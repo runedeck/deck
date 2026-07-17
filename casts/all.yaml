@@ -1,4 +1,4 @@
 name: all
-description: Every domain in the deck — the full loadout.
+description: Everything the deck currently publishes.
 runes:
     - meta/**

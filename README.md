@@ -13,7 +13,7 @@ rune skill add rune
 rune install
 ```
 
-`rune skill` lists what the deck offers; `rune add --cast all` stages everything.
+`rune skill` lists what the deck offers; `rune add --cast all` stages every published rune. The `development`, `council`, and `research` domains are scaffolding today — they fill as artifacts pass adoption review.
 
 ## Layout
 
