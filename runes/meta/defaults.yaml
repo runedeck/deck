@@ -1,0 +1,3 @@
+validate:
+    exclude:
+        - skills/build-skill/*

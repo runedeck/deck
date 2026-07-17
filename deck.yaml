@@ -1,0 +1,9 @@
+schema: 1
+name: runedeck
+version: 0.1.0
+description: Curated instructions for AI coding agents.
+providers:
+    - claude
+    - codex
+    - gemini
+    - opencode
