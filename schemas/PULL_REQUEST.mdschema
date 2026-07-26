@@ -1,0 +1,23 @@
+# Pull request body schema: summary sentence, then Plan / Changes / Testing /
+# Release Notes. The notes section feeds the release body at tag time; `- N/A`
+# is the legal entry for work with no user-facing effect.
+
+heading_rules:
+    no_skip_levels: false
+    max_depth: 2
+
+structure:
+    - heading:
+          pattern: "^## Plan$"
+    - heading:
+          pattern: "^## Changes$"
+      lists:
+          - min: 1
+    - heading:
+          pattern: "^## Testing$"
+      lists:
+          - min: 1
+    - heading:
+          pattern: "^## Release Notes$"
+      lists:
+          - min: 1
