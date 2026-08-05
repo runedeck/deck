@@ -1,7 +1,6 @@
 ---
 name: rune
 description: "Drive the rune CLI to stage, deploy, and verify runes (skills, agents, rules) from a deck into AI harness directories. USE WHEN install runes, add skills to a project, deploy deck content, check drift, .rune manifest, rune validate, spec-driven change, rune spec. Not for authoring deck content (use the deck's build-* skills)."
-version: 0.4.0
 ---
 
 # rune
