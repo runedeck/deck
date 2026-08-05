@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: skills/BuildSkill/scripts/run_loop.py
+    digest:
+      sha256: 9ad4d974f92602a429c552f931be60482cb723ef202895892e9e5209c73fef04
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: https://github.com/N4M3Z/forge-core
+        upstream_commit: ''
+        transforms_applied:
+        - copy
+      resolvedDependencies:
+      - name: upstream
+        uri: https://github.com/N4M3Z/forge-core
+        digest:
+          sha256: 472d58cb5cc4a6b34094dedc0279eda8f2bad3e20afe01ca37162a0c98865d53
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-07-18T19:16:19.958098+00:00
+        review: reviewed

@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: skills/BuildSkill/agents/analyzer.md
+    digest:
+      sha256: 5a24eef9c79ba352ffadc960214ac7d33a786aacf114191852e2bb1738f156b7
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: https://github.com/N4M3Z/forge-core
+        upstream_commit: ''
+        transforms_applied:
+        - copy
+      resolvedDependencies:
+      - name: upstream
+        uri: https://github.com/N4M3Z/forge-core
+        digest:
+          sha256: bf68f4cac5a56c673a928c2e6d619586c5b93ea364026ab37547772cb45a663a
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-07-18T19:16:19.869808+00:00
+        review: reviewed

@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: skills/BuildSkill/agents/comparator.md
+    digest:
+      sha256: 02f4bd02b513907717c4bb8e7d7598006a32f3110a117361533f222119d9d31a
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: https://github.com/N4M3Z/forge-core
+        upstream_commit: ''
+        transforms_applied:
+        - copy
+      resolvedDependencies:
+      - name: upstream
+        uri: https://github.com/N4M3Z/forge-core
+        digest:
+          sha256: fe1fc9787c495d864c5d6eada47396478572325fde1b33a96d78bf4b849b7a3e
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-07-18T19:16:19.870829+00:00
+        review: reviewed

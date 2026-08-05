@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: skills/BuildSkill/CreateWorkflow.md
+    digest:
+      sha256: d24aea1d866672807d3e276c31be5684927f11ed4b8f3abc82968c5dfd0954ec
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: https://github.com/N4M3Z/forge-core
+        upstream_commit: ''
+        transforms_applied:
+        - copy
+      resolvedDependencies:
+      - name: upstream
+        uri: https://github.com/N4M3Z/forge-core
+        digest:
+          sha256: abc12a6eaa8bdc2b28784bc6dc5f17ca1c61f60e7a3500dc0e85915fdef95a7e
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-07-18T19:16:19.860099+00:00
+        review: reviewed

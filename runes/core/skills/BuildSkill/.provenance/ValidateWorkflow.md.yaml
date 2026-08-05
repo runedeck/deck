@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: skills/BuildSkill/ValidateWorkflow.md
+    digest:
+      sha256: dc7f8d23d1f68d31795cb281b6991115af98e46168dde0e3a169297d6d9f16eb
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: https://github.com/N4M3Z/forge-core
+        upstream_commit: ''
+        transforms_applied:
+        - copy
+      resolvedDependencies:
+      - name: upstream
+        uri: https://github.com/N4M3Z/forge-core
+        digest:
+          sha256: 4633c1453587d8ae303e38b3e0b40ef4e2903a58185f8735078352d180c91c4f
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-07-18T19:16:19.868873+00:00
+        review: reviewed

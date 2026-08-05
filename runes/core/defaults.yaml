@@ -1,0 +1,5 @@
+validate:
+    exclude:
+        - skills/BuildSkill/scripts/*
+        - skills/BuildSkill/eval-viewer/*
+        - skills/BuildSkill/assets/*
