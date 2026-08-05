@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: skills/build-skill/scripts/aggregate_benchmark.py
+    digest:
+      sha256: 31eb23a11249bd92f22d79f472ff2a3fa6489f3d29f2980e379d3296627f3b96
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: https://github.com/N4M3Z/forge-core
+        upstream_commit: ''
+        transforms_applied:
+        - copy
+      resolvedDependencies:
+      - name: upstream
+        uri: https://github.com/N4M3Z/forge-core
+        digest:
+          sha256: 611193feb2263e0dae80f3dfc62c0467bf84d52e14ee491adcf99449ffaec6dd
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-07-18T19:16:19.884528+00:00
+        review: reviewed
