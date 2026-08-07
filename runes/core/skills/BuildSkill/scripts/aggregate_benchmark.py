@@ -53,7 +53,8 @@ KNOWN_CONFIG_PAIRS = (
 
 
 def calculate_stats(values: list[float]) -> dict:
-    """Calculate mean, stddev, min, max for a list of values."""
+    """Calculate mean, stddev, min, max, skipping unavailable (null) values."""
+    values = [value for value in values if value is not None]
     if not values:
         return {"mean": 0.0, "stddev": 0.0, "min": 0.0, "max": 0.0}
 

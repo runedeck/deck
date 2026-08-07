@@ -20,7 +20,7 @@ A skill that works as soon as it is deployed needs no INSTALL.md.
 
 ## Shape
 
-Required elements: H1 title, blockquote summary, conversational opening, OBJECTIVE, DONE WHEN (a measurable success condition that embeds verification), TODO checklist (3-7 items), steps with shell commands, EXECUTE NOW closing.
+Required elements per the [Mintlify install.md standard][MINTLIFY]: H1 title, blockquote summary, conversational opening, OBJECTIVE, DONE WHEN (a measurable success condition that embeds verification), TODO checklist (3-7 items), steps with shell commands, EXECUTE NOW closing.
 
 ## Boundary
 

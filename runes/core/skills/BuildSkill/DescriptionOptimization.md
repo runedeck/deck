@@ -1,8 +1,25 @@
 # Description optimization
 
-The `description` field is the primary triggering mechanism: Claude sees only name + description when deciding whether to consult a skill. Claude tends to undertrigger, so descriptions should be a little pushy, naming both what the skill does and the concrete contexts that should invoke it, even when the user doesn't use the skill's own vocabulary.
+> Measure how reliably a skill's description triggers against realistic queries, then let the optimization loop propose a better one.
 
-Triggering mechanics worth knowing: Claude only consults skills for tasks it can't easily handle directly. Simple one-step queries ("read this PDF") may not trigger a skill even with a perfect description match; complex, multi-step, or specialized queries trigger reliably. Eval queries must be substantive enough that consulting a skill would actually help.
+The `description` field is the primary triggering mechanism: Claude sees only name + description when deciding whether to consult a skill. Claude tends to undertrigger, so descriptions should be a little pushy, naming both what the skill does and the concrete contexts that should invoke it, even when the user doesn't use the skill's own vocabulary. Only substantive queries trigger skills at all: simple one-step requests ("read this PDF") may not trigger even on a perfect description match, so eval queries must be complex enough that consulting a skill would actually help.
+
+## OBJECTIVE
+
+A description with a measured trigger score, improved by the optimization loop without losing its `USE WHEN` and `NOT FOR` conventions.
+
+## DONE WHEN
+
+- The user approved the trigger eval set and the remote `claude -p` run.
+- The loop reported per-iteration results and a `best_description` selected on held-out data.
+- The frontmatter carries the merged result, with before/after and scores shown to the user.
+
+## TODO
+
+- [ ] Generate 20 realistic trigger eval queries
+- [ ] Review the eval set with the user in the bundled page
+- [ ] Run the optimization loop with explicit approval
+- [ ] Merge `best_description` and report scores
 
 ## Step 1: Generate trigger eval queries
 
@@ -15,7 +32,7 @@ Create 20 queries, a mix of should-trigger and should-not-trigger, saved as JSON
 ]
 ```
 
-Queries must be realistic: concrete and specific, with file paths, personal context, column names, company names, typos, casual speech, mixed lengths — but synthetic: invented paths, pseudonymous identities and organizations, no real personal data. Favor edge cases over clear-cut ones; the user signs off before the run.
+Queries must be realistic: concrete and specific, with file paths, personal context, column names, company names, typos, casual speech, mixed lengths. They must also be synthetic: invented paths, pseudonymous identities and organizations, no real personal data. Favor edge cases over clear-cut ones; the user signs off before the run.
 
 - **Should-trigger (8-10)**: different phrasings of the same intent, formal and casual; cases where the user never names the skill or file type but clearly needs it; uncommon use cases; cases where this skill competes with another but should win.
 - **Should-not-trigger (8-10)**: near-misses that share keywords or concepts but need something different: adjacent domains, ambiguous phrasing a naive keyword match would catch, contexts where another tool is more appropriate. Obviously irrelevant negatives test nothing.
@@ -34,7 +51,7 @@ Bad eval queries produce bad descriptions; this review step is load-bearing.
 
 ## Step 3: Run the optimization loop
 
-The loop invokes `claude -p`, sending the skill body and eval queries to Anthropic — get explicit approval for that remote run first. Warn the user it takes a while, then run in the background from this skill's directory:
+The loop invokes `claude -p`, sending the skill body and eval queries to Anthropic; get explicit approval for that remote run first. Warn the user it takes a while, then run in the background from this skill's directory:
 
 ```bash
 python3 -m scripts.run_loop \
@@ -51,4 +68,8 @@ Requires the `claude` CLI (`claude -p`); Claude Code only.
 
 ## Step 4: Apply the result
 
-Update the skill's frontmatter with `best_description`, show the user before/after, and report the scores — recording which Claude model was evaluated; the scores measure Claude routing only. Preserve the `USE WHEN` and `NOT FOR` clause conventions when merging the optimized text; never drop anti-triggers to chase a higher trigger score.
+Update the skill's frontmatter with `best_description`, show the user before/after, and report the scores, recording which Claude model was evaluated; the scores measure Claude routing only. Preserve the `USE WHEN` and `NOT FOR` clause conventions when merging the optimized text; never drop anti-triggers to chase a higher trigger score.
+
+## EXECUTE NOW
+
+Work the TODO in order. Begin by drafting the 20 trigger queries for the user's sign-off; nothing runs remotely until they approve.

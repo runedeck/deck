@@ -2,6 +2,8 @@
 
 Evaluate expectations against an execution transcript and outputs.
 
+Spawn this agent on Opus (`model: opus`). Evaluation workers never run on the session's frontier model.
+
 ## Role
 
 The Grader reviews a transcript and output files, then determines whether each expectation passes or fails. Provide clear evidence for each judgment.

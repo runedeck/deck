@@ -4,13 +4,7 @@ How a skill reaches the model decides what belongs where, and how it is phrased 
 
 ## How a skill loads
 
-Loading happens in three stages, and each has a different cost:
-
-- **Name and description** are in context for every skill, all the time, before any of them trigger. This is the only text that decides whether the skill is consulted at all, so every trigger phrase belongs here and nowhere else.
-- **The body** loads in full the moment the skill triggers. Everything here is paid for on every invocation, so it holds routing, constraints, and the steps that always apply.
-- **Companions, scripts, and assets** load only when something reads them. Cost is paid per read, which makes this the right home for anything conditional: a workflow used by one request in five, a schema consulted once, provider-specific detail.
-
-The practical consequence: a procedure that applies to one branch of the work belongs in a companion, and a constraint that applies to all of it belongs in the body. Moving conditional material out of the body is not tidying, it is the mechanism working as designed.
+The frontmatter description is always in context; the body lazy-loads when the skill triggers; companions load only when something reads them. So: trigger phrases live in the description, always-apply routing and constraints in the body, conditional material in companions.
 
 State the load condition wherever you link:
 
@@ -41,9 +35,9 @@ A reference file past roughly 300 lines earns a table of contents at the top, so
 
 ## Explaining why
 
-Today's models have good theory of mind and will do the right thing when they understand the goal. They generalize from reasoning and overfit to commands, so a rule with its rationale attached survives situations you did not anticipate, while a bare imperative does not.
+A rule with its rationale attached survives situations you did not anticipate; a bare imperative holds only in the cases you enumerated. Upstream skill authoring guidance draws the same conclusion: reframe all-caps imperatives as reasoning the model can apply.[SKILLCREATOR]
 
-Treat an all-caps ALWAYS or NEVER as a signal you have not explained something yet. Sometimes the emphasis is genuinely warranted; more often the instruction was hard to justify and force substituted for the argument.
+Treat an all-caps ALWAYS or NEVER as a signal you have not explained something yet.
 
 Weak, because it only holds in the cases you enumerated:
 
@@ -61,7 +55,7 @@ never read at the moment it would matter.
 
 ## Defining an output format
 
-When the shape of the result matters, show it rather than describing it:
+Show the result shape as a template, not a description of it:
 
 ```markdown
 ## Report structure
@@ -81,12 +75,18 @@ Paired examples teach a transformation faster than prose about it:
 ```markdown
 ## Commit message format
 
+Do:
 Input: Added user authentication with JWT tokens
 Output: feat(auth): implement JWT-based authentication
+
+Don't:
+Output: Updated some auth stuff
 ```
 
-Where you show a wrong form, introduce it with the reason it is wrong and never end a section on it, so the last thing read is the form to imitate.
+Introduce a wrong form with the reason it is wrong, and end on the form to imitate.
 
 ## Drafting
 
-Write a first pass without stopping to polish, then read it again as though you had not written it. The second read is where the padding, the instruction that restates its heading, and the step that assumes context the model will not have all become visible. Prefer the imperative for instructions, and cut any sentence whose removal costs nothing.
+Draft without polishing, then reread as a stranger. Cut padding, instructions that restate their heading, and steps that assume context the model lacks. Use the imperative. Cut any sentence whose removal costs nothing.
+
+[SKILLCREATOR]: https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md "Anthropic skill creator"

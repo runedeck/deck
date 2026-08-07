@@ -10,43 +10,43 @@ review:
       sha256: 7a09453e18e28d9a362415116d0abec8ce6c5e833c2681046714c2c40489ae27
   - name: CreateWorkflow.md
     digest:
-      sha256: d24aea1d866672807d3e276c31be5684927f11ed4b8f3abc82968c5dfd0954ec
+      sha256: 4de66daf2109f074d251b408182e17622290746674f1bf1fe80a8c6c04b70acf
   - name: DescriptionOptimization.md
     digest:
-      sha256: dc78cb944b7159f3e896eacf7975302771f41b47a98b9d1b73d0ea1f82661714
+      sha256: 23c83540ff6f51b4592a40e67c222dfd5a82697e3e7ad7663a12d72b33deb76b
   - name: DynamicContextInjection.md
     digest:
       sha256: 18a676d239ed2e93df2c38a61dc14511c3f70e6e498db78fcef5ed9e205eba46
   - name: EvalLoop.md
     digest:
-      sha256: 31b0cc6fb7e2a23d955dc5b6327559a51a86b5f6697204696699e65dd013a9d7
+      sha256: 8a5d7c6709463ce153ccaf1c3c604d99e3e6a7e9742f2979a2f9aaabbc6c023f
   - name: PlatformAgnostic.md
     digest:
       sha256: 110c842ba88186b55a5e664eef1052df2178469b4400ebfaacd151283eed9305
   - name: SKILL.md
     digest:
-      sha256: 5879317eed2062c729c9f026cdf82c4a8e4944271fc626dcb4b911e2a5036882
+      sha256: c276e81ed0d8af8bc1a04930784d4d80a573ccf12153eb853b8a3b42460569c7
   - name: SkillInstallation.md
     digest:
       sha256: 7eb6a80c0f59da0e4eabb1f35bf977b1e041acc104f4a2984a31803ceea93ab4
   - name: SkillStructure.md
     digest:
-      sha256: 3439fc2a34ca8bd1cb53868328b47e294066953510d44914e46dcde9560218e5
+      sha256: b8a92f239c7956454de0ead140034357e6ecd98b6e18ea2e57cd4f21c2eaa4be
   - name: UserConfigSchema.md
     digest:
       sha256: 6d5ebfd44d4a51b167af0550bdefbae3b7c6108699f2d4a93225bdde5ce1f45e
   - name: ValidateWorkflow.md
     digest:
-      sha256: dc7f8d23d1f68d31795cb281b6991115af98e46168dde0e3a169297d6d9f16eb
-  - name: agents/analyzer.md
+      sha256: ed0b346e9fda1e957862f3653acf03e81ff25c815019cb53753e854f1c3af3e7
+  - name: templates/agents/analyzer.md
     digest:
-      sha256: 5a24eef9c79ba352ffadc960214ac7d33a786aacf114191852e2bb1738f156b7
-  - name: agents/comparator.md
+      sha256: 5b6eafd01c36a6f82d3889564577c171d923bf12dc3d0c74d36826d27a768c73
+  - name: templates/agents/comparator.md
     digest:
-      sha256: 02f4bd02b513907717c4bb8e7d7598006a32f3110a117361533f222119d9d31a
-  - name: agents/grader.md
+      sha256: 5566d9a7db48b7bf2a055a30c3fb14f38096fd2142b70d0f1c37c9f6f06e5447
+  - name: templates/agents/grader.md
     digest:
-      sha256: 0dfb36ee75ceae222054be832e322bd11bae84b338a32121a74befae614b9376
+      sha256: 2858fb6ab68a8bee60819d06ab75b02c66eaf8638dfab12eb69a9291286bba23
   - name: assets/eval_review.html
     digest:
       sha256: 6b832486750c14a62af28be65b5c4da545e94e3fec58d34370661b731150fd82
@@ -64,7 +64,7 @@ review:
       sha256: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
   - name: scripts/aggregate_benchmark.py
     digest:
-      sha256: 31eb23a11249bd92f22d79f472ff2a3fa6489f3d29f2980e379d3296627f3b96
+      sha256: 49deeea93e17eb56b5a75c2db06d98542cdb2ec4587ab00a442dc2c9e0487a98
   - name: scripts/generate_report.py
     digest:
       sha256: ee18a1c0458998012231d7ec55165ea42c720028d4a19d7218bdb03cb2ae92e5
@@ -1859,7 +1859,7 @@ review:
       note: 'file-level adapt, synthesis approved via native edit review: kebab + mdschema + Not for gates, DCI body-only checks, link resolution, script security inspection, rune validate as executable gate'
       decidedOn: 2026-07-18T23:47:49.092359+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:1
+    - id: templates/agents/analyzer.md:1
       kind: heading
       digest:
         sha256: aa4f6127b0373f60f7a15ca9070541cd550c8ac1a06fda42f39fd90975593d25
@@ -1868,7 +1868,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:00.458172+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:2
+    - id: templates/agents/analyzer.md:2
       kind: paragraph
       digest:
         sha256: 0e56d125dc9865369f51732f736f6f14abb7c0a6638ec658dd9cc55cd37f6031
@@ -1877,7 +1877,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:01.251617+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:3
+    - id: templates/agents/analyzer.md:3
       kind: heading
       digest:
         sha256: ae2d08dcf5603d2b87a9d892befdf02dcb90aeb4464cd78cc4344528268828f2
@@ -1886,7 +1886,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.148214+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:4
+    - id: templates/agents/analyzer.md:4
       kind: paragraph
       digest:
         sha256: c1f7a5915078c8e6aef53b814e3ba4d6c158ad1a704c8a9673ea9af0814a51c2
@@ -1895,7 +1895,7 @@ review:
       note: 'file-level adapt, full codex synthesis approved: untrusted-input boundary sections, typo/branding fixes, neutral tool names, pseudonymous identities, metric honesty; every renamed field grep-verified against scripts before finalize'
       decidedOn: 2026-07-19T00:11:08.331279+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:5
+    - id: templates/agents/analyzer.md:5
       kind: heading
       digest:
         sha256: 756fe18b33daf3d7624a8fd2e6027b64664f2d413b9f047e285344f486020a60
@@ -1904,7 +1904,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.675207+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:6
+    - id: templates/agents/analyzer.md:6
       kind: paragraph
       digest:
         sha256: 7f6e094af4f6778ae06eab16a7dd4725ba30f5443cc371e4f480e1111ca10497
@@ -1913,7 +1913,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.475717+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:7
+    - id: templates/agents/analyzer.md:7
       kind: list
       digest:
         sha256: 4e42a09649c46683feeb9ecd8f0898f1cb2c451f1ab40dd9687fb24d80730cec
@@ -1922,7 +1922,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:05.628378+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:8
+    - id: templates/agents/analyzer.md:8
       kind: heading
       digest:
         sha256: 0a6ae6aec66002dac2461e16bbe03aff6aa482a29e897a6071c62d254ae3d204
@@ -1931,7 +1931,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.074983+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:9
+    - id: templates/agents/analyzer.md:9
       kind: heading
       digest:
         sha256: a0d5b4349e25cf4bcaa7887b6f045c30b599ee232756045ec439c80426d724a0
@@ -1940,7 +1940,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.149488+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:10
+    - id: templates/agents/analyzer.md:10
       kind: list
       digest:
         sha256: 3d6d89a01a1b7d51fce1df892d2558adc536ef1677beb66583547885e1c072a4
@@ -1949,7 +1949,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:00.529583+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:11
+    - id: templates/agents/analyzer.md:11
       kind: heading
       digest:
         sha256: 1d7556877c95dfd86d2371d09d4f93c8fa97b0bbf153baa1e673202f826f4bb9
@@ -1958,7 +1958,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:00.600805+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:12
+    - id: templates/agents/analyzer.md:12
       kind: list
       digest:
         sha256: a1e883cb50e624c2bdeabcaec5c3b44174be82e0b48b687ec42bc7e78da83ad0
@@ -1967,7 +1967,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:00.671526+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:13
+    - id: templates/agents/analyzer.md:13
       kind: heading
       digest:
         sha256: 5ead3af3233bc5704b12efc5b4cd91ce8678048bc941f96b083677fbb4ea8eb2
@@ -1976,7 +1976,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:00.742549+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:14
+    - id: templates/agents/analyzer.md:14
       kind: list
       digest:
         sha256: 1821abfc4a84107cd3970500538c2238db77297a4f2296fae8b01061cb590687
@@ -1985,7 +1985,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:00.815138+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:15
+    - id: templates/agents/analyzer.md:15
       kind: heading
       digest:
         sha256: 8bfb70ea0e6d2e721475ce8cf8a25bdd20f05ada61a94451b3223e1327c9800b
@@ -1994,7 +1994,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:00.887471+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:16
+    - id: templates/agents/analyzer.md:16
       kind: paragraph
       digest:
         sha256: 18e68581fd2c0a44c254e751fd83b967b304e3dfadc292553aa424406b61d5cc
@@ -2003,7 +2003,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:00.959097+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:17
+    - id: templates/agents/analyzer.md:17
       kind: list
       digest:
         sha256: 0aaa5af40fb6dbb5dff45f948638d2679a54aab7ce151a2c681fc78a55e1745a
@@ -2012,7 +2012,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:01.032571+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:18
+    - id: templates/agents/analyzer.md:18
       kind: paragraph
       digest:
         sha256: a37e052185a11304f83a798563e27c82b8eba902779e6239912309baa6da66ee
@@ -2021,7 +2021,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:01.105976+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:19
+    - id: templates/agents/analyzer.md:19
       kind: heading
       digest:
         sha256: 95a167d6e4bdeda9061e46344f978732dac68eeca8fb1db5bde125239babe864
@@ -2030,7 +2030,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:01.180282+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:20
+    - id: templates/agents/analyzer.md:20
       kind: paragraph
       digest:
         sha256: 75521ef1b3d117f71c9cae40ffe13da37d6c54cd2bfa3fe8927d58cb1f5b0c01
@@ -2039,7 +2039,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:01.328341+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:21
+    - id: templates/agents/analyzer.md:21
       kind: list
       digest:
         sha256: c3cdd8f4781895445c3232ac11f60a5b126a1f3ccd6dd8a3a706462d96712ec3
@@ -2048,7 +2048,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:01.476281+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:22
+    - id: templates/agents/analyzer.md:22
       kind: paragraph
       digest:
         sha256: 690e04b11658ffc78fac8ff89aa58bbd15975255de19c72c6f2b39780d227295
@@ -2057,7 +2057,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:01.569784+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:23
+    - id: templates/agents/analyzer.md:23
       kind: heading
       digest:
         sha256: d651279b5387dfd34cc3f7b562067bb4424a6740812f99df7697da90f6f54349
@@ -2066,7 +2066,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:01.654438+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:24
+    - id: templates/agents/analyzer.md:24
       kind: paragraph
       digest:
         sha256: 12f7c801cafa8c4fac3449e4e3c0e92b9d259f023e989182ee27a6a51e9a9d4c
@@ -2075,7 +2075,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:01.724637+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:25
+    - id: templates/agents/analyzer.md:25
       kind: list
       digest:
         sha256: 8d1eddfdb87b9b8dd0203504c62d7731357815d04414e27b971fa37f2f4101fb
@@ -2084,7 +2084,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:01.795546+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:26
+    - id: templates/agents/analyzer.md:26
       kind: heading
       digest:
         sha256: da5227936f64a1c9cd2a99f6ca3b1bd244bb3aca28eec64c39218d8cc14551de
@@ -2093,7 +2093,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:01.865896+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:27
+    - id: templates/agents/analyzer.md:27
       kind: paragraph
       digest:
         sha256: e9e53ebd815eceaf25c01085cc8e10b61e9abcac6d400f2775d4ba5b6f2d593e
@@ -2102,7 +2102,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:01.936410+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:28
+    - id: templates/agents/analyzer.md:28
       kind: list
       digest:
         sha256: 3ab6c88a7609b798045dc63ac0868ceedef3aa878f045309122c8fe32ebdae44
@@ -2111,7 +2111,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.006143+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:29
+    - id: templates/agents/analyzer.md:29
       kind: paragraph
       digest:
         sha256: db95e636945840606477d2aabd8ca866696988093803d66bd01454d9e8901117
@@ -2120,7 +2120,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.077618+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:30
+    - id: templates/agents/analyzer.md:30
       kind: heading
       digest:
         sha256: c52cc44f1ef420d8718ca2879879cf5746cc2f144ae79ad6718462cadd3cd194
@@ -2129,7 +2129,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.227416+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:31
+    - id: templates/agents/analyzer.md:31
       kind: paragraph
       digest:
         sha256: d9d70549bdcf1d57ac9e4028c8b5ae959808c243742f4763784e77147820063f
@@ -2138,7 +2138,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.300703+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:32
+    - id: templates/agents/analyzer.md:32
       kind: heading
       digest:
         sha256: ebee587fc736970252728814c562d65c888b7d219631a597ff9f0b7409c32d7a
@@ -2147,7 +2147,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.372915+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:33
+    - id: templates/agents/analyzer.md:33
       kind: paragraph
       digest:
         sha256: fdbadc3f5ab6f2bc61ae0bf5b8537450f9b0eeaf5192127239f81fbe709d7357
@@ -2156,7 +2156,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.443127+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:34
+    - id: templates/agents/analyzer.md:34
       kind: code
       digest:
         sha256: aee3d58ce5df0e541b47daa6e3cfde4dc4054c02437ea64424eab1e90aa963c8
@@ -2165,7 +2165,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.512738+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:35
+    - id: templates/agents/analyzer.md:35
       kind: heading
       digest:
         sha256: a2439ddd713971f03360a9ea55fb749bfc51e6bd514dd9e22dc408fe109eab2b
@@ -2174,7 +2174,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.583004+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:36
+    - id: templates/agents/analyzer.md:36
       kind: list
       digest:
         sha256: 11a7ef2b1d332d69952eb436a225bd220f162183d5251c11d0a331d746266ff7
@@ -2183,7 +2183,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.653270+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:37
+    - id: templates/agents/analyzer.md:37
       kind: heading
       digest:
         sha256: f53688dee57113e8e93bb1d5541a76b5585a7341ec6c07cd38b60c79ead4a4a0
@@ -2192,7 +2192,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.722872+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:38
+    - id: templates/agents/analyzer.md:38
       kind: paragraph
       digest:
         sha256: 7535c216b38c5bb4f9949b5ab67bead95500c4b82e24c1c11d09680d764ab482
@@ -2201,7 +2201,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.792681+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:39
+    - id: templates/agents/analyzer.md:39
       kind: table
       digest:
         sha256: 989c9fb8c1a04cbceb3b8891f0cef7b096effbd9146901452f610cce0d1a73de
@@ -2210,7 +2210,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.861945+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:40
+    - id: templates/agents/analyzer.md:40
       kind: heading
       digest:
         sha256: 0fe748a17502af04f3ddace178fd343edef80a3ea164e53bac52ebf6b9efbd33
@@ -2219,7 +2219,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:02.933023+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:41
+    - id: templates/agents/analyzer.md:41
       kind: list
       digest:
         sha256: 340d7266c6fbc563ce367663fdc69ff317d93c7158997960a0b44227918f803e
@@ -2228,7 +2228,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.007835+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:42
+    - id: templates/agents/analyzer.md:42
       kind: rule
       digest:
         sha256: cb3f91d54eee30e53e35b2b99905f70f169ed549fd78909d3dac2defc9ed8d3b
@@ -2237,7 +2237,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.078407+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:43
+    - id: templates/agents/analyzer.md:43
       kind: heading
       digest:
         sha256: 88d15b6b752105374180b1bcfbcf7bc9b47d037526eead0ae7f0379718882916
@@ -2246,7 +2246,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.156407+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:44
+    - id: templates/agents/analyzer.md:44
       kind: paragraph
       digest:
         sha256: cd44f9a56e9b577b45ef785ddcee2b21cf53efe7906c3edbfee471aee621f4ea
@@ -2255,7 +2255,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.243221+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:45
+    - id: templates/agents/analyzer.md:45
       kind: heading
       digest:
         sha256: ae2d08dcf5603d2b87a9d892befdf02dcb90aeb4464cd78cc4344528268828f2
@@ -2264,7 +2264,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.318915+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:46
+    - id: templates/agents/analyzer.md:46
       kind: paragraph
       digest:
         sha256: e4ebbc1d1bad97878e319f57aa0245b13dd87423c7a8401b79c6450f411e1171
@@ -2273,7 +2273,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.390384+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:47
+    - id: templates/agents/analyzer.md:47
       kind: heading
       digest:
         sha256: 756fe18b33daf3d7624a8fd2e6027b64664f2d413b9f047e285344f486020a60
@@ -2282,7 +2282,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.463216+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:48
+    - id: templates/agents/analyzer.md:48
       kind: paragraph
       digest:
         sha256: 7f6e094af4f6778ae06eab16a7dd4725ba30f5443cc371e4f480e1111ca10497
@@ -2291,7 +2291,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.533974+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:49
+    - id: templates/agents/analyzer.md:49
       kind: list
       digest:
         sha256: 5decec4d14d24fb9e3fbeeceac02a1afbc102636f580a5fde81be323e4e2c835
@@ -2300,7 +2300,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.604438+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:50
+    - id: templates/agents/analyzer.md:50
       kind: heading
       digest:
         sha256: 0a6ae6aec66002dac2461e16bbe03aff6aa482a29e897a6071c62d254ae3d204
@@ -2309,7 +2309,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.745171+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:51
+    - id: templates/agents/analyzer.md:51
       kind: heading
       digest:
         sha256: 93914581200ec1cb0fe39386713f0e92bcb4a287dbee745577d70ceeafde8c93
@@ -2318,7 +2318,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.814303+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:52
+    - id: templates/agents/analyzer.md:52
       kind: list
       digest:
         sha256: 550e864e6c81af86da666bea926b23da88586c3d8139c6923d4ffaa153906eb1
@@ -2327,7 +2327,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.883945+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:53
+    - id: templates/agents/analyzer.md:53
       kind: heading
       digest:
         sha256: 20e45d63b733a4f780d08b561d603da946655dfa3056ef0a2b02a32996d75a87
@@ -2336,7 +2336,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:03.953742+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:54
+    - id: templates/agents/analyzer.md:54
       kind: paragraph
       digest:
         sha256: 93d4dcf7085231729956be0bea1155f9d2fc3aa60dac0d043c8658470f7e9866
@@ -2345,7 +2345,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.025777+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:55
+    - id: templates/agents/analyzer.md:55
       kind: list
       digest:
         sha256: cd31a2c2ce39e30aa0ecc507bd4d016ee32c49621d21842d1d6d44eb19eb9f07
@@ -2354,7 +2354,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.100566+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:56
+    - id: templates/agents/analyzer.md:56
       kind: heading
       digest:
         sha256: fce4964823ebd944d9759fe344e520ad4a64fa06eb71f7a25c9cc7fae792a7d7
@@ -2363,7 +2363,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.175466+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:57
+    - id: templates/agents/analyzer.md:57
       kind: paragraph
       digest:
         sha256: 9ad3a44103038b1223a1bd92a3d68221443eee85eb90c5543803f0581de299cc
@@ -2372,7 +2372,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.249655+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:58
+    - id: templates/agents/analyzer.md:58
       kind: list
       digest:
         sha256: b8246cad0a3c8e039f7ede944e985ebbd34b158a9efc6fb496d0b9edc5605149
@@ -2381,7 +2381,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.326629+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:59
+    - id: templates/agents/analyzer.md:59
       kind: heading
       digest:
         sha256: 15c0688837d9ffa50a4088709d3a369acfc78bb5fb21337a6333b4272b9b8617
@@ -2390,7 +2390,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.403180+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:60
+    - id: templates/agents/analyzer.md:60
       kind: paragraph
       digest:
         sha256: 4d612d17f078fca84f85847bdc3e35e490685d7c34ade3a3b7da800b018bbadd
@@ -2399,7 +2399,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.545931+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:61
+    - id: templates/agents/analyzer.md:61
       kind: list
       digest:
         sha256: 2eff5a1a994a579e9f153180dbdbe9d23eec53d6e7f177287e0860818620139d
@@ -2408,7 +2408,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.616247+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:62
+    - id: templates/agents/analyzer.md:62
       kind: heading
       digest:
         sha256: ca61b8227c17fc5428bf06cf62108ecb1201061e066ea79a4ace9bde6653f4a7
@@ -2417,7 +2417,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.685874+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:63
+    - id: templates/agents/analyzer.md:63
       kind: paragraph
       digest:
         sha256: 94b30522aae1f4f5b08385b96bfb655a2cf13adb6c72ee6866001ebdafe143f7
@@ -2426,7 +2426,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.755113+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:64
+    - id: templates/agents/analyzer.md:64
       kind: list
       digest:
         sha256: 9e0bec3889b136f5170433e1d18a57c2367b1b748b7de64549c7621459abfa7f
@@ -2435,7 +2435,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.824847+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:65
+    - id: templates/agents/analyzer.md:65
       kind: paragraph
       digest:
         sha256: 1889f03338b79bbad8bdcdc925ef5e83069569c17e433174ef9a49f62e7d5ee7
@@ -2444,7 +2444,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.894167+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:66
+    - id: templates/agents/analyzer.md:66
       kind: list
       digest:
         sha256: 34488c33d36e66228d7c83ee8b51d886f0319975a1a29207fdb3e692652cd52e
@@ -2453,7 +2453,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:04.975456+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:67
+    - id: templates/agents/analyzer.md:67
       kind: heading
       digest:
         sha256: 3e3d989bb7023db3cb2bee9ea0401fbb3db9991217489dcf65a414dd20dc1eee
@@ -2462,7 +2462,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:05.067766+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:68
+    - id: templates/agents/analyzer.md:68
       kind: paragraph
       digest:
         sha256: 330457e20d48dc1c4b4544e01979a862338007b9d99fa9d132d372d882ee2279
@@ -2471,7 +2471,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:05.344073+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:69
+    - id: templates/agents/analyzer.md:69
       kind: code
       digest:
         sha256: 8be54e60edd1d72dae9ca8edc4b49c4fafc960ae7f9800dbf50edff53490c19c
@@ -2480,7 +2480,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:05.552580+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:70
+    - id: templates/agents/analyzer.md:70
       kind: heading
       digest:
         sha256: a2439ddd713971f03360a9ea55fb749bfc51e6bd514dd9e22dc408fe109eab2b
@@ -2489,7 +2489,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:05.702568+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:71
+    - id: templates/agents/analyzer.md:71
       kind: paragraph
       digest:
         sha256: 611620ff3aa4dfd632897b27cf2b6764b546bc7d6f60b4b1bc215e44a416d50c
@@ -2498,7 +2498,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:05.781219+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:72
+    - id: templates/agents/analyzer.md:72
       kind: list
       digest:
         sha256: bf3f96ccc17b600b5abee1083d392794537458be182a82b1612a92224cc4d539
@@ -2507,7 +2507,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:05.854903+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:73
+    - id: templates/agents/analyzer.md:73
       kind: paragraph
       digest:
         sha256: b766a2526318a44d8c261b1be57b93c96161c3c44a4ef0d9309f615804d3500a
@@ -2516,7 +2516,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:05.928050+00:00
       transport: verdict-cli
-    - id: agents/analyzer.md:74
+    - id: templates/agents/analyzer.md:74
       kind: list
       digest:
         sha256: 7f3db40eee87dcd57c6b4f9a7d063b29f420d032e38072e439d8245c52642c58
@@ -2525,7 +2525,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.001662+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:1
+    - id: templates/agents/comparator.md:1
       kind: heading
       digest:
         sha256: 9578b7c1edbf26856150d2b5c19269e994655ac2635b031fe114fdb08b8ab8ea
@@ -2534,7 +2534,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.220729+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:2
+    - id: templates/agents/comparator.md:2
       kind: paragraph
       digest:
         sha256: 24961ef33694a3b3a5a514e6eb41fb981205634ee620c2e9936cb839a5c45e88
@@ -2543,7 +2543,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.009539+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:3
+    - id: templates/agents/comparator.md:3
       kind: heading
       digest:
         sha256: ae2d08dcf5603d2b87a9d892befdf02dcb90aeb4464cd78cc4344528268828f2
@@ -2552,7 +2552,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.703295+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:4
+    - id: templates/agents/comparator.md:4
       kind: paragraph
       digest:
         sha256: c6407464809f6b8ad69872b711d50e8b53174ef677851af74363af044884b0da
@@ -2561,7 +2561,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:08.358456+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:5
+    - id: templates/agents/comparator.md:5
       kind: paragraph
       digest:
         sha256: 684307def299521868e629ed01c2ea4151d548dca857fca3dda5821d25646c4d
@@ -2570,7 +2570,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:08.568230+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:6
+    - id: templates/agents/comparator.md:6
       kind: heading
       digest:
         sha256: 756fe18b33daf3d7624a8fd2e6027b64664f2d413b9f047e285344f486020a60
@@ -2579,7 +2579,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:08.637982+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:7
+    - id: templates/agents/comparator.md:7
       kind: paragraph
       digest:
         sha256: 7f6e094af4f6778ae06eab16a7dd4725ba30f5443cc371e4f480e1111ca10497
@@ -2588,7 +2588,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:08.706289+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:8
+    - id: templates/agents/comparator.md:8
       kind: list
       digest:
         sha256: cb5fe99920c42362849e1ed6fdfae9c9d986f02e64a23f5d5f691f261286a666
@@ -2597,7 +2597,7 @@ review:
       note: 'file-level adapt, full codex synthesis approved: untrusted-input boundary sections, typo/branding fixes, neutral tool names, pseudonymous identities, metric honesty; every renamed field grep-verified against scripts before finalize'
       decidedOn: 2026-07-19T00:11:13.727969+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:9
+    - id: templates/agents/comparator.md:9
       kind: heading
       digest:
         sha256: 0a6ae6aec66002dac2461e16bbe03aff6aa482a29e897a6071c62d254ae3d204
@@ -2606,7 +2606,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:08.774060+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:10
+    - id: templates/agents/comparator.md:10
       kind: heading
       digest:
         sha256: 73cc3d18196519c6f593734948f9bec84d6c5bd8175af6185d5403b8fb5be623
@@ -2615,7 +2615,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.291684+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:11
+    - id: templates/agents/comparator.md:11
       kind: list
       digest:
         sha256: 7968fd9893a82cac431cfe707605b3d247c998981878956c692ccb58cc0be227
@@ -2624,7 +2624,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.382439+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:12
+    - id: templates/agents/comparator.md:12
       kind: heading
       digest:
         sha256: f42dd12573c0ec0db80abd10a2c75f5fe2690354bb9d537363b6eac102fa1d4f
@@ -2633,7 +2633,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.457346+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:13
+    - id: templates/agents/comparator.md:13
       kind: list
       digest:
         sha256: 56afa99fa873930727461a376b5e1c18a3abacccae203cab78b64cd940e45936
@@ -2642,7 +2642,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.526200+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:14
+    - id: templates/agents/comparator.md:14
       kind: heading
       digest:
         sha256: ba40c376cd4ad1de5692cf29a198e98d4673f449df00d72bd37e98925d21e672
@@ -2651,7 +2651,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.595129+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:15
+    - id: templates/agents/comparator.md:15
       kind: paragraph
       digest:
         sha256: 797635ed4b9e3ef50f81bb33d8e9128dfdbcae5091470d89ffd1d7a39db14bfa
@@ -2660,7 +2660,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.664533+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:16
+    - id: templates/agents/comparator.md:16
       kind: paragraph
       digest:
         sha256: 646c39cac0633e69bb7e797ceab01d1a57de88b5188383bb5987876926b43b3c
@@ -2669,7 +2669,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.732927+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:17
+    - id: templates/agents/comparator.md:17
       kind: table
       digest:
         sha256: fb5b111c55e2b4fb510ee94930325bcdf68a4b0123795d764f66fc2f9f544c30
@@ -2678,7 +2678,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.802191+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:18
+    - id: templates/agents/comparator.md:18
       kind: paragraph
       digest:
         sha256: a7b66372b4e2606c15aa0fd319be750a0768fe117d454a32a6066253d38ecb7c
@@ -2687,7 +2687,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.872050+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:19
+    - id: templates/agents/comparator.md:19
       kind: table
       digest:
         sha256: c26f103e0ae5eb0d0245b2abc29e9d874b9efddafd446237b335b9dcdd54a04a
@@ -2696,7 +2696,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:06.941091+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:20
+    - id: templates/agents/comparator.md:20
       kind: paragraph
       digest:
         sha256: b7e310c705bf0f829904e4bc6ba48981d8be22da18a3a4e094ff56f745aaa5bf
@@ -2705,7 +2705,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.078223+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:21
+    - id: templates/agents/comparator.md:21
       kind: list
       digest:
         sha256: 8226fc9916ded2a1756d9f02ce9bb38a1067dac56e3c26475c5ddd195489b7ad
@@ -2714,7 +2714,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.147217+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:22
+    - id: templates/agents/comparator.md:22
       kind: heading
       digest:
         sha256: 5486b896643f913099486e242ef565a3512ebbc18cb457bf21bc21ec49b0b180
@@ -2723,7 +2723,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.216991+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:23
+    - id: templates/agents/comparator.md:23
       kind: paragraph
       digest:
         sha256: 2da8ffc3d42423b78ea991957e03e56ef8495a7326de79c9df345dcf9ca3a8c7
@@ -2732,7 +2732,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.287944+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:24
+    - id: templates/agents/comparator.md:24
       kind: list
       digest:
         sha256: c45dbf6b1091c466feede651ea48404f81add787b97118c3bc0f264cfb9e9cb2
@@ -2741,7 +2741,7 @@ review:
       note: 'file-level adapt, full codex synthesis approved: untrusted-input boundary sections, typo/branding fixes, neutral tool names, pseudonymous identities, metric honesty; every renamed field grep-verified against scripts before finalize'
       decidedOn: 2026-07-19T00:11:14.792289+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:25
+    - id: templates/agents/comparator.md:25
       kind: heading
       digest:
         sha256: 47e8b0237f640e84292aac181e6d1b598d0240f257f3b796c07064d2122ad6e1
@@ -2750,7 +2750,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.357726+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:26
+    - id: templates/agents/comparator.md:26
       kind: paragraph
       digest:
         sha256: dc9d06e2885ce2f626ebe8a46406c62684374111b3fc4f3987e32e3391535d52
@@ -2759,7 +2759,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.427271+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:27
+    - id: templates/agents/comparator.md:27
       kind: list
       digest:
         sha256: b74f33e6a3b05c3172ae5002e0ef943b4d8d3cd7532cee78de500112ce6cf03f
@@ -2768,7 +2768,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.497200+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:28
+    - id: templates/agents/comparator.md:28
       kind: heading
       digest:
         sha256: e7d895ffe7e5e58f7f2c0af0d99c9ed5731ed58a74467d412ac5c5ea10251ad4
@@ -2777,7 +2777,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.566696+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:29
+    - id: templates/agents/comparator.md:29
       kind: paragraph
       digest:
         sha256: 80cbf06480c41864a87b1cdaf05a668afebb81b3b60d6b54db564588c3d4d818
@@ -2786,7 +2786,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.634830+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:30
+    - id: templates/agents/comparator.md:30
       kind: list
       digest:
         sha256: 6d4218b08e19e4d90dd6f88fd1f1448acb7869639aa599b0ea29cdf93f40f956
@@ -2795,7 +2795,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.772493+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:31
+    - id: templates/agents/comparator.md:31
       kind: paragraph
       digest:
         sha256: eb3564d39dea929e340cc0b73a962bb9fd34662bc65dc2514d8413a18f6dad9a
@@ -2804,7 +2804,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.844224+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:32
+    - id: templates/agents/comparator.md:32
       kind: heading
       digest:
         sha256: ca0a6c8a856cef3169c22e209791f76dc23c4e91eb494793cb63487fc8e792f3
@@ -2813,7 +2813,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.913601+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:33
+    - id: templates/agents/comparator.md:33
       kind: paragraph
       digest:
         sha256: 2ebb8bd40b02420a04f7207ae6cfc7421b2ea50c7bfee2a30696411363796bbc
@@ -2822,7 +2822,7 @@ review:
       note: 'file-level adapt, full codex synthesis approved: untrusted-input boundary sections, typo/branding fixes, neutral tool names, pseudonymous identities, metric honesty; every renamed field grep-verified against scripts before finalize'
       decidedOn: 2026-07-19T00:11:15.386146+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:34
+    - id: templates/agents/comparator.md:34
       kind: heading
       digest:
         sha256: ebee587fc736970252728814c562d65c888b7d219631a597ff9f0b7409c32d7a
@@ -2831,7 +2831,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:07.985238+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:35
+    - id: templates/agents/comparator.md:35
       kind: paragraph
       digest:
         sha256: fdbadc3f5ab6f2bc61ae0bf5b8537450f9b0eeaf5192127239f81fbe709d7357
@@ -2840,7 +2840,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:08.069860+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:36
+    - id: templates/agents/comparator.md:36
       kind: code
       digest:
         sha256: 31263f48df26932782e6e9258ed1a4b3d2b0270440ff057ed517f0e923e2d1ea
@@ -2849,7 +2849,7 @@ review:
       note: 'file-level adapt, full codex synthesis approved: untrusted-input boundary sections, typo/branding fixes, neutral tool names, pseudonymous identities, metric honesty; every renamed field grep-verified against scripts before finalize'
       decidedOn: 2026-07-19T00:11:15.582643+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:37
+    - id: templates/agents/comparator.md:37
       kind: paragraph
       digest:
         sha256: cb0d55bf43408a236bb9a18cd6dd2204746a85725ce08dd72c7795f80270846e
@@ -2858,7 +2858,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:08.148697+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:38
+    - id: templates/agents/comparator.md:38
       kind: heading
       digest:
         sha256: a6d925799f9d3cf34b1440a73d1f6cc094b2faaee6214652ed921b5500abfbc3
@@ -2867,7 +2867,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:08.219515+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:39
+    - id: templates/agents/comparator.md:39
       kind: list
       digest:
         sha256: ea5e1c1e9a4aeb799d141253085d693c085299906e8b58ae2eb08f136e9a9cae
@@ -2876,7 +2876,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:08.289738+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:40
+    - id: templates/agents/comparator.md:40
       kind: heading
       digest:
         sha256: a2439ddd713971f03360a9ea55fb749bfc51e6bd514dd9e22dc408fe109eab2b
@@ -2885,7 +2885,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:08.429803+00:00
       transport: verdict-cli
-    - id: agents/comparator.md:41
+    - id: templates/agents/comparator.md:41
       kind: list
       digest:
         sha256: 227e44dfdfe798e1a6870263b07ac42db2a8cddb91e70b34f30528ffc039b884
@@ -2894,7 +2894,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:08.500173+00:00
       transport: verdict-cli
-    - id: agents/grader.md:1
+    - id: templates/agents/grader.md:1
       kind: heading
       digest:
         sha256: db9095b1febd70cbda4b423ba4a0e14ec4e22f77c17b56873ff52d034a62364b
@@ -2903,7 +2903,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:08.843888+00:00
       transport: verdict-cli
-    - id: agents/grader.md:2
+    - id: templates/agents/grader.md:2
       kind: paragraph
       digest:
         sha256: 99f6dd0c211fdfcc7da75df0658047abcb03b68f693fce264aa8d3887219e895
@@ -2912,7 +2912,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:09.772105+00:00
       transport: verdict-cli
-    - id: agents/grader.md:3
+    - id: templates/agents/grader.md:3
       kind: heading
       digest:
         sha256: ae2d08dcf5603d2b87a9d892befdf02dcb90aeb4464cd78cc4344528268828f2
@@ -2921,7 +2921,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:10.904736+00:00
       transport: verdict-cli
-    - id: agents/grader.md:4
+    - id: templates/agents/grader.md:4
       kind: paragraph
       digest:
         sha256: 97556f2c3947c06c3240e71726b37cd98813316a693df2b36371a6ef78d50d75
@@ -2930,7 +2930,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.656487+00:00
       transport: verdict-cli
-    - id: agents/grader.md:5
+    - id: templates/agents/grader.md:5
       kind: paragraph
       digest:
         sha256: f22c0dc9d08c958558c00c5f011a3930b33ef242ab18edc67ed94340aebed371
@@ -2939,7 +2939,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:12.142552+00:00
       transport: verdict-cli
-    - id: agents/grader.md:6
+    - id: templates/agents/grader.md:6
       kind: heading
       digest:
         sha256: 756fe18b33daf3d7624a8fd2e6027b64664f2d413b9f047e285344f486020a60
@@ -2948,7 +2948,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:12.211348+00:00
       transport: verdict-cli
-    - id: agents/grader.md:7
+    - id: templates/agents/grader.md:7
       kind: paragraph
       digest:
         sha256: 7f6e094af4f6778ae06eab16a7dd4725ba30f5443cc371e4f480e1111ca10497
@@ -2957,7 +2957,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:12.283551+00:00
       transport: verdict-cli
-    - id: agents/grader.md:8
+    - id: templates/agents/grader.md:8
       kind: list
       digest:
         sha256: b2e7b25fcf694000cb9c09634a4dd99d4c3f320fed2e5201d3ce07feef4f1381
@@ -2966,7 +2966,7 @@ review:
       note: 'file-level adapt, full codex synthesis approved: untrusted-input boundary sections, typo/branding fixes, neutral tool names, pseudonymous identities, metric honesty; every renamed field grep-verified against scripts before finalize'
       decidedOn: 2026-07-19T00:11:16.448943+00:00
       transport: verdict-cli
-    - id: agents/grader.md:9
+    - id: templates/agents/grader.md:9
       kind: heading
       digest:
         sha256: 0a6ae6aec66002dac2461e16bbe03aff6aa482a29e897a6071c62d254ae3d204
@@ -2975,7 +2975,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:12.353900+00:00
       transport: verdict-cli
-    - id: agents/grader.md:10
+    - id: templates/agents/grader.md:10
       kind: heading
       digest:
         sha256: d8e4cacc2c2ad5b859a11bad136e192a54a7b2c77c7b497737a4b19d82019e76
@@ -2984,7 +2984,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:08.923722+00:00
       transport: verdict-cli
-    - id: agents/grader.md:11
+    - id: templates/agents/grader.md:11
       kind: list
       digest:
         sha256: e3be475480a7fb9c3b23f79fb39ea87e0b8c751fff894b51fcae98a20934e634
@@ -2993,7 +2993,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:09.080741+00:00
       transport: verdict-cli
-    - id: agents/grader.md:12
+    - id: templates/agents/grader.md:12
       kind: heading
       digest:
         sha256: eb2592d9c1a718430e86943428a337e0a10d5985b8b3156831a975ecb07991d6
@@ -3002,7 +3002,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:09.170556+00:00
       transport: verdict-cli
-    - id: agents/grader.md:13
+    - id: templates/agents/grader.md:13
       kind: list
       digest:
         sha256: e7d5bd08411eaa7dd74293cc938894e02429a22d4f52707da1483c305eaf433c
@@ -3011,7 +3011,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:09.260496+00:00
       transport: verdict-cli
-    - id: agents/grader.md:14
+    - id: templates/agents/grader.md:14
       kind: heading
       digest:
         sha256: 206ed5305906ae2c90a62ec003f725e4c263ea6ba67c19099994c9622a38dc2b
@@ -3020,7 +3020,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:09.350500+00:00
       transport: verdict-cli
-    - id: agents/grader.md:15
+    - id: templates/agents/grader.md:15
       kind: paragraph
       digest:
         sha256: c9642c4953295760391604b1acad68196f8ae22f684d284bf114a1bcfbc7b26f
@@ -3029,7 +3029,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:09.443152+00:00
       transport: verdict-cli
-    - id: agents/grader.md:16
+    - id: templates/agents/grader.md:16
       kind: list
       digest:
         sha256: bf4c4ef253fa14183a91799afb599aef6f6a34e219d6158a3c642569080c61ad
@@ -3038,7 +3038,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:09.528203+00:00
       transport: verdict-cli
-    - id: agents/grader.md:17
+    - id: templates/agents/grader.md:17
       kind: heading
       digest:
         sha256: 4d2ad5a0946531350f69ce5cfa828740dc2be3e474439b10ffb3cd1d64ea9363
@@ -3047,7 +3047,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:09.625746+00:00
       transport: verdict-cli
-    - id: agents/grader.md:18
+    - id: templates/agents/grader.md:18
       kind: paragraph
       digest:
         sha256: cd0e130926a0c2382b2282e2f831badbe3e375cce4868c34d633d45b899dddfe
@@ -3056,7 +3056,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:09.701327+00:00
       transport: verdict-cli
-    - id: agents/grader.md:19
+    - id: templates/agents/grader.md:19
       kind: list
       digest:
         sha256: 7979fc35f2ffb3d8a4d09f75113746ce8fca2baf5e66b2c6816692a1b1decb3b
@@ -3065,7 +3065,7 @@ review:
       note: 'file-level adapt, full codex synthesis approved: untrusted-input boundary sections, typo/branding fixes, neutral tool names, pseudonymous identities, metric honesty; every renamed field grep-verified against scripts before finalize'
       decidedOn: 2026-07-19T00:11:17.371098+00:00
       transport: verdict-cli
-    - id: agents/grader.md:20
+    - id: templates/agents/grader.md:20
       kind: paragraph
       digest:
         sha256: 90de6f9b8ec1405eb156184e47a45127659be342892830f0ef99ac7de8d7d5be
@@ -3074,7 +3074,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:09.841416+00:00
       transport: verdict-cli
-    - id: agents/grader.md:21
+    - id: templates/agents/grader.md:21
       kind: heading
       digest:
         sha256: 2671aadce2f0748fbb770555c759df762621922da6b8efa8749800f061b904e7
@@ -3083,7 +3083,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:09.910642+00:00
       transport: verdict-cli
-    - id: agents/grader.md:22
+    - id: templates/agents/grader.md:22
       kind: paragraph
       digest:
         sha256: 9367e1cda1fc397218b138e035b083000a43da29e6d0d5a0a0cf8872fd71dda2
@@ -3092,7 +3092,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:10.029561+00:00
       transport: verdict-cli
-    - id: agents/grader.md:23
+    - id: templates/agents/grader.md:23
       kind: list
       digest:
         sha256: 886ab357159ef2dee64185172ef53369d673b331f1ea062fc316cfe40a8d30eb
@@ -3101,7 +3101,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:10.151377+00:00
       transport: verdict-cli
-    - id: agents/grader.md:24
+    - id: templates/agents/grader.md:24
       kind: heading
       digest:
         sha256: 7999601fab1513b7e97abd444bc40f1bd2e40366730cbeb58ecdd4502e8cedc7
@@ -3110,7 +3110,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:10.490064+00:00
       transport: verdict-cli
-    - id: agents/grader.md:25
+    - id: templates/agents/grader.md:25
       kind: paragraph
       digest:
         sha256: 7ce0a731f1b23c40ee00f2a3e8046f9a7ef28a06798dbab5dad99708a7c15323
@@ -3119,7 +3119,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:10.564327+00:00
       transport: verdict-cli
-    - id: agents/grader.md:26
+    - id: templates/agents/grader.md:26
       kind: paragraph
       digest:
         sha256: 353d9548c600a4f4cc3280ed3bf9879073bd1df56f19f90f2c9aa4c337fc2f74
@@ -3128,7 +3128,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:10.633666+00:00
       transport: verdict-cli
-    - id: agents/grader.md:27
+    - id: templates/agents/grader.md:27
       kind: paragraph
       digest:
         sha256: f8fe3e07bf85569b735a138acae4fb184010ff952c4dc8be87509490b9897630
@@ -3137,7 +3137,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:10.701740+00:00
       transport: verdict-cli
-    - id: agents/grader.md:28
+    - id: templates/agents/grader.md:28
       kind: list
       digest:
         sha256: 781014d5d0863db7bd3beca4c45ea73586b2e65051ca5274f6f4d1cf18aff2e0
@@ -3146,7 +3146,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:10.769482+00:00
       transport: verdict-cli
-    - id: agents/grader.md:29
+    - id: templates/agents/grader.md:29
       kind: paragraph
       digest:
         sha256: c7f883c92d3bc007777cf9498e792c06ce13664621193ba98869e642257ee317
@@ -3155,7 +3155,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:10.837117+00:00
       transport: verdict-cli
-    - id: agents/grader.md:30
+    - id: templates/agents/grader.md:30
       kind: heading
       digest:
         sha256: 3e64b66035887d0eec3b4af3a946f9591e994bb57f2faa4bf734518e61ce4169
@@ -3164,7 +3164,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:10.973215+00:00
       transport: verdict-cli
-    - id: agents/grader.md:31
+    - id: templates/agents/grader.md:31
       kind: paragraph
       digest:
         sha256: d5bdafb63c9b9f5aea93efdb10428e48af8e52b22e6af7f49f9bde491abea4eb
@@ -3173,7 +3173,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.041386+00:00
       transport: verdict-cli
-    - id: agents/grader.md:32
+    - id: templates/agents/grader.md:32
       kind: heading
       digest:
         sha256: 53cb4b2f5e1563edf500cf1a3406106b2b9c72197bbeb475109c724feadc5c29
@@ -3182,7 +3182,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.111013+00:00
       transport: verdict-cli
-    - id: agents/grader.md:33
+    - id: templates/agents/grader.md:33
       kind: paragraph
       digest:
         sha256: 63b9ba41f474196ac9645985053d87ad7d59d7b552db7bf753b1f066d574bb7c
@@ -3191,7 +3191,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.180657+00:00
       transport: verdict-cli
-    - id: agents/grader.md:34
+    - id: templates/agents/grader.md:34
       kind: list
       digest:
         sha256: 567a59f2e9a1aa15979539ccaa2e54136f85ee3aebc2417a2b6bd6df5a914071
@@ -3200,7 +3200,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.249871+00:00
       transport: verdict-cli
-    - id: agents/grader.md:35
+    - id: templates/agents/grader.md:35
       kind: paragraph
       digest:
         sha256: 81a815e751787a3982edcf7ffadd098ef7286b4268248fe99156d3718cf2c364
@@ -3209,7 +3209,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.318849+00:00
       transport: verdict-cli
-    - id: agents/grader.md:36
+    - id: templates/agents/grader.md:36
       kind: list
       digest:
         sha256: 7fcb4df5636371950397bf14b2d88ee6cb9e5cdc38e32d9e432715cd79053238
@@ -3218,7 +3218,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.387213+00:00
       transport: verdict-cli
-    - id: agents/grader.md:37
+    - id: templates/agents/grader.md:37
       kind: paragraph
       digest:
         sha256: 1a6e54ad65cca67c7937b6b3a6234d63e3f705161f0ac614af1e6cd143a0719d
@@ -3227,7 +3227,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.454523+00:00
       transport: verdict-cli
-    - id: agents/grader.md:38
+    - id: templates/agents/grader.md:38
       kind: heading
       digest:
         sha256: b5a6651a3b079af42c06531b307ca501e28f60a65e2c5b7f39cd35b0b2a9c2c4
@@ -3236,7 +3236,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.521671+00:00
       transport: verdict-cli
-    - id: agents/grader.md:39
+    - id: templates/agents/grader.md:39
       kind: list
       digest:
         sha256: 67bff4cb55090552164cc54e95ae2a0faf177cd3324564777394db6ac67131f6
@@ -3245,7 +3245,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.588399+00:00
       transport: verdict-cli
-    - id: agents/grader.md:40
+    - id: templates/agents/grader.md:40
       kind: heading
       digest:
         sha256: ebee587fc736970252728814c562d65c888b7d219631a597ff9f0b7409c32d7a
@@ -3254,7 +3254,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.723427+00:00
       transport: verdict-cli
-    - id: agents/grader.md:41
+    - id: templates/agents/grader.md:41
       kind: paragraph
       digest:
         sha256: fdbadc3f5ab6f2bc61ae0bf5b8537450f9b0eeaf5192127239f81fbe709d7357
@@ -3263,7 +3263,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.792427+00:00
       transport: verdict-cli
-    - id: agents/grader.md:42
+    - id: templates/agents/grader.md:42
       kind: code
       digest:
         sha256: 161b6d8c9963ae7ef4897caca33e525b4afb7dd76f802d0458e28a0eaaa5231e
@@ -3272,7 +3272,7 @@ review:
       note: 'file-level adapt, full codex synthesis approved: untrusted-input boundary sections, typo/branding fixes, neutral tool names, pseudonymous identities, metric honesty; every renamed field grep-verified against scripts before finalize'
       decidedOn: 2026-07-19T00:11:18.934892+00:00
       transport: verdict-cli
-    - id: agents/grader.md:43
+    - id: templates/agents/grader.md:43
       kind: heading
       digest:
         sha256: a6d925799f9d3cf34b1440a73d1f6cc094b2faaee6214652ed921b5500abfbc3
@@ -3281,7 +3281,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.862230+00:00
       transport: verdict-cli
-    - id: agents/grader.md:44
+    - id: templates/agents/grader.md:44
       kind: list
       digest:
         sha256: 4e99c158177f84f4bacd6ca10e73cc7a06c6c27887f68342c166e2d3f9fb17f1
@@ -3290,7 +3290,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:11.932998+00:00
       transport: verdict-cli
-    - id: agents/grader.md:45
+    - id: templates/agents/grader.md:45
       kind: heading
       digest:
         sha256: a2439ddd713971f03360a9ea55fb749bfc51e6bd514dd9e22dc408fe109eab2b
@@ -3299,7 +3299,7 @@ review:
       note: block unchanged within a file-level adapt; re-decided keep to match the edited state
       decidedOn: 2026-07-19T09:41:12.001901+00:00
       transport: verdict-cli
-    - id: agents/grader.md:46
+    - id: templates/agents/grader.md:46
       kind: list
       digest:
         sha256: 48277f3d122cd8661f48462245bc135a8864dae9490884f3949e7d842c909666
@@ -4564,7 +4564,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/analyzer.md:added:4
+    - id: templates/agents/analyzer.md:added:4
       kind: paragraph
       digest:
         sha256: dc2fe1a2d73ecdf0d5c08ff7b97f7ecc43f5b45b919aeea8dcd4bbf4e3da95ce
@@ -4572,7 +4572,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/analyzer.md:added:8
+    - id: templates/agents/analyzer.md:added:8
       kind: heading
       digest:
         sha256: 93379941b17af9cf8ed8c73827dde8cad1c1e337eb8f68c8d927466d2d130f5a
@@ -4580,7 +4580,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/analyzer.md:added:9
+    - id: templates/agents/analyzer.md:added:9
       kind: paragraph
       digest:
         sha256: d7121c471e13c75db8aeb9e183c573cb2c22c741c9c8b02754cdc214021a8126
@@ -4588,7 +4588,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/analyzer.md:added:52
+    - id: templates/agents/analyzer.md:added:52
       kind: heading
       digest:
         sha256: 93379941b17af9cf8ed8c73827dde8cad1c1e337eb8f68c8d927466d2d130f5a
@@ -4596,7 +4596,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/analyzer.md:added:53
+    - id: templates/agents/analyzer.md:added:53
       kind: paragraph
       digest:
         sha256: 28ce7fc30fbd6a2b385bcef6c30e710218836bd0889b70075132fe78f64aa3f6
@@ -4604,7 +4604,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/comparator.md:added:8
+    - id: templates/agents/comparator.md:added:8
       kind: list
       digest:
         sha256: e6908104735983cca8de20e43bba8dbd92acce3e4988187f90896b152095ace5
@@ -4612,7 +4612,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/comparator.md:added:9
+    - id: templates/agents/comparator.md:added:9
       kind: heading
       digest:
         sha256: 93379941b17af9cf8ed8c73827dde8cad1c1e337eb8f68c8d927466d2d130f5a
@@ -4620,7 +4620,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/comparator.md:added:10
+    - id: templates/agents/comparator.md:added:10
       kind: paragraph
       digest:
         sha256: 468a0c3f7d509fcbbdaad79c9c8ffcf12241cd44a631a69c412a8a9d1603b233
@@ -4628,7 +4628,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/comparator.md:added:26
+    - id: templates/agents/comparator.md:added:26
       kind: list
       digest:
         sha256: b7fd912987301f73b7ac8c0e50e7d832ab115a0fe4ba8e58c157458d32fe4964
@@ -4636,7 +4636,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/comparator.md:added:35
+    - id: templates/agents/comparator.md:added:35
       kind: paragraph
       digest:
         sha256: 2fe7b713297990769965392dcdaa822d190dc55220f8143686aac7e66963a75c
@@ -4644,7 +4644,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/comparator.md:added:38
+    - id: templates/agents/comparator.md:added:38
       kind: code
       digest:
         sha256: bf5bbb059dc1ec72d9bf2573ae71094f8dd8c02678a10d1115ad368a32b2b39e
@@ -4652,7 +4652,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/grader.md:added:8
+    - id: templates/agents/grader.md:added:8
       kind: list
       digest:
         sha256: d9c7294d4afca26b99213a9fb47a698548b92caad80779e1fd295d5b03426031
@@ -4660,7 +4660,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/grader.md:added:9
+    - id: templates/agents/grader.md:added:9
       kind: heading
       digest:
         sha256: 93379941b17af9cf8ed8c73827dde8cad1c1e337eb8f68c8d927466d2d130f5a
@@ -4668,7 +4668,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/grader.md:added:10
+    - id: templates/agents/grader.md:added:10
       kind: paragraph
       digest:
         sha256: 5ed770bdb6dacb6cb9820bf588c5caa5765b83bb3bc1a98f5f08a54bf1dd098a
@@ -4676,7 +4676,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/grader.md:added:21
+    - id: templates/agents/grader.md:added:21
       kind: list
       digest:
         sha256: e8b6ad13154fb720138ce7c8469634c18909d3a370d27598997504fefbcf3848
@@ -4684,7 +4684,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/grader.md:added:44
+    - id: templates/agents/grader.md:added:44
       kind: code
       digest:
         sha256: 6d1a64bdabe5507033f510993ea94f748152a05f80998870edd4c7dd7e1b1156
@@ -4692,7 +4692,7 @@ review:
       verdict: added
       decidedOn: 2026-07-19T09:41:35.707488+00:00
       transport: finalize
-    - id: agents/grader.md:added:45
+    - id: templates/agents/grader.md:added:45
       kind: paragraph
       digest:
         sha256: 704dcf73940d1ef6f6b9cd690416fc8450615754b950a7c638530ddb51eddc7b

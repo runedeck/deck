@@ -2,7 +2,7 @@
 
 A Claude Code skill can open with **live machine state** instead of stale prose. `` !`<command>` `` lines in the SKILL.md body run when the skill is invoked, and their output replaces the placeholder before Claude sees the content ("Inject dynamic context", a Claude Code extension to the Agent Skills standard).
 
-When authoring a Claude skill, treat this as a first-class step, not an afterthought: **ask what live state would orient the model on load, and inject it.** A skill that opens with the actual situation (the current branch and diff, a tool's auth status, the names of things that exist right now) beats one that only describes how to go find it. Default to injecting unless there is a reason not to.
+Injection works only in harnesses that implement it; today that is Claude Code, and other harnesses render the `!` lines as inert literal text. Where the harness supports it, use it heavily: **ask what live state would orient the model on load, and inject it.** A skill that opens with the actual situation (the current branch and diff, a tool's auth status, the names of things that exist right now) beats one that only describes how to go find it. Default to injecting unless there is a reason not to.
 
 ```markdown
 ---
@@ -32,6 +32,7 @@ Each `` !`<command>` `` runs once, before the rendered SKILL.md is sent to Claud
   ```
 
 - **Claude Code only.** `!`, `@`, and `$ARGUMENTS` are Claude Code extensions, not part of the portable Agent Skills standard. In Codex / Gemini / opencode the `!` lines render as inert literal text. Use injection in skills you accept as Claude-first; it degrades to harmless text elsewhere.
+- **Test the built skill.** When authoring a skill that uses `!`, load the finished skill and confirm the lines inject in the supporting harness, and that a failing or unsupported line degrades to harmless text instead of corrupting the body.
 
 ## Substitutions available alongside `!`
 

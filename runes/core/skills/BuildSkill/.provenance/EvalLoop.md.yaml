@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BuildSkill/EvalLoop.md
     digest:
-      sha256: 31b0cc6fb7e2a23d955dc5b6327559a51a86b5f6697204696699e65dd013a9d7
+      sha256: 8a5d7c6709463ce153ccaf1c3c604d99e3e6a7e9742f2979a2f9aaabbc6c023f
   predicate:
     buildDefinition:
       buildType: adopt/v1

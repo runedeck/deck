@@ -2,9 +2,9 @@ provenance:
   _type: https://in-toto.io/Statement/v1
   predicateType: https://slsa.dev/provenance/v1
   subject:
-  - name: skills/BuildSkill/agents/analyzer.md
+  - name: skills/BuildSkill/templates/agents/analyzer.md
     digest:
-      sha256: 5a24eef9c79ba352ffadc960214ac7d33a786aacf114191852e2bb1738f156b7
+      sha256: 5b6eafd01c36a6f82d3889564577c171d923bf12dc3d0c74d36826d27a768c73
   predicate:
     buildDefinition:
       buildType: adopt/v1

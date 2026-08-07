@@ -12,11 +12,9 @@ mkdir -p runes/<domain>/skills/<skill-name>
 
 Casts name a selection of runes for a consumer to install together. A new skill needs no cast entry unless the maintainer wants it in a named bundle.
 
-## The body convention has a name here
+## What validation expects
 
-The heading convention the other companions describe is distributed to each harness by the `RuneShell` rule, and enforced by the `.mdschema` beside each `skills/` directory. Validation messages name the convention rather than the rule, so a diagnostic reads `stable shell identity`, never `RuneShell`. Neither name refers to `rune shell`, a planned interactive command.
-
-The body length limits come from the `ArtifactLength` rule: a `SKILL.md` body warns after 100 lines and fails after 150, excluding frontmatter, and Markdown companions stay under 150.
+The heading convention and length limits the other companions describe are enforced here at validation time. The `.mdschema` beside each `skills/` directory checks the section shell; its diagnostics call it `stable shell identity`. A `SKILL.md` body warns after 100 lines and fails after 150, excluding frontmatter; Markdown companions stay under 150.
 
 ## Validation
 
@@ -46,8 +44,8 @@ Never edit a deployed file under a provider directory. Edit the source and reins
 
 ## Per-user configuration
 
-A skill that needs per-user runtime data reads one file per artifact at `~/.config/rune/<artifact>.{ext}`. See [UserConfigSchema.md](UserConfigSchema.md) for the shape, and [SkillInstallation.md](SkillInstallation.md) for the setup step that creates it.
+A skill that needs per-user runtime data reads one file at `~/.config/rune/<artifact>.{ext}`. [UserConfigSchema.md](UserConfigSchema.md) has the shape; [SkillInstallation.md](SkillInstallation.md) has the setup step.
 
 ## Adopting rather than authoring
 
-An artifact that comes from somewhere else does not go through this skill. It enters the deck through `rune adopt`, which segments it and records a maintainer verdict on every block before sealing a review record. Use the `adopt-artifact` skill for that workflow, and this one only for what you write yourself.
+Third-party artifacts do not go through this skill. They enter through `rune adopt`, which records a maintainer verdict on every block and seals a review record. Use the `adopt-artifact` skill for that; use this one only for what you write yourself.

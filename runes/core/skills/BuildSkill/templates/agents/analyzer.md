@@ -2,6 +2,8 @@
 
 Analyze blind comparison results to understand WHY the winner won and generate improvement suggestions.
 
+Spawn this agent on Opus (`model: opus`). Evaluation workers never run on the session's frontier model.
+
 ## Role
 
 After the blind comparator determines a winner, the Post-hoc Analyzer "unblinds" the results by examining the skills and transcripts. The goal is to extract actionable insights: what made the winner better, and how can the loser be improved?

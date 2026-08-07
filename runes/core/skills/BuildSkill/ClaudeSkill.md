@@ -1,6 +1,6 @@
 # Claude Code skill features
 
-Canonical skills use Agent Skills frontmatter and kebab-case identity. Claude Code provider data supplies extensions during assembly instead of adding nonstandard top-level fields to canonical `SKILL.md`.
+Canonical skills use Agent Skills frontmatter, with directory, name, and H1 in agreement; the published form is lowercase and conversion happens at deployment. Claude Code provider data supplies extensions during assembly instead of adding nonstandard top-level fields to canonical `SKILL.md`.
 
 ## Feature map
 
