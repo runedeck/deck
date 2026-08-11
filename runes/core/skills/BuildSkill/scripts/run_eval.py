@@ -20,7 +20,8 @@ from pathlib import Path
 from scripts.harness import get_harness
 from scripts.utils import parse_skill_md
 
-SKILL_NAME_PATTERN = re.compile(r"^[A-Za-z0-9](?:[-_]?[A-Za-z0-9]+){0,63}$")
+SKILL_NAME_PATTERN = re.compile(r"^[A-Za-z0-9]+(?:[-_][A-Za-z0-9]+)*$")
+SKILL_NAME_MAX_LENGTH = 64
 
 
 def run_single_query(
@@ -59,9 +60,10 @@ def run_eval(
     harness_name: str = "claude",
 ) -> dict:
     """Run the full eval set inside an isolated project directory."""
-    if not SKILL_NAME_PATTERN.match(skill_name):
+    if len(skill_name) > SKILL_NAME_MAX_LENGTH or not SKILL_NAME_PATTERN.match(skill_name):
         raise ValueError(
             f"Invalid skill name '{skill_name}': must match {SKILL_NAME_PATTERN.pattern}"
+            f" and stay within {SKILL_NAME_MAX_LENGTH} characters"
         )
 
     get_harness(harness_name)

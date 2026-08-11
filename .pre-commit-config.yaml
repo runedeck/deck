@@ -80,7 +80,7 @@ repos:
 
           - id: mdschema-skills
             name: mdschema skill entrypoints
-            entry: sh -c 'if command -v mdschema >/dev/null 2>&1; then for schema in runes/*/skills/.mdschema; do [ -f "$schema" ] || continue; mdschema check "$(dirname "$schema")/*/SKILL.md" --schema "$schema" || exit 1; done; fi'
+            entry: sh -c 'if command -v mdschema >/dev/null 2>&1; then for schema in runes/*/skills/.mdschema; do [ -f "$schema" ] || continue; dir=$(dirname "$schema"); set -- "$dir"/*/SKILL.md; [ -e "$1" ] || { echo "no SKILL.md under $dir"; exit 1; }; mdschema check "$@" --schema "$schema" || exit 1; done; fi'
             language: system
             pass_filenames: false
 
