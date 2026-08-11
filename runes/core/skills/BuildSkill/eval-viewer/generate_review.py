@@ -110,11 +110,13 @@ def build_run(root: Path, run_dir: Path) -> dict | None:
         if candidate.exists():
             try:
                 metadata = json.loads(candidate.read_text(encoding="utf-8"))
-                prompt = metadata.get("prompt", "")
-                eval_id = metadata.get("eval_id")
             except (json.JSONDecodeError, OSError):
-                pass
-            if prompt:
+                continue
+            if not prompt:
+                prompt = metadata.get("prompt", "")
+            if eval_id is None:
+                eval_id = metadata.get("eval_id")
+            if prompt and eval_id is not None:
                 break
 
     # Fall back to transcript.md

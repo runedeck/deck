@@ -34,9 +34,11 @@ def split_eval_set(eval_set: list[dict], holdout: float, seed: int = 42) -> tupl
     random.shuffle(trigger)
     random.shuffle(no_trigger)
 
-    # Calculate split points
-    n_trigger_test = max(1, int(len(trigger) * holdout))
-    n_no_trigger_test = max(1, int(len(no_trigger) * holdout))
+    # Calculate split points. A group with a single member stays in train:
+    # holding it out would leave train empty and let an untrained pass read
+    # as all_passed.
+    n_trigger_test = max(1, int(len(trigger) * holdout)) if len(trigger) > 1 else 0
+    n_no_trigger_test = max(1, int(len(no_trigger) * holdout)) if len(no_trigger) > 1 else 0
 
     # Split
     test_set = trigger[:n_trigger_test] + no_trigger[:n_no_trigger_test]
