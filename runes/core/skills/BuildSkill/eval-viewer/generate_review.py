@@ -67,7 +67,12 @@ def find_runs(workspace: Path) -> list[dict]:
     """Recursively find directories that contain an outputs/ subdirectory."""
     runs: list[dict] = []
     _find_runs_recursive(workspace, workspace, runs)
-    runs.sort(key=lambda r: (r.get("eval_id", float("inf")), r["id"]))
+    runs.sort(
+        key=lambda r: (
+            r["eval_id"] if r.get("eval_id") is not None else float("inf"),
+            r["id"],
+        )
+    )
     return runs
 
 
@@ -93,8 +98,15 @@ def build_run(root: Path, run_dir: Path) -> dict | None:
     prompt = ""
     eval_id = None
 
-    # Try eval_metadata.json
-    for candidate in [run_dir / "eval_metadata.json", run_dir.parent / "eval_metadata.json"]:
+    # Try eval_metadata.json in the run directory or any ancestor up to the
+    # workspace root: the documented layout keeps it beside the eval case
+    # directory, two levels above run-<R>/.
+    metadata_candidates = [run_dir / "eval_metadata.json"]
+    for ancestor in run_dir.parents:
+        metadata_candidates.append(ancestor / "eval_metadata.json")
+        if ancestor == root:
+            break
+    for candidate in metadata_candidates:
         if candidate.exists():
             try:
                 metadata = json.loads(candidate.read_text(encoding="utf-8"))

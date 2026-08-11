@@ -20,7 +20,7 @@ from pathlib import Path
 from scripts.harness import get_harness
 from scripts.utils import parse_skill_md
 
-SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
+SKILL_NAME_PATTERN = re.compile(r"^[A-Za-z0-9](?:[-_]?[A-Za-z0-9]+){0,63}$")
 
 
 def run_single_query(
