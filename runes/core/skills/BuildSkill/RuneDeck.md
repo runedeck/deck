@@ -48,4 +48,4 @@ A skill that needs per-user runtime data reads one file at `~/.config/rune/<arti
 
 ## Adopting rather than authoring
 
-Third-party artifacts do not go through this skill. They enter through `rune adopt`, which records a maintainer verdict on every block and seals a review record. Use the `adopt-artifact` skill for that; use this one only for what you write yourself.
+Third-party artifacts do not go through this skill. They enter through `rune adopt`, which records a maintainer verdict on every block and seals a review record. Use the `AdoptArtifact` skill for that; use this one only for what you write yourself.

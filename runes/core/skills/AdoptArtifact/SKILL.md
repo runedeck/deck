@@ -1,12 +1,12 @@
 ---
-name: adopt-artifact
-description: "Adopt an upstream skill, agent, or rule through the rune review state machine. USE WHEN adopt a skill, adopt an agent, adopt a rule, import an upstream artifact, bring in a community skill, or review every imported block before it lands. NOT FOR authoring a new rune with build-skill, BuildAgent, BuildRule, or BuildHook, or capturing session learnings with LearnFrom."
+name: AdoptArtifact
+description: "Adopt an upstream skill, agent, or rule through the rune review state machine. USE WHEN adopt a skill, adopt an agent, adopt a rule, import an upstream artifact, bring in a community skill, or review every imported block before it lands. NOT FOR authoring a new rune with BuildSkill, BuildAgent, BuildRule, or BuildHook, or capturing session learnings with LearnFrom."
 metadata:
     version: 0.5.0
 allowed-tools: Bash(rune adopt *), Bash(git add *), Bash(git status *), Read, Edit, Write, Grep, Glob
 ---
 
-# adopt-artifact
+# AdoptArtifact
 
 Adopt an upstream artifact only after the maintainer has reviewed every imported block. Rune owns import provenance, segmentation, the verdict ledger, final enforcement, and the sealed review record.
 
@@ -56,7 +56,7 @@ An Other answer is clarification, not a verdict. Ask a follow-up. Re-record a ch
 
 ### Apply the verdicts
 
-Keep blocks unchanged, remove cut blocks, and rewrite adapted blocks. Conform the result to the nearest `.mdschema`, the artifact's authoring rules, and RuneShell for skills. Use `build-skill` for skill structure guidance. Do not copy unreviewed companion material into the adoption.
+Keep blocks unchanged, remove cut blocks, and rewrite adapted blocks. Conform the result to the nearest `.mdschema`, the artifact's authoring rules, and the section convention for skills. Use `BuildSkill` for skill structure guidance. Do not copy unreviewed companion material into the adoption.
 
 ### Finalize and stage
 
