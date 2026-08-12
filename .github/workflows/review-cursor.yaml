@@ -13,8 +13,12 @@ permissions:
     pull-requests: read
     issues: write
 
+# The label name is part of the group. Every labeled event starts a run,
+# and GitHub keeps one pending run per group: with a shared group, an
+# unrelated label event evicts a queued review:cursor summon. Per-label
+# groups keep unrelated events out of the summon's queue.
 concurrency:
-    group: review-cursor-${{ github.event.pull_request.number }}
+    group: review-cursor-${{ github.event.pull_request.number }}-${{ github.event.label.name }}
     cancel-in-progress: false
 
 jobs:
