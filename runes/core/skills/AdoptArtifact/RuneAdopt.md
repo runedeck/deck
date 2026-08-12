@@ -50,7 +50,7 @@ rune adopt finalize
 rune adopt abandon --yes
 ```
 
-Finalize mutates nothing: it refuses with reasons until the tree matches the ledger, so repair and re-run it until it seals. The reviewer identity defaults to git config `user.name`/`user.email`, which is the human maintainer; pass `--reviewer "Name <email>"` only when no identity is configured. On success, inspect the reported added entries and the record path. Abandon drops the session, the exit for an unresolvable name conflict with a first-party artifact.
+Finalize mutates nothing: it refuses with reasons until the tree matches the ledger, so repair and re-run it until it seals. The record's reviewer identity defaults to git config `user.name` and `user.email`. Confirm it names the human maintainer; pass `--reviewer "Name <email>"` when the configuration holds an agent identity or nothing. On success, inspect the reported added entries and the record path. Abandon drops the session, the exit for an unresolvable name conflict with a first-party artifact.
 
 ## Maintenance
 
@@ -59,7 +59,7 @@ rune adopt doctor
 rune adopt reseal
 ```
 
-`doctor` verifies sealed records, open sessions, and unreviewed imports. `reseal` re-syncs a sealed record to pre-commit maintainer touch-ups on the adopted files.
+`doctor` verifies sealed records, open sessions, and unreviewed imports. `reseal` re-syncs a sealed record to the maintainer's own pre-commit touch-ups; it records the edit, it does not review it. Never use reseal to bless content the block verdicts did not cover.
 
 ## EXECUTE NOW
 

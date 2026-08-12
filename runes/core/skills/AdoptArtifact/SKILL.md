@@ -3,7 +3,7 @@ name: AdoptArtifact
 description: "Adopt an upstream skill, agent, or rule through a review state machine. USE WHEN adopting a skill, adopting an agent, adopting a rule, importing an upstream artifact, bringing in a community skill, or reviewing every imported block before it lands. NOT FOR authoring a new rune with BuildSkill, BuildAgent, BuildRule, or BuildHook, or capturing session learnings with LearnFrom."
 metadata:
     version: 0.5.0
-allowed-tools: Bash(rune *), Bash(git add *), Bash(git status *), Bash(git diff *), Read, Edit, Write, Grep, Glob
+allowed-tools: Bash(rune *), Bash(git add *), Bash(git status *), Bash(git diff *), Bash(rm *), Read, Edit, Write, Grep, Glob
 ---
 
 # AdoptArtifact
