@@ -58,6 +58,7 @@ jobs:
                           ["review", "5319e7", "Summons the full review funnel"],
                           ["review:runeseer", "5319e7", "Summons the adjudicating correctness lane"],
                           ["review:macroscope", "5319e7", "Summons the macroscope lane"],
+                          ["review:cursor", "5319e7", "Summons a standalone Cursor round"],
                           ["review:autofix", "5319e7", "Summons a mechanical-fix suggestion patch"],
                           ["review:skip", "ededed", "Owner waiver: skip hosted review"],
                           ["spec:none", "ededed", "Owner waiver: no specification change needed, reason in body"],
