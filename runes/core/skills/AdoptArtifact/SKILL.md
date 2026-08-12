@@ -1,6 +1,6 @@
 ---
 name: AdoptArtifact
-description: "Adopt an upstream skill, agent, or rule through the rune review state machine. USE WHEN adopt a skill, adopt an agent, adopt a rule, import an upstream artifact, bring in a community skill, or review every imported block before it lands. NOT FOR authoring a new rune with BuildSkill, BuildAgent, BuildRule, or BuildHook, or capturing session learnings with LearnFrom."
+description: "Adopt an upstream skill, agent, or rule through a review state machine. USE WHEN adopting a skill, adopting an agent, adopting a rule, importing an upstream artifact, bringing in a community skill, or reviewing every imported block before it lands. NOT FOR authoring a new rune with BuildSkill, BuildAgent, BuildRule, or BuildHook, or capturing session learnings with LearnFrom."
 metadata:
     version: 0.5.0
 allowed-tools: Bash(rune adopt *), Bash(git add *), Bash(git status *), Read, Edit, Write, Grep, Glob
@@ -8,13 +8,13 @@ allowed-tools: Bash(rune adopt *), Bash(git add *), Bash(git status *), Read, Ed
 
 # AdoptArtifact
 
-Adopt an upstream artifact only after the maintainer has reviewed every imported block. Rune owns import provenance, segmentation, the verdict ledger, final enforcement, and the sealed review record.
+Adopt an upstream artifact by reviewing it in blocks: the maintainer passes a verdict on every block before anything lands. The review state machine owns import provenance, segmentation, the verdict ledger, final enforcement, and the sealed review record.
 
 ## Prerequisites
 
 - Run every command from the deck root. Adopt commands default to `--root .`.
 - Re-run `rune adopt status --json` before acting because invocation-time state becomes stale after each command.
-- Confirm the source, destination module, artifact kind, and name with the maintainer when `$ARGUMENTS` does not provide them.
+- Confirm the source, destination module, artifact kind, and name with the maintainer when the invocation does not provide them.
 
 ## Constraints
 
@@ -42,7 +42,7 @@ A commit-pinned GitHub URL imports one file. A local directory imports its compl
 
 ### Review and record blocks
 
-Run `rune adopt next --count 4 --json`. For each returned block, ask one focused AskUserQuestion that invites clarification, refutation, or doubt. Lead with any reported flag and explain what the suspect content does. Use Keep, Adapt, and Cut options. Review oversized code blocks and whole-file blocks separately.
+Run `rune adopt next --count 4 --json`. For each returned block, ask one focused AskUserQuestion that invites clarification, refutation, or doubt. Lead with any reported flag and explain what the suspect content does. Offer Keep, Adapt, and Cut options; when you can see the fix, draft the adapted text and put it in the Adapt option so the maintainer approves a concrete edit rather than a direction. Review oversized code blocks and whole-file blocks separately.
 
 Record each answer only after the maintainer resolves it to a verdict:
 
@@ -83,7 +83,5 @@ On success, inspect the reported added entries and record path. Stage the artifa
 ## References
 
 - Claude Code skills documentation [CCDOCS]
-- Anthropic skill authoring source [SKILLCREATOR]
 
 [CCDOCS]: https://code.claude.com/docs/en/skills "Claude Code docs, Agent Skills"
-[SKILLCREATOR]: https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md "Anthropic skill creator"
