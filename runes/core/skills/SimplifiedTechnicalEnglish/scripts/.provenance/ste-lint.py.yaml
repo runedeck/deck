@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: skills/SimplifiedTechnicalEnglish/scripts/ste-lint.py
+    digest:
+      sha256: 1b9aa76e3041b0c010219f548ec4a34ce5333b0de671f6dac83a12951606b6d0
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: https://github.com/danyuchn/asd-ste100-skill/tree/d5ce157 + https://github.com/woosal1337/blog/tree/51100c9/videos/ep01-the-cure-for-ai-slop
+        upstream_commit: ''
+        transforms_applied:
+        - copy
+      resolvedDependencies:
+      - name: upstream
+        uri: https://github.com/danyuchn/asd-ste100-skill/tree/d5ce157 + https://github.com/woosal1337/blog/tree/51100c9/videos/ep01-the-cure-for-ai-slop
+        digest:
+          sha256: bedba551157b7cf6378ecf97d29e6606496c49a8df83d7778e5f330e48c9595e
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-08-13T12:26:06.828768+00:00
+        review: reviewed

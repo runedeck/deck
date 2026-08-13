@@ -1,5 +1,8 @@
 validate:
     exclude:
         - skills/BuildSkill/scripts/*
-        - skills/BuildSkill/eval-viewer/*
         - skills/BuildSkill/assets/*
+        - skills/BenchArtifact/scripts/*
+        - skills/BenchArtifact/eval-viewer/*
+        - skills/BenchArtifact/assets/*
+        - skills/SimplifiedTechnicalEnglish/scripts/*

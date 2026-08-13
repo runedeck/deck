@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: skills/SimplifiedTechnicalEnglish/SKILL.md
+    digest:
+      sha256: 389e4151c2ed9504abf289cb1f1254341c7c3e47ee018e576dbeec90ff73b29c
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: https://github.com/danyuchn/asd-ste100-skill/tree/d5ce157 + https://github.com/woosal1337/blog/tree/51100c9/videos/ep01-the-cure-for-ai-slop
+        upstream_commit: ''
+        transforms_applied:
+        - align
+      resolvedDependencies:
+      - name: upstream
+        uri: https://github.com/danyuchn/asd-ste100-skill/tree/d5ce157 + https://github.com/woosal1337/blog/tree/51100c9/videos/ep01-the-cure-for-ai-slop
+        digest:
+          sha256: d47fc124174164caa714165eb32156c9d5e5f289166563b71e5e9816d5ba948c
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-08-13T12:26:06.827786+00:00
+        review: reviewed
