@@ -1,6 +1,6 @@
 # ASD-STE100 Writing Rules — Summary and Sources
 
-This file summarizes the public, official description of ASD-STE100 (Simplified Technical English). It paraphrases rule *categories*; it does not reproduce the standard's text or its ~900-word dictionary verbatim. For the authoritative document, request the free download at the official site.
+This file summarizes the public, official description of ASD-STE100 (Simplified Technical English). It paraphrases rule *categories*. It does not reproduce the standard text or its approximately 900-word dictionary. Request the free document from the official site.
 
 ## What ASD-STE100 Is
 
@@ -10,7 +10,7 @@ ASD-STE100 is a controlled natural language, first released in 1986 (as AECMA Do
 
 - **53 writing rules across 9 sections** covering word choice, grammar, sentence structure, and style.
 - **A dictionary** of roughly 900 approved words, each restricted to one meaning and one part of speech, plus roughly 1,200 words to avoid with suggested replacements.
-- **A terminology allowance**: organizations may define their own dictionary of approved technical nouns and verbs beyond the base ~900 words, for domain-specific vocabulary the base dictionary can't cover.
+- **A terminology allowance**: organizations may define approved technical nouns and verbs beyond the base dictionary for domain-specific vocabulary.
 
 ## Rule Categories (Paraphrased)
 

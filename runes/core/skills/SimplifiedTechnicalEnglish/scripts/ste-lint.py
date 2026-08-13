@@ -188,7 +188,6 @@ def lint(text, strict=False, config=None, config_path=None, config_digest=None):
         # Match "may" case-sensitively so that the month "May" stays clean.
         strict_count += len(re.findall(r"(?<![A-Za-z])may(?![a-z])", text))
         violations["strict_banned_word"] = strict_count
-        violations["em_dash"] = em_dash
     total = sum(violations.values())
     return {
         "score_version": SCORE_VERSION,
@@ -219,6 +218,11 @@ def parse_args(argv):
     parser.add_argument("--json", action="store_true", help="print JSON for files")
     parser.add_argument("--config", default=DEFAULT_CONFIG, help="complete JSON rule set")
     parser.add_argument("--fail-over", type=float, help="fail above this score")
+    parser.add_argument(
+        "--context",
+        metavar="ARGUMENTS",
+        help="lint a readable draft path supplied as skill arguments",
+    )
     parser.add_argument("files", nargs="*", help="files or glob patterns; stdin if empty")
     return parser.parse_args(argv)
 
@@ -229,6 +233,13 @@ def main(argv=None):
         config, config_path, config_digest = load_config(args.config)
     except (TypeError, ValueError) as error:
         raise SystemExit(str(error)) from error
+    if args.context:
+        candidate = Path(args.context).expanduser()
+        if candidate.is_file():
+            args.files.insert(0, str(candidate))
+        else:
+            print("No readable draft path was supplied for automatic linting.")
+            return 0
     worst = 0.0
     if not args.files:
         sys.stdin.reconfigure(encoding="utf-8")
@@ -244,11 +255,14 @@ def main(argv=None):
     else:
         expanded = []
         for filename in args.files:
-            expanded.extend(
-                sorted(glob.glob(filename))
+            matches = (
+                sorted(glob.glob(filename, recursive=True))
                 if any(character in filename for character in "*?[")
                 else [filename]
             )
+            if not matches:
+                raise SystemExit(f"no files matched {filename!r}")
+            expanded.extend(matches)
         for filename in expanded:
             with open(filename, encoding="utf-8") as file:
                 result = lint(

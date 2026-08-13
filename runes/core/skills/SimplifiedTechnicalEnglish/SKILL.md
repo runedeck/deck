@@ -9,6 +9,8 @@ allowed-tools: Bash(python3 *), Read, Write, Edit, Grep, Glob
 
 # SimplifiedTechnicalEnglish
 
+!`python3 ${CLAUDE_SKILL_DIR}/scripts/ste-lint.py --context "$ARGUMENTS" 2>&1 || true`
+
 Write prose that one reading cannot misread. ASD-STE100 is the aerospace controlled-language standard that stops a technician with basic English from misreading a maintenance instruction. The same discipline stops an AI agent, a translation layer, or a tired reviewer from misparsing your text. It applies to documentation, READMEs, pull-request text, commit messages, error messages, release notes, comments, tool descriptions, and agent-to-agent messages. It never applies to code, identifiers, or command syntax.
 
 Three ways to use it: **write** new text in STE, **rewrite** existing text and keep every fact, or **review** without a rewrite, one violation for each row.

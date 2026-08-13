@@ -138,6 +138,71 @@ class ConfigTests(unittest.TestCase):
 
         self.assertEqual(process.returncode, 1)
 
+    def test_unmatched_glob_fails_with_threshold(self):
+        process = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPT),
+                "--fail-over",
+                "2.5",
+                "/does/not/exist/*.md",
+            ],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertNotEqual(process.returncode, 0)
+        self.assertIn("no files matched", process.stderr)
+
+    def test_recursive_glob_lints_nested_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            nested = root / "one" / "two"
+            nested.mkdir(parents=True)
+            (nested / "draft.md").write_text("Use this text.", encoding="utf-8")
+            process = subprocess.run(
+                [sys.executable, str(SCRIPT), str(root / "**" / "*.md")],
+                text=True,
+                capture_output=True,
+                check=True,
+            )
+
+        self.assertIn("draft.md", process.stdout)
+
+    def test_strict_em_dash_is_only_a_marker(self):
+        result = STE_LINT.lint("Use this text — now.", strict=True)
+
+        self.assertEqual(result["em_dash(slop-marker)"], 1)
+        self.assertNotIn("em_dash", result["violations"])
+        self.assertEqual(result["total"], 0)
+        self.assertEqual(result["total_per100w"], 0.0)
+
+    def test_context_lints_a_draft_path(self):
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".md", encoding="utf-8", delete=False
+        ) as draft:
+            draft.write("Use this text.")
+        self.addCleanup(Path(draft.name).unlink, missing_ok=True)
+        process = subprocess.run(
+            [sys.executable, str(SCRIPT), "--context", draft.name],
+            text=True,
+            capture_output=True,
+            check=True,
+        )
+
+        self.assertIn(Path(draft.name).name, process.stdout)
+
+    def test_context_without_a_draft_path_is_advisory(self):
+        process = subprocess.run(
+            [sys.executable, str(SCRIPT), "--context", "rewrite this sentence"],
+            text=True,
+            capture_output=True,
+            check=True,
+        )
+
+        self.assertIn("No readable draft path", process.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

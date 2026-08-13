@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/SimplifiedTechnicalEnglish/references/writing-rules.md
     digest:
-      sha256: 778a8adc1feec8845ea78078adfa8cd2824f28aba610bef322d729e1be5064ba
+      sha256: 810ff437efacbc96d8b9042e5377e132bc8b6b89919db732cc104212e6878712
   predicate:
     buildDefinition:
       buildType: adopt/v1

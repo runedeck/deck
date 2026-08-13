@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/SimplifiedTechnicalEnglish/scripts/ste-lint.py
     digest:
-      sha256: 61c3a98c73901ae12855a4a809ded96ffb61587ba98a036562646fb6cb1abec1
+      sha256: d2a4aae9a5e67ee21fbb9f95cb5b6a7c7c98091555efb3f2e488648d4e5d3e22
   predicate:
     buildDefinition:
       buildType: adopt/v1
