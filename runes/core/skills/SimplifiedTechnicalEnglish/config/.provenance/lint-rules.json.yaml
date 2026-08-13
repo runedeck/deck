@@ -2,9 +2,9 @@ provenance:
   _type: https://in-toto.io/Statement/v1
   predicateType: https://slsa.dev/provenance/v1
   subject:
-  - name: skills/SimplifiedTechnicalEnglish/SKILL.md
+  - name: skills/SimplifiedTechnicalEnglish/config/lint-rules.json
     digest:
-      sha256: 41cd305adf969f64c8faa9728c7f766f4a79d2f023eb3c0d639f3af222902250
+      sha256: d39616b5efedc0cc66b2a17b15b038ecb5ad43e69d6390f6c8bb2339dddec4e9
   predicate:
     buildDefinition:
       buildType: adopt/v1
@@ -13,17 +13,17 @@ provenance:
         upstream_url: https://github.com/danyuchn/asd-ste100-skill/tree/d5ce157 + https://github.com/woosal1337/blog/tree/51100c9/videos/ep01-the-cure-for-ai-slop
         upstream_commit: ''
         transforms_applied:
-        - align
+        - extract policy lists from ste-lint.py
       resolvedDependencies:
       - name: upstream
         uri: https://github.com/danyuchn/asd-ste100-skill/tree/d5ce157 + https://github.com/woosal1337/blog/tree/51100c9/videos/ep01-the-cure-for-ai-slop
         digest:
-          sha256: d47fc124174164caa714165eb32156c9d5e5f289166563b71e5e9816d5ba948c
+          sha256: bedba551157b7cf6378ecf97d29e6606496c49a8df83d7778e5f330e48c9595e
     runDetails:
       builder:
         id: rune-cli
         version:
           rune: 0.5.0
       metadata:
-        startedOn: 2026-08-13T12:26:06.827786+00:00
+        startedOn: 2026-08-13T12:26:06.828768+00:00
         review: reviewed

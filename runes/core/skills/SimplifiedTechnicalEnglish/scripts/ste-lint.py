@@ -1,8 +1,11 @@
+import argparse
 import glob
+import hashlib
 import json
 import os
 import re
 import sys
+from pathlib import Path
 
 # Score v2: adds complex_tense (perfect tenses, modal stacks), exempts
 # adjectival/stative participles from the passive count, moves "provide" to the
@@ -10,161 +13,263 @@ import sys
 # published numbers were measured with score v1 (this file's git history at the
 # episode date); v1 and v2 totals are close but not directly comparable.
 SCORE_VERSION = 2
-
-MARKETING = ["seamless","seamlessly","robust","powerful","cutting-edge","effortless","effortlessly",
-    "world-class","next-generation","revolutionary","blazing","lightning-fast","elegant","delightful",
-    "turnkey","best-in-class","state-of-the-art","game-changing","first-class","battle-tested",
-    "enterprise-grade","supercharge","unlock","unleash","empower","empowers"]
-BANNED = ["begin","begins","commence","commences","initiate","initiates","originate",
-    "utilize","utilizes","utilizing","leverage","leverages","leveraging","facilitate","facilitates",
-    "ensure","ensures","ensuring","prior to","subsequent to","obtain","obtains","acquire","acquires",
-    "demonstrate","demonstrates","additionally","furthermore","moreover","comprehensive","comprehensively",
-    "utilization","aforementioned","henceforth","therein","whilst","amongst","numerous","myriad","plethora",
-    "provide","provides","provided",
-    "in order to","a variety of","in the event that","due to the fact that"]
-# STE's own recurring-errors list (see ste-recurring-errors.md). Counted only
-# with --strict: these are correct STE but would flag normal prose in docs.
-STRICT_BANNED = ["however","since","should","shall","using","follow","follows","followed"]
-PHRASAL = ["spin up","spin down","reach out","dive into","dives into","diving into","kick off","kicks off",
-    "roll out","rolls out","tear down","ramp up","circle back","drill down","spun up","reaching out"]
-MODAL_HEDGE = ["it is important to note","it should be noted","it is worth noting","please note that",
-    "as mentioned","as noted above"]
+DEFAULT_CONFIG = Path(__file__).resolve().parent.parent / "config" / "lint-rules.json"
+CONFIG_KEYS = {
+    "marketing",
+    "bannedWords",
+    "bannedPhrases",
+    "strictBannedWords",
+    "phrasalVerbs",
+    "modalHedges",
+}
 BE = r"(?:am|is|are|was|were|be|been|being)"
 PP_IRREG = r"(?:done|made|sent|read|built|kept|held|set|put|run|written|shown|given|taken|found|got|gotten|seen|known|thrown|drawn)"
 # Rule 3.3: a past participle used as an adjective is not passive. These
 # stative participles only count as passive when a by-agent follows.
 STATIVE = r"(?:closed|opened?|damaged|completed?|installed|connected|required|expected|configured|enabled|disabled|deprecated|supported)"
-FUNC_WORDS = set("""a an the this that these those of for to in on at by with from as and or but if
+FUNC_WORDS = set(
+    """a an the this that these those of for to in on at by with from as and or but if
 when then than not no is are was were be been being am do does did has have had will would can could
-may might must should shall it its their your our his her they we you i""".split())  # noqa: SIM905
+may might must should shall it its their your our his her they we you i""".split()  # noqa: SIM905
+)
 
-def strip_code(t):
-    t = re.sub(r"```.*?```", " ", t, flags=re.DOTALL)
-    t = re.sub(r"`[^`]*`", " ", t)
-    return t
+
+def load_config(path=DEFAULT_CONFIG):
+    path = Path(path).expanduser()
+    try:
+        raw = path.read_bytes()
+    except OSError as error:
+        raise ValueError(f"cannot read config {path}: {error.strerror}") from error
+    try:
+        data = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError(f"invalid JSON in config {path}: {error}") from error
+    if not isinstance(data, dict):
+        raise TypeError(f"config {path} must contain a JSON object")
+    keys = set(data)
+    unknown = sorted(keys - CONFIG_KEYS)
+    missing = sorted(CONFIG_KEYS - keys)
+    if unknown:
+        raise ValueError(f"config {path} has unknown keys: {', '.join(unknown)}")
+    if missing:
+        raise ValueError(f"config {path} is missing keys: {', '.join(missing)}")
+    normalized = {}
+    for key in sorted(CONFIG_KEYS):
+        values = data[key]
+        if not isinstance(values, list):
+            raise TypeError(f"config {path} key {key} must be a list")
+        clean = []
+        seen = set()
+        for value in values:
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError(f"config {path} key {key} must contain non-empty strings")
+            value = value.strip().lower()
+            if value not in seen:
+                seen.add(value)
+                clean.append(value)
+        normalized[key] = clean
+    return normalized, str(path.resolve()), hashlib.sha256(raw).hexdigest()
+
+
+def strip_code(text):
+    text = re.sub(r"```.*?```", " ", text, flags=re.DOTALL)
+    return re.sub(r"`[^`]*`", " ", text)
+
 
 def sentences(text):
     out = []
     for line in text.split("\n"):
-        s = line.strip()
-        if not s: continue
-        s = re.sub(r"^\s*#{1,6}\s*", "", s)
-        s = re.sub(r"^\s*(?:[-*+]|\d+[.)])\s+", "", s)
-        if not s: continue
-        parts = re.split(r"(?<=[.!?:])\s+(?=[A-Z0-9\"'\-])", s)
-        for p in parts:
-            p = p.strip()
-            if p: out.append(p)
+        sentence = line.strip()
+        if not sentence:
+            continue
+        sentence = re.sub(r"^\s*#{1,6}\s*", "", sentence)
+        sentence = re.sub(r"^\s*(?:[-*+]|\d+[.)])\s+", "", sentence)
+        if not sentence:
+            continue
+        parts = re.split(r"(?<=[.!?:])\s+(?=[A-Z0-9\"'\-])", sentence)
+        out.extend(part.strip() for part in parts if part.strip())
     return out
 
-def wc(s):
-    return len([w for w in re.findall(r"[A-Za-z0-9][A-Za-z0-9'\-/]*", s)])
+
+def wc(sentence):
+    return len(re.findall(r"[A-Za-z0-9][A-Za-z0-9'\-/]*", sentence))
+
 
 def count_ci(text, phrases):
-    n = 0; hits = []
-    low = text.lower()
-    for ph in phrases:
-        for m in re.finditer(r"(?<![a-z])" + re.escape(ph) + r"(?![a-z])", low):
-            n += 1; hits.append(ph)
-    return n, hits
+    count = 0
+    hits = []
+    lower = text.lower()
+    for phrase in phrases:
+        for _ in re.finditer(r"(?<![a-z])" + re.escape(phrase) + r"(?![a-z])", lower):
+            count += 1
+            hits.append(phrase)
+    return count, hits
+
 
 def noun_trains(text):
-    """Runs of 4+ consecutive non-function lowercase words (Rule 2.1 proxy).
-    Heuristic marker only - proper nouns break a run, the leading word of each
-    sentence is skipped, and the count stays out of the total."""
+    """Return 4-word non-function runs as a heuristic Rule 2.1 marker."""
     hits = []
-    for s in sentences(text):
-        words = re.findall(r"[A-Za-z][A-Za-z'\-]*", s)[1:]
+    for sentence in sentences(text):
+        words = re.findall(r"[A-Za-z][A-Za-z'\-]*", sentence)[1:]
         run = []
-        for w in words + [""]:
-            if w and w.lower() not in FUNC_WORDS and not w[0].isupper():
-                run.append(w)
+        for word in [*words, ""]:
+            if word and word.lower() not in FUNC_WORDS and not word[0].isupper():
+                run.append(word)
             else:
-                if len(run) >= 4: hits.append(" ".join(run))
+                if len(run) >= 4:
+                    hits.append(" ".join(run))
                 run = []
     return hits
 
-def lint(text, strict=False):
+
+def lint(text, strict=False, config=None, config_path=None, config_digest=None):
+    if config is None:
+        config, config_path, config_digest = load_config()
     text = strip_code(text)
     sents = sentences(text)
-    words = sum(wc(s) for s in sents) or 1
-    v = {}
-    longs = [(wc(s), s) for s in sents if wc(s) > 20]
-    v["long_sentence(>20w)"] = len(longs)
-    v["semicolon"] = text.count(";")
+    words = sum(wc(sentence) for sentence in sents) or 1
+    violations = {}
+    long_sentences = [(wc(sentence), sentence) for sentence in sents if wc(sentence) > 20]
+    violations["long_sentence(>20w)"] = len(long_sentences)
+    violations["semicolon"] = text.count(";")
     # 's counts as a contraction only on known heads (it's, there's, ...);
     # a possessive noun ("the standard's list") is correct STE and stays clean.
-    v["contraction"] = len(re.findall(r"\b\w+['’](?:t|re|ve|ll|d|m)\b", text)) \
-        + len(re.findall(r"\b(?:it|that|this|there|here|what|who|she|he|let)['’]s\b", text, re.IGNORECASE))
-    passive_parts = re.findall(rf"\b{BE}\s+(\w+ed|{PP_IRREG})\b", text, re.IGNORECASE)
-    v["passive_voice"] = sum(1 for p in passive_parts if not re.fullmatch(STATIVE, p, re.IGNORECASE)) \
-        + len(re.findall(rf"\b{BE}\s+{STATIVE}\s+by\b", text, re.IGNORECASE))
-    v["complex_tense"] = len(re.findall(
-        rf"\b(?:(?:may|might|could|would|should|must|will|shall|can)\s+)?(?:have|has|had)\s+(?:been\s+)?(?:\w+ed|{PP_IRREG})\b",
-        text, re.IGNORECASE))
-    v["ing_main_verb"] = len(re.findall(rf"\b{BE}\s+\w+ing\b", text, re.IGNORECASE))
-    v["nominalization"] = len(re.findall(r"\b(?:perform(?:s|ed)?|conduct(?:s|ed)?|carry out|carries out|make use of|makes use of)\b", text, re.IGNORECASE)) + len(re.findall(r"\b\w{4,}(?:tion|ment|ance|ence)\s+of\b", text, re.IGNORECASE))
-    v["phrasal_verb"], _ = count_ci(text, PHRASAL)
-    v["banned_word"], bh = count_ci(text, BANNED)
-    v["marketing_adjective"], mh = count_ci(text, MARKETING)
-    v["modal_hedge"], _ = count_ci(text, MODAL_HEDGE)
-    # Paragraphs split the code-stripped text: splitting raw would cut a fenced
-    # block at its blank lines, and each fragment would then keep its code.
-    paras = [p for p in re.split(r"\n\s*\n", text) if p.strip()]
-    v["long_paragraph(>6s)"] = sum(1 for p in paras if len(sentences(p)) > 6)
-    em = text.count("—") + text.count("–")
+    violations["contraction"] = len(
+        re.findall(r"\b\w+['’](?:t|re|ve|ll|d|m)\b", text)
+    ) + len(
+        re.findall(
+            r"\b(?:it|that|this|there|here|what|who|she|he|let)['’]s\b",
+            text,
+            re.IGNORECASE,
+        )
+    )
+    passive_parts = re.findall(
+        rf"\b{BE}\s+(\w+ed|{PP_IRREG})\b", text, re.IGNORECASE
+    )
+    violations["passive_voice"] = sum(
+        1 for part in passive_parts if not re.fullmatch(STATIVE, part, re.IGNORECASE)
+    ) + len(re.findall(rf"\b{BE}\s+{STATIVE}\s+by\b", text, re.IGNORECASE))
+    violations["complex_tense"] = len(
+        re.findall(
+            rf"\b(?:(?:may|might|could|would|should|must|will|shall|can)\s+)?(?:have|has|had)\s+(?:been\s+)?(?:\w+ed|{PP_IRREG})\b",
+            text,
+            re.IGNORECASE,
+        )
+    )
+    violations["ing_main_verb"] = len(
+        re.findall(rf"\b{BE}\s+\w+ing\b", text, re.IGNORECASE)
+    )
+    violations["nominalization"] = len(
+        re.findall(
+            r"\b(?:perform(?:s|ed)?|conduct(?:s|ed)?|carry out|carries out|make use of|makes use of)\b",
+            text,
+            re.IGNORECASE,
+        )
+    ) + len(
+        re.findall(
+            r"\b\w{4,}(?:tion|ment|ance|ence)\s+of\b", text, re.IGNORECASE
+        )
+    )
+    violations["phrasal_verb"], _ = count_ci(text, config["phrasalVerbs"])
+    banned = [*config["bannedWords"], *config["bannedPhrases"]]
+    violations["banned_word"], banned_hits = count_ci(text, banned)
+    violations["marketing_adjective"], marketing_hits = count_ci(
+        text, config["marketing"]
+    )
+    violations["modal_hedge"], _ = count_ci(text, config["modalHedges"])
+    paragraphs = [part for part in re.split(r"\n\s*\n", text) if part.strip()]
+    violations["long_paragraph(>6s)"] = sum(
+        1 for paragraph in paragraphs if len(sentences(paragraph)) > 6
+    )
+    em_dash = text.count("—") + text.count("–")
     trains = noun_trains(text)
     if strict:
-        n_strict, _ = count_ci(text, STRICT_BANNED)
-        # "may" is matched case-sensitively so the month "May" stays clean
-        n_strict += len(re.findall(r"(?<![A-Za-z])may(?![a-z])", text))
-        v["strict_banned_word"] = n_strict
-        v["em_dash"] = em
-    total = sum(v.values())
+        strict_count, _ = count_ci(text, config["strictBannedWords"])
+        # Match "may" case-sensitively so that the month "May" stays clean.
+        strict_count += len(re.findall(r"(?<![A-Za-z])may(?![a-z])", text))
+        violations["strict_banned_word"] = strict_count
+        violations["em_dash"] = em_dash
+    total = sum(violations.values())
     return {
         "score_version": SCORE_VERSION,
         "mode": "strict" if strict else "flavored",
-        "words": words, "sentences": len(sents),
-        "violations": v, "total": total,
-        "total_per100w": round(total*100.0/words, 2),
-        "em_dash(slop-marker)": em,
+        "config_path": config_path,
+        "config_sha256": config_digest,
+        "words": words,
+        "sentences": len(sents),
+        "violations": violations,
+        "total": total,
+        "total_per100w": round(total * 100.0 / words, 2),
+        "em_dash(slop-marker)": em_dash,
         "noun_train(>=4w,marker)": len(trains),
-        "longest_sentence_words": (max(longs)[0] if longs else max((wc(s) for s in sents), default=0)),
-        "sample_marketing": list(dict.fromkeys(mh))[:6],
-        "sample_banned": list(dict.fromkeys(bh))[:6],
+        "longest_sentence_words": (
+            max(long_sentences)[0]
+            if long_sentences
+            else max((wc(sentence) for sentence in sents), default=0)
+        ),
+        "sample_marketing": list(dict.fromkeys(marketing_hits))[:6],
+        "sample_banned": list(dict.fromkeys(banned_hits))[:6],
         "sample_noun_train": trains[:3],
     }
 
-if __name__ == "__main__":
-    args = sys.argv[1:]
-    strict = "--strict" in args
-    as_json = "--json" in args
-    fail_over = None
-    if "--fail-over" in args:
-        i = args.index("--fail-over")
-        if i + 1 >= len(args):
-            sys.exit("--fail-over needs a number")
-        try:
-            fail_over = float(args[i + 1])
-        except ValueError:
-            sys.exit(f"--fail-over needs a number, got {args[i + 1]!r}")
-        del args[i:i + 2]
-    files = [a for a in args if a not in ("--strict", "--json")]
+
+def parse_args(argv):
+    parser = argparse.ArgumentParser(description="Score prose with heuristic STE checks.")
+    parser.add_argument("--strict", action="store_true", help="enable strict checks")
+    parser.add_argument("--json", action="store_true", help="print JSON for files")
+    parser.add_argument("--config", default=DEFAULT_CONFIG, help="complete JSON rule set")
+    parser.add_argument("--fail-over", type=float, help="fail above this score")
+    parser.add_argument("files", nargs="*", help="files or glob patterns; stdin if empty")
+    return parser.parse_args(argv)
+
+
+def main(argv=None):
+    args = parse_args(argv)
+    try:
+        config, config_path, config_digest = load_config(args.config)
+    except (TypeError, ValueError) as error:
+        raise SystemExit(str(error)) from error
     worst = 0.0
-    if not files:
+    if not args.files:
         sys.stdin.reconfigure(encoding="utf-8")
-        r = lint(sys.stdin.read(), strict=strict)
-        print(json.dumps(r, indent=2))
-        worst = r["total_per100w"]
+        result = lint(
+            sys.stdin.read(),
+            strict=args.strict,
+            config=config,
+            config_path=config_path,
+            config_digest=config_digest,
+        )
+        print(json.dumps(result, indent=2))
+        worst = result["total_per100w"]
     else:
-        exp = []
-        for f in files: exp += sorted(glob.glob(f)) if any(c in f for c in "*?[") else [f]
-        for f in exp:
-            with open(f, encoding="utf-8") as fh: r = lint(fh.read(), strict=strict)
-            worst = max(worst, r["total_per100w"])
-            if as_json:
-                print(json.dumps({"file": f, **r}, indent=2))
+        expanded = []
+        for filename in args.files:
+            expanded.extend(
+                sorted(glob.glob(filename))
+                if any(character in filename for character in "*?[")
+                else [filename]
+            )
+        for filename in expanded:
+            with open(filename, encoding="utf-8") as file:
+                result = lint(
+                    file.read(),
+                    strict=args.strict,
+                    config=config,
+                    config_path=config_path,
+                    config_digest=config_digest,
+                )
+            worst = max(worst, result["total_per100w"])
+            if args.json:
+                print(json.dumps({"file": filename, **result}, indent=2))
             else:
-                print(f"{os.path.basename(f):32} words={r['words']:4d} total={r['total']:3d} per100w={r['total_per100w']:6.2f} em_dash={r['em_dash(slop-marker)']:2d}")
-    if fail_over is not None and worst > fail_over:
-        sys.exit(1)
+                print(
+                    f"{os.path.basename(filename):32} "
+                    f"words={result['words']:4d} total={result['total']:3d} "
+                    f"per100w={result['total_per100w']:6.2f} "
+                    f"em_dash={result['em_dash(slop-marker)']:2d}"
+                )
+    return int(args.fail_over is not None and worst > args.fail_over)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
