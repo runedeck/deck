@@ -19,7 +19,7 @@ review:
       sha256: 778a8adc1feec8845ea78078adfa8cd2824f28aba610bef322d729e1be5064ba
   - name: scripts/ste-lint.py
     digest:
-      sha256: bedba551157b7cf6378ecf97d29e6606496c49a8df83d7778e5f330e48c9595e
+      sha256: 9b065d90ca21d5fc31edcf1620a5bff3f4262abac72ece41f35f07ee9a6113f9
   predicate:
     status: reviewed
     upstream:

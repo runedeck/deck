@@ -89,7 +89,10 @@ def lint(text, strict=False):
     longs = [(wc(s), s) for s in sents if wc(s) > 20]
     v["long_sentence(>20w)"] = len(longs)
     v["semicolon"] = text.count(";")
-    v["contraction"] = len(re.findall(r"\b\w+['’](?:t|re|ve|ll|d|s|m)\b", text))
+    # 's counts as a contraction only on known heads (it's, there's, ...);
+    # a possessive noun ("the standard's list") is correct STE and stays clean.
+    v["contraction"] = len(re.findall(r"\b\w+['’](?:t|re|ve|ll|d|m)\b", text)) \
+        + len(re.findall(r"\b(?:it|that|this|there|here|what|who|she|he|one|let)['’]s\b", text, re.I))
     passive_parts = re.findall(rf"\b{BE}\s+(\w+ed|{PP_IRREG})\b", text, re.I)
     v["passive_voice"] = sum(1 for p in passive_parts if not re.fullmatch(STATIVE, p, re.I)) \
         + len(re.findall(rf"\b{BE}\s+{STATIVE}\s+by\b", text, re.I))
