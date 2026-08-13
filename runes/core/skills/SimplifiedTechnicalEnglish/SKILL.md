@@ -4,12 +4,14 @@ description: "Write or rewrite prose as Simplified Technical English (ASD-STE100
 metadata:
     version: 0.1.0
     spec: ASD-STE100 Issue 9 (January 2025)
-allowed-tools: Bash(python3 *), Read, Write, Edit, Grep, Glob
+allowed-tools: Bash(python3 *), Bash(git diff *), Read, Write, Edit, Grep, Glob
 ---
 
 # SimplifiedTechnicalEnglish
 
-!`python3 scripts/ste-lint.py --context "$ARGUMENTS" 2>&1 || true`
+Changed prose files in the current project:
+
+!`git diff --name-only --diff-filter=ACMR HEAD -- '*.md' '*.txt' 2>/dev/null || true`
 
 Write prose that one reading cannot misread. ASD-STE100 is the aerospace controlled-language standard that stops a technician with basic English from misreading a maintenance instruction. The same discipline stops an AI agent, a translation layer, or a tired reviewer from misparsing your text. It applies to documentation, READMEs, pull-request text, commit messages, error messages, release notes, comments, tool descriptions, and agent-to-agent messages. It never applies to code, identifiers, or command syntax.
 
@@ -59,7 +61,7 @@ On a review request (`show the diff`, `which rules did it break`, `before/after`
 
 ### Lint
 
-When commands are available, lint the draft with the bundled checker. Repair the reported categories and lint again, at most two passes:
+Use the injected changed-file list to locate likely drafts. When commands are available, lint the requested draft with the bundled checker. Repair the reported categories and lint again, at most two passes:
 
 ```sh
 # <skill-dir> is this skill's directory; the draft path is your own.
