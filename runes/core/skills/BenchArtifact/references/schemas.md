@@ -220,18 +220,21 @@ Wall clock timing for a run. Located at `<run-dir>/timing.json`.
 
 ## benchmark.json
 
-Output from Benchmark mode. Located at `benchmarks/<timestamp>/benchmark.json`.
+Output of `scripts/aggregate_benchmark.py`, written beside the discovered `eval-*` directories.
 
 ```json
 {
   "metadata": {
+    "artifact_name": "pdf",
+    "artifact_path": "/path/to/pdf",
     "skill_name": "pdf",
-    "skill_path": "/path/to/pdf",
-    "executor_model": "provider/model-id",
+    "models": ["provider/model-id"],
     "analyzer_model": "provider/model-id",
     "timestamp": "2026-01-15T10:30:00Z",
     "evals_run": [1, 2, 3],
-    "runs_per_configuration": 3
+    "runs_per_configuration": 3,
+    "primary_config": "with_skill",
+    "baseline_config": "without_skill"
   },
 
   "runs": [
@@ -239,6 +242,8 @@ Output from Benchmark mode. Located at `benchmarks/<timestamp>/benchmark.json`.
       "eval_id": 1,
       "eval_name": "Ocean",
       "configuration": "with_skill",
+      "configuration_base": "with_skill",
+      "model": "provider/model-id",
       "run_number": 1,
       "result": {
         "pass_rate": 0.85,
@@ -289,20 +294,23 @@ Output from Benchmark mode. Located at `benchmarks/<timestamp>/benchmark.json`.
 
 **Fields:**
 - `metadata`: Information about the benchmark run
-  - `skill_name`: Name of the skill
-  - `executor_model` / `analyzer_model`: Runtime-reported model identifiers (`provider/model-id`); omit when the runtime does not report them
+  - `artifact_name` / `artifact_path`: The artifact under test; `skill_name` mirrors `artifact_name` for the viewer's header
+  - `models`: Every model that produced runs, from the `@model` configuration suffixes and `timing.json`
+  - `analyzer_model`: Runtime-reported model identifier for the analyst pass; omit when the runtime does not report it
   - `timestamp`: When the benchmark was run (UTC)
   - `evals_run`: List of eval names or IDs
   - `runs_per_configuration`: Number of runs per config, derived from the discovered run directories
+  - `primary_config` / `baseline_config`: The resolved delta direction (base names), null when undetermined
 - `runs[]`: Individual run results
   - `eval_id`: Numeric eval identifier
   - `eval_name`: Human-readable eval name, used as section header in the viewer (optional; falls back to the id)
-  - `configuration`: The run's configuration directory name; the conventional pairs are `"with_skill"`/`"without_skill"` and `"new_skill"`/`"old_skill"` (the viewer groups and color-codes on these exact strings)
+  - `configuration`: The run's configuration directory name, base plus optional `@model` suffix; the conventional base pairs are the `with_`/`without_` and `new_`/`old_` families for artifact, rule, agent, and skill
+  - `configuration_base` / `model`: The configuration name split at the `@` boundary
   - `run_number`: Integer run number (1, 2, 3...)
   - `result`: Nested object with `pass_rate`, `passed`, `failed`, `total`, `time_seconds`, `tokens`, `tool_calls`, `errors`; omit metrics the runtime does not report rather than estimating them
-- `run_summary`: Statistical aggregates per configuration
-  - `with_skill` / `without_skill`: Each contains `pass_rate`, `time_seconds`, `tokens` objects with `mean` and `stddev` fields
-  - `delta`: Difference strings like `"+0.50"`, `"+13.0"`, `"+1700"`
+- `run_summary`: Statistical aggregates per configuration directory name
+  - Each configuration entry contains `pass_rate`, `time_seconds`, `tokens` objects with `mean` and `stddev` fields, primary before baseline within each model
+  - `delta` (single model) or `delta@<model>` (several): difference strings like `"+0.50"`, `"+13.0"`, `"+1700"`, computed within one model only
 - `notes`: Freeform observations from the analyzer
 
 **Important:** The viewer reads these field names exactly. Using `config` instead of `configuration`, or putting `pass_rate` at the top level of a run instead of nested under `result`, will cause the viewer to show empty/zero values. Always reference this schema when generating benchmark.json manually.

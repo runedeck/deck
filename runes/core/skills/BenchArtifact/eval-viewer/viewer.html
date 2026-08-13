@@ -1150,20 +1150,16 @@
         return "";
       }
 
-      // Discover config names dynamically (everything except "delta");
-      // run_summary order already puts the primary configuration first
-      const configs = Object.keys(summary).filter(k => k !== "delta");
-      const configA = configs[0] || "config_a";
-      const configB = configs[1] || "config_b";
-      const a = summary[configA] || {};
-      const b = summary[configB] || {};
-      const delta = summary.delta || {};
-
-      const summaryTable = el("table", "benchmark-table");
-      const summaryHead = el("thead");
-      summaryHead.appendChild(headerRow(["Metric", titleCase(configA), titleCase(configB), "Delta"]));
-      summaryTable.appendChild(summaryHead);
-      const summaryBody = el("tbody");
+      // Discover config names dynamically (everything except delta entries);
+      // run_summary order already puts the primary configuration first within
+      // each model. A configuration may carry an `@model` suffix; each model
+      // gets its own summary table paired with its own delta entry
+      // (`delta` for a single model, `delta@<model>` for several).
+      const configKeys = Object.keys(summary).filter(k => !k.startsWith("delta"));
+      const modelOf = k => { const at = k.indexOf("@"); return at === -1 ? "" : k.slice(at + 1); };
+      const baseOf = k => { const at = k.indexOf("@"); return at === -1 ? k : k.slice(0, at); };
+      const models = [...new Set(configKeys.map(modelOf))];
+      const singleModel = models.length <= 1;
 
       function metricRow(label, statA, statB, pct, deltaRaw, deltaText) {
         const tr = el("tr");
@@ -1176,18 +1172,39 @@
         return tr;
       }
 
-      summaryBody.appendChild(metricRow("Pass Rate", a.pass_rate, b.pass_rate, true,
-        delta.pass_rate, delta.pass_rate || "—"));
-      if (a.time_seconds || b.time_seconds) {
-        summaryBody.appendChild(metricRow("Time (s)", a.time_seconds, b.time_seconds, false,
-          delta.time_seconds, delta.time_seconds ? delta.time_seconds + "s" : "—"));
+      for (const model of models) {
+        const configs = configKeys.filter(k => modelOf(k) === model);
+        const configA = configs[0] || "config_a";
+        const configB = configs[1] || "config_b";
+        const a = summary[configA] || {};
+        const b = summary[configB] || {};
+        const delta = summary[singleModel ? "delta" : "delta@" + model] || {};
+
+        if (model && !singleModel) {
+          const modelHeading = el("h4", null, model);
+          modelHeading.style.cssText = "font-family: ui-sans-serif, system-ui, sans-serif; margin: 1rem 0 0.5rem; color: var(--text);";
+          container.appendChild(modelHeading);
+        }
+
+        const summaryTable = el("table", "benchmark-table");
+        const summaryHead = el("thead");
+        summaryHead.appendChild(headerRow(["Metric", titleCase(baseOf(configA)), titleCase(baseOf(configB)), "Delta"]));
+        summaryTable.appendChild(summaryHead);
+        const summaryBody = el("tbody");
+
+        summaryBody.appendChild(metricRow("Pass Rate", a.pass_rate, b.pass_rate, true,
+          delta.pass_rate, delta.pass_rate || "—"));
+        if (a.time_seconds || b.time_seconds) {
+          summaryBody.appendChild(metricRow("Time (s)", a.time_seconds, b.time_seconds, false,
+            delta.time_seconds, delta.time_seconds ? delta.time_seconds + "s" : "—"));
+        }
+        if (a.tokens || b.tokens) {
+          summaryBody.appendChild(metricRow("Tokens", a.tokens, b.tokens, false,
+            delta.tokens, delta.tokens || "—"));
+        }
+        summaryTable.appendChild(summaryBody);
+        container.appendChild(summaryTable);
       }
-      if (a.tokens || b.tokens) {
-        summaryBody.appendChild(metricRow("Tokens", a.tokens, b.tokens, false,
-          delta.tokens, delta.tokens || "—"));
-      }
-      summaryTable.appendChild(summaryBody);
-      container.appendChild(summaryTable);
 
       // Per-eval breakdown (if runs data available)
       const runs = data.runs || [];
