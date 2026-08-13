@@ -10,7 +10,7 @@ allowed-tools: Bash(python3 *), Bash(mkdir *), Bash(cp *), Read, Write, Edit, Gr
 
 Measure whether an artifact changes model behavior enough to earn its place. Every benchmark runs the same test cases in two configurations, with the artifact and without it, grades both against the same assertions, and reports the delta per model. The loop ends with a human reading the comparison, not with a number.
 
-Results live in `<artifact-name>-bench/` as a sibling of the artifact, organized by iteration (`iteration-1/`, `iteration-2/`), one directory per test case named `eval-<ID>-<descriptive-name>`. Each configuration directory is named `<config>@<model>` (for example `with_rule@claude-opus-5`) and holds `run-<R>/` subdirectories containing `outputs/`, `grading.json`, and `timing.json`. The aggregator discovers only `eval-*` directories and `run-*` subdirectories; files placed elsewhere are ignored. Create directories as you go, not upfront.
+Results live in the benchmarks working layer outside the repository, `~/Data/Benchmarks/<deck>/<artifact-name>/`, organized by iteration (`iteration-1/`, `iteration-2/`), one directory per test case named `eval-<ID>-<descriptive-name>`. Each configuration directory is named `<config>@<model>` (for example `with_rule@claude-opus-5`) and holds `run-<R>/` subdirectories containing `outputs/`, `grading.json`, and `timing.json`. The aggregator discovers only `eval-*` directories and `run-*` subdirectories; files placed elsewhere are ignored. Create directories as you go, not upfront.
 
 ## Prerequisites
 

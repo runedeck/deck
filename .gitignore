@@ -3,10 +3,6 @@ dist/
 .DS_Store
 __pycache__/
 
-# BenchArtifact workspaces: benchmark runs live beside the artifact under
-# test and never enter history.
-*-bench/
-
 # rune-deployed provider trees and review comments
 .claude/
 .codex/
