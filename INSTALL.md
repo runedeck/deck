@@ -1,0 +1,34 @@
+# Rune Deck
+
+> Activate this repository's commit and push checks after cloning.
+
+I want you to finish setting up deck. Execute all the steps below autonomously.
+
+## OBJECTIVE
+
+Hooks active (git `core.hooksPath` plus the jj `push` alias when the repo is colocated) and the toolchain for this repo installed.
+
+## DONE WHEN
+
+`make validate` exits 0, and `git config core.hooksPath` prints `.githooks`.
+
+## TODO
+
+- [ ] Run `make install`
+- [ ] Install each missing check tool (`prek`, `gitleaks`, `shellcheck`)
+- [ ] Install Copier for template updates
+- [ ] Run `make validate` and confirm it exits 0
+
+## Steps
+
+```sh
+make install
+for tool in prek gitleaks shellcheck copier; do
+    command -v "$tool" >/dev/null || brew install "$tool"
+done
+make validate
+```
+
+Without Homebrew, install each missing tool with the platform's package manager; `gitleaks` needs the upstream release (the Debian and Ubuntu package is too old for `gitleaks git`). Copier is needed only for template installation and updates; repository checks and review workflows continue without it.
+
+EXECUTE NOW: Complete the above TODO list to achieve: hooks wired and `make validate` green.
