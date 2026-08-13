@@ -3,8 +3,8 @@
 Aggregate individual run results into benchmark summary statistics.
 
 Reads grading.json files from run directories and produces:
-- run_summary with mean, stddev, min, max for each metric
-- delta between the primary and baseline configurations
+- run_summary with mean, stddev, min, max for each metric, per configuration and model
+- delta between the primary and baseline configurations, computed within each model
 
 Usage:
     python3 -m scripts.aggregate_benchmark <benchmark_dir>
@@ -12,30 +12,27 @@ Usage:
 Example:
     python3 -m scripts.aggregate_benchmark benchmarks/2026-01-15T10-30-00/
 
-The delta direction is primary minus baseline. The pairs with_skill vs
-without_skill and new_skill vs old_skill are recognized automatically; any
-other configuration names require --primary-config and --baseline-config.
+A configuration directory may carry a model suffix after `@`, e.g.
+`with_rule@claude-opus-5`. Runs then aggregate per configuration and model,
+and each model gets its own delta (`delta` when one model ran, `delta@<model>`
+when several did). Deltas are never averaged across models.
 
-The script supports two directory layouts:
+The delta direction is primary minus baseline. The pairs with_artifact vs
+without_artifact, with_rule vs without_rule, with_agent vs without_agent,
+with_skill vs without_skill, and new_artifact vs old_artifact are recognized
+automatically; any other configuration names require --primary-config and
+--baseline-config (base names, without the model suffix).
 
-    Workspace layout (from build-skill iterations):
+Expected directory layout:
+
     <benchmark_dir>/
     └── eval-N/
-        ├── with_skill/
+        ├── with_rule@claude-opus-5/
         │   ├── run-1/grading.json
         │   └── run-2/grading.json
-        └── without_skill/
+        └── without_rule@claude-opus-5/
             ├── run-1/grading.json
             └── run-2/grading.json
-
-    Legacy layout (with runs/ subdirectory):
-    <benchmark_dir>/
-    └── runs/
-        └── eval-N/
-            ├── with_skill/
-            │   └── run-1/grading.json
-            └── without_skill/
-                └── run-1/grading.json
 """
 
 import argparse
@@ -47,9 +44,23 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 KNOWN_CONFIG_PAIRS = (
+    ("with_artifact", "without_artifact"),
+    ("with_rule", "without_rule"),
+    ("with_agent", "without_agent"),
     ("with_skill", "without_skill"),
+    ("new_artifact", "old_artifact"),
     ("new_skill", "old_skill"),
 )
+
+DEFAULT_MODEL = "default"
+
+
+def split_config(name: str) -> tuple[str, str]:
+    """Split a configuration directory name into (base, model)."""
+    if "@" in name:
+        base, model = name.split("@", 1)
+        return base, model or DEFAULT_MODEL
+    return name, DEFAULT_MODEL
 
 
 def calculate_stats(values: list[float]) -> dict:
@@ -79,22 +90,16 @@ def load_run_results(benchmark_dir: Path) -> dict:
     """
     Load all run results from a benchmark directory.
 
-    Returns dict keyed by config name (e.g. "with_skill"/"without_skill",
-    or "new_skill"/"old_skill"), each containing a list of run results.
+    Returns dict keyed by configuration directory name (base plus optional
+    `@model` suffix), each containing a list of run results.
     """
-    # Support both layouts: eval dirs directly under benchmark_dir, or under runs/
-    runs_dir = benchmark_dir / "runs"
-    if runs_dir.exists():
-        search_dir = runs_dir
-    elif list(benchmark_dir.glob("eval-*")):
-        search_dir = benchmark_dir
-    else:
-        print(f"No eval directories found in {benchmark_dir} or {benchmark_dir / 'runs'}")
+    if not list(benchmark_dir.glob("eval-*")):
+        print(f"No eval directories found in {benchmark_dir}")
         return {}
 
     results: dict[str, list] = {}
 
-    for eval_idx, eval_dir in enumerate(sorted(search_dir.glob("eval-*"))):
+    for eval_idx, eval_dir in enumerate(sorted(benchmark_dir.glob("eval-*"))):
         eval_id = eval_idx
         eval_name = None
         metadata_path = eval_dir / "eval_metadata.json"
@@ -157,12 +162,15 @@ def load_run_results(benchmark_dir: Path) -> dict:
                 timing = grading.get("timing", {})
                 result["time_seconds"] = timing.get("total_duration_seconds", 0.0)
                 timing_file = run_dir / "timing.json"
-                if result["time_seconds"] == 0.0 and timing_file.exists():
+                if timing_file.exists():
                     try:
                         with open(timing_file, encoding="utf-8") as tf:
                             timing_data = json.load(tf)
-                        result["time_seconds"] = timing_data.get("total_duration_seconds", 0.0)
+                        if result["time_seconds"] == 0.0:
+                            result["time_seconds"] = timing_data.get("total_duration_seconds", 0.0)
                         result["tokens"] = timing_data.get("total_tokens", 0)
+                        if timing_data.get("model"):
+                            result["model"] = timing_data["model"]
                     except json.JSONDecodeError:
                         pass
 
@@ -194,11 +202,11 @@ def load_run_results(benchmark_dir: Path) -> dict:
 
 
 def resolve_config_pair(
-    configs: list[str],
+    base_names: list[str],
     primary: str | None = None,
     baseline: str | None = None,
 ) -> tuple[str, str] | None:
-    """Resolve the (primary, baseline) configuration pair for delta direction.
+    """Resolve the (primary, baseline) base-name pair for delta direction.
 
     Explicit flags win; otherwise known pairs are recognized. Returns None
     when the direction cannot be determined — never falls back to
@@ -208,14 +216,14 @@ def resolve_config_pair(
         if not (primary and baseline):
             raise ValueError("--primary-config and --baseline-config must be given together")
         for name in (primary, baseline):
-            if name not in configs:
+            if name not in base_names:
                 raise ValueError(
-                    f"Configuration '{name}' not found; discovered: {', '.join(sorted(configs)) or '(none)'}"
+                    f"Configuration '{name}' not found; discovered: {', '.join(sorted(base_names)) or '(none)'}"
                 )
         return primary, baseline
 
     for pair in KNOWN_CONFIG_PAIRS:
-        if pair[0] in configs and pair[1] in configs:
+        if pair[0] in base_names and pair[1] in base_names:
             return pair
 
     return None
@@ -239,52 +247,68 @@ def aggregate_results(results: dict, pair: tuple[str, str] | None) -> dict:
     """
     Aggregate run results into summary statistics.
 
-    Returns run_summary with stats for each configuration, ordered primary
-    first when the pair is known, plus a delta entry when it is.
+    Returns run_summary keyed by configuration directory name, primary before
+    baseline within each model when the pair is known, plus one delta entry
+    per model (`delta` for a single model, `delta@<model>` for several).
     """
     run_summary = {}
-    configs = list(results.keys())
-    if pair:
-        configs = [pair[0], pair[1]] + [c for c in configs if c not in pair]
+    models = sorted({split_config(config)[1] for config in results})
+    single_model = len(models) <= 1
 
-    for config in configs:
-        runs = results.get(config, [])
+    for model in models:
+        model_configs = [c for c in results if split_config(c)[1] == model]
+        if pair:
+            ordered = [c for base in pair for c in model_configs if split_config(c)[0] == base]
+            ordered += [c for c in model_configs if c not in ordered]
+        else:
+            ordered = sorted(model_configs)
 
-        if not runs:
+        for config in ordered:
+            runs = results.get(config, [])
+
+            if not runs:
+                run_summary[config] = {
+                    "pass_rate": {"mean": 0.0, "stddev": 0.0, "min": 0.0, "max": 0.0},
+                    "time_seconds": {"mean": 0.0, "stddev": 0.0, "min": 0.0, "max": 0.0},
+                    "tokens": {"mean": 0, "stddev": 0, "min": 0, "max": 0}
+                }
+                continue
+
             run_summary[config] = {
-                "pass_rate": {"mean": 0.0, "stddev": 0.0, "min": 0.0, "max": 0.0},
-                "time_seconds": {"mean": 0.0, "stddev": 0.0, "min": 0.0, "max": 0.0},
-                "tokens": {"mean": 0, "stddev": 0, "min": 0, "max": 0}
+                "pass_rate": calculate_stats([r["pass_rate"] for r in runs]),
+                "time_seconds": calculate_stats([r["time_seconds"] for r in runs]),
+                "tokens": calculate_stats([r.get("tokens", 0) for r in runs])
             }
+
+        if not pair:
             continue
 
-        pass_rates = [r["pass_rate"] for r in runs]
-        times = [r["time_seconds"] for r in runs]
-        tokens = [r.get("tokens", 0) for r in runs]
+        by_base = {split_config(c)[0]: c for c in ordered}
+        primary_name = by_base.get(pair[0])
+        baseline_name = by_base.get(pair[1])
+        if not (primary_name and baseline_name):
+            print(f"Warning: model '{model}' is missing one side of {pair[0]} vs {pair[1]}; delta omitted for it")
+            continue
 
-        run_summary[config] = {
-            "pass_rate": calculate_stats(pass_rates),
-            "time_seconds": calculate_stats(times),
-            "tokens": calculate_stats(tokens)
-        }
+        primary_summary = run_summary[primary_name]
+        baseline_summary = run_summary[baseline_name]
 
-    if pair:
-        primary_summary = run_summary.get(pair[0], {})
-        baseline_summary = run_summary.get(pair[1], {})
+        delta_pass_rate = primary_summary["pass_rate"]["mean"] - baseline_summary["pass_rate"]["mean"]
+        delta_time = primary_summary["time_seconds"]["mean"] - baseline_summary["time_seconds"]["mean"]
+        delta_tokens = primary_summary["tokens"]["mean"] - baseline_summary["tokens"]["mean"]
 
-        delta_pass_rate = primary_summary.get("pass_rate", {}).get("mean", 0) - baseline_summary.get("pass_rate", {}).get("mean", 0)
-        delta_time = primary_summary.get("time_seconds", {}).get("mean", 0) - baseline_summary.get("time_seconds", {}).get("mean", 0)
-        delta_tokens = primary_summary.get("tokens", {}).get("mean", 0) - baseline_summary.get("tokens", {}).get("mean", 0)
-
-        run_summary["delta"] = {
+        delta_key = "delta" if single_model else f"delta@{model}"
+        run_summary[delta_key] = {
             "pass_rate": f"{delta_pass_rate:+.2f}",
             "time_seconds": f"{delta_time:+.1f}",
             "tokens": f"{delta_tokens:+.0f}"
         }
-    elif len(configs) >= 2:
+
+    if not pair and len(results) >= 2:
+        base_names = sorted({split_config(c)[0] for c in results})
         print(
             "Warning: cannot determine delta direction for configurations "
-            f"{', '.join(sorted(configs))}; pass --primary-config and --baseline-config. Delta omitted."
+            f"{', '.join(base_names)}; pass --primary-config and --baseline-config. Delta omitted."
         )
 
     return run_summary
@@ -292,8 +316,8 @@ def aggregate_results(results: dict, pair: tuple[str, str] | None) -> dict:
 
 def generate_benchmark(
     benchmark_dir: Path,
-    skill_name: str = "",
-    skill_path: str = "",
+    artifact_name: str = "",
+    artifact_path: str = "",
     primary_config: str | None = None,
     baseline_config: str | None = None,
 ) -> dict:
@@ -301,17 +325,22 @@ def generate_benchmark(
     Generate complete benchmark.json from run results.
     """
     results = load_run_results(benchmark_dir)
-    pair = resolve_config_pair(list(results.keys()), primary_config, baseline_config)
+    base_names = sorted({split_config(c)[0] for c in results})
+    pair = resolve_config_pair(base_names, primary_config, baseline_config)
     run_summary = aggregate_results(results, pair)
+    models = sorted({split_config(c)[1] for c in results})
 
     # Build runs array for benchmark.json
     runs = []
     for config in results:
+        base, model = split_config(config)
         for result in results[config]:
             runs.append({
                 "eval_id": result["eval_id"],
                 "eval_name": result.get("eval_name"),
                 "configuration": config,
+                "configuration_base": base,
+                "model": result.get("model", model),
                 "run_number": result["run_number"],
                 "result": {
                     "pass_rate": result["pass_rate"],
@@ -336,9 +365,11 @@ def generate_benchmark(
 
     benchmark = {
         "metadata": {
-            "skill_name": skill_name or "<skill-name>",
-            "skill_path": skill_path or "<path/to/skill>",
-            "executor_model": "<model-name>",
+            "artifact_name": artifact_name or "<artifact-name>",
+            "artifact_path": artifact_path or "<path/to/artifact>",
+            # The review viewer labels its Benchmark tab from skill_name.
+            "skill_name": artifact_name or "<artifact-name>",
+            "models": models,
             "analyzer_model": "<model-name>",
             "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "evals_run": eval_ids,
@@ -359,44 +390,45 @@ def generate_markdown(benchmark: dict) -> str:
     metadata = benchmark["metadata"]
     run_summary = benchmark["run_summary"]
 
-    # Config order in run_summary already puts primary first when known
-    configs = [k for k in run_summary if k != "delta"]
-    config_a = configs[0] if len(configs) >= 1 else "config_a"
-    config_b = configs[1] if len(configs) >= 2 else "config_b"
-    label_a = config_a.replace("_", " ").title()
-    label_b = config_b.replace("_", " ").title()
-
+    models = metadata.get("models") or [DEFAULT_MODEL]
     lines = [
-        f"# Skill Benchmark: {metadata['skill_name']}",
+        f"# Artifact Benchmark: {metadata['artifact_name']}",
         "",
-        f"**Model**: {metadata['executor_model']}",
+        f"**Models**: {', '.join(models)}",
         f"**Date**: {metadata['timestamp']}",
         f"**Evals**: {', '.join(map(str, metadata['evals_run']))} ({metadata['runs_per_configuration']} runs each per configuration)",
-        "",
-        "## Summary",
-        "",
-        f"| Metric | {label_a} | {label_b} | Delta |",
-        "|--------|------------|---------------|-------|",
     ]
 
-    a_summary = run_summary.get(config_a, {})
-    b_summary = run_summary.get(config_b, {})
-    delta = run_summary.get("delta", {})
+    for model in models:
+        configs = [
+            key for key in run_summary
+            if not key.startswith("delta") and split_config(key)[1] == model
+        ]
+        if len(models) > 1:
+            lines.extend(["", f"## {model}"])
+        config_a = configs[0] if len(configs) >= 1 else "config_a"
+        config_b = configs[1] if len(configs) >= 2 else "config_b"
+        label_a = split_config(config_a)[0].replace("_", " ").title()
+        label_b = split_config(config_b)[0].replace("_", " ").title()
+        delta = run_summary.get("delta" if len(models) <= 1 else f"delta@{model}", {})
 
-    # Format pass rate
-    a_pr = a_summary.get("pass_rate", {})
-    b_pr = b_summary.get("pass_rate", {})
-    lines.append(f"| Pass Rate | {a_pr.get('mean', 0)*100:.0f}% ± {a_pr.get('stddev', 0)*100:.0f}% | {b_pr.get('mean', 0)*100:.0f}% ± {b_pr.get('stddev', 0)*100:.0f}% | {delta.get('pass_rate', '—')} |")
+        a_summary = run_summary.get(config_a, {})
+        b_summary = run_summary.get(config_b, {})
+        a_pr = a_summary.get("pass_rate", {})
+        b_pr = b_summary.get("pass_rate", {})
+        a_time = a_summary.get("time_seconds", {})
+        b_time = b_summary.get("time_seconds", {})
+        a_tokens = a_summary.get("tokens", {})
+        b_tokens = b_summary.get("tokens", {})
 
-    # Format time
-    a_time = a_summary.get("time_seconds", {})
-    b_time = b_summary.get("time_seconds", {})
-    lines.append(f"| Time | {a_time.get('mean', 0):.1f}s ± {a_time.get('stddev', 0):.1f}s | {b_time.get('mean', 0):.1f}s ± {b_time.get('stddev', 0):.1f}s | {delta.get('time_seconds', '—')}s |")
-
-    # Format tokens
-    a_tokens = a_summary.get("tokens", {})
-    b_tokens = b_summary.get("tokens", {})
-    lines.append(f"| Tokens | {a_tokens.get('mean', 0):.0f} ± {a_tokens.get('stddev', 0):.0f} | {b_tokens.get('mean', 0):.0f} ± {b_tokens.get('stddev', 0):.0f} | {delta.get('tokens', '—')} |")
+        lines.extend([
+            "",
+            f"| Metric | {label_a} | {label_b} | Delta |",
+            "|--------|------------|---------------|-------|",
+            f"| Pass Rate | {a_pr.get('mean', 0)*100:.0f}% ± {a_pr.get('stddev', 0)*100:.0f}% | {b_pr.get('mean', 0)*100:.0f}% ± {b_pr.get('stddev', 0)*100:.0f}% | {delta.get('pass_rate', '—')} |",
+            f"| Time | {a_time.get('mean', 0):.1f}s ± {a_time.get('stddev', 0):.1f}s | {b_time.get('mean', 0):.1f}s ± {b_time.get('stddev', 0):.1f}s | {delta.get('time_seconds', '—')}s |",
+            f"| Tokens | {a_tokens.get('mean', 0):.0f} ± {a_tokens.get('stddev', 0):.0f} | {b_tokens.get('mean', 0):.0f} ± {b_tokens.get('stddev', 0):.0f} | {delta.get('tokens', '—')} |",
+        ])
 
     # Notes section
     if benchmark.get("notes"):
@@ -421,24 +453,24 @@ def main():
         help="Path to the benchmark directory"
     )
     parser.add_argument(
-        "--skill-name",
+        "--artifact-name",
         default="",
-        help="Name of the skill being benchmarked"
+        help="Name of the artifact being benchmarked"
     )
     parser.add_argument(
-        "--skill-path",
+        "--artifact-path",
         default="",
-        help="Path to the skill being benchmarked"
+        help="Path to the artifact being benchmarked"
     )
     parser.add_argument(
         "--primary-config",
         default=None,
-        help="Configuration treated as primary in the delta (auto-detected for with_skill/new_skill)"
+        help="Base configuration treated as primary in the delta (auto-detected for the with_/new_ families)"
     )
     parser.add_argument(
         "--baseline-config",
         default=None,
-        help="Configuration treated as baseline in the delta (auto-detected for without_skill/old_skill)"
+        help="Base configuration treated as baseline in the delta (auto-detected for the without_/old_ families)"
     )
     parser.add_argument(
         "--output", "-o",
@@ -456,8 +488,8 @@ def main():
     try:
         benchmark = generate_benchmark(
             args.benchmark_dir,
-            args.skill_name,
-            args.skill_path,
+            args.artifact_name,
+            args.artifact_path,
             args.primary_config,
             args.baseline_config,
         )
@@ -483,15 +515,16 @@ def main():
 
     # Print summary
     run_summary = benchmark["run_summary"]
-    configs = [k for k in run_summary if k != "delta"]
-    delta = run_summary.get("delta", {})
+    configs = [k for k in run_summary if not k.startswith("delta")]
 
     print("\nSummary:")
     for config in configs:
         pr = run_summary[config]["pass_rate"]["mean"]
-        label = config.replace("_", " ").title()
+        label = config.replace("_", " ")
         print(f"  {label}: {pr*100:.1f}% pass rate")
-    print(f"  Delta:         {delta.get('pass_rate', '—')}")
+    for key in run_summary:
+        if key.startswith("delta"):
+            print(f"  {key}: {run_summary[key].get('pass_rate', '—')}")
 
 
 if __name__ == "__main__":

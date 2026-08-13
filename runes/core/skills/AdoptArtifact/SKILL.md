@@ -15,7 +15,7 @@ The ceremony exists for accountability: the artifacts a user stacks on top of mo
 ## Prerequisites
 
 - Confirm the source, destination module, artifact kind, and name with the user when the invocation does not provide them.
-- Check that the artifact is not already adopted and that it earns its place: it must add something the first-party artifacts and the model's defaults do not. When its value is uncertain, measure it with BuildSkill's evaluation loop, the artifact against a baseline, before adopting.
+- Check that the artifact is not already adopted and that it earns its place: it must add something the first-party artifacts and the model's defaults do not. When its value is uncertain, measure it with BenchArtifact, the artifact against a baseline, before adopting.
 - In a Rune deck, read [RuneAdopt.md](RuneAdopt.md) for the commands that drive the state machine.
 
 ## Constraints

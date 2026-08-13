@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BuildSkill/SkillInstallation.md
     digest:
-      sha256: 7eb6a80c0f59da0e4eabb1f35bf977b1e041acc104f4a2984a31803ceea93ab4
+      sha256: 784237cbfb5b87e168357f0af75663f2bc1c465897ca5b71c463eb1d86e9d8d4
   predicate:
     buildDefinition:
       buildType: adopt/v1
