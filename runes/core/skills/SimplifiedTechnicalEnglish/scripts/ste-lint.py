@@ -1,4 +1,8 @@
-import re, sys, json, glob, os
+import glob
+import json
+import os
+import re
+import sys
 
 # Score v2: adds complex_tense (perfect tenses, modal stacks), exempts
 # adjectival/stative participles from the passive count, moves "provide" to the
@@ -32,10 +36,10 @@ PP_IRREG = r"(?:done|made|sent|read|built|kept|held|set|put|run|written|shown|gi
 STATIVE = r"(?:closed|opened?|damaged|completed?|installed|connected|required|expected|configured|enabled|disabled|deprecated|supported)"
 FUNC_WORDS = set("""a an the this that these those of for to in on at by with from as and or but if
 when then than not no is are was were be been being am do does did has have had will would can could
-may might must should shall it its their your our his her they we you i""".split())
+may might must should shall it its their your our his her they we you i""".split())  # noqa: SIM905
 
 def strip_code(t):
-    t = re.sub(r"```.*?```", " ", t, flags=re.S)
+    t = re.sub(r"```.*?```", " ", t, flags=re.DOTALL)
     t = re.sub(r"`[^`]*`", " ", t)
     return t
 
@@ -81,7 +85,6 @@ def noun_trains(text):
     return hits
 
 def lint(text, strict=False):
-    raw = text
     text = strip_code(text)
     sents = sentences(text)
     words = sum(wc(s) for s in sents) or 1
@@ -92,15 +95,15 @@ def lint(text, strict=False):
     # 's counts as a contraction only on known heads (it's, there's, ...);
     # a possessive noun ("the standard's list") is correct STE and stays clean.
     v["contraction"] = len(re.findall(r"\b\w+['’](?:t|re|ve|ll|d|m)\b", text)) \
-        + len(re.findall(r"\b(?:it|that|this|there|here|what|who|she|he|let)['’]s\b", text, re.I))
-    passive_parts = re.findall(rf"\b{BE}\s+(\w+ed|{PP_IRREG})\b", text, re.I)
-    v["passive_voice"] = sum(1 for p in passive_parts if not re.fullmatch(STATIVE, p, re.I)) \
-        + len(re.findall(rf"\b{BE}\s+{STATIVE}\s+by\b", text, re.I))
+        + len(re.findall(r"\b(?:it|that|this|there|here|what|who|she|he|let)['’]s\b", text, re.IGNORECASE))
+    passive_parts = re.findall(rf"\b{BE}\s+(\w+ed|{PP_IRREG})\b", text, re.IGNORECASE)
+    v["passive_voice"] = sum(1 for p in passive_parts if not re.fullmatch(STATIVE, p, re.IGNORECASE)) \
+        + len(re.findall(rf"\b{BE}\s+{STATIVE}\s+by\b", text, re.IGNORECASE))
     v["complex_tense"] = len(re.findall(
         rf"\b(?:(?:may|might|could|would|should|must|will|shall|can)\s+)?(?:have|has|had)\s+(?:been\s+)?(?:\w+ed|{PP_IRREG})\b",
-        text, re.I))
-    v["ing_main_verb"] = len(re.findall(rf"\b{BE}\s+\w+ing\b", text, re.I))
-    v["nominalization"] = len(re.findall(r"\b(?:perform(?:s|ed)?|conduct(?:s|ed)?|carry out|carries out|make use of|makes use of)\b", text, re.I)) + len(re.findall(r"\b\w{4,}(?:tion|ment|ance|ence)\s+of\b", text, re.I))
+        text, re.IGNORECASE))
+    v["ing_main_verb"] = len(re.findall(rf"\b{BE}\s+\w+ing\b", text, re.IGNORECASE))
+    v["nominalization"] = len(re.findall(r"\b(?:perform(?:s|ed)?|conduct(?:s|ed)?|carry out|carries out|make use of|makes use of)\b", text, re.IGNORECASE)) + len(re.findall(r"\b\w{4,}(?:tion|ment|ance|ence)\s+of\b", text, re.IGNORECASE))
     v["phrasal_verb"], _ = count_ci(text, PHRASAL)
     v["banned_word"], bh = count_ci(text, BANNED)
     v["marketing_adjective"], mh = count_ci(text, MARKETING)
@@ -112,7 +115,7 @@ def lint(text, strict=False):
     em = text.count("—") + text.count("–")
     trains = noun_trains(text)
     if strict:
-        n_strict, sh = count_ci(text, STRICT_BANNED)
+        n_strict, _ = count_ci(text, STRICT_BANNED)
         # "may" is matched case-sensitively so the month "May" stays clean
         n_strict += len(re.findall(r"(?<![A-Za-z])may(?![a-z])", text))
         v["strict_banned_word"] = n_strict
