@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artifact Benchmark</title>
+<style>
+    :root {
+        --bg: #0a0f1a;
+        --surface: #121a2a;
+        --surface-2: #1a2438;
+        --border: #2a3a56;
+        --text: #e8ecf4;
+        --dim: #a1aec5;
+        --accent: #5b8def;
+        --ok: #44b77a;
+        --warn: #e0a94a;
+        --bad: #e15555;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        padding: 2rem 1.25rem 4rem;
+    }
+    main { max-width: 64rem; margin: 0 auto; }
+    h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+    h2 { font-size: 1.1rem; margin: 2rem 0 0.75rem; }
+    .meta { color: var(--dim); font-size: 0.85rem; margin-bottom: 1.5rem; }
+    .meta code {
+        font-family: ui-monospace, "SF Mono", Menlo, monospace;
+        font-size: 0.8rem;
+    }
+    .eyebrow {
+        font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.08em; color: var(--dim); margin-bottom: 0.35rem;
+    }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 6px; }
+    table { border-collapse: collapse; width: 100%; background: var(--surface); }
+    th, td {
+        padding: 0.5rem 0.9rem; text-align: left; white-space: nowrap;
+        border-top: 1px solid var(--border); font-size: 0.85rem;
+    }
+    thead th {
+        border-top: none; background: var(--surface-2); color: var(--dim);
+        font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    td.num, th.num { text-align: right; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+    .model-cell { color: var(--accent); font-weight: 600; }
+    .delta-pos { color: var(--ok); font-weight: 600; }
+    .delta-neg { color: var(--bad); font-weight: 600; }
+    .delta-zero { color: var(--dim); }
+    .badge {
+        display: inline-block; padding: 0.05rem 0.5rem; border-radius: 999px;
+        font-size: 0.72rem; font-weight: 600; border: 1px solid var(--border);
+    }
+    .badge.pass { color: var(--ok); border-color: var(--ok); }
+    .badge.fail { color: var(--bad); border-color: var(--bad); }
+    details {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 6px; margin-bottom: 0.6rem;
+    }
+    details summary {
+        cursor: pointer; padding: 0.6rem 0.9rem; font-size: 0.9rem;
+        display: flex; gap: 0.75rem; align-items: baseline; flex-wrap: wrap;
+    }
+    details summary .dim { color: var(--dim); font-size: 0.8rem; }
+    .expectations { padding: 0 0.9rem 0.75rem; }
+    .expectation {
+        display: flex; gap: 0.6rem; align-items: baseline;
+        padding: 0.3rem 0; border-top: 1px solid var(--border); font-size: 0.85rem;
+    }
+    .expectation .evidence { color: var(--dim); font-size: 0.78rem; }
+    footer { color: var(--dim); font-size: 0.78rem; margin-top: 3rem; }
+</style>
+</head>
+<body>
+<main>
+    <div class="eyebrow">Artifact benchmark</div>
+    <h1 id="artifact-name"></h1>
+    <p class="meta" id="meta-line"></p>
+
+    <h2>Summary by model</h2>
+    <div class="table-wrap">
+        <table id="summary-table">
+            <thead>
+                <tr>
+                    <th>Model</th><th>Configuration</th>
+                    <th class="num">Pass rate</th><th class="num">Δ pass</th>
+                    <th class="num">Time</th><th class="num">Tokens</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <h2>Cases</h2>
+    <div id="cases"></div>
+
+    <footer>Self-contained report; data inlined at build time by build_report.py.</footer>
+</main>
+<script>
+    "use strict";
+    var DATA = JSON.parse(new TextDecoder().decode(
+        Uint8Array.from(atob("__BENCHMARK_DATA_BASE64__"), function (c) { return c.charCodeAt(0); })
+    ));
+
+    function el(tag, className, text) {
+        var node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined && text !== null) node.textContent = text;
+        return node;
+    }
+
+    function splitConfig(name) {
+        var at = name.indexOf("@");
+        if (at === -1) return { base: name, model: "default" };
+        return { base: name.slice(0, at), model: name.slice(at + 1) || "default" };
+    }
+
+    function pct(stats) {
+        if (!stats) return "—";
+        return (stats.mean * 100).toFixed(0) + "% ± " + (stats.stddev * 100).toFixed(0) + "%";
+    }
+
+    function deltaClass(value) {
+        var number = parseFloat(value);
+        if (!isFinite(number) || number === 0) return "delta-zero";
+        return number > 0 ? "delta-pos" : "delta-neg";
+    }
+
+    var metadata = DATA.metadata || {};
+    document.title = "Benchmark: " + (metadata.artifact_name || "artifact");
+    document.getElementById("artifact-name").textContent = metadata.artifact_name || "artifact";
+    document.getElementById("meta-line").textContent =
+        (metadata.timestamp || "") + " — evals " +
+        ((metadata.evals_run || []).join(", ") || "?") + " — " +
+        (metadata.runs_per_configuration || "?") + " runs per configuration";
+
+    var summary = DATA.run_summary || {};
+    var configKeys = Object.keys(summary).filter(function (key) { return key.indexOf("delta") !== 0; });
+    var models = [];
+    configKeys.forEach(function (key) {
+        var model = splitConfig(key).model;
+        if (models.indexOf(model) === -1) models.push(model);
+    });
+    var singleModel = models.length <= 1;
+
+    var tbody = document.querySelector("#summary-table tbody");
+    models.forEach(function (model) {
+        var delta = summary[singleModel ? "delta" : "delta@" + model] || {};
+        var rows = configKeys.filter(function (key) { return splitConfig(key).model === model; });
+        rows.forEach(function (key, index) {
+            var stats = summary[key];
+            var row = el("tr");
+            row.appendChild(el("td", index === 0 ? "model-cell" : null, index === 0 ? model : ""));
+            row.appendChild(el("td", null, splitConfig(key).base.replace(/_/g, " ")));
+            row.appendChild(el("td", "num", pct(stats.pass_rate)));
+            var deltaCell = el("td", "num");
+            if (index === 0 && delta.pass_rate !== undefined) {
+                deltaCell.appendChild(el("span", deltaClass(delta.pass_rate), delta.pass_rate));
+            }
+            row.appendChild(deltaCell);
+            row.appendChild(el("td", "num",
+                stats.time_seconds ? stats.time_seconds.mean.toFixed(1) + "s" : "—"));
+            row.appendChild(el("td", "num",
+                stats.tokens ? Math.round(stats.tokens.mean).toLocaleString() : "—"));
+            tbody.appendChild(row);
+        });
+    });
+
+    var casesRoot = document.getElementById("cases");
+    var byEval = {};
+    (DATA.runs || []).forEach(function (run) {
+        var key = run.eval_id + "|" + (run.eval_name || "");
+        (byEval[key] = byEval[key] || []).push(run);
+    });
+    Object.keys(byEval).sort().forEach(function (key) {
+        var runs = byEval[key];
+        var parts = key.split("|");
+        var detail = el("details");
+        var summaryLine = el("summary");
+        summaryLine.appendChild(el("span", null, "eval " + parts[0] + (parts[1] ? " — " + parts[1] : "")));
+        summaryLine.appendChild(el("span", "dim", runs.length + " runs"));
+        detail.appendChild(summaryLine);
+        runs.sort(function (a, b) {
+            return (a.configuration + a.run_number).localeCompare(b.configuration + b.run_number);
+        }).forEach(function (run) {
+            var block = el("div", "expectations");
+            var head = el("div", "expectation");
+            var passRate = run.result ? (run.result.pass_rate * 100).toFixed(0) + "%" : "—";
+            head.appendChild(el("span", "badge " + (run.result && run.result.pass_rate >= 1 ? "pass" : "fail"), passRate));
+            head.appendChild(el("strong", null, run.configuration + " · run " + run.run_number));
+            block.appendChild(head);
+            (run.expectations || []).forEach(function (expectation) {
+                var line = el("div", "expectation");
+                line.appendChild(el("span", "badge " + (expectation.passed ? "pass" : "fail"),
+                    expectation.passed ? "pass" : "fail"));
+                var body = el("span");
+                body.appendChild(el("span", null, expectation.text || ""));
+                if (expectation.evidence) {
+                    body.appendChild(el("div", "evidence", expectation.evidence));
+                }
+                line.appendChild(body);
+                block.appendChild(line);
+            });
+            detail.appendChild(block);
+        });
+        casesRoot.appendChild(detail);
+    });
+</script>
+</body>
+</html>
