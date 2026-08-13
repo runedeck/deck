@@ -1,13 +1,13 @@
 # One universal config for every scaffolded repository: each hook gates on
 # the file types present in the change, so hooks for absent languages never
 # fire and language templates carry no lint config of their own.
-# Sealed adoption evidence stays byte-stable under every hook.
+# Durable provenance sidecars stay byte-stable under every hook.
 repos:
     - repo: builtin
       hooks:
-          # Everything under .provenance/ is sealed, digest-bound evidence:
-          # an auto-fixing hook that rewrites it destroys what it touches.
-          # All records remain covered by validators and secret scanning.
+          # Source-level sidecars under .provenance/ are digest-bound evidence:
+          # an auto-fixing hook that rewrites one destroys what it touches.
+          # Temporary block-review ledgers must never be committed here.
           - id: trailing-whitespace
             exclude: '(^|/)\.provenance/'
           - id: check-yaml
@@ -28,6 +28,12 @@ repos:
           - id: check-reject-files
             name: reject files
             entry: sh -c 'rejects=$(git ls-files --cached --others --exclude-standard -- "*.rej"); [ -z "$rejects" ] || { printf "%s\n" "$rejects"; exit 1; }'
+            language: system
+            pass_filenames: false
+
+          - id: check-review-ledgers
+            name: temporary review ledgers are not tracked
+            entry: sh -c 'ledgers=$(git ls-files -- "**/.provenance/review.yaml" "**/.provenance/*.review.yaml" | while IFS= read -r path; do [ ! -e "$path" ] || printf "%s\n" "$path"; done); [ -z "$ledgers" ] || { printf "temporary adoption state must not be committed:\n%s\n" "$ledgers"; exit 1; }'
             language: system
             pass_filenames: false
 

@@ -12,4 +12,9 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- AdoptArtifact keeps block verdicts in temporary CLI sessions and commits only source-level provenance sidecars (DECK-0002).
 - BuildSkill defers its evaluation step to BenchArtifact; the loop, agent templates, review viewer, and evaluation schemas moved there.
+
+### Removed
+
+- Legacy per-block review ledgers from BuildSkill and ReviewMarkers.
