@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: rules/ReviewMarkers.md
+    digest:
+      sha256: eb415c1af05847242bdc637072e0152b73dd0f96b8a236c72f2195868025fef9
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: file:///Users/N4M3Z/.claude/rules/ReviewMarkers.md
+        upstream_commit: ''
+        transforms_applied:
+        - copy
+      resolvedDependencies:
+      - name: upstream
+        uri: file:///Users/N4M3Z/.claude/rules/ReviewMarkers.md
+        digest:
+          sha256: c14b669388bf7671ed1f213a5450094c36a342b5f77b838b40f4e25b3230037c
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-08-13T10:10:05.402234+00:00
+        review: reviewed
