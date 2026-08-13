@@ -8,7 +8,7 @@ review:
   predicate:
     status: reviewed
     upstream:
-      uri: file:///Users/N4M3Z/.claude/rules/ReviewMarkers.md
+      uri: urn:runedeck:import:claude/rules/ReviewMarkers.md
       digest:
         sha256: c14b669388bf7671ed1f213a5450094c36a342b5f77b838b40f4e25b3230037c
     reviewer: Martin Zeman <N4M3Z@users.noreply.github.com>
