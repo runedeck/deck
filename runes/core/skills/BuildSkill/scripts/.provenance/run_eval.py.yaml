@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BuildSkill/scripts/run_eval.py
     digest:
-      sha256: a74e6c676aadf128a1e4504a6fbc10a37caed466bce3574940c0876b96148a32
+      sha256: ba71bd0b67ae79125138699828bfec1fe9fba5f218b19e738d0ff091305bc330
   predicate:
     buildDefinition:
       buildType: adopt/v1

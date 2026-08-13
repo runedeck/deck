@@ -44,7 +44,7 @@ Read and follow [ValidateWorkflow.md](ValidateWorkflow.md).
 
 ### Evaluate a skill
 
-Read and follow [EvalLoop.md](EvalLoop.md).
+Benchmark with the BenchArtifact skill: with-skill and baseline runs, grading, per-model aggregation, and the comparison report. Its `with_skill` and `without_skill` configurations are the skill-authoring case of that loop.
 
 ### Improve skill discovery
 
@@ -64,10 +64,8 @@ Companions, each loaded only when its condition applies:
 - [ClaudeSkill.md](ClaudeSkill.md): Claude Code provider features.
 - [SkillInstallation.md](SkillInstallation.md): per-skill installation instructions.
 - [RuneDeck.md](RuneDeck.md): where skills live and how they validate and deploy in a Rune deck.
-- [references/schemas.md](references/schemas.md): evaluation data contracts.
-- [templates/agents/](templates/agents/): grader, comparator, and analyzer prompts for evaluation subagents.
 
-The evaluation harness beside this file: scripts run as `python3 -m scripts.<name>` from this directory, `templates/agents/` holds the prompt templates the evaluation loop hands to its grader, comparator, and analyzer subagents, `eval-viewer/generate_review.py` serves finished eval outputs on loopback for human review, and harness invocation plus packaging sit behind `scripts/harness/` adapters.
+The scripts beside this file run as `python3 -m scripts.<name>` from this directory: the description-optimization pipeline (`run_eval`, `run_loop`, `improve_description`, `generate_report`) and `package_skill` for claude.ai upload, with harness invocation behind `scripts/harness/` adapters. The evaluation loop, its agent templates, and the review viewer live in the BenchArtifact skill.
 
 External sources:
 

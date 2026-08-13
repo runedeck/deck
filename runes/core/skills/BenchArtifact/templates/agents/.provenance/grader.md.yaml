@@ -2,9 +2,9 @@ provenance:
   _type: https://in-toto.io/Statement/v1
   predicateType: https://slsa.dev/provenance/v1
   subject:
-  - name: skills/BuildSkill/references/schemas.md
+  - name: skills/BenchArtifact/templates/agents/grader.md
     digest:
-      sha256: 14bbb8fca5e8a0df05bdd76c9bc447c394a119cc3d9c168a801107ab8abf9582
+      sha256: 2858fb6ab68a8bee60819d06ab75b02c66eaf8638dfab12eb69a9291286bba23
   predicate:
     buildDefinition:
       buildType: adopt/v1
@@ -18,12 +18,12 @@ provenance:
       - name: upstream
         uri: https://github.com/N4M3Z/forge-core
         digest:
-          sha256: 8e8876180a8989b406a4d3edddf875b04cdfd5805cc8616686d552b11ce4455f
+          sha256: 57134da0c1a4eea33fbd74a1c9c44aa814f07d6bc64de303edb586f941e5d21a
     runDetails:
       builder:
         id: rune-cli
         version:
           rune: 0.5.0
       metadata:
-        startedOn: 2026-07-18T19:16:19.882132+00:00
+        startedOn: 2026-07-18T19:16:19.872644+00:00
         review: reviewed
