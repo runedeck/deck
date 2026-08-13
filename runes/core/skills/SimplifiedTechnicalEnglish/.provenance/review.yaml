@@ -1,0 +1,1668 @@
+review:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://runedeck.github.io/attestation/adoption-review/v1
+  subject:
+  - name: SKILL.md
+    digest:
+      sha256: adec65f2b02769e3e27a8bec6081ed010a979045a1b11491815e0ea02a29e5ca
+  - name: examples/before-after.md
+    digest:
+      sha256: 8b86a33ad88cabc088d1d19c0623e8e50a948e840e5ecdb9e022418c8a3476a9
+  - name: examples/rewrite-samples.md
+    digest:
+      sha256: 366a6e2fac01c61e0ce9213d13dd57608db5ebdf342f25289e2092d98b6c3daf
+  - name: references/recurring-errors.md
+    digest:
+      sha256: d721d9f415e4f4d94624d3c3727e6e82a5311eaaf31db28ba6ade7e5c8dae880
+  - name: references/writing-rules.md
+    digest:
+      sha256: 778a8adc1feec8845ea78078adfa8cd2824f28aba610bef322d729e1be5064ba
+  - name: scripts/ste-lint.py
+    digest:
+      sha256: bedba551157b7cf6378ecf97d29e6606496c49a8df83d7778e5f330e48c9595e
+  predicate:
+    status: reviewed
+    upstream:
+      uri: https://github.com/danyuchn/asd-ste100-skill/tree/d5ce157 + https://github.com/woosal1337/blog/tree/51100c9/videos/ep01-the-cure-for-ai-slop
+      digest:
+        sha256: d47fc124174164caa714165eb32156c9d5e5f289166563b71e5e9816d5ba948c
+    reviewer: Claude Fable 5 (claude-fable-5) <claude@zeman.dev>
+    segmenter: segment/v1
+    lint: lint/v1
+    rune: 0.5.0
+    startedOn: 2026-08-13T12:26:06.831832+00:00
+    completedOn: 2026-08-13T12:35:29.141238+00:00
+    schema: runes/core/skills/.mdschema
+    schemaDigest: c4f8cb5d5b141367be867ff316f3526edb6c54203dd78f86b18fdba97f116004
+    blocks:
+    - id: SKILL.md:1
+      kind: frontmatter
+      digest:
+        sha256: 5a15dc46f45096879a3254728b6cc655b792c93373ce4a769454fbcc02babc13
+      line: 1
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.568687+00:00
+      transport: verdict-cli
+    - id: SKILL.md:2
+      kind: heading
+      digest:
+        sha256: 96c93c90bb85f7095f65d38fae671d5fbed9c7b27467e9d947233f8dd0e7bc7d
+      line: 6
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.576539+00:00
+      transport: verdict-cli
+    - id: SKILL.md:3
+      kind: paragraph
+      digest:
+        sha256: da31bb6512805bfdb71baf1fc5e071db8729df6da6d6861b7eff63f045aa6442
+      line: 8
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.584687+00:00
+      transport: verdict-cli
+    - id: SKILL.md:4
+      kind: paragraph
+      digest:
+        sha256: b26a42f9d1728fe425b212b8638327de9e33d5325a733d1b78f56ce57037f1ef
+      line: 10
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.592912+00:00
+      transport: verdict-cli
+    - id: SKILL.md:5
+      kind: heading
+      digest:
+        sha256: 9263eff1578626a4fcaf102e2eb971391d3bd46d3ea77d00d0aa2383848d63d9
+      line: 12
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.609100+00:00
+      transport: verdict-cli
+    - id: SKILL.md:6
+      kind: list
+      digest:
+        sha256: d6181bb3eb75f6d2eeab68efb2b86fe1f4376dedf3de194954a9f4be2051280a
+      line: 14
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.617288+00:00
+      transport: verdict-cli
+    - id: SKILL.md:7
+      kind: paragraph
+      digest:
+        sha256: 5bfad372dc43e65b0623949ce1202d58b4f74263807da8aa923fe92e94711de8
+      line: 19
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.625518+00:00
+      transport: verdict-cli
+    - id: SKILL.md:8
+      kind: heading
+      digest:
+        sha256: c51e8fb6f44e668f740985e6f90be4f52bac947dd27a0966041c1dacba9a36d0
+      line: 21
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.633932+00:00
+      transport: verdict-cli
+    - id: SKILL.md:9
+      kind: paragraph
+      digest:
+        sha256: bb4410f5194adbb70d1640be80950c3ae2efa241b98f2197a163f43b8993b23b
+      line: 23
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.650452+00:00
+      transport: verdict-cli
+    - id: SKILL.md:10
+      kind: paragraph
+      digest:
+        sha256: 6c4aef5b4c81907056ac03b19fed2bf2961acf1521bc2005c8cf5dba0182c9fd
+      line: 25
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.658344+00:00
+      transport: verdict-cli
+    - id: SKILL.md:11
+      kind: paragraph
+      digest:
+        sha256: 5a7a0c22522aeb29b4398f00bcef1fd4ef7d59d9f30fa4c0b4eae333295ce16e
+      line: 27
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.666420+00:00
+      transport: verdict-cli
+    - id: SKILL.md:12
+      kind: paragraph
+      digest:
+        sha256: f20aa6a85197e7ac76e24f2a53a67265c43210aed6fd09b8ad8b6651b02f19b8
+      line: 29
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.674311+00:00
+      transport: verdict-cli
+    - id: SKILL.md:13
+      kind: heading
+      digest:
+        sha256: 89c6c2f8eb7810f35beb4062b92c254a2bc19adeee9ac6e7b978a5003be94c8a
+      line: 31
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.690927+00:00
+      transport: verdict-cli
+    - id: SKILL.md:14
+      kind: paragraph
+      digest:
+        sha256: f59d382eb19bf5249af998c33df1577431194e44db76f12a2d956b6cf3d59ff1
+      line: 33
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.700184+00:00
+      transport: verdict-cli
+    - id: SKILL.md:15
+      kind: paragraph
+      digest:
+        sha256: f7c48c4ca053fd785952fb78a44b307a40ec5433aade04d78860c864e66af30d
+      line: 35
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.709605+00:00
+      transport: verdict-cli
+    - id: SKILL.md:16
+      kind: paragraph
+      digest:
+        sha256: ff446603f8d44b581ccb5b5f5e851bdcf7b4ccb76a38cb3989e21c8a448e7b7e
+      line: 37
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.717912+00:00
+      transport: verdict-cli
+    - id: SKILL.md:17
+      kind: heading
+      digest:
+        sha256: 8748c13acfa400bfc629843a52a61f6cae922f67fdbbf5e61e376596cd77c0a3
+      line: 39
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.735319+00:00
+      transport: verdict-cli
+    - id: SKILL.md:18
+      kind: paragraph
+      digest:
+        sha256: 26a1ad0f0609215d769f9ba81bc192340a99d2fb1eb273d982f3f7b1b8690526
+      line: 41
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.743601+00:00
+      transport: verdict-cli
+    - id: SKILL.md:19
+      kind: paragraph
+      digest:
+        sha256: 2dcbe79e26be6bdffdeb3335cd40414bfb870aed36080c82390171ffc3dfb676
+      line: 43
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.751669+00:00
+      transport: verdict-cli
+    - id: SKILL.md:20
+      kind: heading
+      digest:
+        sha256: 3397ee237e50f0b3c021d89f2936c601c2d047f6720c040b3e61643866737d36
+      line: 45
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.759619+00:00
+      transport: verdict-cli
+    - id: SKILL.md:21
+      kind: table
+      digest:
+        sha256: 0ee574eef08cfd5c05b276331042d605f3c70139e51e7ce981d60ab7296563c6
+      line: 47
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.775768+00:00
+      transport: verdict-cli
+    - id: SKILL.md:22
+      kind: heading
+      digest:
+        sha256: 4a8f154804508643edd21837e53132727271b604b4214689e0d3659229dd5b6d
+      line: 60
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.783551+00:00
+      transport: verdict-cli
+    - id: SKILL.md:23
+      kind: table
+      digest:
+        sha256: 23e592efe2211ba63db7e5fe8eb2fc5ddbfd409497ffd53d9475422c3e37aea9
+      line: 62
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.791561+00:00
+      transport: verdict-cli
+    - id: SKILL.md:24
+      kind: heading
+      digest:
+        sha256: 972f811dc1c1a5ee20b2eefd0c5a7f9728d8caa71300b609e13feebe21ac76c8
+      line: 69
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.799640+00:00
+      transport: verdict-cli
+    - id: SKILL.md:25
+      kind: paragraph
+      digest:
+        sha256: 1aa4a156917c0aa2066bc885d006e0df509b2aa68281ba2c32321f9d77f98cf5
+      line: 71
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.816197+00:00
+      transport: verdict-cli
+    - id: SKILL.md:26
+      kind: paragraph
+      digest:
+        sha256: c9cc93ba2851a8323bcaaa53c732d54b0a9e3ba7f68ac4799a24102d20cef5ba
+      line: 73
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.825592+00:00
+      transport: verdict-cli
+    - id: SKILL.md:27
+      kind: heading
+      digest:
+        sha256: 0c41d104e3d1e94958ef9bd5f17b7a7e1ac7d3a49c222182512c83614e4fcd56
+      line: 75
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.835172+00:00
+      transport: verdict-cli
+    - id: SKILL.md:28
+      kind: paragraph
+      digest:
+        sha256: 0a9ef1c3be724393938f635395154867de7c30952d442a0636a4f449f8836299
+      line: 77
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.844194+00:00
+      transport: verdict-cli
+    - id: SKILL.md:29
+      kind: list
+      digest:
+        sha256: a1ab653d89f94ac3a5fe9a39a1b5e0963e941c7656674c9778d1d36b73652d43
+      line: 79
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.861904+00:00
+      transport: verdict-cli
+    - id: SKILL.md:30
+      kind: heading
+      digest:
+        sha256: 0a6ae6aec66002dac2461e16bbe03aff6aa482a29e897a6071c62d254ae3d204
+      line: 86
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.870988+00:00
+      transport: verdict-cli
+    - id: SKILL.md:31
+      kind: list
+      digest:
+        sha256: 4066310d8c77fcb84e162924408019ef19579ad7544119790da23d44361835cf
+      line: 88
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.879464+00:00
+      transport: verdict-cli
+    - id: SKILL.md:32
+      kind: heading
+      digest:
+        sha256: ebee587fc736970252728814c562d65c888b7d219631a597ff9f0b7409c32d7a
+      line: 97
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.887731+00:00
+      transport: verdict-cli
+    - id: SKILL.md:33
+      kind: paragraph
+      digest:
+        sha256: 34d9918c6e2c2b19c10beda218c982f6b2ab0bd0f398224d87d14d8ee4e2d8d9
+      line: 99
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.904816+00:00
+      transport: verdict-cli
+    - id: SKILL.md:34
+      kind: paragraph
+      digest:
+        sha256: d18ee67b07662e42ada825a15e9b4e031c3dfbbbbdedb200dc63bf0a50b14489
+      line: 101
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.913504+00:00
+      transport: verdict-cli
+    - id: SKILL.md:35
+      kind: paragraph
+      digest:
+        sha256: 8204afb60132d1d311f262be3c621686c39679519b08f60fe8804865c47eb8a1
+      line: 103
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.921534+00:00
+      transport: verdict-cli
+    - id: SKILL.md:36
+      kind: code
+      digest:
+        sha256: ba76098f020b7838d5773267bf757f758e1dc6d76446b2c84ba529d53e2c4ba4
+      line: 105
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.929419+00:00
+      transport: verdict-cli
+    - id: SKILL.md:37
+      kind: paragraph
+      digest:
+        sha256: df96cf1137f767cfcc2f2ce71dc2f2dc4d8884f20be4eefdbf4ec6b6fcc2e40f
+      line: 114
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.947096+00:00
+      transport: verdict-cli
+    - id: SKILL.md:38
+      kind: heading
+      digest:
+        sha256: 1c6e9bf04bebf11a47d059763a677f9d7925650e854ce8eb243bb553c0530bdc
+      line: 116
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.957007+00:00
+      transport: verdict-cli
+    - id: SKILL.md:39
+      kind: paragraph
+      digest:
+        sha256: 8c0ede95a76000c01e1050f2f35f2f6238ff42ffb33da01dac65770b7f38a155
+      line: 118
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.966146+00:00
+      transport: verdict-cli
+    - id: SKILL.md:40
+      kind: list
+      digest:
+        sha256: f372b1291062724730d932232874544bc532311c296435589742442790e39a1e
+      line: 119
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.974649+00:00
+      transport: verdict-cli
+    - id: SKILL.md:41
+      kind: paragraph
+      digest:
+        sha256: ede8bcfdd17b97e71484b396d99895d87707762483ee8695b88562e0bec5bf20
+      line: 125
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:40.992340+00:00
+      transport: verdict-cli
+    - id: SKILL.md:42
+      kind: list
+      digest:
+        sha256: 1609f81e8e01be9c7ebf3b6c20235f3a3ffe37f141eba4ae104c523db3eefce4
+      line: 126
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:41.001130+00:00
+      transport: verdict-cli
+    - id: SKILL.md:43
+      kind: heading
+      digest:
+        sha256: 10f87178f164c035ecfa7770143db68c2c8a7dfbbddfd5278bdeb0733b121288
+      line: 134
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:41.009524+00:00
+      transport: verdict-cli
+    - id: SKILL.md:44
+      kind: list
+      digest:
+        sha256: 9f549423971a50864d67492c8c3b866971cbfc3d3a8274116fe7ce34bdf00597
+      line: 136
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: entrypoint rewritten to the deck skill schema, merged with the ste-writing rules, lint workflow, and trigger-style description'
+      decidedOn: 2026-08-13T12:34:41.017728+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:1
+      kind: heading
+      digest:
+        sha256: 95634b6090985422cfa1e7e6f3ea0292995430dcee8fe3b62c4ca86ac7d9660c
+      line: 1
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.034297+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:2
+      kind: heading
+      digest:
+        sha256: fa88657124d389312db6564979968074caedca76e0a2bb6d2db92412f053a0ab
+      line: 3
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.042684+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:3
+      kind: paragraph
+      digest:
+        sha256: a1e4dcbe952c72dd6653deeeee8bb3b7619cf8e8f9318f6f74198c97d10e3d86
+      line: 5
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.051025+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:4
+      kind: table
+      digest:
+        sha256: ac5b4f1c66e075e20e1555796688a90395204def57753090c7791f3972c0365a
+      line: 7
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.060554+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:5
+      kind: heading
+      digest:
+        sha256: 3febf1f253e5b2182019dc2fc9a08d43a3de15942580929a291a018ac9897d77
+      line: 16
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.078608+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:6
+      kind: paragraph
+      digest:
+        sha256: 361617e48fe25853290f9d2d3a996f47dffe785df3caa80935620126112738cd
+      line: 18
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.087005+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:7
+      kind: heading
+      digest:
+        sha256: d0f574751f387ad60a7a7972a6cfcde6063a9cc2a8faaa72eb6bdcd8b2c84034
+      line: 20
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.095667+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:8
+      kind: paragraph
+      digest:
+        sha256: 8ca0ff2a71cc56e14890752056cd630a8ef85a8983e0dd1efdf8e615df4ba661
+      line: 22
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.104718+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:9
+      kind: quote
+      digest:
+        sha256: 10156398c8393340c26d29f99e39424a368c76734904fbd2aa289c39c8b6ad18
+      line: 23
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.121435+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:10
+      kind: paragraph
+      digest:
+        sha256: f4bb0353cf9dafaf86986f610a10a4fa9c901f83542bdb9b67f7805d0b8e71f3
+      line: 25
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.129631+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:11
+      kind: list
+      digest:
+        sha256: c18dc199746419cf745c1268982a5f0b7601a52920586831a930dbf31acab8d7
+      line: 26
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.137644+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:12
+      kind: paragraph
+      digest:
+        sha256: 6194bc766fb10326f402591f4bedda34d410449ddef753f968d7b458e9a51f0b
+      line: 30
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.146083+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:13
+      kind: paragraph
+      digest:
+        sha256: 9e4f81244a1bbec2a610e96093d1c05673fee3b8ac68e570271ef91c25d32860
+      line: 32
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.162654+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:14
+      kind: quote
+      digest:
+        sha256: 9bc7d83c17d2675325c7724180921671ea7e14b0fd30fbdbdbbd56830b6efd3e
+      line: 33
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.172432+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:15
+      kind: paragraph
+      digest:
+        sha256: d314712f160bc8842658ab0df05b0da64f24352802029afeeeed8db60f5186f8
+      line: 35
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.182676+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:16
+      kind: heading
+      digest:
+        sha256: b22133dbbcba0e04206255baa88bc7240c0795fe87a368098b6cba63a78e5128
+      line: 37
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.191685+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:17
+      kind: paragraph
+      digest:
+        sha256: 8ca0ff2a71cc56e14890752056cd630a8ef85a8983e0dd1efdf8e615df4ba661
+      line: 39
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.209561+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:18
+      kind: quote
+      digest:
+        sha256: aea99dbe10c2deb1f237fdb5c056f1ea3402b4c598df210c8227b1e5a2dfa3f3
+      line: 40
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.218238+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:19
+      kind: paragraph
+      digest:
+        sha256: f4bb0353cf9dafaf86986f610a10a4fa9c901f83542bdb9b67f7805d0b8e71f3
+      line: 42
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.226293+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:20
+      kind: list
+      digest:
+        sha256: c2a81fb7a2e3d28471851126080384a54093bdb868c8e8a73e2653180d000bd4
+      line: 43
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.234361+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:21
+      kind: paragraph
+      digest:
+        sha256: 1d4be5e81e0b616339f197adcdda5b80b14cbfbe05772ba61d8903c0cf8d78dd
+      line: 46
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.250973+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:22
+      kind: paragraph
+      digest:
+        sha256: 9e4f81244a1bbec2a610e96093d1c05673fee3b8ac68e570271ef91c25d32860
+      line: 48
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.259034+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:23
+      kind: quote
+      digest:
+        sha256: c210aad251d4eb1f1d84e2b4551a4430584354a33af6b5855ef14d86f804248a
+      line: 49
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.267452+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:24
+      kind: paragraph
+      digest:
+        sha256: 3613257d26dff6602e0c82fd10fc34b455e83dcbc668659fd43fdec830cdd3df
+      line: 51
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.276003+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:25
+      kind: paragraph
+      digest:
+        sha256: 94e54fc7c7eb81cfb1619053dadcf449d2bbc842f40c9589d1ee3a09a72224c0
+      line: 53
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.294162+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:26
+      kind: heading
+      digest:
+        sha256: 0fd98df87fdae48aa7bcfbf6b3f538c369c1244c99f2b920539fc3330867bf11
+      line: 55
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.304433+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:27
+      kind: paragraph
+      digest:
+        sha256: 8ca0ff2a71cc56e14890752056cd630a8ef85a8983e0dd1efdf8e615df4ba661
+      line: 57
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.313638+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:28
+      kind: quote
+      digest:
+        sha256: b79db448fc59f797b5630035108faa1d8919f5a8c80ba3f426a671d537b77855
+      line: 58
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.322445+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:29
+      kind: paragraph
+      digest:
+        sha256: f4bb0353cf9dafaf86986f610a10a4fa9c901f83542bdb9b67f7805d0b8e71f3
+      line: 60
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.340279+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:30
+      kind: list
+      digest:
+        sha256: 2e6717f75f30114765bb3e98a2c6efc5d4d47c09217ac40dbf2a4dab164eaf8e
+      line: 61
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.348708+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:31
+      kind: paragraph
+      digest:
+        sha256: 9e4f81244a1bbec2a610e96093d1c05673fee3b8ac68e570271ef91c25d32860
+      line: 65
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.357385+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:32
+      kind: quote
+      digest:
+        sha256: 8b9a3fbc015fac67b0cd83bcd42ace3d20a190283555419cccce755e94343fc6
+      line: 66
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.365969+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:33
+      kind: paragraph
+      digest:
+        sha256: e04b73a1993088fcd19183f0ac78bf4dbfeaf994e8df36b80d15e1fa6eaf8212
+      line: 68
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.383457+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:34
+      kind: list
+      digest:
+        sha256: 8979c918a40bb8a833485c55d99c0b05b8b0212f1ef17a99960a6dd1e2bd0f39
+      line: 69
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.392075+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:35
+      kind: heading
+      digest:
+        sha256: bb67eabc450d70754998fd13bd6da507f42e5aa634a495619015797222cc581e
+      line: 72
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.402408+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:36
+      kind: paragraph
+      digest:
+        sha256: 8ca0ff2a71cc56e14890752056cd630a8ef85a8983e0dd1efdf8e615df4ba661
+      line: 74
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.412123+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:37
+      kind: quote
+      digest:
+        sha256: af94c78ab99949a05edde428872c22e3433b46787b290f120438df1aa935bfb6
+      line: 75
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.430043+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:38
+      kind: paragraph
+      digest:
+        sha256: f4bb0353cf9dafaf86986f610a10a4fa9c901f83542bdb9b67f7805d0b8e71f3
+      line: 77
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.438349+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:39
+      kind: list
+      digest:
+        sha256: 9c4dac889b4f3679eb145459b0f5127e9f784cccd58a7c2ec515ac03a73c945b
+      line: 78
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.446517+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:40
+      kind: paragraph
+      digest:
+        sha256: 9e4f81244a1bbec2a610e96093d1c05673fee3b8ac68e570271ef91c25d32860
+      line: 83
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.454761+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:41
+      kind: quote
+      digest:
+        sha256: 39162c17e92b7030c38a151c265a94086f07bcfada241f8904484d167ba29da9
+      line: 84
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.471978+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:42
+      kind: paragraph
+      digest:
+        sha256: 99f3f54ac8d043839156625f3d26a86dd0e71da2a07204be02ca1162b34b1df5
+      line: 86
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.480473+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:43
+      kind: heading
+      digest:
+        sha256: 16cd2c713303ea124a72c981d1776c9965e76bfce134f687abf481fc0151c210
+      line: 88
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.489524+00:00
+      transport: verdict-cli
+    - id: examples/before-after.md:44
+      kind: paragraph
+      digest:
+        sha256: 4f5d890b8b4e3c501be1ccf048d776b431cba9a0f5b92f5b29762ed2e55dde52
+      line: 90
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.498305+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:1
+      kind: frontmatter
+      digest:
+        sha256: a2d4799f02446fe2aad54a54cd1b2e4450e03d8cdb56bb6a0bc558d3e9cab4d3
+      line: 1
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: blog frontmatter stripped and dangling episode links replaced with in-skill references'
+      decidedOn: 2026-08-13T12:34:41.519278+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:2
+      kind: heading
+      digest:
+        sha256: 7de449bb51f7de4ace6fe087d04e23887b5bcc5058afb343e7925102b55b6433
+      line: 7
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: blog frontmatter stripped and dangling episode links replaced with in-skill references'
+      decidedOn: 2026-08-13T12:34:41.528883+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:3
+      kind: paragraph
+      digest:
+        sha256: 89875df1ee9e0cf317bf77b4b053ffcbb95d024a91c0785eff825935a3650a75
+      line: 9
+      verdict: adapt
+      note: 'autonomous adoption per user instruction: blog frontmatter stripped and dangling episode links replaced with in-skill references'
+      decidedOn: 2026-08-13T12:34:41.538482+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:4
+      kind: heading
+      digest:
+        sha256: da26476185fdf87b524b24de84c6a94ca2e2a22c129366f354befa521cdde6a7
+      line: 11
+      verdict: keep
+      decidedOn: 2026-08-13T12:35:19.310383+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:5
+      kind: paragraph
+      digest:
+        sha256: 28303e8463ee1795088714f49f4e643edf17355479466e7bf725c905c23ab0b2
+      line: 13
+      verdict: keep
+      decidedOn: 2026-08-13T12:35:19.319344+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:6
+      kind: quote
+      digest:
+        sha256: 33b52a5ec86c39fe8cf1f8ca2903ea85c56d656f182c7633331867cb861b82e5
+      line: 14
+      verdict: keep
+      decidedOn: 2026-08-13T12:35:19.327970+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:7
+      kind: paragraph
+      digest:
+        sha256: aa9d403280c1095ac6719dc89cdcc3abdfe2d177a6691197e439194bf46a6484
+      line: 16
+      verdict: keep
+      decidedOn: 2026-08-13T12:35:19.337073+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:8
+      kind: quote
+      digest:
+        sha256: 6b618c620b633faaca3166401b74b9dc27c87dde37b08a58e2e3379c8bedbe43
+      line: 17
+      verdict: keep
+      decidedOn: 2026-08-13T12:35:19.345679+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:9
+      kind: paragraph
+      digest:
+        sha256: 7c60e00a3a46d16200b52fb998e4f430bad20da9af87a102038b4195ca60c26d
+      line: 19
+      verdict: keep
+      decidedOn: 2026-08-13T12:35:19.354802+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:10
+      kind: heading
+      digest:
+        sha256: 707cde22064ad2477e0f099e1fe5f50bc0459c91efeef4ea63eb64dde238dd5a
+      line: 21
+      verdict: keep
+      decidedOn: 2026-08-13T12:35:19.258556+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:11
+      kind: paragraph
+      digest:
+        sha256: 2cfcac020fb68a8c5647e5c6c1869a4c9143b05a99eb3c201cdc018c855e4a4e
+      line: 23
+      verdict: keep
+      decidedOn: 2026-08-13T12:35:19.267288+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:12
+      kind: paragraph
+      digest:
+        sha256: 179cb7017d58d4c9d4bffb7428fa65a3c5984613774dfea375464e283df1b842
+      line: 25
+      verdict: keep
+      decidedOn: 2026-08-13T12:35:19.276061+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:13
+      kind: quote
+      digest:
+        sha256: 71533a940c7fcc3faf68d437abdf62e4fe8155c14cf23c11f4ca875e23c68f4e
+      line: 26
+      verdict: keep
+      decidedOn: 2026-08-13T12:35:19.284843+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:14
+      kind: heading
+      digest:
+        sha256: 0e08109a805c4ce2625808ee2d5ca5a89fed9b83b3a3a7f893fe61b1ffe23fdb
+      line: 28
+      verdict: keep
+      decidedOn: 2026-08-13T12:35:19.293235+00:00
+      transport: verdict-cli
+    - id: examples/rewrite-samples.md:15
+      kind: paragraph
+      digest:
+        sha256: 9a902422c32313df33400e4dc6258bf6519cd21b67bc8c71c636c9526af3273e
+      line: 30
+      verdict: keep
+      decidedOn: 2026-08-13T12:35:19.301425+00:00
+      transport: verdict-cli
+    - id: references/recurring-errors.md:1
+      kind: heading
+      digest:
+        sha256: 8fbebfe254a14af0b2f428f3eb12ed63bae9e39780e4b9895769d6c48d7041ca
+      line: 1
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.694843+00:00
+      transport: verdict-cli
+    - id: references/recurring-errors.md:2
+      kind: paragraph
+      digest:
+        sha256: ff4447ff23f2a3a047cc1bdd3141c890e1b117e988c314441874d56fa709164b
+      line: 3
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.713911+00:00
+      transport: verdict-cli
+    - id: references/recurring-errors.md:3
+      kind: paragraph
+      digest:
+        sha256: 63f53a510392670e8d8b42c3212a2b2367a6326063aa45350bda78a045726d03
+      line: 8
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.722784+00:00
+      transport: verdict-cli
+    - id: references/recurring-errors.md:4
+      kind: table
+      digest:
+        sha256: 1415c0cb905ea69714bf61c40f60de53f78bc6387f24c246aed368667089af0e
+      line: 13
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.731861+00:00
+      transport: verdict-cli
+    - id: references/recurring-errors.md:5
+      kind: heading
+      digest:
+        sha256: 96d35cfccff44ba0b35f2420cadd9263a52c2756b2f39cf73e7046cdd3dca22b
+      line: 55
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.741401+00:00
+      transport: verdict-cli
+    - id: references/recurring-errors.md:6
+      kind: paragraph
+      digest:
+        sha256: 4eca39dffcc55af15baa64859f784f29a9ebe40a6c3e6c3031ed2fdc1ca88cf4
+      line: 57
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.761154+00:00
+      transport: verdict-cli
+    - id: references/recurring-errors.md:7
+      kind: list
+      digest:
+        sha256: 00a2f5e240d292f8d144b82391099ad9f85bd563988bc01b73392451ec8fba8a
+      line: 60
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.771015+00:00
+      transport: verdict-cli
+    - id: references/recurring-errors.md:8
+      kind: paragraph
+      digest:
+        sha256: 211cc7c255ac3612d07d50ea0c401982f81497ce09e7e859f1db1ea626bfd98e
+      line: 74
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.780246+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:1
+      kind: heading
+      digest:
+        sha256: 06408ab34468f301eb85f2a2d57969871dc643546b5bceeb06d409b494f7b13f
+      line: 1
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.789383+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:2
+      kind: paragraph
+      digest:
+        sha256: 0b1c1e64482e6980309e996def63a69686fa9522c3a15d3a2dc5406a24b2ba75
+      line: 3
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.808313+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:3
+      kind: heading
+      digest:
+        sha256: b8f5c21f0515515ddc71f7ba0e79330b3cc812086a14950a8f06b4a34cc1d32c
+      line: 5
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.817622+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:4
+      kind: paragraph
+      digest:
+        sha256: ec58d5737db94b010652d663e25ba87975f4d02b3e89bd29e7b1c89e96ef09de
+      line: 7
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.826697+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:5
+      kind: heading
+      digest:
+        sha256: 71a991828a7d42a230db575418a74e79eb1c80016a064ec732d2c4a8f6a2b0c6
+      line: 9
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.835695+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:6
+      kind: list
+      digest:
+        sha256: f0b437a5f7cc4f5c9c0f89d403bcf81e74ff500023144cc3d9572b74fbe59ded
+      line: 11
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.854481+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:7
+      kind: heading
+      digest:
+        sha256: 3433da4f1cbf362cbc0a5dcdd0dc2ae446e4364ce3e1ea47d331b158d38f9ca1
+      line: 15
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.865036+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:8
+      kind: paragraph
+      digest:
+        sha256: 110eb70380dadf2b50100d30edae5c55f845efcc76a755ee481ed94076241fed
+      line: 17
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.874700+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:9
+      kind: list
+      digest:
+        sha256: 34821a961be12de17bc59474b97c1f0b554a8c43e10943bba4373ba05622a989
+      line: 18
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.884338+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:10
+      kind: paragraph
+      digest:
+        sha256: 08000448731f0c213139c23c50198a823a56c5b8bb9c33d2f81634be3ea616d8
+      line: 24
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.901874+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:11
+      kind: list
+      digest:
+        sha256: ebd0527aec8478e0e7838b70b837037bad0a33a6d8232a26aab550694d4effd0
+      line: 25
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.910644+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:12
+      kind: paragraph
+      digest:
+        sha256: cf6c7caa3b4773e3a7970710de8674e080f22e49a0cdcc155d57cd61f334f66f
+      line: 29
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.919021+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:13
+      kind: list
+      digest:
+        sha256: afbfffdba7667cf4c67bbcbb6c67a727d8f5e0cc0d55e496ea5a8fec34de66ff
+      line: 30
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.927313+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:14
+      kind: paragraph
+      digest:
+        sha256: f8c642befa212542acd206c6af1f0489fdb99352339d4f19dacfaa8a513fba9e
+      line: 33
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.944584+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:15
+      kind: list
+      digest:
+        sha256: 551b4fd7e3b417d7a23113ce575ed8007565373ac11724b6e98d49d31d8bf9ad
+      line: 34
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.954245+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:16
+      kind: paragraph
+      digest:
+        sha256: b1f9d64faf3e98c562728fe2555c60cf36346cbdb07fefe120d93ef93ab01dab
+      line: 40
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.964506+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:17
+      kind: list
+      digest:
+        sha256: 3da4d4bbcdd6744e397adfd6fa4f1733ae6a2922ebc46c1d7e35dc9987970524
+      line: 41
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.975656+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:18
+      kind: paragraph
+      digest:
+        sha256: f9964dcda120043af855bb62f56fee7d2f3a36c3975b9d770cd5b8ffd28e8414
+      line: 45
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:41.998082+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:19
+      kind: list
+      digest:
+        sha256: 81093f00a247a46e87faf97110ba3be9df89b70b6ff5743ceec56d2ff67d4c8e
+      line: 46
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:42.008258+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:20
+      kind: heading
+      digest:
+        sha256: 943e0f1ab9c65448a86035c0075df64467117de3a52b6c67165c36aae8005abe
+      line: 48
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:42.018103+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:21
+      kind: paragraph
+      digest:
+        sha256: f6621a60cf549848d66fac03e0bb676c6a3b862b494e944bd582e2bf56ee7772
+      line: 50
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:42.027501+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:22
+      kind: heading
+      digest:
+        sha256: ad2af7425caf26f8e901cad40a4f6e6a983dbbdd707725cdd2439ecaa1779f28
+      line: 52
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:42.046015+00:00
+      transport: verdict-cli
+    - id: references/writing-rules.md:23
+      kind: list
+      digest:
+        sha256: 53daa85ca44fce8227e7c7e429ae5a3b7123e438f2691d7ef8199d6e0c2cddac
+      line: 54
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:42.054808+00:00
+      transport: verdict-cli
+    - id: scripts/ste-lint.py:1
+      kind: file
+      digest:
+        sha256: bedba551157b7cf6378ecf97d29e6606496c49a8df83d7778e5f330e48c9595e
+      line: 1
+      verdict: keep
+      decidedOn: 2026-08-13T12:34:42.063693+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:1
+      kind: frontmatter
+      digest:
+        sha256: 03e0c8bfe3053137896084607dc6671ceef1ac84e7810a96755790349d236571
+      line: 1
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.073246+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:2
+      kind: heading
+      digest:
+        sha256: d7ca79e48a6f3b907024e0b1c8d1dd1c071f8d6bfc7bef870badd478d6d18798
+      line: 8
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.092140+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:3
+      kind: paragraph
+      digest:
+        sha256: d62797bce797dae01bd2fd477130cea4772cf1625efe137f5192da242fc4a878
+      line: 10
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.101482+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:4
+      kind: paragraph
+      digest:
+        sha256: 18a0ba6652187cffe7b0b5c2fe8e9d2041af6daf59545425d652ff754103b68e
+      line: 12
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.111544+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:5
+      kind: list
+      digest:
+        sha256: 1c3690d68ac7d537788e068b747f73a26fc95dd4f06561b987d0282568da9ca9
+      line: 14
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.120397+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:6
+      kind: heading
+      digest:
+        sha256: b66542635d2ad70de4ec8139e147d08ed26bde020bb9540555f55b7612efdeb2
+      line: 18
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.137643+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:7
+      kind: paragraph
+      digest:
+        sha256: ca5d6bd8ac72fdd221f2c4d66f2eafc3357b54fc6b42f86595381931c41d0ee4
+      line: 20
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.146107+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:8
+      kind: paragraph
+      digest:
+        sha256: 9403edaaf45d496474abf63f5f7e99230c1b6dae2f99c8cd7fe1b7eda83901f0
+      line: 22
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.154546+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:9
+      kind: list
+      digest:
+        sha256: f3ba2f41f43e17e4bb89a83a44c60bc87e0af9019aba1a5c41e897af3274cebf
+      line: 23
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.163121+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:10
+      kind: paragraph
+      digest:
+        sha256: 8ffb5bc37aa49a0d32e68f49f27d5bfe3220651e37f449ca87ae31e8b36fc103
+      line: 29
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.180184+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:11
+      kind: list
+      digest:
+        sha256: c0a4de72ae67c190975b60a9f9736a6893972ce2ca0a3ff9911d5ce231d1fd5f
+      line: 30
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.188938+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:12
+      kind: paragraph
+      digest:
+        sha256: 6224b0ba2bed94c5eb728a35e2277c4b96cffa94b739c95fccedbd69b78004b3
+      line: 38
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.197210+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:13
+      kind: list
+      digest:
+        sha256: dd030a6b0d6c60a1c03bc12e9b3ab5f7c8b8b6e77dff97c6bd8edc0c4e7057fe
+      line: 39
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.205744+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:14
+      kind: paragraph
+      digest:
+        sha256: 4824c97f2379e0a466ac03ce5b2c2a81ce0c65e57139b6504c5eb1bda9760afd
+      line: 45
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.223796+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:15
+      kind: list
+      digest:
+        sha256: 2fbce9f0bc59f13801b3943386f2f8fc223341f8f2e3f6abc02b5e0393d928d5
+      line: 46
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.234182+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:16
+      kind: paragraph
+      digest:
+        sha256: 21cac2a05b2d45799608d63b85777a9be9c9541a63d4ae3333462360513daaa0
+      line: 49
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.243920+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:17
+      kind: list
+      digest:
+        sha256: 376ffa98c3b89abca916bd4e7ed2fd10e1a958acf3ffacd7cb2be746c7d54fac
+      line: 50
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.253442+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:18
+      kind: paragraph
+      digest:
+        sha256: bd3642a7f18ed8f9e092357c65cff531950be5f2bc91d0399175b91ae9db4c1f
+      line: 52
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.271708+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:19
+      kind: list
+      digest:
+        sha256: f02142d8e753916fc725a085366797855fbbddca9365df1a44ff1e8d6ddfd3d7
+      line: 53
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.280327+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:20
+      kind: heading
+      digest:
+        sha256: ac8d46a4c305bfa1f0545f0e0e23f9e10a7625e7954b40cdb4e9689b37d19289
+      line: 57
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.288926+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:21
+      kind: list
+      digest:
+        sha256: 65f36d948abf35de233f22159e4a6dff3a2f57a65296ff31681dfc3b7803d672
+      line: 59
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.297678+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:22
+      kind: heading
+      digest:
+        sha256: f3f173976d49aa4812a2744ccc28fc49d1229afe4f5da80ec4024e3019e11abb
+      line: 65
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.315629+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:23
+      kind: list
+      digest:
+        sha256: ef6f1cb03149832ec22a091446011dad88c8940c5a6d43ec3b42faaf41ad3087
+      line: 67
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.324276+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:24
+      kind: heading
+      digest:
+        sha256: 9fb6d35b9791cf610a58524f852b077ebe3de26a6cef47abb116028785ac5c0b
+      line: 70
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.333413+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:25
+      kind: paragraph
+      digest:
+        sha256: c3b9466cdc5f3b1b717bb2f388ba693c50c6f96c605e5589cb17bc53ea99a12b
+      line: 72
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.342121+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:26
+      kind: code
+      digest:
+        sha256: 028260b640e1a258fa5656169a7a83de3d4b4421803531720227bbf3148b47f2
+      line: 74
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.361411+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:27
+      kind: paragraph
+      digest:
+        sha256: dd888758ec3f931903e95106bb09e6c39abb2e21686fb44f4d9d30680b0972e5
+      line: 79
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.371051+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:28
+      kind: paragraph
+      digest:
+        sha256: 50c1071d39cda87d5d34d986a9ad89ad6d3c3c639a7e30b34cbce204891cfdf6
+      line: 81
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.380113+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:29
+      kind: list
+      digest:
+        sha256: ed1d6e475867d83a1f805cccc54bc06288268874ab35134f544ff8d394cb290e
+      line: 83
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.388981+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:30
+      kind: heading
+      digest:
+        sha256: 06f13eceae24bd0eb87002e30400999346da1ac5f0f9e44ba02101ab01d1f6a3
+      line: 94
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.406733+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:31
+      kind: paragraph
+      digest:
+        sha256: 277ca0523f5894f79df3ecb557e46eddba8210980701974d9ea76a6da87d57de
+      line: 96
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.415563+00:00
+      transport: verdict-cli
+    - id: ste-writing.md:32
+      kind: paragraph
+      digest:
+        sha256: 09298d56bc3b709ec938c96dca83fd435e54a9c494f6b016403b621e71821121
+      line: 98
+      verdict: cut
+      note: 'autonomous adoption per user instruction: content merged into SKILL.md; two competing entrypoints would duplicate the rule set'
+      decidedOn: 2026-08-13T12:34:42.424131+00:00
+      transport: verdict-cli
+    - id: SKILL.md:added:1
+      kind: frontmatter
+      digest:
+        sha256: 555b3268b27de29332c4c8d3f2d38c42f0d560eb31a37d17dfb35f5d4bd61ef1
+      line: 1
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:2
+      kind: heading
+      digest:
+        sha256: 570dd1e1451793ea8a1a59eb03dd58eadcb40fbcf6423b97ba324499cafac887
+      line: 10
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:3
+      kind: paragraph
+      digest:
+        sha256: a56831482aff1243fcee56642fad436f090f35e8b4aaa9f132315cdbf115181d
+      line: 12
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:4
+      kind: paragraph
+      digest:
+        sha256: 4c6c12848eebe7b104813df7090f77c1dc261580163b03f593f44d7ab2bee9dc
+      line: 14
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:5
+      kind: heading
+      digest:
+        sha256: bbd3d4949a6f237efd8d4ff5c7c5f30d968e7a989ad12f3d7dcef69c98053912
+      line: 16
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:6
+      kind: paragraph
+      digest:
+        sha256: 8ca125fdd37e61be1170abbe33e59d348f52f32d1b012480b54dd3a357c4a374
+      line: 18
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:7
+      kind: list
+      digest:
+        sha256: 7ff62cdf509b3d11bba549167d8e14582d9ad751d4d6821fdc1a27bba4ecd120
+      line: 20
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:8
+      kind: heading
+      digest:
+        sha256: 7c9dcab419cdfb7a37acd2e64f63fec1b8f14ae04ecfa078d8ab826ae9f9f923
+      line: 23
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:9
+      kind: paragraph
+      digest:
+        sha256: 74503277912f0d34e2e4915c2cf6a3f1cf4af6a63e0a2c21fae69b78afcb4da3
+      line: 25
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:10
+      kind: list
+      digest:
+        sha256: 66725f10444ee734e26831c68e013fc1f133238f222c7cc2ad504549cb8af576
+      line: 27
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:11
+      kind: paragraph
+      digest:
+        sha256: 5a9bf366a5765bdc20b05cb7f927f84ec587adb287a63cb6342c040247c5251d
+      line: 38
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:12
+      kind: list
+      digest:
+        sha256: 83d5d146b843fc9c88165bf58dfb32ffd9e1e4280c5d8e63c98726055948bd42
+      line: 40
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:13
+      kind: heading
+      digest:
+        sha256: 2fdc8f85ced713b321cb61df5896acf72522455151d452a04704419bf3853e9e
+      line: 48
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:14
+      kind: heading
+      digest:
+        sha256: 7d1dc5f7564024b0f1d117be2b676ead033efd10e3ba002932c5861b02d1ec49
+      line: 50
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:15
+      kind: paragraph
+      digest:
+        sha256: 71d1ae09dfb47594f64ee963228af65e46a142c3e08bc0ff96b1a983e72d7010
+      line: 52
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:16
+      kind: heading
+      digest:
+        sha256: e01620192341cce37ee7b2b96d0395f68c46b8cae39307f225ad492ee2f4d3c3
+      line: 54
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:17
+      kind: paragraph
+      digest:
+        sha256: 7b5eb4929d2c65492c894922932ff0966bfbd1854e768608292e921d1e18d42b
+      line: 56
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:18
+      kind: heading
+      digest:
+        sha256: c97a515baea1101fffbae7f3a30f46cf63c58b4b31ccdc3dbe0ed862be69aefe
+      line: 58
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:19
+      kind: paragraph
+      digest:
+        sha256: 1ad0574f2516593fab37a3bd67b4a5a2f66ea8e693d77c02f675c21569008726
+      line: 60
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:20
+      kind: code
+      digest:
+        sha256: 23f43f81817d0d92c95a5d00ac6cdee87a08e34c285d5235ed3ae7178d85b808
+      line: 62
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:21
+      kind: paragraph
+      digest:
+        sha256: 537076400a31d62d181574bcbf943cbd0d4a4d534a5e21e035586c54075ceb56
+      line: 67
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:22
+      kind: heading
+      digest:
+        sha256: 80937328f4f7b2400b498c2e504a90057378843e8c8870ab4738c70572fefef7
+      line: 69
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:23
+      kind: list
+      digest:
+        sha256: 6fcb7d30d446b2085c5edf2a9d65190e944471a6582a6a8396b1a4383a651881
+      line: 71
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:24
+      kind: heading
+      digest:
+        sha256: 65b72d86eeeb214ab8ca5fd24cb7cd7773e58084e95b670040df03e21e8c6fa7
+      line: 75
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: SKILL.md:added:25
+      kind: list
+      digest:
+        sha256: 4396d1ca98ea9786c17c011aaffd06549bf0434b19296a5e2fe1fb2d9757b3c4
+      line: 77
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: examples/rewrite-samples.md:added:1
+      kind: heading
+      digest:
+        sha256: 32373baf70a2c71b05ee043513cf99d6b3d680c9e536e829eec81f21983b91fa
+      line: 1
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
+    - id: examples/rewrite-samples.md:added:2
+      kind: paragraph
+      digest:
+        sha256: a6ff4f09fc1365a856270dd2589bc579d7728972b94f35fd57a26d5419c957df
+      line: 3
+      verdict: added
+      decidedOn: 2026-08-13T12:35:29.141238+00:00
+      transport: finalize
