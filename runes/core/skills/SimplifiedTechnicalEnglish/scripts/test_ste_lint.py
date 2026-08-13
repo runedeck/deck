@@ -203,6 +203,36 @@ class ConfigTests(unittest.TestCase):
 
         self.assertIn("No readable draft path", process.stdout)
 
+    def test_empty_context_does_not_read_stdin(self):
+        process = subprocess.run(
+            [sys.executable, str(SCRIPT), "--context", ""],
+            input="This input must not be linted.",
+            text=True,
+            capture_output=True,
+            check=True,
+        )
+
+        self.assertIn("No readable draft path", process.stdout)
+        self.assertNotIn("score_version", process.stdout)
+
+    def test_context_failure_blocks_threshold_callers(self):
+        process = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPT),
+                "--context",
+                "rewrite this sentence",
+                "--fail-over",
+                "2.5",
+            ],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertNotEqual(process.returncode, 0)
+        self.assertIn("No readable draft path", process.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

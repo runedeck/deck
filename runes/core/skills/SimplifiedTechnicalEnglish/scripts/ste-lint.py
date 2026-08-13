@@ -233,12 +233,15 @@ def main(argv=None):
         config, config_path, config_digest = load_config(args.config)
     except (TypeError, ValueError) as error:
         raise SystemExit(str(error)) from error
-    if args.context:
+    if args.context is not None:
         candidate = Path(args.context).expanduser()
         if candidate.is_file():
             args.files.insert(0, str(candidate))
         else:
-            print("No readable draft path was supplied for automatic linting.")
+            message = "No readable draft path was supplied for automatic linting."
+            if args.fail_over is not None:
+                raise SystemExit(message)
+            print(message)
             return 0
     worst = 0.0
     if not args.files:

@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/SimplifiedTechnicalEnglish/SKILL.md
     digest:
-      sha256: e15ea28a0e8e435e62afa3be373197444be0e20252756c8ba0937380a8f78fa2
+      sha256: 62300276b103f719a0d7379128f1c4809e5b466d35abd09a4fe543d67ced68d8
   predicate:
     buildDefinition:
       buildType: adopt/v1
