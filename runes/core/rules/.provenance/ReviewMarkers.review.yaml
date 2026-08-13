@@ -2,9 +2,9 @@ review:
   _type: https://in-toto.io/Statement/v1
   predicateType: https://runedeck.github.io/attestation/adoption-review/v1
   subject:
-  - name: ReviewMarkers.md
-    digest:
-      sha256: 7dd7f74ba85a3e41cc661703c76773a7840145d17f3038a87a94e45abf6dee0b
+    - name: ReviewMarkers.md
+      digest:
+        sha256: 7dd7f74ba85a3e41cc661703c76773a7840145d17f3038a87a94e45abf6dee0b
   predicate:
     status: reviewed
     upstream:
@@ -20,37 +20,37 @@ review:
     schema: embedded:rules
     schemaDigest: 67baf77e4582a3dd70c68f64bc87f9a45d3b21454d524e1b668b80c1c8fafba0
     blocks:
-    - id: ReviewMarkers.md:1
-      kind: paragraph
-      digest:
-        sha256: 20fd00577afe6421555215488b25531a229656b5ff82f6b51ae7c76c9a50b30e
-      line: 1
-      verdict: adapt
-      note: tighter, ASD-STE100 simplified technical english, name tuicr as the origin of the marker grammar
-      decidedOn: 2026-08-13T10:24:18.659723+00:00
-      transport: verdict-cli
-    - id: ReviewMarkers.md:2
-      kind: paragraph
-      digest:
-        sha256: d2f9ccd7764b0eace9e7b1e83038b8cb6d9510b7151a6ce4272e78d96e1b01d5
-      line: 3
-      verdict: adapt
-      note: no specific tool name; enforcement lives at the pre-commit hook or repository workflow level and the tool may be renamed
-      decidedOn: 2026-08-13T10:24:25.533015+00:00
-      transport: verdict-cli
-    - id: ReviewMarkers.md:added:1
-      kind: paragraph
-      digest:
-        sha256: 602004bf29411481e428af79766ae35cf457baadc3a4ab306fa5339ccd681ecf
-      line: 1
-      verdict: added
-      decidedOn: 2026-08-13T10:24:41.329699+00:00
-      transport: finalize
-    - id: ReviewMarkers.md:added:2
-      kind: paragraph
-      digest:
-        sha256: 38fb39424ef4e4a5c032b97a8e798c2e78c18d652ad66550f05cb58c9df57c88
-      line: 3
-      verdict: added
-      decidedOn: 2026-08-13T10:24:41.329699+00:00
-      transport: finalize
+      - id: ReviewMarkers.md:1
+        kind: paragraph
+        digest:
+          sha256: 20fd00577afe6421555215488b25531a229656b5ff82f6b51ae7c76c9a50b30e
+        line: 1
+        verdict: adapt
+        note: tighter, ASD-STE100 simplified technical english, name tuicr as the origin of the marker grammar
+        decidedOn: 2026-08-13T10:24:18.659723+00:00
+        transport: verdict-cli
+      - id: ReviewMarkers.md:2
+        kind: paragraph
+        digest:
+          sha256: d2f9ccd7764b0eace9e7b1e83038b8cb6d9510b7151a6ce4272e78d96e1b01d5
+        line: 3
+        verdict: adapt
+        note: no specific tool name; enforcement lives at the pre-commit hook or repository workflow level and the tool may be renamed
+        decidedOn: 2026-08-13T10:24:25.533015+00:00
+        transport: verdict-cli
+      - id: ReviewMarkers.md:added:1
+        kind: paragraph
+        digest:
+          sha256: 602004bf29411481e428af79766ae35cf457baadc3a4ab306fa5339ccd681ecf
+        line: 1
+        verdict: added
+        decidedOn: 2026-08-13T10:24:41.329699+00:00
+        transport: finalize
+      - id: ReviewMarkers.md:added:2
+        kind: paragraph
+        digest:
+          sha256: b96598a97627abe1fab951441623e13f9e9fc5989c9126e3b945dda5cecff256
+        line: 3
+        verdict: added
+        decidedOn: 2026-08-13T10:24:41.329699+00:00
+        transport: finalize

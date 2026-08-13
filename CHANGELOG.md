@@ -7,3 +7,4 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 ### Added
 
 - Initial scaffold.
+- The ReviewMarkers rule in core, adopted through the block-review ceremony.
