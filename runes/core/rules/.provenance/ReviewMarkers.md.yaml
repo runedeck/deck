@@ -2,23 +2,23 @@ provenance:
   _type: https://in-toto.io/Statement/v1
   predicateType: https://slsa.dev/provenance/v1
   subject:
-  - name: rules/ReviewMarkers.md
-    digest:
-      sha256: 7dd7f74ba85a3e41cc661703c76773a7840145d17f3038a87a94e45abf6dee0b
+    - name: rules/ReviewMarkers.md
+      digest:
+        sha256: 7dd7f74ba85a3e41cc661703c76773a7840145d17f3038a87a94e45abf6dee0b
   predicate:
     buildDefinition:
       buildType: adopt/v1
       externalParameters:
         source: ''
-        upstream_url: file:///Users/N4M3Z/.claude/rules/ReviewMarkers.md
+        upstream_url: urn:runedeck:import:claude/rules/ReviewMarkers.md
         upstream_commit: ''
         transforms_applied:
-        - copy
+          - copy
       resolvedDependencies:
-      - name: upstream
-        uri: file:///Users/N4M3Z/.claude/rules/ReviewMarkers.md
-        digest:
-          sha256: c14b669388bf7671ed1f213a5450094c36a342b5f77b838b40f4e25b3230037c
+        - name: upstream
+          uri: urn:runedeck:import:claude/rules/ReviewMarkers.md
+          digest:
+            sha256: c14b669388bf7671ed1f213a5450094c36a342b5f77b838b40f4e25b3230037c
     runDetails:
       builder:
         id: rune-cli
