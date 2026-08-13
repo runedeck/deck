@@ -4,13 +4,13 @@ review:
   subject:
   - name: SKILL.md
     digest:
-      sha256: adec65f2b02769e3e27a8bec6081ed010a979045a1b11491815e0ea02a29e5ca
+      sha256: 389e4151c2ed9504abf289cb1f1254341c7c3e47ee018e576dbeec90ff73b29c
   - name: examples/before-after.md
     digest:
       sha256: 8b86a33ad88cabc088d1d19c0623e8e50a948e840e5ecdb9e022418c8a3476a9
   - name: examples/rewrite-samples.md
     digest:
-      sha256: 366a6e2fac01c61e0ce9213d13dd57608db5ebdf342f25289e2092d98b6c3daf
+      sha256: dee68212b007551966a25cef7d35bf6c212e98d1ceefec2e2f5a4cdada6008a6
   - name: references/recurring-errors.md
     digest:
       sha256: d721d9f415e4f4d94624d3c3727e6e82a5311eaaf31db28ba6ade7e5c8dae880
@@ -19,7 +19,7 @@ review:
       sha256: 778a8adc1feec8845ea78078adfa8cd2824f28aba610bef322d729e1be5064ba
   - name: scripts/ste-lint.py
     digest:
-      sha256: 9b065d90ca21d5fc31edcf1620a5bff3f4262abac72ece41f35f07ee9a6113f9
+      sha256: e52f802b40759967e2b4304417ac7b42e115324b89884ce4835e5ab34204e114
   predicate:
     status: reviewed
     upstream:

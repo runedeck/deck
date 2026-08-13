@@ -60,8 +60,9 @@ On a review request (`show the diff`, `which rules did it break`, `before/after`
 When commands are available, lint the draft with the bundled checker. Repair the reported categories and lint again, at most two passes:
 
 ```sh
-python3 scripts/ste-lint.py draft.md            # flavored target: under 2.5 per 100 words
-python3 scripts/ste-lint.py --strict draft.md   # strict target: under 1.5 per 100 words
+# <skill-dir> is this skill's directory; the draft path is your own.
+python3 <skill-dir>/scripts/ste-lint.py <draft>            # flavored target: under 2.5 per 100 words
+python3 <skill-dir>/scripts/ste-lint.py --strict <draft>   # strict target: under 1.5 per 100 words
 ```
 
 Report the final score with the text. Do not present text as clean without a lint run. Without command access, walk the checklist instead: long sentences, semicolons, contractions, complex tenses, passive with a known actor, nominalizations, phrasal verbs, four-word noun stacks, dropped articles, rotated names.

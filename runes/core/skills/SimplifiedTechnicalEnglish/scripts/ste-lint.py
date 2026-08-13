@@ -17,7 +17,7 @@ BANNED = ["begin","begins","commence","commences","initiate","initiates","origin
     "demonstrate","demonstrates","additionally","furthermore","moreover","comprehensive","comprehensively",
     "utilization","aforementioned","henceforth","therein","whilst","amongst","numerous","myriad","plethora",
     "provide","provides","provided",
-    "in order to","a variety of","in the event that","due to the fact that","it is important to note"]
+    "in order to","a variety of","in the event that","due to the fact that"]
 # STE's own recurring-errors list (see ste-recurring-errors.md). Counted only
 # with --strict: these are correct STE but would flag normal prose in docs.
 STRICT_BANNED = ["however","since","should","shall","using","follow","follows","followed"]
@@ -92,7 +92,7 @@ def lint(text, strict=False):
     # 's counts as a contraction only on known heads (it's, there's, ...);
     # a possessive noun ("the standard's list") is correct STE and stays clean.
     v["contraction"] = len(re.findall(r"\b\w+['’](?:t|re|ve|ll|d|m)\b", text)) \
-        + len(re.findall(r"\b(?:it|that|this|there|here|what|who|she|he|one|let)['’]s\b", text, re.I))
+        + len(re.findall(r"\b(?:it|that|this|there|here|what|who|she|he|let)['’]s\b", text, re.I))
     passive_parts = re.findall(rf"\b{BE}\s+(\w+ed|{PP_IRREG})\b", text, re.I)
     v["passive_voice"] = sum(1 for p in passive_parts if not re.fullmatch(STATIVE, p, re.I)) \
         + len(re.findall(rf"\b{BE}\s+{STATIVE}\s+by\b", text, re.I))
@@ -105,9 +105,11 @@ def lint(text, strict=False):
     v["banned_word"], bh = count_ci(text, BANNED)
     v["marketing_adjective"], mh = count_ci(text, MARKETING)
     v["modal_hedge"], _ = count_ci(text, MODAL_HEDGE)
-    paras = [p for p in re.split(r"\n\s*\n", raw) if p.strip()]
-    v["long_paragraph(>6s)"] = sum(1 for p in paras if len(sentences(strip_code(p))) > 6)
-    em = raw.count("—") + raw.count("–")
+    # Paragraphs split the code-stripped text: splitting raw would cut a fenced
+    # block at its blank lines, and each fragment would then keep its code.
+    paras = [p for p in re.split(r"\n\s*\n", text) if p.strip()]
+    v["long_paragraph(>6s)"] = sum(1 for p in paras if len(sentences(p)) > 6)
+    em = text.count("—") + text.count("–")
     trains = noun_trains(text)
     if strict:
         n_strict, sh = count_ci(text, STRICT_BANNED)
@@ -137,7 +139,12 @@ if __name__ == "__main__":
     fail_over = None
     if "--fail-over" in args:
         i = args.index("--fail-over")
-        fail_over = float(args[i + 1])
+        if i + 1 >= len(args):
+            sys.exit("--fail-over needs a number")
+        try:
+            fail_over = float(args[i + 1])
+        except ValueError:
+            sys.exit(f"--fail-over needs a number, got {args[i + 1]!r}")
         del args[i:i + 2]
     files = [a for a in args if a not in ("--strict", "--json")]
     worst = 0.0
