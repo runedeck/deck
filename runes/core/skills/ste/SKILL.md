@@ -1,6 +1,7 @@
 ---
 name: ste
 description: Short name for the SimplifiedTechnicalEnglish skill.
+targets: [claude]
 disable-model-invocation: true
 ---
 
