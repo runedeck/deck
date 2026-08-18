@@ -35,7 +35,7 @@ Agent Skills requires `name` and `description`. It defines `license`, `compatibi
 - `compatibility`: required providers, binaries, operating systems, or network access.
 - `metadata`: string-valued information such as version and upstream attribution.
 
-Canonical source contains only Agent Skills fields at the top level; provider-specific fields arrive during assembly. Validate with the nearest `.mdschema`, the official `skills-ref` validator, and the project's own validator.
+Canonical source carries Agent Skills fields at the top level, plus three assembly directives: `targets` routes the skill to named providers, and `disable-model-invocation` and `user-invocable` set Claude Code invocation controls. Assembly consumes `targets` and deploys the invocation controls. Other provider-specific fields arrive through per-provider overlays during assembly. Validate with the nearest `.mdschema`, the official `skills-ref` validator, and the project's own validator.
 
 ## Section convention
 

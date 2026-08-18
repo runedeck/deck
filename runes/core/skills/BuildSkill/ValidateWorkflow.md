@@ -31,7 +31,7 @@ Read `SKILL.md` and note the companions, scripts, references, and assets it link
 
 - [ ] `name` is lowercase kebab-case and equals the skill directory.
 - [ ] `description` is one line with concrete `USE WHEN` triggers and a useful `NOT FOR` boundary.
-- [ ] Top-level fields are limited to `name`, `description`, `license`, `compatibility`, `metadata`, and `allowed-tools`.
+- [ ] Top-level fields are limited to `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`, and the assembly directives `targets`, `disable-model-invocation`, and `user-invocable`.
 - [ ] `compatibility` names required providers, binaries, operating systems, or network access.
 - [ ] Additional string-valued information lives under `metadata`.
 - [ ] The official `skills-ref` validator accepts the skill.
