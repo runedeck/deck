@@ -29,7 +29,7 @@ Read `SKILL.md` and note the companions, scripts, references, and assets it link
 
 ## Step 2: Check canonical frontmatter
 
-- [ ] `name` is lowercase kebab-case and equals the skill directory.
+- [ ] `name` equals the skill directory and the H1. This deck authors PascalCase; the agentskills provider converts to lowercase on deployment.
 - [ ] `description` is one line with concrete `USE WHEN` triggers and a useful `NOT FOR` boundary.
 - [ ] Top-level fields are limited to `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`, and the assembly directives `targets`, `disable-model-invocation`, and `user-invocable`.
 - [ ] `compatibility` names required providers, binaries, operating systems, or network access.

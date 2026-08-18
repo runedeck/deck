@@ -38,7 +38,7 @@ rune install
 
 Assembly maps canonical content into each provider's native format without changing the canonical contract: frontmatter is stripped to the fields a provider keeps, tool names are remapped, and provider-specific fields come from `claude/` and other qualifier variants rather than from the canonical file.
 
-A deck that authors skills in PascalCase enables the `kebab-case` assembly rule for its providers. Directory segments and Markdown companions convert, the frontmatter `name` converts with them, and relative Markdown links are retargeted so companions stay reachable. `SKILL.md`, bundled scripts, and assets keep their exact names, because harnesses, Python module paths, and in-document references all resolve those by spelling.
+A deck that authors skills in PascalCase enables the `kebab-case-skills` assembly rule for the providers that require lowercase names (here, agentskills). Directory segments and Markdown companions convert, the frontmatter `name` converts with them, and relative Markdown links are retargeted so companions stay reachable. `SKILL.md`, bundled scripts, and assets keep their exact names, because harnesses, Python module paths, and in-document references all resolve those by spelling.
 
 Never edit a deployed file under a provider directory. Edit the source and reinstall; a local exception belongs in the rune's `user/` override.
 
