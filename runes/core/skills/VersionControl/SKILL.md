@@ -26,14 +26,12 @@ Commit discipline, staging hygiene, push policy, and repo governance. In a jj co
 
 Use a conventional prefix. Explain why, not what. Keep the first line under 72 characters.
 
-| Prefix       | Use when                                |
-|--------------|-----------------------------------------|
-| `feat:`      | New feature or capability               |
-| `fix:`       | Bug fix                                 |
-| `refactor:`  | Restructure without behavior change     |
-| `docs:`      | Documentation only                      |
-| `chore:`     | Maintenance (deps, configs, CI)         |
-| `test:`      | Add or fix tests                        |
+- `feat:`: New feature or capability.
+- `fix:`: Bug fix.
+- `refactor:`: Restructure without a behavior change.
+- `docs:`: Documentation only.
+- `chore:`: Maintenance, such as dependencies, configuration, or CI.
+- `test:`: Add or repair tests.
 
 Name other model contributors with `Co-Authored-By` trailers in the `authors.yaml` format. Do not repeat the author as a trailer. Run `scripts/check-authorship` to verify the outgoing range; the prek pre-push hook runs it automatically.
 
