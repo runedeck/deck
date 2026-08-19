@@ -12,7 +12,7 @@ from pathlib import Path
 # uncertainty, and reports short-text density as advisory.
 SCORE_VERSION = 5
 DENSITY_RELIABLE_WORDS = 40
-DEFAULT_CONFIG = Path(__file__).resolve().parent.parent / "config" / "lint-rules.json"
+DEFAULT_CONFIG = Path(__file__).resolve().parent.parent / "config" / "rules.json"
 CONFIG_KEYS = {
     "marketing",
     "bannedWords",

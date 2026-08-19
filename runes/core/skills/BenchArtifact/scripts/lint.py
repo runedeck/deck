@@ -15,7 +15,7 @@ from pathlib import Path
 
 SCORE_VERSION = 1
 DENSITY_RELIABLE_WORDS = 40
-DEFAULT_CONFIG = Path(__file__).resolve().parent.parent / "config" / "patterns.sample.json"
+DEFAULT_CONFIG = Path(__file__).resolve().parent.parent / "config" / "rules.sample.json"
 
 
 def load_config(path: Path) -> tuple[dict, str, str]:

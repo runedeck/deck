@@ -72,11 +72,11 @@ Use the injected changed-file list to locate likely drafts. When commands are av
 
 ```sh
 # <skill-dir> is this skill's directory; the draft path is your own.
-python3 <skill-dir>/scripts/ste-lint.py <draft>            # flavored target: under 2.5 per 100 words
-python3 <skill-dir>/scripts/ste-lint.py --strict <draft>   # strict target: under 1.5 per 100 words
+python3 <skill-dir>/scripts/lint.py <draft>            # flavored target: under 2.5 per 100 words
+python3 <skill-dir>/scripts/lint.py --strict <draft>   # strict target: under 1.5 per 100 words
 ```
 
-The score is advisory in this workflow. Use `--fail-over <score>` only when a caller needs a blocking exit status. The checker loads `config/lint-rules.json` by default. A caller can select a complete replacement rule set with `--config <path>`. The JSON output includes the selected path and its SHA-256 digest.
+The score is advisory in this workflow. Use `--fail-over <score>` only when a caller needs a blocking exit status. The checker loads `config/rules.json` by default. A caller can select a complete replacement rule set with `--config <path>`. The JSON output includes the selected path and its SHA-256 digest.
 
 Report the final score with the text. Do not present text as clean without a lint run. Without command access, walk the checklist instead: long sentences, semicolons, contractions, complex tenses, passive with a known actor, nominalizations, phrasal verbs, four-word noun stacks, dropped articles, rotated names.
 

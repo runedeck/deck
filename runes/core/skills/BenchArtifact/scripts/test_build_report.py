@@ -19,7 +19,7 @@ class BuildReportTests(unittest.TestCase):
             "metadata": {
                 "artifact_path": "/private/artifacts/Rule.md",
                 "identities": {
-                    "checker": {"path": "/private/bin/ste-lint.py"},
+                    "checker": {"path": "/private/bin/lint.py"},
                     "manifest": {"path": "/private/evals/evals.json"},
                 },
             },
@@ -46,10 +46,10 @@ class BuildReportTests(unittest.TestCase):
             match = re.search(r'atob\("([A-Za-z0-9+/=]+)"\)', output.read_text(encoding="utf-8"))
             data = json.loads(base64.b64decode(match.group(1)))
         self.assertEqual(data["metadata"]["artifact_path"], "Rule.md")
-        self.assertEqual(data["metadata"]["identities"]["checker"]["path"], "ste-lint.py")
+        self.assertEqual(data["metadata"]["identities"]["checker"]["path"], "lint.py")
         self.assertEqual(
             data["metadata"]["identities"]["checker"]["path_url"],
-            "file:///private/bin/ste-lint.py",
+            "file:///private/bin/lint.py",
         )
         self.assertEqual(
             data["arms"]["with_rule"]["artifact_url"],

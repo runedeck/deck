@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-SCRIPT = Path(__file__).with_name("ste-lint.py")
+SCRIPT = Path(__file__).with_name("lint.py")
 SPEC = importlib.util.spec_from_file_location("ste_lint", SCRIPT)
 STE_LINT = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(STE_LINT)

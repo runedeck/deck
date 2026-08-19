@@ -61,7 +61,7 @@ Report each case, arm, model, completion, and failure while the matrix runs.
 
 Grade each valid run against the frozen assertions. Use [templates/agents/grader.md](templates/agents/grader.md).
 
-An artifact with a measurable claim names its checker. An artifact without a dedicated checker uses [scripts/check_patterns.py](scripts/check_patterns.py) with a small patterns JSON. No artifact ships its own checker script for simple pattern claims.
+An artifact with a measurable claim names its checker. An artifact without a dedicated checker uses [scripts/lint.py](scripts/lint.py) with a small patterns JSON. No artifact ships its own checker script for simple pattern claims.
 
 Use [templates/agents/comparator.md](templates/agents/comparator.md) for blind clarity, fluency, and directness judgments.
 

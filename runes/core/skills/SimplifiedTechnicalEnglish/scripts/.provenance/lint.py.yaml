@@ -2,7 +2,7 @@ provenance:
   _type: https://in-toto.io/Statement/v1
   predicateType: https://slsa.dev/provenance/v1
   subject:
-  - name: skills/SimplifiedTechnicalEnglish/scripts/ste-lint.py
+  - name: skills/SimplifiedTechnicalEnglish/scripts/lint.py
     digest:
       sha256: 4b09e152ed9288aee1201defd117dbeb99db05fa79c95b229b99b4ea425f2f24
   predicate:
