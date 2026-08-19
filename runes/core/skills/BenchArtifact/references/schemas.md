@@ -147,6 +147,8 @@ The optional manifest `judging` object formalizes the criteria:
 
 The judge builds its prompt from these dimensions and guards. The aggregator copies the block into `benchmark.json`, and the report shows each criterion beside its scores. Without the block, the judge uses the default clarity, fluency, and directness criteria.
 
+Each dimension accepts an optional `weight`, `trade_off`, and `win` value. A weight of 0 removes the dimension from the verdict. A weight below 1 turns its trade-off into a label note instead of a downgrade. The default weights are 1, with 0.5 for fluency. Threshold values on a dimension replace the report defaults for that dimension.
+
 The optional manifest `metrics` array replaces the report's metric definitions:
 
 ```json

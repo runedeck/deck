@@ -25,6 +25,14 @@ METRICS = (
 )
 
 
+def default_judging():
+    path = Path(__file__).resolve().parent.parent / "config" / "judging.json"
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
 def read_json(path: Path) -> dict:
     data = json.loads(path.read_text(encoding="utf-8"))
     return data if isinstance(data, dict) else {}
@@ -388,7 +396,7 @@ def generate(root: Path, manifest_path: Path | None, artifact_name: str, artifac
         "summaries": summaries,
         "runs": runs,
         "preference_judgments": judgments,
-        "judging": manifest.get("judging"),
+        "judging": manifest.get("judging") or default_judging(),
         "metric_definitions": manifest.get("metrics"),
         "verdict_thresholds": manifest.get("verdict_thresholds"),
         "notes": manifest.get("notes", []),

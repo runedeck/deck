@@ -42,12 +42,17 @@ class ConfigTests(unittest.TestCase):
         for text in (
             "The API surface stays stable.",
             "Travel by ship to the island.",
-            "Open the gate.",
             "The landing page loads fast.",
         ):
             with self.subTest(text=text):
                 result = STE_LINT.lint(text)
                 self.assertEqual(result["violations"]["banned_word"], 0)
+
+    def test_jargon_nouns_count_as_banned_words(self):
+        for text in ("The release gate is open.", "Turn the knob on the treatment arm."):
+            with self.subTest(text=text):
+                result = STE_LINT.lint(text)
+                self.assertGreaterEqual(result["violations"]["banned_word"], 1)
 
     def test_verb_position_counts_verb_only_words(self):
         for text in (

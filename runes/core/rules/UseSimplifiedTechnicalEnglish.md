@@ -10,7 +10,11 @@ Combine related descriptive facts when separate sentences sound choppy. Keep one
 
 Use a verb for an action, not a noun. Do not use phrasal verbs, semicolons, contractions, or marketing adjectives.
 
-Prefer literal verbs. Strongly discourage `bake`, `gate`, `land`, `orchestrate`, `scaffold`, `ship`, `surface`, and `wire up` as verbs. Noun uses stay valid.
+Prefer literal verbs. Strongly discourage `bake`, `land`, `orchestrate`, `scaffold`, `ship`, `surface`, and `wire up` as verbs. Literal noun uses stay valid.
+
+Do not use jargon nouns such as `gate`, `arm`, or `knob` for software concepts.
+
+Answer the question that the prompt asked. Do not add detail that the prompt did not request.
 
 Preserve natural English. Preserve each fact, figure, condition, scope qualifier, hedge, and modal meaning before you reduce the lint score.
 

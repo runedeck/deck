@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BenchArtifact/references/schemas.md
     digest:
-      sha256: 151c7119f2100a6958f323224fe1cf3f4d7866974fe5eee0c080e67b66ea3499
+      sha256: a7fe12a73af693f44fd0937b3cf06d15724d02c71df8c21b2a9246a3b9414b20
   predicate:
     buildDefinition:
       buildType: adopt/v1

@@ -72,7 +72,11 @@
     "arm",
     "arms",
     "knob",
-    "knobs"
+    "knobs",
+    "gate",
+    "gated",
+    "gates",
+    "gating"
   ],
   "bannedPhrases": [
     "prior to",
@@ -135,10 +139,6 @@
     "baked",
     "bakes",
     "baking",
-    "gate",
-    "gated",
-    "gates",
-    "gating",
     "harden",
     "hardened",
     "hardening",

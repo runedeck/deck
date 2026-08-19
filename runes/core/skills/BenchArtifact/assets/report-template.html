@@ -432,7 +432,7 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
     <div id="limits"></div>
     <div class="prose-card" id="threshold-panel">
       <h3>Explore the verdict thresholds <span id="threshold-state" class="badge b-warn" hidden>custom, not the recorded verdict</span></h3>
-      <p class="muted">Move a slider to re-mark every verdict live. The recorded verdicts use the recommended values. This exploration resets on reload.</p>
+      <p class="muted">Move a slider to re-mark every verdict live. The recorded verdicts use the recommended values. This exploration resets on reload. A manifest can set a weight and its own thresholds for each judging dimension.</p>
       <div class="threshold-row">
         <label>Trade-off below <output id="tradeoff-value"></output>
           <input type="range" id="tradeoff-slider" min="0" max="0.5" step="0.05"></label>
@@ -751,20 +751,29 @@ function verdict(data) {
   if (!Number.isFinite(assertion)) parts.unshift("Required meaning data is unavailable.");
   const assertionBroken = Number.isFinite(assertion) && assertion < 0;
   const checkerImproved = Number.isFinite(lint) && lint < 0;
-  const clarityImproved = clarity !== null && clarity > THRESHOLDS.win;
-  const directnessImproved = directness !== null && directness > THRESHOLDS.win;
-  const improved = checkerImproved || clarityImproved || directnessImproved;
+  const dimensionValues = { clarity, fluency, directness };
+  const dimensionSpec = id => (DATA.judging?.dimensions || []).find(item => item.id === id) || {};
+  const weightOf = id => {
+    const weight = dimensionSpec(id).weight;
+    return Number.isFinite(weight) ? weight : (id === "fluency" ? 0.5 : 1);
+  };
+  const tradeOffAt = id => Number.isFinite(dimensionSpec(id).trade_off) ? dimensionSpec(id).trade_off : THRESHOLDS.trade_off;
+  const winAt = id => Number.isFinite(dimensionSpec(id).win) ? dimensionSpec(id).win : THRESHOLDS.win;
+  const judgeImproved = Object.entries(dimensionValues).some(([id, value]) =>
+    value !== null && weightOf(id) >= 1 && value > winAt(id));
+  const improved = checkerImproved || judgeImproved;
   if (!Number.isFinite(assertion)) return { cls: "b-neutral", label: "No meaning data", parts };
   if (assertionBroken) return { cls: "b-fail", label: "Regresses required meaning", parts };
   if (!improved) return { cls: "b-neutral", label: "No material improvement", parts };
-  const tradeoffs = [];
-  if (clarity !== null && clarity < THRESHOLDS.trade_off) tradeoffs.push("clarity");
-  if (fluency !== null && fluency < THRESHOLDS.trade_off) tradeoffs.push("fluency");
-  if (directness !== null && directness < THRESHOLDS.trade_off) tradeoffs.push("directness");
-  if (tradeoffs.length === 1 && tradeoffs[0] === "fluency") {
-    return { cls: "b-warn", label: "Improves with a fluency trade-off", parts };
+  const lows = Object.entries(dimensionValues)
+    .filter(([id, value]) => value !== null && weightOf(id) > 0 && value < tradeOffAt(id))
+    .map(([id]) => id);
+  const hardLows = lows.filter(id => weightOf(id) >= 1);
+  const softLows = lows.filter(id => weightOf(id) < 1);
+  if (!hardLows.length && softLows.length === 1) {
+    return { cls: "b-warn", label: `Improves with a ${softLows[0]} trade-off`, parts };
   }
-  if (tradeoffs.length) return { cls: "b-warn", label: "Improves with trade-offs", parts };
+  if (lows.length) return { cls: "b-warn", label: "Improves with trade-offs", parts };
   return { cls: "b-ok", label: "Improves controlled English", parts };
 }
 
