@@ -40,10 +40,12 @@ def grade_case(case: dict, text: str) -> list[dict]:
     return checks
 
 
-def lint(checker: Path, mode: str, response: Path) -> dict:
+def lint(checker: Path, mode: str, response: Path, checker_config: Path | None = None) -> dict:
     command = ["python3", str(checker), "--json"]
     if mode == "strict":
         command.append("--strict")
+    if checker_config is not None:
+        command.extend(["--config", str(checker_config)])
     command.append(str(response))
     result = subprocess.run(command, text=True, capture_output=True, check=False)
     if result.returncode not in (0, 1):
@@ -57,6 +59,7 @@ def main() -> int:
     parser.add_argument("--iteration", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--checker", type=Path, required=True)
+    parser.add_argument("--checker-config", type=Path)
     args = parser.parse_args()
     manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
     cases = {int(case["id"]): case for case in manifest["evals"]}
@@ -74,7 +77,7 @@ def main() -> int:
             "grader_version": 1,
             "expectations": checks,
             "summary": {"passed": passed, "failed": len(checks) - passed, "total": len(checks), "pass_rate": passed / len(checks)},
-            "lint": lint(args.checker, case.get("lint_mode", "flavored"), response),
+            "lint": lint(args.checker, case.get("lint_mode", "flavored"), response, args.checker_config),
             "notes": [],
         }
         (result_path.parent / "grading.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
