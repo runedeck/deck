@@ -15,6 +15,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- AdoptArtifact keeps block verdicts in temporary CLI sessions and commits only source-level provenance sidecars (DECK-0002).
 - BuildSkill defers its evaluation step to BenchArtifact; the loop, agent templates, review viewer, and evaluation schemas moved there.
 - The core skill schema now accepts `targets`, `disable-model-invocation`, and `user-invocable`.
 
@@ -23,3 +24,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 - The meta module again includes its required empty defaults file.
 - The current rune skill uses a directory-scoped schema until the Stable shell migration replaces it.
 - The skill hook validates each entrypoint against its nearest `.mdschema`.
+
+### Removed
+
+- Legacy per-block review ledgers from BuildSkill and ReviewMarkers.
