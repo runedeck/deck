@@ -213,6 +213,28 @@ summary:hover { background: var(--card); }
 .identity-link { color: var(--ok); }
 .empty { color: var(--muted); }
 :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.chip { display: inline-flex; align-items: center; font-family: var(--mono); font-size: 0.62rem;
+        letter-spacing: 0.05em; color: var(--muted); border: 1px solid var(--line);
+        border-radius: 999px; padding: 0.08rem 0.5rem; white-space: nowrap; }
+.chip.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); }
+#matrix-wrap table td { font-size: 0.76rem; }
+#matrix-wrap .modelcell a { text-decoration: none; font-weight: 600; }
+.cellviz { display: inline-block; vertical-align: middle; margin-left: 0.45rem; }
+.cellviz svg { display: block; }
+mark.diff-a { background: color-mix(in srgb, var(--warn) 30%, transparent); color: inherit;
+              border-radius: 3px; padding: 0 1px; }
+mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); color: inherit;
+              border-radius: 3px; padding: 0 1px; }
+.pair-controls button[aria-pressed] { border-style: dashed; }
+.pair-controls button[aria-pressed="true"] { border-style: solid; border-color: var(--primary);
+                                             color: var(--primary); }
+.schematic a rect { pointer-events: all; }
+.schematic a:hover rect, .schematic a:focus rect { stroke: var(--primary); stroke-width: 2; }
+.judge-meta { font-family: var(--mono); font-size: 0.64rem; color: var(--muted);
+              letter-spacing: 0.06em; text-transform: uppercase; font-weight: 400; }
+.notes-list { margin: 0.3rem 0 1.2rem 1.15rem; padding: 0; font-size: 0.9rem; }
+.notes-list li { margin: 0.35rem 0; }
+.forensics { margin-bottom: 0.9rem; }
 @media (max-width: 900px) {
   .pair { grid-template-columns: 1fr; }
   .masthead { padding-top: 3.4rem; }
@@ -247,6 +269,7 @@ summary:hover { background: var(--card); }
     <p id="tested"></p>
     <div class="cards" id="summary"></div>
     <div class="verdict-tabs" id="verdict-tabs" role="tablist" aria-label="Verdict comparison"></div>
+    <div id="matrix-wrap"></div>
     <div class="verdict-grid" id="verdict-rows"></div>
   </section>
   <section id="how" aria-labelledby="how-heading">
@@ -293,8 +316,16 @@ summary:hover { background: var(--card); }
           <path d="M626 184 L666 184 L666 132 L702 132"/>
         </g>
         <text x="795" y="172" fill="currentColor" opacity="0.6" font-size="10.5" text-anchor="middle" font-family="var(--mono)">responses arrive shuffled as A and B</text>
+        <g fill="transparent" stroke="none">
+          <a href="#cases" aria-label="Jump to run records"><rect x="16" y="90" width="130" height="56" rx="9"/></a>
+          <a href="#comparisons" aria-label="Jump to comparisons"><rect x="216" y="26" width="170" height="56" rx="9"/></a>
+          <a href="#comparisons" aria-label="Jump to comparisons"><rect x="216" y="156" width="170" height="56" rx="9"/></a>
+          <a href="#examples" aria-label="Jump to pair review"><rect x="466" y="26" width="160" height="56" rx="9"/></a>
+          <a href="#examples" aria-label="Jump to pair review"><rect x="466" y="156" width="160" height="56" rx="9"/></a>
+          <a href="#examples" aria-label="Jump to pair review"><rect x="698" y="88" width="194" height="64" rx="9"/></a>
+        </g>
       </svg>
-      <figcaption class="muted">Every case runs twice per model: identical prompt, files, and mode; only the artifact differs. Assertions guard meaning, the checker measures the claimed behavior, and a blind judge from another vendor compares the shuffled pair. The verdicts above read those three signals together, within one model.</figcaption>
+      <figcaption class="muted">Every case runs twice per model: identical prompt, files, and mode; only the artifact differs. Assertions guard meaning, the checker measures the claimed behavior, and a blind judge from another vendor compares the shuffled pair. The verdicts above read those three signals together, within one model. The boxes link to the matching report sections.</figcaption>
     </figure>
     <div class="prose-card">
       <p><b>Assertion pass rate (0–1, higher is better).</b> The case assertions measure required behavior. A drop means the artifact harmed a requirement.</p>
@@ -317,6 +348,7 @@ summary:hover { background: var(--card); }
       <label>Case <select id="pair-case"></select></label>
       <button type="button" id="pair-prev" aria-label="Previous pair">←</button>
       <button type="button" id="pair-next" aria-label="Next pair">→</button>
+      <button type="button" id="pair-diff" aria-pressed="true">highlight differences</button>
       <span id="pair-position" class="muted"></span>
     </div>
     <div id="pair-view"></div>
@@ -341,6 +373,38 @@ const DATA = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob("__BENCHMA
 const el = (tag, text, cls) => { const node = document.createElement(tag); if (text !== undefined && text !== null) node.textContent = String(text); if (cls) node.className = cls; return node; };
 const fmt = value => value === null || value === undefined ? "—" : typeof value === "number" ? (Number.isInteger(value) ? String(value) : value.toFixed(2)) : String(value);
 const listText = values => new Intl.ListFormat("en", { style: "long", type: "conjunction" }).format(values);
+const SVG_NS = "http://www.w3.org/2000/svg";
+const svg = (tag, attrs) => { const node = document.createElementNS(SVG_NS, tag);
+  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value); return node; };
+const dumbbell = (base, treat, lowerBetter) => {
+  if (!Number.isFinite(base) || !Number.isFinite(treat)) return null;
+  const box = svg("svg", { width: 58, height: 12, viewBox: "0 0 58 12", "aria-hidden": "true" });
+  const low = Math.min(base, treat), high = Math.max(base, treat);
+  const span = high - low || 1;
+  const x = value => 6 + 46 * ((value - low) / span);
+  const improved = lowerBetter ? treat < base : treat > base;
+  box.append(
+    svg("line", { x1: x(base), y1: 6, x2: x(treat), y2: 6, stroke: "currentColor", "stroke-opacity": 0.35, "stroke-width": 1.4 }),
+    svg("circle", { cx: x(base), cy: 6, r: 2.4, fill: "currentColor", "fill-opacity": 0.45 }),
+    svg("circle", { cx: x(treat), cy: 6, r: 3.2, fill: treat === base ? "currentColor" : improved ? "var(--ok)" : "var(--fail)" }));
+  const holder = el("span", null, "cellviz");
+  holder.appendChild(box);
+  return holder;
+};
+const gauge = value => {
+  if (!Number.isFinite(value)) return null;
+  const box = svg("svg", { width: 46, height: 12, viewBox: "0 0 46 12", "aria-hidden": "true" });
+  const x = share => 4 + 38 * Math.min(Math.max(share, 0), 1);
+  box.append(
+    svg("rect", { x: x(0), y: 4.5, width: x(0.4) - x(0), height: 3, rx: 1.5, fill: "var(--fail)", "fill-opacity": 0.22 }),
+    svg("rect", { x: x(0.4), y: 4.5, width: x(0.5) - x(0.4), height: 3, fill: "var(--warn)", "fill-opacity": 0.25 }),
+    svg("rect", { x: x(0.5), y: 4.5, width: x(1) - x(0.5), height: 3, rx: 1.5, fill: "var(--ok)", "fill-opacity": 0.22 }),
+    svg("circle", { cx: x(value), cy: 6, r: 3.1,
+      fill: value < 0.4 ? "var(--fail)" : value < 0.5 ? "var(--warn)" : "var(--ok)" }));
+  const holder = el("span", null, "cellviz");
+  holder.appendChild(box);
+  return holder;
+};
 const mean = summary => summary && summary.mean !== null && summary.mean !== undefined ? summary.mean : null;
 const metadata = DATA.metadata || {};
 const artifact = metadata.artifact_name || "Artifact benchmark";
@@ -482,7 +546,7 @@ const setVerdictComparison = comparisonId => {
     button.setAttribute("aria-selected", String(selected));
     button.tabIndex = selected ? 0 : -1;
   });
-  verdictRoot.querySelectorAll("[data-comparison]").forEach(row => {
+  document.querySelectorAll("#verdict-rows [data-comparison], #matrix-wrap [data-comparison]").forEach(row => {
     const hidden = row.dataset.comparison !== comparisonId;
     row.hidden = hidden;
     row.setAttribute("aria-hidden", String(hidden));
@@ -529,6 +593,17 @@ for (const comparison of shownComparisons) {
   if (identity) section.append(identity);
   const models = Object.entries(comparison.models || {});
   if (!models.length) section.appendChild(el("p", "No run records are available for this comparison.", "empty"));
+  const matrixScroll = el("div", null, "scroll");
+  matrixScroll.dataset.comparison = comparison.id;
+  const matrix = el("table");
+  matrix.setAttribute("aria-label", `Scoring matrix for ${comparison.label || comparison.id}`);
+  const matrixHead = el("tr");
+  ["Model", "Verdict", "Pairs", "Assertions \u0394", "Checker /100w", "Clarity", "Fluency", "Directness"]
+    .forEach(label => matrixHead.appendChild(el("th", label)));
+  const matrixThead = el("thead"); matrixThead.appendChild(matrixHead); matrix.appendChild(matrixThead);
+  const matrixBody = el("tbody"); matrix.appendChild(matrixBody);
+  matrixScroll.appendChild(matrix);
+  document.getElementById("matrix-wrap").appendChild(matrixScroll);
   for (const [model, data] of models) {
     const summary = verdict(data);
     const row = el("article", null, "verdict-row");
@@ -537,10 +612,52 @@ for (const comparison of shownComparisons) {
     row.setAttribute("aria-label", `${model}: ${summary.label}`);
     row.append(el("h3", `${model} · ${armLabel(comparison.primary).replace(/^the /, "")}`), el("span", summary.label, `badge ${summary.cls}`), el("p", summary.sentence));
     verdictRoot.appendChild(row);
+    const matrixRow = el("tr");
+    const modelCell = el("td", null, "modelcell");
+    const modelLink = el("a", model);
+    modelLink.href = `#pair=${encodeURIComponent(model)}`;
+    modelLink.title = "Review this model's pairs";
+    modelCell.appendChild(modelLink);
+    const verdictCell = el("td");
+    verdictCell.appendChild(el("span", summary.label, `badge ${summary.cls}`));
+    const pairsCell = el("td", `${data.paired_samples || 0}/${data.planned_pairs || 0}`);
+    const assertionDelta = pairedDelta(data, "assertion_pass_rate");
+    const assertionCell = el("td", fmt(assertionDelta), deltaClass("assertion_pass_rate", assertionDelta));
+    const checkerCell = el("td");
+    const checkerBase = pairedMetric(data, "baseline", "lint_per100w");
+    const checkerTreat = pairedMetric(data, "primary", "lint_per100w");
+    checkerCell.append(`${fmt(checkerBase)} \u2192 ${fmt(checkerTreat)}`);
+    const checkerViz = dumbbell(checkerBase, checkerTreat, true);
+    if (checkerViz) checkerCell.appendChild(checkerViz);
+    matrixRow.append(modelCell, verdictCell, pairsCell, assertionCell, checkerCell);
+    for (const dimension of ["clarity_preference", "fluency_preference", "directness_preference"]) {
+      const value = mean(data.primary?.metrics?.[dimension]);
+      const cell = el("td", fmt(value), value === null ? "null" : "");
+      const viz = gauge(value);
+      if (viz) cell.appendChild(viz);
+      matrixRow.appendChild(cell);
+    }
+    matrixBody.appendChild(matrixRow);
 
     const block = el("article", null, "model-block");
     const head = el("div", null, "model-head");
-    head.append(el("h3", model), el("span", summary.label, `badge ${summary.cls}`), el("span", null, "spacer"),
+    head.append(el("h3", model), el("span", summary.label, `badge ${summary.cls}`));
+    const routeInfo = (DATA.runs || []).find(run => run.model === model && run.route)?.route;
+    if (routeInfo) {
+      const routeName = routeInfo.resolved_route || routeInfo.requested_route || routeInfo.requested_provider;
+      if (routeName) head.appendChild(el("span", routeInfo.clean_harness_state ? `${routeName} \u00b7 clean state` : routeName, "chip"));
+    }
+    const wordsBase = pairedMetric(data, "baseline", "word_count");
+    const wordsTreat = pairedMetric(data, "primary", "word_count");
+    if (Number.isFinite(wordsBase) && Number.isFinite(wordsTreat) && wordsBase > 0 && wordsTreat / wordsBase >= 1.8) {
+      head.appendChild(el("span", `output \u00d7${(wordsTreat / wordsBase).toFixed(1)}`, "chip warn"));
+    }
+    const secondsBase = pairedMetric(data, "baseline", "duration_seconds");
+    const secondsTreat = pairedMetric(data, "primary", "duration_seconds");
+    if (Number.isFinite(secondsBase) && Number.isFinite(secondsTreat) && secondsBase > 0 && secondsTreat / secondsBase >= 2) {
+      head.appendChild(el("span", `slower \u00d7${(secondsTreat / secondsBase).toFixed(1)}`, "chip warn"));
+    }
+    head.append(el("span", null, "spacer"),
       el("span", `${data.paired_samples || 0}/${data.planned_pairs || 0} pairs`, "muted"));
     block.appendChild(head);
     const table = el("table");
@@ -613,6 +730,60 @@ for (const comparison of DATA.comparisons || []) {
 }
 pairs.sort((a, b) => a.model.localeCompare(b.model) || Number(a.treatment.eval_id) - Number(b.treatment.eval_id));
 let pairIndex = 0;
+let pairInteracted = false;
+let diffEnabled = true;
+const tokenize = value => value.split(/(\s+)/);
+const diffPre = (own, other, cls) => {
+  const pre = el("pre");
+  const ownTokens = tokenize(own), otherTokens = tokenize(other);
+  if (!diffEnabled || ownTokens.length > 1600 || otherTokens.length > 1600) {
+    pre.textContent = own;
+    return pre;
+  }
+  const rows = ownTokens.length, cols = otherTokens.length;
+  const lcs = Array.from({ length: rows + 1 }, () => new Uint16Array(cols + 1));
+  for (let i = rows - 1; i >= 0; i--) {
+    for (let j = cols - 1; j >= 0; j--) {
+      lcs[i][j] = ownTokens[i] === otherTokens[j] ? lcs[i + 1][j + 1] + 1 : Math.max(lcs[i + 1][j], lcs[i][j + 1]);
+    }
+  }
+  let i = 0, j = 0, run = [];
+  const flush = unique => {
+    if (!run.length) return;
+    const chunk = run.join("");
+    if (unique && chunk.trim()) {
+      const markNode = el("mark", chunk, cls);
+      pre.appendChild(markNode);
+    } else {
+      pre.appendChild(document.createTextNode(chunk));
+    }
+    run = [];
+  };
+  let uniqueRun = false;
+  while (i < rows) {
+    const match = j < cols && ownTokens[i] === otherTokens[j] && lcs[i][j] === lcs[i + 1][j + 1] + 1;
+    if (match) {
+      if (uniqueRun) { flush(true); uniqueRun = false; }
+      run.push(ownTokens[i]); i += 1; j += 1;
+    } else if (j < cols && lcs[i][j + 1] >= lcs[i + 1][j]) {
+      j += 1;
+    } else {
+      if (!uniqueRun) { flush(false); uniqueRun = true; }
+      run.push(ownTokens[i]); i += 1;
+    }
+  }
+  flush(uniqueRun);
+  return pre;
+};
+const pairHash = entry => `#pair=${encodeURIComponent(entry.model)}/${entry.treatment.eval_id}/${entry.treatment.run_number}`;
+const findPairFromHash = () => {
+  const match = /^#pair=([^/]+)(?:\/([^/]+))?(?:\/([^/]+))?$/.exec(location.hash);
+  if (!match) return -1;
+  const model = decodeURIComponent(match[1]);
+  return pairs.findIndex(pair => pair.model === model
+    && (match[2] === undefined || String(pair.treatment.eval_id) === match[2])
+    && (match[3] === undefined || String(pair.treatment.run_number) === match[3]));
+};
 const fillSelect = (select, values, current) => {
   select.replaceChildren();
   for (const [value, label] of values) {
@@ -636,21 +807,27 @@ const renderPair = () => {
     pairs.filter(p => p.model === entry.model)
       .map(p => [String(p.treatment.eval_id), `case ${p.treatment.eval_id} ${p.treatment.eval_name || ""} · run ${p.treatment.run_number}`]),
     String(entry.treatment.eval_id));
-  pairPosition.textContent = `${pairIndex + 1} of ${pairs.length}`;
+  pairPosition.textContent = `${pairIndex + 1} of ${pairs.length} \u00b7 \u2190 \u2192 keys`;
+  if (pairInteracted) history.replaceState(null, "", pairHash(entry));
   const pair = el("div", null, "pair");
-  for (const [label, record] of [
-    ["Baseline (no artifact)", entry.baseline],
-    [armLabel(entry.comparison.primary).replace(/^the /, "With the "), entry.treatment],
+  for (const [label, record, other, cls] of [
+    ["Baseline (no artifact)", entry.baseline, entry.treatment, "diff-a"],
+    [armLabel(entry.comparison.primary).replace(/^the /, "With the "), entry.treatment, entry.baseline, "diff-b"],
   ]) {
     const cell = el("div");
     cell.appendChild(el("h4", label));
-    cell.appendChild(el("pre", record.response));
+    cell.appendChild(diffPre(record.response, other.response, cls));
     cell.appendChild(el("p", `fact checks ${fmt(record.result?.assertion_pass_rate)} · lint ${fmt(record.result?.lint_per100w)}/100w · ${fmt(record.result?.word_count)} words · ${fmt(record.result?.duration_seconds)}s`, "stats"));
     pair.appendChild(cell);
   }
   pairView.appendChild(pair);
   const judgmentCard = el("div", null, "judgment");
-  judgmentCard.appendChild(el("h4", "Blind judgment for this pair"));
+  const judgmentTitle = el("h4", "Blind judgment for this pair");
+  if (entry.judgment && (entry.judgment.judge_model || entry.judgment.judge_route)) {
+    judgmentTitle.append(" ", el("span",
+      `judge ${entry.judgment.judge_model || "?"} via ${entry.judgment.judge_route || "?"}`, "judge-meta"));
+  }
+  judgmentCard.appendChild(judgmentTitle);
   if (entry.judgment && entry.judgment.state !== "provider_failure") {
     for (const dimension of ["clarity", "fluency", "directness"]) {
       const winner = entry.judgment[`${dimension}_winner_arm`];
@@ -669,20 +846,74 @@ const renderPair = () => {
   pairView.appendChild(judgmentCard);
 };
 pairModelSelect.addEventListener("change", () => {
+  pairInteracted = true;
   pairIndex = pairs.findIndex(p => p.model === pairModelSelect.value);
   renderPair();
 });
 pairCaseSelect.addEventListener("change", () => {
+  pairInteracted = true;
   const found = pairs.findIndex(p =>
     p.model === pairModelSelect.value && String(p.treatment.eval_id) === pairCaseSelect.value);
   if (found >= 0) pairIndex = found;
   renderPair();
 });
-document.getElementById("pair-prev").addEventListener("click", () => { pairIndex -= 1; renderPair(); });
-document.getElementById("pair-next").addEventListener("click", () => { pairIndex += 1; renderPair(); });
+document.getElementById("pair-prev").addEventListener("click", () => { pairInteracted = true; pairIndex -= 1; renderPair(); });
+document.getElementById("pair-next").addEventListener("click", () => { pairInteracted = true; pairIndex += 1; renderPair(); });
+const diffToggle = document.getElementById("pair-diff");
+diffToggle.addEventListener("click", () => {
+  diffEnabled = !diffEnabled;
+  diffToggle.setAttribute("aria-pressed", String(diffEnabled));
+  renderPair();
+});
+document.addEventListener("keydown", event => {
+  if (event.altKey || event.ctrlKey || event.metaKey) return;
+  const tag = event.target.tagName;
+  if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") return;
+  if (event.key === "ArrowLeft") { pairInteracted = true; pairIndex -= 1; renderPair(); }
+  else if (event.key === "ArrowRight") { pairInteracted = true; pairIndex += 1; renderPair(); }
+  else return;
+  event.preventDefault();
+});
+const applyHash = () => {
+  const found = findPairFromHash();
+  if (found >= 0) {
+    pairInteracted = true;
+    pairIndex = found;
+    renderPair();
+    document.getElementById("examples").scrollIntoView();
+  }
+};
+window.addEventListener("hashchange", applyHash);
+const initialPair = findPairFromHash();
+if (initialPair >= 0) pairIndex = initialPair;
 renderPair();
+if (initialPair >= 0) document.getElementById("examples").scrollIntoView();
 
 const runRoot = document.getElementById("runs");
+const excludedRuns = runs.filter(run => !run.valid);
+if (excludedRuns.length) {
+  const groups = new Map();
+  for (const run of excludedRuns) {
+    const reason = typeof run.exclusion_reason === "string" ? run.exclusion_reason : run.state;
+    const key = `${run.model}|${reason}`;
+    if (!groups.has(key)) groups.set(key, { model: run.model, reason, count: 0, seconds: [] });
+    const group = groups.get(key);
+    group.count += 1;
+    const seconds = run.result?.duration_seconds;
+    if (Number.isFinite(seconds)) group.seconds.push(seconds);
+  }
+  const forensics = el("div", null, "prose-card forensics");
+  forensics.appendChild(el("h3", "Excluded runs by failure signature"));
+  const list = el("ul", null, "notes-list");
+  for (const group of groups.values()) {
+    const range = group.seconds.length
+      ? ` \u00b7 ${Math.min(...group.seconds).toFixed(0)}\u2013${Math.max(...group.seconds).toFixed(0)}s`
+      : "";
+    list.appendChild(el("li", `${group.count} \u00d7 ${group.model} \u00b7 ${group.reason}${range}`));
+  }
+  forensics.appendChild(list);
+  runRoot.appendChild(forensics);
+}
 const caseIds = [...new Set(runs.map(run => `${run.eval_id}|${run.eval_name || ""}`))]
   .sort((a, b) => Number(a.split("|")[0]) - Number(b.split("|")[0]));
 for (const key of caseIds) {
@@ -704,12 +935,14 @@ for (const key of caseIds) {
 }
 
 const notesRoot = document.getElementById("notes");
-const notes = [...(DATA.notes || []), ...(DATA.limitations || [])];
-if (!notes.length) notesRoot.appendChild(el("p", "No notes were recorded.", "empty"));
-for (const note of notes) {
-  const card = el("div", null, "prose-card");
-  card.appendChild(el("p", typeof note === "string" ? note : JSON.stringify(note)));
-  notesRoot.appendChild(card);
+const noteGroups = [["Notes", DATA.notes || []], ["Limitations", DATA.limitations || []]]
+  .filter(([, items]) => items.length);
+if (!noteGroups.length) notesRoot.appendChild(el("p", "No notes were recorded.", "empty"));
+for (const [title, items] of noteGroups) {
+  notesRoot.appendChild(el("h3", title));
+  const list = el("ul", null, "notes-list");
+  for (const note of items) list.appendChild(el("li", typeof note === "string" ? note : JSON.stringify(note)));
+  notesRoot.appendChild(list);
 }
 
 const identities = metadata.identities || {};
