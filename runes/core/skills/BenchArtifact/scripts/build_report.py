@@ -18,7 +18,7 @@ from pathlib import Path
 TEMPLATE_PATH = Path(__file__).resolve().parent.parent / "assets" / "report-template.html"
 DATA_PLACEHOLDER = "__BENCHMARK_DATA_BASE64__"
 JUDGMENT_FIELDS = {
-    "schema_version", "comparison", "eval_id", "model", "repeat",
+    "schema_version", "comparison", "eval_id", "model", "repeat", "run_number",
     "judge_route", "judge_model", "seed", "blind_order", "state",
     "clarity_winner", "clarity_winner_arm", "clarity_reason",
     "fluency_winner", "fluency_winner_arm", "fluency_reason",

@@ -184,6 +184,20 @@ summary:hover { background: var(--card); }
             padding: 0.6rem 0.8rem; font-size: 0.8rem; max-height: 26rem; overflow-y: auto; }
 .pair .stats { margin-top: 0.3rem; font-size: 0.78rem; color: var(--muted);
                font-variant-numeric: tabular-nums; }
+.pair-controls { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center;
+                 margin: 0.8rem 0; font-size: 0.85rem; }
+.pair-controls label { display: inline-flex; gap: 0.4rem; align-items: center; color: var(--muted); }
+.pair-controls select, .pair-controls button {
+  font: inherit; color: var(--ink); background: var(--card); border: 1px solid var(--line);
+  border-radius: 6px; padding: 0.25rem 0.55rem; cursor: pointer; }
+#pair-view .pair { border: 1px solid var(--line); border-radius: 10px; }
+.judgment { margin-top: 0.8rem; border: 1px solid var(--line); border-radius: 10px;
+            padding: 0.7rem 1rem; font-size: 0.84rem; background: var(--card); }
+.judgment h4 { margin: 0 0 0.5rem; font-size: 0.78rem; text-transform: uppercase;
+               letter-spacing: 0.05em; color: var(--muted); }
+.judgment .dim { display: flex; flex-wrap: wrap; gap: 0.4rem 0.8rem; align-items: baseline;
+                 padding: 0.25rem 0; }
+.judgment .dim b { min-width: 6.5rem; }
 .run-line { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; padding: 0.5rem 1rem;
             border-top: 1px solid var(--line); font-size: 0.82rem; align-items: baseline; }
 .run-line .who { min-width: 17rem; font-weight: 600; }
@@ -268,9 +282,16 @@ summary:hover { background: var(--card); }
   </section>
   <section id="comparisons" aria-label="Comparisons"></section>
   <section id="examples" aria-labelledby="example-heading">
-    <h2 id="example-heading">Read one pair yourself</h2>
-    <p class="muted">Each entry shows the same task answered by the same model with and without the artifact. One read explains the numbers.</p>
-    <div id="example-list"></div>
+    <h2 id="example-heading">Review the pairs</h2>
+    <p class="muted">Every matched pair shows the same task answered by the same model with and without the artifact, beside the blind judgment for that pair.</p>
+    <div class="pair-controls">
+      <label>Model <select id="pair-model"></select></label>
+      <label>Case <select id="pair-case"></select></label>
+      <button type="button" id="pair-prev" aria-label="Previous pair">←</button>
+      <button type="button" id="pair-next" aria-label="Next pair">→</button>
+      <span id="pair-position" class="muted"></span>
+    </div>
+    <div id="pair-view"></div>
   </section>
   <section id="cases" aria-labelledby="case-heading">
     <h2 id="case-heading">Run records by case</h2>
@@ -539,37 +560,96 @@ for (const run of runs) {
     byKey.set(`${run.arm}|${run.model}|${run.eval_id}|${run.run_number}`, run);
   }
 }
-const exampleRoot = document.getElementById("example-list");
-let examples = 0;
-const exampleRuns = [...runs].sort((a, b) => Number(b.eval_id) - Number(a.eval_id));
+// Pair browser: every matched pair is reviewable with its blind judgment.
+const pairView = document.getElementById("pair-view");
+const pairModelSelect = document.getElementById("pair-model");
+const pairCaseSelect = document.getElementById("pair-case");
+const pairPosition = document.getElementById("pair-position");
+const judgments = DATA.preference_judgments || [];
+const pairs = [];
 for (const comparison of DATA.comparisons || []) {
   for (const model of Object.keys(comparison.models || {})) {
-    const seenEvals = new Set();
-    for (const run of exampleRuns) {
+    for (const run of runs) {
       if (run.model !== model || run.arm !== comparison.primary || !run.valid) continue;
-      if (seenEvals.has(run.eval_id)) continue;
       const baseline = byKey.get(`${comparison.baseline}|${model}|${run.eval_id}|${run.run_number}`);
-      const treatment = byKey.get(`${comparison.primary}|${model}|${run.eval_id}|${run.run_number}`);
-      if (!baseline || !treatment) continue;
-      seenEvals.add(run.eval_id);
-      const detail = el("details");
-      detail.appendChild(el("summary", `${comparison.label || comparison.id} · ${model} · case ${run.eval_id} ${run.eval_name || ""} · run ${run.run_number}`));
-      const pair = el("div", null, "pair");
-      for (const [label, record] of [["Baseline (no artifact)", baseline], [armLabel(comparison.primary).replace(/^the /, "With the "), treatment]]) {
-        const cell = el("div");
-        cell.appendChild(el("h4", label));
-        cell.appendChild(el("pre", record.response));
-        cell.appendChild(el("p", `fact checks ${fmt(record.result?.assertion_pass_rate)} · lint ${fmt(record.result?.lint_per100w)}/100w · ${fmt(record.result?.word_count)} words`, "stats"));
-        pair.appendChild(cell);
-      }
-      detail.appendChild(pair);
-      exampleRoot.appendChild(detail);
-      examples += 1;
-      break;
+      if (!baseline || typeof baseline.response !== "string" || typeof run.response !== "string") continue;
+      const judgment = judgments.find(j =>
+        j.comparison === comparison.id && j.model === model
+        && String(j.eval_id) === String(run.eval_id) && j.run_number === run.run_number);
+      pairs.push({ comparison, model, treatment: run, baseline, judgment });
     }
   }
 }
-if (!examples) exampleRoot.appendChild(el("p", "No matched pair with stored outputs is available.", "empty"));
+pairs.sort((a, b) => a.model.localeCompare(b.model) || Number(a.treatment.eval_id) - Number(b.treatment.eval_id));
+let pairIndex = 0;
+const fillSelect = (select, values, current) => {
+  select.replaceChildren();
+  for (const [value, label] of values) {
+    const option = el("option", label);
+    option.value = value;
+    if (value === current) option.selected = true;
+    select.appendChild(option);
+  }
+};
+const renderPair = () => {
+  pairView.replaceChildren();
+  if (!pairs.length) {
+    pairView.appendChild(el("p", "No matched pair with stored outputs is available.", "empty"));
+    return;
+  }
+  pairIndex = Math.max(0, Math.min(pairIndex, pairs.length - 1));
+  const entry = pairs[pairIndex];
+  fillSelect(pairModelSelect, [...new Set(pairs.map(p => p.model))].map(m => [m, m]), entry.model);
+  fillSelect(
+    pairCaseSelect,
+    pairs.filter(p => p.model === entry.model)
+      .map(p => [String(p.treatment.eval_id), `case ${p.treatment.eval_id} ${p.treatment.eval_name || ""} · run ${p.treatment.run_number}`]),
+    String(entry.treatment.eval_id));
+  pairPosition.textContent = `${pairIndex + 1} of ${pairs.length}`;
+  const pair = el("div", null, "pair");
+  for (const [label, record] of [
+    ["Baseline (no artifact)", entry.baseline],
+    [armLabel(entry.comparison.primary).replace(/^the /, "With the "), entry.treatment],
+  ]) {
+    const cell = el("div");
+    cell.appendChild(el("h4", label));
+    cell.appendChild(el("pre", record.response));
+    cell.appendChild(el("p", `fact checks ${fmt(record.result?.assertion_pass_rate)} · lint ${fmt(record.result?.lint_per100w)}/100w · ${fmt(record.result?.word_count)} words · ${fmt(record.result?.duration_seconds)}s`, "stats"));
+    pair.appendChild(cell);
+  }
+  pairView.appendChild(pair);
+  const judgmentCard = el("div", null, "judgment");
+  judgmentCard.appendChild(el("h4", "Blind judgment for this pair"));
+  if (entry.judgment && entry.judgment.state !== "provider_failure") {
+    for (const dimension of ["clarity", "fluency", "directness"]) {
+      const winner = entry.judgment[`${dimension}_winner_arm`];
+      const reason = entry.judgment[`${dimension}_reason`] || "";
+      const row = el("div", null, "dim");
+      row.appendChild(el("b", dimension));
+      const label = winner === "tie" ? "tie"
+        : winner === entry.comparison.primary ? "treatment" : "baseline";
+      row.appendChild(el("span", label, `badge ${winner === "tie" ? "b-neutral" : winner === entry.comparison.primary ? "b-ok" : "b-warn"}`));
+      row.appendChild(el("span", reason, "muted"));
+      judgmentCard.appendChild(row);
+    }
+  } else {
+    judgmentCard.appendChild(el("p", "No valid blind judgment exists for this pair.", "empty"));
+  }
+  pairView.appendChild(judgmentCard);
+};
+pairModelSelect.addEventListener("change", () => {
+  pairIndex = pairs.findIndex(p => p.model === pairModelSelect.value);
+  renderPair();
+});
+pairCaseSelect.addEventListener("change", () => {
+  const found = pairs.findIndex(p =>
+    p.model === pairModelSelect.value && String(p.treatment.eval_id) === pairCaseSelect.value);
+  if (found >= 0) pairIndex = found;
+  renderPair();
+});
+document.getElementById("pair-prev").addEventListener("click", () => { pairIndex -= 1; renderPair(); });
+document.getElementById("pair-next").addEventListener("click", () => { pairIndex += 1; renderPair(); });
+renderPair();
 
 const runRoot = document.getElementById("runs");
 const caseIds = [...new Set(runs.map(run => `${run.eval_id}|${run.eval_name || ""}`))]

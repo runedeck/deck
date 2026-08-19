@@ -99,8 +99,10 @@ class BuildReportTests(unittest.TestCase):
         self.assertIn('[hidden] { display: none !important; }', template)
         self.assertIn('row.setAttribute("aria-hidden", String(hidden))', template)
         self.assertIn('class="verdict-grid"', template)
-        self.assertIn("const exampleRuns = [...runs].sort", template)
-        self.assertEqual(template.count("Each entry shows the same task answered"), 1)
+        self.assertIn('id="pair-view"', template)
+        self.assertIn("const renderPair = () => {", template)
+        self.assertIn("Blind judgment for this pair", template)
+        self.assertEqual(template.count("Every matched pair shows the same task answered"), 1)
         self.assertNotIn("p { max-width: 76ch; }", template)
         self.assertNotIn("nav.side { display: none; }", template)
 

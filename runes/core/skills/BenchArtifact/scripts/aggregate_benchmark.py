@@ -400,22 +400,56 @@ def generate(root: Path, manifest_path: Path | None, artifact_name: str, artifac
     }
 
 
+def format_cell(value, digits=2):
+    return "—" if value is None else f"{value:.{digits}f}"
+
+
+def preference_cell(value):
+    if value is None:
+        return "—"
+    return f"{value:+.2f}"
+
+
 def markdown(data: dict) -> str:
+    """One compact table per executed comparison, ready for a pull request body."""
     lines = [f"# Artifact Benchmark: {data['metadata']['artifact_name']}", ""]
     for comparison in data["comparisons"]:
-        lines.extend([f"## {comparison.get('label', comparison['id'])}", ""])
-        for model, values in comparison["models"].items():
-            primary, baseline = values["primary"], values["baseline"]
-            lines.append(f"### {model}")
-            lines.append("")
-            lines.append("| Arm | Valid | Excluded | Assertion pass | Lint per 100 words |")
-            lines.append("|---|---:|---:|---:|---:|")
-            for name, summary in ((comparison["primary"], primary), (comparison["baseline"], baseline)):
-                metrics = summary["metrics"] if summary else {}
-                assertion = metrics.get("assertion_pass_rate", {}).get("mean")
-                lint = metrics.get("lint_per100w", {}).get("mean")
-                lines.append(f"| {name} | {summary['valid_samples'] if summary else 0} | {summary['exclusions'] if summary else 0} | {assertion if assertion is not None else '—'} | {lint if lint is not None else '—'} |")
-            lines.append("")
+        cells = comparison["models"]
+        if not any((values.get("paired_samples") or 0) > 0 for values in cells.values()):
+            continue
+        explainer = (
+            "Deltas are treatment minus baseline within one model. "
+            "Lower lint density is better. Preferences run from -1 (baseline) to +1 (treatment)."
+        )
+        lines.extend([
+            f"## {comparison.get('label', comparison['id'])}", "",
+            explainer, "",
+            "| Model | Pairs | Assertions | Lint /100w | Clarity | Fluency | Directness |",
+            "|---|---:|---|---|---:|---:|---:|",
+        ])
+        for model, values in cells.items():
+            pairs = values.get("paired_samples") or 0
+            if pairs == 0:
+                lines.append(f"| {model} | 0 | — | — | — | — | — |")
+                continue
+            corpus = values.get("paired_corpus") or {}
+            base, treat = corpus.get("baseline", {}), corpus.get("primary", {})
+            deltas = values.get("deltas") or {}
+            assertion = (
+                f"{format_cell(base.get('assertion_pass_rate'))} → "
+                f"{format_cell(treat.get('assertion_pass_rate'))}"
+            )
+            lint = (
+                f"{format_cell(base.get('lint_per100w'))} → "
+                f"{format_cell(treat.get('lint_per100w'))}"
+            )
+            lines.append(
+                f"| {model} | {pairs} | {assertion} | {lint} "
+                f"| {preference_cell(deltas.get('clarity_preference'))} "
+                f"| {preference_cell(deltas.get('fluency_preference'))} "
+                f"| {preference_cell(deltas.get('directness_preference'))} |"
+            )
+        lines.append("")
     if data["limitations"]:
         lines.extend(["## Limitations", "", *(f"- {item}" for item in data["limitations"]), ""])
     return "\n".join(lines)
