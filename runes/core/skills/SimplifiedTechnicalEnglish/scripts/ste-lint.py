@@ -7,12 +7,11 @@ import re
 import sys
 from pathlib import Path
 
-# Score v2: adds complex_tense (perfect tenses, modal stacks), exempts
-# adjectival/stative participles from the passive count, moves "provide" to the
-# banned list, adds a noun-train marker and a --strict mode. The episode's
-# published numbers were measured with score v1 (this file's git history at the
-# episode date); v1 and v2 totals are close but not directly comparable.
-SCORE_VERSION = 2
+# Score v5 skips verb-only banned words in noun position. It lints prose
+# inside Markdown fences, keeps other fenced content masked, protects
+# uncertainty, and reports short-text density as advisory.
+SCORE_VERSION = 5
+DENSITY_RELIABLE_WORDS = 40
 DEFAULT_CONFIG = Path(__file__).resolve().parent.parent / "config" / "lint-rules.json"
 CONFIG_KEYS = {
     "marketing",
@@ -20,7 +19,8 @@ CONFIG_KEYS = {
     "bannedPhrases",
     "strictBannedWords",
     "phrasalVerbs",
-    "modalHedges",
+    "fillerPhrases",
+    "verbOnlyWords",
 }
 BE = r"(?:am|is|are|was|were|be|been|being)"
 PP_IRREG = r"(?:done|made|sent|read|built|kept|held|set|put|run|written|shown|given|taken|found|got|gotten|seen|known|thrown|drawn)"
@@ -32,6 +32,22 @@ FUNC_WORDS = set(
 when then than not no is are was were be been being am do does did has have had will would can could
 may might must should shall it its their your our his her they we you i""".split()  # noqa: SIM905
 )
+ABBREVIATIONS = ("e.g.", "i.e.", "etc.", "Mr.", "Mrs.", "Ms.", "Dr.", "vs.")
+SEVERITIES = {
+    "long_sentence(>20w)": "hard",
+    "semicolon": "hard",
+    "contraction": "hard",
+    "passive_voice": "soft",
+    "complex_tense": "hard",
+    "ing_main_verb": "hard",
+    "nominalization": "soft",
+    "phrasal_verb": "hard",
+    "banned_word": "soft",
+    "marketing_adjective": "soft",
+    "filler_phrase": "soft",
+    "long_paragraph(>6s)": "hard",
+    "strict_banned_word": "hard",
+}
 
 
 def load_config(path=DEFAULT_CONFIG):
@@ -72,27 +88,126 @@ def load_config(path=DEFAULT_CONFIG):
 
 
 def strip_code(text):
-    text = re.sub(r"```.*?```", " ", text, flags=re.DOTALL)
-    return re.sub(r"`[^`]*`", " ", text)
+    """Mask Markdown regions that do not contain prose."""
+    lines = text.splitlines()
+    masked = list(lines)
+    if lines and lines[0].strip() == "---":
+        for index in range(len(lines)):
+            masked[index] = ""
+            if index and lines[index].strip() == "---":
+                break
+    in_fence = False
+    fenced_prose = False
+    table = False
+    for index, line in enumerate(lines):
+        stripped = line.lstrip()
+        if stripped.startswith(("```", "~~~")):
+            if in_fence:
+                in_fence = False
+                fenced_prose = False
+            else:
+                in_fence = True
+                language = stripped[3:].strip().casefold()
+                fenced_prose = language in {"markdown", "md"}
+            masked[index] = ""
+            continue
+        if in_fence and not fenced_prose:
+            masked[index] = ""
+            continue
+        next_line = lines[index + 1] if index + 1 < len(lines) else ""
+        if "|" in line and re.fullmatch(r"\s*\|?\s*:?-+:?\s*(?:\|\s*:?-+:?\s*)+\|?\s*", next_line):
+            table = True
+            masked[index] = ""
+            continue
+        if table:
+            if "|" in line:
+                masked[index] = ""
+                continue
+            table = False
+        masked[index] = re.sub(r"`[^`]*`", " ", masked[index])
+    return "\n".join(masked)
 
 
 def sentences(text):
-    out = []
+    blocks = []
+    current = []
     for line in text.split("\n"):
         sentence = line.strip()
         if not sentence:
+            if current:
+                blocks.append(" ".join(current))
+                current = []
             continue
+        structural = bool(re.match(r"^\s*(?:#{1,6}\s+|[-*+]\s+|\d+[.)]\s+)", line))
         sentence = re.sub(r"^\s*#{1,6}\s*", "", sentence)
         sentence = re.sub(r"^\s*(?:[-*+]|\d+[.)])\s+", "", sentence)
         if not sentence:
             continue
-        parts = re.split(r"(?<=[.!?:])\s+(?=[A-Z0-9\"'\-])", sentence)
-        out.extend(part.strip() for part in parts if part.strip())
+        if structural and current:
+            blocks.append(" ".join(current))
+            current = []
+        current.append(sentence)
+        if structural:
+            blocks.append(" ".join(current))
+            current = []
+    if current:
+        blocks.append(" ".join(current))
+    out = []
+    for block in blocks:
+        protected = block
+        for index, abbreviation in enumerate(ABBREVIATIONS):
+            protected = re.sub(
+                re.escape(abbreviation),
+                abbreviation.replace(".", f"\x00{index}"),
+                protected,
+                flags=re.IGNORECASE,
+            )
+        parts = re.split(r"(?<=[.!?:])\s+(?=[A-Z0-9\"'\-])", protected)
+        for part in parts:
+            for index in range(len(ABBREVIATIONS)):
+                part = part.replace(f"\x00{index}", ".")
+            if part.strip():
+                out.append(part.strip())
     return out
 
 
 def wc(sentence):
     return len(re.findall(r"[A-Za-z0-9][A-Za-z0-9'\-/]*", sentence))
+
+
+# Noun-position guard for verb-only banned words. A determiner, possessive,
+# or preposition before the word marks a noun use ("the API surface", "by
+# ship"), unless an auxiliary or infinitive marker follows it ("the team
+# will ship"). Ambiguous positions still count as soft findings.
+NOUN_MARKERS = set(
+    """the a an this that these those its their our your his her my each every
+any some no of on in at by from into onto over under across through near""".split()  # noqa: SIM905
+)
+VERB_MARKERS = set(
+    "will would can could may might must shall should do does did to not".split()  # noqa: SIM905
+)
+
+
+def is_noun_position(prefix):
+    segment = re.split(r"[.,;:!?()\n]", prefix)[-1]
+    tokens = re.findall(r"[a-z'\-]+", segment)[-3:]
+    for index, token in enumerate(tokens):
+        if token in NOUN_MARKERS and not set(tokens[index + 1 :]) & VERB_MARKERS:
+            return True
+    return False
+
+
+def count_verb_only(text, words):
+    count = 0
+    hits = []
+    lower = text.lower()
+    for word in words:
+        for match in re.finditer(r"(?<![a-z])" + re.escape(word) + r"(?![a-z])", lower):
+            if is_noun_position(lower[: match.start()]):
+                continue
+            count += 1
+            hits.append(word)
+    return count, hits
 
 
 def count_ci(text, phrases):
@@ -149,10 +264,16 @@ def lint(text, strict=False, config=None, config_path=None, config_digest=None):
     violations["passive_voice"] = sum(
         1 for part in passive_parts if not re.fullmatch(STATIVE, part, re.IGNORECASE)
     ) + len(re.findall(rf"\b{BE}\s+{STATIVE}\s+by\b", text, re.IGNORECASE))
+    tense_text = re.sub(
+        rf"\b(?:may|might|could|would|should|must)\s+have\s+(?:been\s+)?(?:\w+ed|{PP_IRREG})\b",
+        " ",
+        text,
+        flags=re.IGNORECASE,
+    )
     violations["complex_tense"] = len(
         re.findall(
-            rf"\b(?:(?:may|might|could|would|should|must|will|shall|can)\s+)?(?:have|has|had)\s+(?:been\s+)?(?:\w+ed|{PP_IRREG})\b",
-            text,
+            rf"\b(?:have|has|had)\s+(?:been\s+)?(?:\w+ed|{PP_IRREG})\b",
+            tense_text,
             re.IGNORECASE,
         )
     )
@@ -173,10 +294,13 @@ def lint(text, strict=False, config=None, config_path=None, config_digest=None):
     violations["phrasal_verb"], _ = count_ci(text, config["phrasalVerbs"])
     banned = [*config["bannedWords"], *config["bannedPhrases"]]
     violations["banned_word"], banned_hits = count_ci(text, banned)
+    verb_only_count, verb_only_hits = count_verb_only(text, config["verbOnlyWords"])
+    violations["banned_word"] += verb_only_count
+    banned_hits.extend(verb_only_hits)
     violations["marketing_adjective"], marketing_hits = count_ci(
         text, config["marketing"]
     )
-    violations["modal_hedge"], _ = count_ci(text, config["modalHedges"])
+    violations["filler_phrase"], _ = count_ci(text, config["fillerPhrases"])
     paragraphs = [part for part in re.split(r"\n\s*\n", text) if part.strip()]
     violations["long_paragraph(>6s)"] = sum(
         1 for paragraph in paragraphs if len(sentences(paragraph)) > 6
@@ -185,10 +309,16 @@ def lint(text, strict=False, config=None, config_path=None, config_digest=None):
     trains = noun_trains(text)
     if strict:
         strict_count, _ = count_ci(text, config["strictBannedWords"])
-        # Match "may" case-sensitively so that the month "May" stays clean.
-        strict_count += len(re.findall(r"(?<![A-Za-z])may(?![a-z])", text))
         violations["strict_banned_word"] = strict_count
     total = sum(violations.values())
+    severity_totals = {
+        severity: sum(
+            count for name, count in violations.items()
+            if SEVERITIES.get(name) == severity
+        )
+        for severity in ("hard", "soft")
+    }
+    density_reliable = words >= DENSITY_RELIABLE_WORDS
     return {
         "score_version": SCORE_VERSION,
         "mode": "strict" if strict else "flavored",
@@ -198,7 +328,10 @@ def lint(text, strict=False, config=None, config_path=None, config_digest=None):
         "sentences": len(sents),
         "violations": violations,
         "total": total,
+        "severity_totals": severity_totals,
         "total_per100w": round(total * 100.0 / words, 2),
+        "density_reliable": density_reliable,
+        "density_note": None if density_reliable else "Advisory: fewer than 40 words.",
         "em_dash(slop-marker)": em_dash,
         "noun_train(>=4w,marker)": len(trains),
         "longest_sentence_words": (

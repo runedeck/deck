@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/SimplifiedTechnicalEnglish/config/lint-rules.json
     digest:
-      sha256: d39616b5efedc0cc66b2a17b15b038ecb5ad43e69d6390f6c8bb2339dddec4e9
+      sha256: 0cb412d1c2d0efa60c9fcd8ea6fd6285f7272d9e5d2dffc8b13b269c0268ebc9
   predicate:
     buildDefinition:
       buildType: adopt/v1

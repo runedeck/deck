@@ -32,6 +32,34 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(result["config_path"], self.path)
         self.assertEqual(result["config_sha256"], self.digest)
 
+    def test_software_metaphors_are_soft_findings(self):
+        result = STE_LINT.lint("Bake the value, gate the merge, and land the change.")
+
+        self.assertEqual(result["violations"]["banned_word"], 3)
+        self.assertEqual(result["severity_totals"], {"hard": 0, "soft": 3})
+
+    def test_noun_position_does_not_count_verb_only_words(self):
+        for text in (
+            "The API surface stays stable.",
+            "Travel by ship to the island.",
+            "Open the gate.",
+            "The landing page loads fast.",
+        ):
+            with self.subTest(text=text):
+                result = STE_LINT.lint(text)
+                self.assertEqual(result["violations"]["banned_word"], 0)
+
+    def test_verb_position_counts_verb_only_words(self):
+        for text in (
+            "We ship the fix today.",
+            "The team will ship it.",
+            "Ship the fix.",
+            "Do not ship broken code.",
+        ):
+            with self.subTest(text=text):
+                result = STE_LINT.lint(text)
+                self.assertEqual(result["violations"]["banned_word"], 1)
+
     def test_complete_custom_config_replaces_defaults(self):
         custom = {key: [] for key in STE_LINT.CONFIG_KEYS}
         custom["marketing"] = ["frictionless", "FRICTIONLESS"]
@@ -177,6 +205,93 @@ class ConfigTests(unittest.TestCase):
         self.assertNotIn("em_dash", result["violations"])
         self.assertEqual(result["total"], 0)
         self.assertEqual(result["total_per100w"], 0.0)
+
+    def test_score_version_and_filler_category(self):
+        result = STE_LINT.lint("It is important to note that the test failed.")
+
+        self.assertEqual(result["score_version"], 5)
+        self.assertEqual(result["violations"]["filler_phrase"], 1)
+        self.assertNotIn("modal_hedge", result["violations"])
+
+    def test_semantic_may_is_not_penalized_in_strict_mode(self):
+        result = STE_LINT.lint("The request may fail.", strict=True)
+
+        self.assertEqual(result["violations"]["strict_banned_word"], 0)
+
+    def test_modal_perfect_preserves_uncertainty(self):
+        for text in (
+            "We may have found an edge case.",
+            "The service might have failed.",
+            "The client could have sent stale data.",
+        ):
+            with self.subTest(text=text):
+                result = STE_LINT.lint(text)
+                self.assertEqual(result["violations"]["complex_tense"], 0)
+
+    def test_ordinary_perfect_tense_remains_scored(self):
+        result = STE_LINT.lint("We have found an edge case.")
+
+        self.assertEqual(result["violations"]["complex_tense"], 1)
+
+    def test_short_density_is_advisory(self):
+        short = STE_LINT.lint("Use this text.")
+        long = STE_LINT.lint(" ".join(["word"] * 40) + ".")
+
+        self.assertFalse(short["density_reliable"])
+        self.assertEqual(short["density_note"], "Advisory: fewer than 40 words.")
+        self.assertTrue(long["density_reliable"])
+        self.assertIsNone(long["density_note"])
+
+    def test_markdown_code_frontmatter_and_tables_are_masked(self):
+        text = """---
+title: Seamless robust platform
+---
+
+Use this text.
+
+| Long sentence that must not count as prose | Value |
+| --- | --- |
+| This is a seamless and robust table value | one |
+
+```text
+This is a seamless robust sentence that must not count.
+```
+"""
+
+        result = STE_LINT.lint(text)
+
+        self.assertEqual(result["violations"]["marketing_adjective"], 0)
+        self.assertEqual(result["sentences"], 1)
+
+    def test_markdown_fence_content_is_prose(self):
+        text = """```markdown
+Use this seamless interface.
+```
+"""
+
+        result = STE_LINT.lint(text)
+
+        self.assertEqual(result["violations"]["marketing_adjective"], 1)
+        self.assertEqual(result["sentences"], 1)
+
+    def test_soft_wrapped_sentence_keeps_one_word_count(self):
+        text = "This sentence has ten words across this first soft line\nand eleven more words across the second soft line today for reliable results."
+
+        result = STE_LINT.lint(text)
+
+        self.assertEqual(result["sentences"], 1)
+        self.assertEqual(result["violations"]["long_sentence(>20w)"], 1)
+
+    def test_abbreviation_does_not_create_a_sentence_boundary(self):
+        result = STE_LINT.lint("Use common formats, e.g. JSON and YAML. Keep both names.")
+
+        self.assertEqual(result["sentences"], 2)
+
+    def test_severity_totals_separate_hard_and_soft_findings(self):
+        result = STE_LINT.lint("We have used a seamless system;")
+
+        self.assertGreaterEqual(result["severity_totals"]["hard"], 2)
+        self.assertEqual(result["severity_totals"]["soft"], 1)
 
     def test_context_lints_a_draft_path(self):
         with tempfile.NamedTemporaryFile(

@@ -29,8 +29,10 @@ Pick a mode before you write. When the user does not say which, infer it from th
 Structural rules, numbered per ASD-STE100 Issue 9:
 
 - Use the active voice. Passive is correct only when the actor is unknown or irrelevant (3.6). A past participle used as an adjective is not passive (3.3): `the field is required` is correct.
-- Use simple tenses only (3.2): no present perfect, no stacked auxiliaries (3.4), no `-ing` main verb where a simple tense works (3.5).
-- Write one instruction for each sentence (5.2). Instructions stay within 20 words (5.1) and descriptive sentences within 25 (6.3).
+- Prefer simple tenses (3.2). In strict mode, avoid present perfect, stacked auxiliaries (3.4), and unnecessary `-ing` main verbs (3.5).
+- In STE-flavored mode, keep a natural progressive or perfect form when a simple tense changes time or sounds unnatural.
+- Write one instruction for each procedural sentence (5.2). Instructions stay within 20 words (5.1) and descriptions within 25 (6.3).
+- Combine related descriptive facts within the length limit when separate sentences sound choppy.
 - Put a comma between a condition and its command (5.4): `If the test fails, read the log.`
 - Do not drop words to compress (4.2): `Remove the bolts from the panel`, never `Remove bolts from panel`. Do not use contractions.
 - Use a verb for an action (3.7): `analyze the log`, not `perform an analysis of the log`.
@@ -38,22 +40,25 @@ Structural rules, numbered per ASD-STE100 Issue 9:
 - Do not use semicolons (8.1). Every other standard mark is permitted. Keep multi-word nouns within three words (2.1). Write one topic for each paragraph (6.5), at most six sentences (6.6).
 - Use one name for one thing (1.11, 9.4). Pick one verb for one action and reuse it. Never rotate `check`, `verify`, and `confirm`.
 - Use the short common word: `use`, not `utilize` or `leverage`, and `before`, not `prior to`. Do not use marketing adjectives. [references/recurring-errors.md](references/recurring-errors.md) carries the standard's own list of the most frequent writer errors.
+- Prefer literal verbs. Treat `bake`, `gate`, `land`, `orchestrate`, `scaffold`, `ship`, `surface`, and `wire up` as soft findings when the model uses them as verbs. The checker skips noun uses after a determiner or preposition.
 
 Guards that outrank every rule above:
 
-- Never drop a fact, number, condition, hedge, or scope qualifier to satisfy a length cap. Keep the longer sentence and flag it.
-- Modality is content. `May have failed` never becomes `failed`. When the tense rule and the modality rule conflict, modality wins.
+- Preserve each fact, figure, condition, scope qualifier, hedge, and modal meaning before lint changes.
+- Modality is content. `May have failed` never becomes `failed`. Keep natural modal-perfect phrases when alternatives change certainty.
 - Never add a cause, frequency, or mechanism that the source did not state. That is a different claim, not a rewrite.
 - Keep code identifiers, part numbers, units, error strings, and safety wording exact.
 - Change the smallest span that repairs a violation. If the input already complies, return it unchanged and say so.
 - This skill repairs the form of a text, not its substance. A hollow paragraph rewritten under these rules is still hollow. Say so instead of polishing it.
+- Treat checker findings as advisory when they conflict with meaning or natural English. Do not optimize for a zero score.
+- Read the result for sentence flow. Join choppy facts and use clear pronouns when repeated names sound mechanical.
 - The official dictionary of approximately 900 words is not reproduced here, because ASD restricts redistribution. Apply its principle and do not claim dictionary compliance.
 
 ## Instructions
 
 ### Rewrite or write
 
-Read the input once for meaning before you change anything. Walk it sentence by sentence, flag each violation, and rewrite the flagged spans with the meaning kept exact. Output the finished text alone: no preamble, no mode announcement, no summary of changes. When you keep a longer phrasing on purpose, add one line with the prefix `Kept as-is:` that names the phrase and the precision it protects.
+Read the input once for meaning before you change anything. Walk it sentence by sentence, flag each violation, and keep the meaning exact. Output the finished text alone: no preamble, no mode announcement, no summary of changes. Report deliberate keeps only for review or lint requests. Use `Kept as-is:` and name the precision that each keep protects.
 
 ### Review
 
@@ -76,7 +81,8 @@ Report the final score with the text. Do not present text as clean without a lin
 ## Verification
 
 - The lint score meets the mode's target, or each remaining violation is a flagged, deliberate keep.
-- Every fact, number, hedge, and qualifier of the source survives in the output.
+- Every fact, figure, condition, scope qualifier, hedge, and modal meaning survives in the output.
+- The output reads as natural English.
 - The output contains only the requested text.
 
 ## References
@@ -85,4 +91,5 @@ Report the final score with the text. Do not present text as clean without a lin
 - [references/recurring-errors.md](references/recurring-errors.md): the standard's own 39 most frequent writer errors, with the software-relevant subset.
 - [examples/before-after.md](examples/before-after.md): official-rule illustrations and agent-output rewrites, with the reason modality wins.
 - [examples/rewrite-samples.md](examples/rewrite-samples.md): measured baseline-versus-STE model outputs with lint scores.
+- [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md): upstream checker and benchmark design notices.
 - The full standard is free at [asd-ste100.org](https://www.asd-ste100.org) via the request form. This skill is unofficial and not affiliated with ASD. ASD-STE100 is a registered EU trademark.
