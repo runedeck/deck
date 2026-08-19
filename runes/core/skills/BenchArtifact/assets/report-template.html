@@ -235,6 +235,22 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
 .metric-card h3 { font-family: var(--mono); font-size: 0.8rem; text-transform: uppercase;
                   letter-spacing: 0.08em; color: var(--primary); }
 .metric-example { margin-top: 0.35rem; }
+.metric-formula { font-family: var(--mono); font-size: 0.78rem; display: flex; flex-wrap: wrap;
+                  align-items: center; gap: 0.45rem; margin: 0.45rem 0 0.1rem; }
+.frac { display: inline-flex; flex-direction: column; text-align: center; vertical-align: middle;
+        line-height: 1.3; }
+.frac .den { border-top: 1px solid var(--muted); padding-top: 0.05rem; }
+.threshold-row { display: flex; flex-wrap: wrap; gap: 0.8rem 1.6rem; align-items: center;
+                 margin-top: 0.5rem; }
+.threshold-row label { display: inline-flex; align-items: center; gap: 0.5rem;
+                       font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.05em;
+                       text-transform: uppercase; color: var(--muted); }
+.threshold-row output { color: var(--ink); min-width: 2.2rem; }
+.threshold-row input[type="range"] { accent-color: var(--primary); width: 9rem; }
+.threshold-row button { font: inherit; font-family: var(--mono); font-size: 0.72rem;
+                        color: var(--muted); background: var(--surface); border: 1px solid var(--line);
+                        border-radius: 999px; padding: 0.28rem 0.8rem; cursor: pointer; }
+#threshold-panel h3 .badge { margin-left: 0.5rem; vertical-align: middle; }
 .notes-list { margin: 0.3rem 0 1.2rem 1.15rem; padding: 0; font-size: 0.9rem; }
 .notes-list li { margin: 0.35rem 0; }
 .forensics { margin-bottom: 0.9rem; }
@@ -358,6 +374,17 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
       <p><b>Verdict rule:</b> required meaning must not regress. Checker, clarity, or directness gains can support a positive result. Lower fluency creates a trade-off, not an automatic failure. The report never averages models.</p>
     </div>
     <div id="limits"></div>
+    <div class="prose-card" id="threshold-panel">
+      <h3>Explore the verdict thresholds <span id="threshold-state" class="badge b-warn" hidden>custom \u00b7 not the recorded verdict</span></h3>
+      <p class="muted">Move a slider to re-mark every verdict live. The recorded verdicts use the recommended values. This exploration resets on reload.</p>
+      <div class="threshold-row">
+        <label>Trade-off below <output id="tradeoff-value"></output>
+          <input type="range" id="tradeoff-slider" min="0" max="0.5" step="0.05"></label>
+        <label>Win above <output id="win-value"></output>
+          <input type="range" id="win-slider" min="0.4" max="0.8" step="0.05"></label>
+        <button type="button" id="threshold-reset">reset to recommended</button>
+      </div>
+    </div>
   </section>
   <section id="comparisons" aria-label="Comparisons"></section>
   <section id="examples" aria-labelledby="example-heading">
@@ -416,58 +443,83 @@ const dumbbell = (base, treat, lowerBetter) => {
   holder.appendChild(box);
   return holder;
 };
-const gauge = value => {
-  if (!Number.isFinite(value)) return null;
+const drawGauge = (holder, value) => {
+  holder.replaceChildren();
+  const low = THRESHOLDS.trade_off, high = THRESHOLDS.win;
   const box = svg("svg", { width: 46, height: 12, viewBox: "0 0 46 12", "aria-hidden": "true" });
   const x = share => 4 + 38 * Math.min(Math.max(share, 0), 1);
   box.append(
-    svg("rect", { x: x(0), y: 4.5, width: x(0.4) - x(0), height: 3, rx: 1.5, fill: "var(--fail)", "fill-opacity": 0.22 }),
-    svg("rect", { x: x(0.4), y: 4.5, width: x(0.5) - x(0.4), height: 3, fill: "var(--warn)", "fill-opacity": 0.25 }),
-    svg("rect", { x: x(0.5), y: 4.5, width: x(1) - x(0.5), height: 3, rx: 1.5, fill: "var(--ok)", "fill-opacity": 0.22 }),
+    svg("rect", { x: x(0), y: 4.5, width: x(low) - x(0), height: 3, rx: 1.5, fill: "var(--fail)", "fill-opacity": 0.22 }),
+    svg("rect", { x: x(low), y: 4.5, width: Math.max(x(high) - x(low), 0), height: 3, fill: "var(--warn)", "fill-opacity": 0.25 }),
+    svg("rect", { x: x(high), y: 4.5, width: Math.max(x(1) - x(high), 0), height: 3, rx: 1.5, fill: "var(--ok)", "fill-opacity": 0.22 }),
     svg("circle", { cx: x(value), cy: 6, r: 3.1,
-      fill: value < 0.4 ? "var(--fail)" : value < 0.5 ? "var(--warn)" : "var(--ok)" }));
-  const holder = el("span", null, "cellviz");
+      fill: value < low ? "var(--fail)" : value < high ? "var(--warn)" : "var(--ok)" }));
   holder.appendChild(box);
+};
+const gauge = value => {
+  if (!Number.isFinite(value)) return null;
+  const holder = el("span", null, "cellviz");
+  drawGauge(holder, value);
+  gaugeRegistry.push({ holder, value });
   return holder;
 };
 const mean = summary => summary && summary.mean !== null && summary.mean !== undefined ? summary.mean : null;
 const DEFAULT_METRICS = [
-  { id: "valid", label: "Valid",
+  { id: "valid", label: "Valid runs",
     definition: "The count of runs that returned a parseable final response. Only valid runs get grades and pairs.",
+    formula: { text: "count of runs with state valid" },
     example: "6 of 6 planned runs returned a response, so all 6 count." },
-  { id: "excluded", label: "Excluded",
-    definition: "The count of runs that failed before grading. Causes include provider failure, timeout, and invalid output. An excluded run reduces the sample. It never counts as a failed assertion.",
+  { id: "excluded", label: "Excluded runs",
+    definition: "The count of runs that failed before grading. Causes include provider failure, timeout, and invalid output. An excluded run reduces the sample. It never counts as a failed fact check.",
+    formula: { text: "count of runs with a failure state" },
     example: "A provider that returns exit code 1 six times shows 6 excluded runs and no verdict." },
-  { id: "assertions", label: "Assertions",
-    definition: "The share of frozen fact checks that passed. Each check names one required fact, figure, or restriction. The value is the mean over this side's valid runs. A drop means the output lost required content.",
+  { id: "assertions", label: "Facts kept",
+    definition: "The share of frozen fact checks that passed. Each check names one required fact, figure, or restriction. A drop means the output lost required content.",
+    formula: { numerator: "passed checks", denominator: "total checks", suffix: "mean over valid runs" },
     example: "1.00 means 18 of 18 checks passed. 0.83 means 15 of 18 passed." },
-  { id: "checker", label: "Checker /100w",
-    definition: "Checker findings for each 100 checked words. The formula divides total findings by total checked words across matched outputs, then multiplies by 100. The checker is the program named under Identities. A lower value is better. The checker measures the claimed writing behavior, not overall quality.",
+  { id: "checker", label: "Findings /100w",
+    definition: "Checker findings for each 100 checked words. The checker is the deterministic program named under Identities. A lower value is better. It measures the claimed writing behavior, not overall quality.",
+    formula: { numerator: "total checker findings", denominator: "total checked words", suffix: "\u00d7 100" },
     example: "4.89 \u2192 1.09 means the artifact removed most style violations from the same tasks." },
   { id: "words", label: "Words",
     definition: "The mean word count of this side's responses in matched pairs. Strong growth against the baseline usually signals meta text instead of the deliverable.",
+    formula: { numerator: "total words", denominator: "matched responses" },
     example: "463 \u2192 1447 words showed that one model answered with plans instead of the requested text." },
-  { id: "clarity", label: "Clarity",
-    definition: "The share of blind pairs where the judge selected this side as easier to understand. A judge from another vendor reads each pair with shuffled labels. A tie adds one half. 0.50 equals a coin flip. A value below 0.40 counts as a trade-off in the verdict.",
+  { id: "clarity", label: "Clarity wins",
+    definition: "The share of blind pairs where the judge selected this side as easier to understand. A judge from another vendor reads each pair with shuffled labels. 0.50 equals a coin flip. A value below 0.40 counts as a trade-off in the verdict.",
+    formula: { numerator: "wins + \u00bd ties", denominator: "judged pairs" },
     example: "0.33 over 6 pairs means the judge chose this side 2 times." },
-  { id: "fluency", label: "Fluency",
-    definition: "The share of blind pairs where the judge selected this side as the more natural prose. Same blind method: shuffled labels, another vendor, ties add one half. A value below 0.40 counts as a trade-off.",
+  { id: "fluency", label: "Fluency wins",
+    definition: "The share of blind pairs where the judge selected this side as the more natural prose. Same blind method: shuffled labels, another vendor. A value below 0.40 counts as a trade-off.",
+    formula: { numerator: "wins + \u00bd ties", denominator: "judged pairs" },
     example: "0.25 over 6 pairs means the judge chose this side 1.5 times, with one tie." },
-  { id: "directness", label: "Directness",
+  { id: "directness", label: "Directness wins",
     definition: "The share of blind pairs where the judge selected this side as the one that states useful information sooner. Same blind method. Planning narration and filler lower this score.",
+    formula: { numerator: "wins + \u00bd ties", denominator: "judged pairs" },
     example: "0.75 over 6 pairs means the judge chose this side 4.5 times." },
   { id: "seconds", label: "Seconds",
     definition: "The mean provider wall-clock seconds for one run on this side.",
+    formula: { numerator: "total seconds", denominator: "runs" },
     example: "28.25 \u2192 36.55 means the artifact added about 8 seconds for each run." },
   { id: "output_tokens", label: "Output tokens",
     definition: "The mean output tokens the provider reported for this side. A missing value stays blank. The report never estimates tokens.",
+    formula: { numerator: "total reported output tokens", denominator: "runs" },
     example: "400.67 \u2192 467.33 means the artifact made responses about 17% longer in tokens." },
 ];
 const METRICS = (Array.isArray(DATA.metric_definitions) && DATA.metric_definitions.length)
   ? DATA.metric_definitions : DEFAULT_METRICS;
+const RECOMMENDED_THRESHOLDS = {
+  trade_off: Number(DATA.verdict_thresholds?.trade_off ?? 0.4),
+  win: Number(DATA.verdict_thresholds?.win ?? 0.5),
+};
+const THRESHOLDS = { ...RECOMMENDED_THRESHOLDS };
+const verdictRegistry = [];
+const gaugeRegistry = [];
+const metricLabel = id => METRICS.find(item => item.id === id)?.label
+  || DEFAULT_METRICS.find(item => item.id === id)?.label || id;
 const COLUMN_INFO = {
   "Arm": "The configuration that produced these runs. The treatment arm carries the artifact. The baseline arm runs the identical prompt without it.",
-  "Assertions \u0394": "Treatment assertion pass rate minus baseline pass rate over matched pairs. A negative value means the artifact removed required content.",
+  [`${metricLabel("assertions")} \u0394`]: "Treatment pass rate minus baseline pass rate over matched pairs. A negative value means the artifact removed required content.",
   "Verdict": "Three signals read together within one model: assertions must hold, the checker must improve, and blind preference must stay acceptable. A preference below 0.40 is a trade-off. The report withholds a verdict when fewer than half of the planned pairs are valid.",
   "Pairs": "Matched pairs: the same case and run number valid in both arms, out of the planned count. Deltas use matched pairs only.",
 };
@@ -641,16 +693,16 @@ function verdict(data) {
   if (!Number.isFinite(assertion)) parts.unshift("Required meaning data is unavailable.");
   const assertionBroken = Number.isFinite(assertion) && assertion < 0;
   const checkerImproved = Number.isFinite(lint) && lint < 0;
-  const clarityImproved = clarity !== null && clarity > 0.5;
-  const directnessImproved = directness !== null && directness > 0.5;
+  const clarityImproved = clarity !== null && clarity > THRESHOLDS.win;
+  const directnessImproved = directness !== null && directness > THRESHOLDS.win;
   const improved = checkerImproved || clarityImproved || directnessImproved;
   if (!Number.isFinite(assertion)) return { cls: "b-neutral", label: "No meaning data", sentence: parts.join(" ") };
   if (assertionBroken) return { cls: "b-fail", label: "Regresses required meaning", sentence: parts.join(" ") };
   if (!improved) return { cls: "b-neutral", label: "No material improvement", sentence: parts.join(" ") };
   const tradeoffs = [];
-  if (clarity !== null && clarity < 0.4) tradeoffs.push("clarity");
-  if (fluency !== null && fluency < 0.4) tradeoffs.push("fluency");
-  if (directness !== null && directness < 0.4) tradeoffs.push("directness");
+  if (clarity !== null && clarity < THRESHOLDS.trade_off) tradeoffs.push("clarity");
+  if (fluency !== null && fluency < THRESHOLDS.trade_off) tradeoffs.push("fluency");
+  if (directness !== null && directness < THRESHOLDS.trade_off) tradeoffs.push("directness");
   if (tradeoffs.length === 1 && tradeoffs[0] === "fluency") {
     return { cls: "b-warn", label: "Improves with a fluency trade-off", sentence: parts.join(" ") };
   }
@@ -724,7 +776,8 @@ for (const comparison of shownComparisons) {
   const matrix = el("table");
   matrix.setAttribute("aria-label", `Scoring matrix for ${comparison.label || comparison.id}`);
   const matrixHead = el("tr");
-  ["Model", "Verdict", "Pairs", "Assertions \u0394", "Checker /100w", "Clarity", "Fluency", "Directness"]
+  ["Model", "Verdict", "Pairs", `${metricLabel("assertions")} \u0394`, metricLabel("checker"),
+    metricLabel("clarity"), metricLabel("fluency"), metricLabel("directness")]
     .forEach(label => matrixHead.appendChild(headerCell(label)));
   const matrixThead = el("thead"); matrixThead.appendChild(matrixHead); matrix.appendChild(matrixThead);
   const matrixBody = el("tbody"); matrix.appendChild(matrixBody);
@@ -751,8 +804,12 @@ for (const comparison of shownComparisons) {
     row.dataset.verdict = summary.cls.replace(/^b-/, "");
     row.dataset.comparison = comparison.id;
     row.setAttribute("aria-label", `${model}: ${summary.label}`);
-    row.append(el("h3", `${model} · ${armLabel(comparison.primary).replace(/^the /, "")}`), el("span", summary.label, `badge ${summary.cls}`), el("p", summary.sentence));
+    const rowBadge = el("span", summary.label, `badge ${summary.cls}`);
+    const rowSentence = el("p", summary.sentence);
+    row.append(el("h3", `${model} · ${armLabel(comparison.primary).replace(/^the /, "")}`), rowBadge, rowSentence);
     verdictRoot.appendChild(row);
+    const registryEntry = { data, row, badges: [rowBadge], sentence: rowSentence };
+    verdictRegistry.push(registryEntry);
     const matrixRow = el("tr");
     const modelCell = el("td", null, "modelcell");
     const modelLink = el("a", model);
@@ -760,7 +817,9 @@ for (const comparison of shownComparisons) {
     modelLink.title = "Review this model's pairs";
     modelCell.appendChild(modelLink);
     const verdictCell = el("td");
-    verdictCell.appendChild(el("span", summary.label, `badge ${summary.cls}`));
+    const matrixBadge = el("span", summary.label, `badge ${summary.cls}`);
+    verdictCell.appendChild(matrixBadge);
+    registryEntry.badges.push(matrixBadge);
     const pairsCell = el("td", `${data.paired_samples || 0}/${data.planned_pairs || 0}`);
     const assertionDelta = pairedDelta(data, "assertion_pass_rate");
     const assertionCell = el("td", fmt(assertionDelta), deltaClass("assertion_pass_rate", assertionDelta));
@@ -782,7 +841,9 @@ for (const comparison of shownComparisons) {
 
     const block = el("article", null, "model-block");
     const head = el("div", null, "model-head");
-    head.append(el("h3", model), el("span", summary.label, `badge ${summary.cls}`));
+    const headBadge = el("span", summary.label, `badge ${summary.cls}`);
+    head.append(el("h3", model), headBadge);
+    registryEntry.badges.push(headBadge);
     const routeInfo = (DATA.runs || []).find(run => run.model === model && run.route)?.route;
     if (routeInfo) {
       const routeName = routeInfo.resolved_route || routeInfo.requested_route || routeInfo.requested_provider;
@@ -802,14 +863,14 @@ for (const comparison of shownComparisons) {
       el("span", `${data.paired_samples || 0}/${data.planned_pairs || 0} pairs`, "muted"));
     block.appendChild(head);
     const table = el("table");
-    const columns = [["assertion_pass_rate", "Assertions"], ["lint_per100w", "Checker /100w"],
-      ["word_count", "Words"], ["clarity_preference", "Clarity"],
-      ["fluency_preference", "Fluency"], ["directness_preference", "Directness"],
-      ["duration_seconds", "Seconds"], ["output_tokens", "Output tokens"]]
+    const columns = [["assertion_pass_rate", metricLabel("assertions")], ["lint_per100w", metricLabel("checker")],
+      ["word_count", metricLabel("words")], ["clarity_preference", metricLabel("clarity")],
+      ["fluency_preference", metricLabel("fluency")], ["directness_preference", metricLabel("directness")],
+      ["duration_seconds", metricLabel("seconds")], ["output_tokens", metricLabel("output_tokens")]]
       .filter(([name]) => pairedMetric(data, "primary", name) !== null
         || pairedMetric(data, "baseline", name) !== null || Number.isFinite(pairedDelta(data, name)));
     const headRow = el("tr");
-    ["Arm", "Valid", "Excluded", ...columns.map(item => item[1])].forEach(label => headRow.appendChild(headerCell(label)));
+    ["Arm", metricLabel("valid"), metricLabel("excluded"), ...columns.map(item => item[1])].forEach(label => headRow.appendChild(headerCell(label)));
     const thead = el("thead"); thead.appendChild(headRow); table.appendChild(thead);
     const tbody = el("tbody");
     for (const [arm, side, sideName] of [[comparison.primary, data.primary, "primary"], [comparison.baseline, data.baseline, "baseline"]]) {
@@ -1034,6 +1095,47 @@ if (initialPair >= 0) pairIndex = initialPair;
 renderPair();
 if (initialPair >= 0) document.getElementById("examples").scrollIntoView();
 
+const tradeoffSlider = document.getElementById("tradeoff-slider");
+const winSlider = document.getElementById("win-slider");
+const tradeoffValue = document.getElementById("tradeoff-value");
+const winValue = document.getElementById("win-value");
+const thresholdState = document.getElementById("threshold-state");
+const applyThresholds = () => {
+  tradeoffValue.textContent = THRESHOLDS.trade_off.toFixed(2);
+  winValue.textContent = THRESHOLDS.win.toFixed(2);
+  const custom = THRESHOLDS.trade_off !== RECOMMENDED_THRESHOLDS.trade_off
+    || THRESHOLDS.win !== RECOMMENDED_THRESHOLDS.win;
+  thresholdState.hidden = !custom;
+  for (const entry of verdictRegistry) {
+    const summary = verdict(entry.data);
+    entry.row.dataset.verdict = summary.cls.replace(/^b-/, "");
+    entry.sentence.textContent = summary.sentence;
+    for (const badge of entry.badges) {
+      badge.textContent = summary.label;
+      badge.className = `badge ${summary.cls}`;
+    }
+  }
+  for (const item of gaugeRegistry) drawGauge(item.holder, item.value);
+};
+const setThreshold = (key, value) => {
+  THRESHOLDS[key] = Number(value);
+  if (THRESHOLDS.win < THRESHOLDS.trade_off) THRESHOLDS.win = THRESHOLDS.trade_off;
+  tradeoffSlider.value = THRESHOLDS.trade_off;
+  winSlider.value = THRESHOLDS.win;
+  applyThresholds();
+};
+tradeoffSlider.value = THRESHOLDS.trade_off;
+winSlider.value = THRESHOLDS.win;
+tradeoffSlider.addEventListener("input", () => setThreshold("trade_off", tradeoffSlider.value));
+winSlider.addEventListener("input", () => setThreshold("win", winSlider.value));
+document.getElementById("threshold-reset").addEventListener("click", () => {
+  Object.assign(THRESHOLDS, RECOMMENDED_THRESHOLDS);
+  tradeoffSlider.value = THRESHOLDS.trade_off;
+  winSlider.value = THRESHOLDS.win;
+  applyThresholds();
+});
+applyThresholds();
+
 const runRoot = document.getElementById("runs");
 const excludedRuns = runs.filter(run => !run.valid);
 if (excludedRuns.length) {
@@ -1085,6 +1187,19 @@ for (const item of METRICS) {
   const title = el("h3", item.label);
   card.appendChild(title);
   card.appendChild(el("p", item.definition));
+  if (item.formula) {
+    const formulaRow = el("p", null, "metric-formula");
+    formulaRow.append(el("span", "Formula:", "muted"), " ");
+    if (item.formula.numerator && item.formula.denominator) {
+      const frac = el("span", null, "frac");
+      frac.append(el("span", item.formula.numerator, "num"), el("span", item.formula.denominator, "den"));
+      formulaRow.appendChild(frac);
+      if (item.formula.suffix) formulaRow.append(" ", el("span", item.formula.suffix, "muted"));
+    } else if (item.formula.text) {
+      formulaRow.append(item.formula.text);
+    }
+    card.appendChild(formulaRow);
+  }
   if (item.example) card.appendChild(el("p", `Example: ${item.example}`, "muted mono metric-example"));
   metricRoot.appendChild(card);
 }
