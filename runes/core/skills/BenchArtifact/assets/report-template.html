@@ -433,6 +433,7 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
     <div class="prose-card" id="threshold-panel">
       <h3>Explore the verdict thresholds <span id="threshold-state" class="badge b-warn" hidden>custom, not the recorded verdict</span></h3>
       <p class="muted">Move a slider to re-mark every verdict live. The recorded verdicts use the recommended values. This exploration resets on reload. A manifest can set a weight and its own thresholds for each judging dimension.</p>
+      <p class="muted mono" id="weight-line"></p>
       <div class="threshold-row">
         <label>Trade-off below <output id="tradeoff-value"></output>
           <input type="range" id="tradeoff-slider" min="0" max="0.5" step="0.05"></label>
@@ -592,6 +593,20 @@ if (JUDGING) {
 }
 const JUDGE_DIMENSIONS = JUDGING?.dimensions?.map(dimension => dimension.id)
   || ["clarity", "fluency", "directness"];
+const dimensionWeight = id => {
+  const weight = JUDGING?.dimensions?.find(item => item.id === id)?.weight;
+  return Number.isFinite(weight) ? weight : (id === "fluency" ? 0.5 : 1);
+};
+const weightSentence = id => {
+  const weight = dimensionWeight(id);
+  if (weight === 0) return " Weight 0: this dimension does not change the verdict.";
+  if (weight < 1) return ` Weight ${weight}: a low score here softens the verdict label. It does not downgrade the verdict.`;
+  return ` Weight ${weight}: a low score here counts as a full trade-off.`;
+};
+for (const id of ["clarity", "fluency", "directness"]) {
+  const label = metricLabel(id);
+  if (COLUMN_INFO[label]) COLUMN_INFO[label] += weightSentence(id);
+}
 const tooltip = el("div", null, null);
 tooltip.id = "tooltip";
 tooltip.hidden = true;
@@ -1195,6 +1210,9 @@ const setThreshold = (key, value) => {
   winSlider.value = THRESHOLDS.win;
   applyThresholds();
 };
+document.getElementById("weight-line").textContent =
+  "dimension weights: " + JUDGE_DIMENSIONS.map(id => `${id} \u00d7${dimensionWeight(id)}`).join(" \u00b7 ")
+  + " (a weight below 1 softens the label, 0 removes the dimension)";
 tradeoffSlider.value = THRESHOLDS.trade_off;
 winSlider.value = THRESHOLDS.win;
 tradeoffSlider.addEventListener("input", () => setThreshold("trade_off", tradeoffSlider.value));
