@@ -235,6 +235,23 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
 .notes-list { margin: 0.3rem 0 1.2rem 1.15rem; padding: 0; font-size: 0.9rem; }
 .notes-list li { margin: 0.35rem 0; }
 .forensics { margin-bottom: 0.9rem; }
+.info { display: inline-flex; align-items: center; justify-content: center;
+        width: 0.95rem; height: 0.95rem; margin-left: 0.3rem; border: 1px solid var(--line);
+        border-radius: 50%; color: var(--muted); font-family: var(--mono); font-size: 0.6rem;
+        font-weight: 400; cursor: help; vertical-align: middle; text-transform: none; }
+.info:hover, .info:focus-visible { color: var(--primary); border-color: var(--primary); }
+#tooltip { position: fixed; z-index: 50; max-width: 21rem; background: var(--surface);
+           color: var(--ink); border: 1px solid color-mix(in srgb, var(--primary) 45%, var(--line));
+           border-radius: 8px; padding: 0.55rem 0.75rem; font-size: 0.78rem; line-height: 1.45;
+           font-family: -apple-system, "Avenir Next", "Segoe UI", system-ui, sans-serif;
+           font-weight: 400; letter-spacing: normal; text-transform: none; text-align: left;
+           white-space: normal; box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+           pointer-events: none; }
+.legend { font-family: var(--mono); font-size: 0.68rem; color: var(--muted);
+          letter-spacing: 0.03em; margin: 0.35rem 0 1rem; display: flex; flex-wrap: wrap;
+          gap: 0.3rem 1.4rem; align-items: center; }
+.legend .swatch { display: inline-block; width: 0.55rem; height: 0.55rem; border-radius: 50%;
+                  margin-right: 0.3rem; vertical-align: -0.05rem; }
 @media (max-width: 900px) {
   .pair { grid-template-columns: 1fr; }
   .masthead { padding-top: 3.4rem; }
@@ -406,6 +423,65 @@ const gauge = value => {
   return holder;
 };
 const mean = summary => summary && summary.mean !== null && summary.mean !== undefined ? summary.mean : null;
+const COLUMN_INFO = {
+  "Arm": "The configuration that produced these runs. The treatment arm carries the artifact; the baseline arm runs the identical prompt without it.",
+  "Valid": "Runs that returned a parseable final response. Only valid runs are graded and paired.",
+  "Excluded": "Runs dropped for provider failure, timeout, or invalid output. Exclusions reduce the sample and are never counted as failed assertions.",
+  "Assertions": "The share of frozen fact checks that passed, averaged over this arm's valid runs. The checks name required facts, figures, and restrictions; 1.00 means every one survived. A drop means the artifact damaged required meaning.",
+  "Assertions \u0394": "Treatment assertion pass rate minus baseline pass rate over matched pairs. Negative means the artifact damaged required meaning.",
+  "Checker /100w": "Total checker findings divided by total checked words across this arm's matched outputs, times 100. The checker is the deterministic program named under Identities; lower is better. It measures the claimed writing behavior, not overall quality.",
+  "Words": "Mean word count of this arm's responses in matched pairs. Large growth against baseline usually means the model added meta text instead of the deliverable.",
+  "Clarity": "The share of blind pairs where the judge picked this side's output as easier to understand. A judge from another vendor reads each pair with labels shuffled; ties count one half. 0.50 is a coin flip; below 0.40 counts as a trade-off in the verdict.",
+  "Fluency": "The share of blind pairs where the judge picked this side's output as the more natural prose. Shuffled labels, other-vendor judge, ties count one half. Below 0.40 counts as a trade-off.",
+  "Directness": "The share of blind pairs where the judge picked this side's output as stating useful information sooner. Shuffled labels, other-vendor judge, ties count one half. Below 0.40 counts as a trade-off.",
+  "Seconds": "Mean provider wall-clock seconds per run in this arm's matched pairs.",
+  "Output tokens": "Mean output tokens the provider reported for this arm. Missing values stay blank; nothing is estimated.",
+  "Verdict": "Three signals read together within this model: assertions must hold, the checker must improve, and blind preference must stay acceptable. Below 0.40 on a preference is a trade-off; a verdict is withheld when fewer than half of planned pairs are valid.",
+  "Pairs": "Matched pairs: the same case and run number valid in both arms, out of the planned count. Deltas use matched pairs only.",
+};
+const JUDGING = DATA.judging || null;
+if (JUDGING) {
+  for (const dimension of JUDGING.dimensions || []) {
+    const label = dimension.label || dimension.id;
+    const base = COLUMN_INFO[label] || "The share of blind pairs where the judge preferred this side, ties counting one half.";
+    COLUMN_INFO[label] = `Judge criterion: ${dimension.criterion} \u2014 ${base}`;
+  }
+}
+const JUDGE_DIMENSIONS = JUDGING?.dimensions?.map(dimension => dimension.id)
+  || ["clarity", "fluency", "directness"];
+const tooltip = el("div", null, null);
+tooltip.id = "tooltip";
+tooltip.hidden = true;
+document.body.appendChild(tooltip);
+const showTooltip = (target, message) => {
+  tooltip.textContent = message;
+  tooltip.hidden = false;
+  const anchorBox = target.getBoundingClientRect();
+  tooltip.style.left = "0px"; tooltip.style.top = "0px";
+  const box = tooltip.getBoundingClientRect();
+  const left = Math.min(Math.max(8, anchorBox.left - 12), window.innerWidth - box.width - 8);
+  const top = anchorBox.bottom + 8 + box.height > window.innerHeight
+    ? anchorBox.top - box.height - 8 : anchorBox.bottom + 8;
+  tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${Math.max(8, top)}px`;
+};
+const hideTooltip = () => { tooltip.hidden = true; };
+const infoDot = message => {
+  const dot = el("span", "i", "info");
+  dot.tabIndex = 0;
+  dot.setAttribute("role", "note");
+  dot.setAttribute("aria-label", message);
+  dot.addEventListener("mouseenter", () => showTooltip(dot, message));
+  dot.addEventListener("mouseleave", hideTooltip);
+  dot.addEventListener("focus", () => showTooltip(dot, message));
+  dot.addEventListener("blur", hideTooltip);
+  return dot;
+};
+const headerCell = label => {
+  const cell = el("th", label);
+  if (COLUMN_INFO[label]) cell.appendChild(infoDot(COLUMN_INFO[label]));
+  return cell;
+};
 const metadata = DATA.metadata || {};
 const artifact = metadata.artifact_name || "Artifact benchmark";
 const comparisonList = DATA.comparisons || [];
@@ -470,12 +546,8 @@ const armIdentity = arm => {
   return line.childNodes.length ? line : null;
 };
 const tested = shownComparisons.map(comparison => armLabel(comparison.primary));
-const baselines = [...new Set(shownComparisons.map(comparison => comparison.baseline))];
-const comparisonScope = baselines.length === 1
-  ? ` against the shared ${baselines[0]} arm`
-  : " across the named comparisons";
 document.getElementById("tested").textContent = tested.length
-  ? `This benchmark tests ${listText(tested)}${comparisonScope}. Each verdict names the arm it judges.`
+  ? `This benchmark tests ${listText(tested)}. Each model answered every task twice: once with the artifact in context and once without it.`
   : "No comparisons are defined.";
 
 const LOWER_IS_BETTER = new Set(["lint_violations", "lint_per100w", "duration_seconds",
@@ -504,13 +576,32 @@ function verdict(data) {
   const fluency = mean(data.primary?.metrics?.fluency_preference);
   const directness = mean(data.primary?.metrics?.directness_preference);
   const parts = [];
-  if (Number.isFinite(assertion)) parts.push(assertion === 0 ? "Required meaning held." : `Required meaning ${assertion > 0 ? "improved" : "fell"} by ${Math.abs(assertion * 100).toFixed(0)} points.`);
+  const assertionsPassed = data.paired_corpus?.primary?.assertions_passed;
+  const assertionsTotal = data.paired_corpus?.primary?.assertions_total;
+  if (Number.isFinite(assertion)) {
+    if (assertion === 0 && Number.isFinite(assertionsPassed) && Number.isFinite(assertionsTotal)) {
+      parts.push(assertionsPassed === assertionsTotal
+        ? `Every required fact survived (${assertionsPassed} of ${assertionsTotal} checks in both arms).`
+        : `Fact checks matched the baseline (${assertionsPassed} of ${assertionsTotal} passed).`);
+    } else if (assertion !== 0) {
+      parts.push(`The artifact ${assertion > 0 ? "recovered" : "lost"} required facts: pass rate ${assertion > 0 ? "rose" : "fell"} ${Math.abs(assertion * 100).toFixed(0)} points.`);
+    } else {
+      parts.push("Required meaning held.");
+    }
+  }
+  const lintBase = pairedMetric(data, "baseline", "lint_per100w");
+  const lintTreat = pairedMetric(data, "primary", "lint_per100w");
   if (Number.isFinite(lint)) parts.push(lint === 0
-    ? "Checker findings did not change."
-    : `Checker findings ${lint < 0 ? "fell" : "rose"} by ${Math.abs(lint).toFixed(1)} per 100 words.`);
-  if (clarity !== null) parts.push(`Judges preferred artifact clarity in ${(clarity * 100).toFixed(0)}% of pairs.`);
-  if (fluency !== null) parts.push(`Judges preferred artifact fluency in ${(fluency * 100).toFixed(0)}% of pairs.`);
-  if (directness !== null) parts.push(`Judges preferred artifact directness in ${(directness * 100).toFixed(0)}% of pairs.`);
+    ? "The style checker found the same number of violations in both arms."
+    : `The style checker found ${lint < 0 ? "fewer" : "more"} violations with the artifact: ${fmt(lintBase)} \u2192 ${fmt(lintTreat)} per 100 words.`);
+  const paired2 = data.paired_samples || 0;
+  const preferenceCount = value => {
+    const wins = value * paired2;
+    return Number.isInteger(wins) ? `${wins} of ${paired2}` : `${wins.toFixed(1)} of ${paired2}`;
+  };
+  if (clarity !== null) parts.push(`The blind judge preferred the artifact's clarity in ${preferenceCount(clarity)} pairs.`);
+  if (fluency !== null) parts.push(`The blind judge preferred the artifact's fluency in ${preferenceCount(fluency)} pairs.`);
+  if (directness !== null) parts.push(`The blind judge preferred the artifact's directness in ${preferenceCount(directness)} pairs (ties count one half).`);
   if (paired < planned) parts.push(`Only ${paired} of ${planned} planned pairs were valid.`);
   if (!Number.isFinite(assertion)) parts.unshift("Required meaning data is unavailable.");
   const assertionBroken = Number.isFinite(assertion) && assertion < 0;
@@ -599,11 +690,26 @@ for (const comparison of shownComparisons) {
   matrix.setAttribute("aria-label", `Scoring matrix for ${comparison.label || comparison.id}`);
   const matrixHead = el("tr");
   ["Model", "Verdict", "Pairs", "Assertions \u0394", "Checker /100w", "Clarity", "Fluency", "Directness"]
-    .forEach(label => matrixHead.appendChild(el("th", label)));
+    .forEach(label => matrixHead.appendChild(headerCell(label)));
   const matrixThead = el("thead"); matrixThead.appendChild(matrixHead); matrix.appendChild(matrixThead);
   const matrixBody = el("tbody"); matrix.appendChild(matrixBody);
   matrixScroll.appendChild(matrix);
   document.getElementById("matrix-wrap").appendChild(matrixScroll);
+  const legend = el("p", null, "legend");
+  legend.dataset.comparison = comparison.id;
+  const legendDot = (color, label) => {
+    const item = el("span");
+    const swatch = el("span", null, "swatch");
+    swatch.style.background = color;
+    item.append(swatch, label);
+    return item;
+  };
+  legend.append(
+    legendDot("var(--fail)", "below 0.40 \u00b7 baseline preferred (trade-off)"),
+    legendDot("var(--warn)", "0.40\u20130.50 \u00b7 near a coin flip"),
+    legendDot("var(--ok)", "above 0.50 \u00b7 artifact preferred"),
+    el("span", "dumbbell: faint dot = baseline, solid dot = treatment; green when the artifact improves"));
+  document.getElementById("matrix-wrap").appendChild(legend);
   for (const [model, data] of models) {
     const summary = verdict(data);
     const row = el("article", null, "verdict-row");
@@ -668,7 +774,7 @@ for (const comparison of shownComparisons) {
       .filter(([name]) => pairedMetric(data, "primary", name) !== null
         || pairedMetric(data, "baseline", name) !== null || Number.isFinite(pairedDelta(data, name)));
     const headRow = el("tr");
-    ["Arm", "Valid", "Excluded", ...columns.map(item => item[1])].forEach(label => headRow.appendChild(el("th", label)));
+    ["Arm", "Valid", "Excluded", ...columns.map(item => item[1])].forEach(label => headRow.appendChild(headerCell(label)));
     const thead = el("thead"); thead.appendChild(headRow); table.appendChild(thead);
     const tbody = el("tbody");
     for (const [arm, side, sideName] of [[comparison.primary, data.primary, "primary"], [comparison.baseline, data.baseline, "baseline"]]) {
@@ -829,11 +935,14 @@ const renderPair = () => {
   }
   judgmentCard.appendChild(judgmentTitle);
   if (entry.judgment && entry.judgment.state !== "provider_failure") {
-    for (const dimension of ["clarity", "fluency", "directness"]) {
+    for (const dimension of JUDGE_DIMENSIONS) {
       const winner = entry.judgment[`${dimension}_winner_arm`];
       const reason = entry.judgment[`${dimension}_reason`] || "";
       const row = el("div", null, "dim");
-      row.appendChild(el("b", dimension));
+      const dimLabel = el("b", dimension);
+      const spec = JUDGING?.dimensions?.find(item => item.id === dimension);
+      if (spec?.criterion) dimLabel.appendChild(infoDot(spec.criterion));
+      row.appendChild(dimLabel);
       const label = winner === "tie" ? "tie"
         : winner === entry.comparison.primary ? "treatment" : "baseline";
       row.appendChild(el("span", label, `badge ${winner === "tie" ? "b-neutral" : winner === entry.comparison.primary ? "b-ok" : "b-warn"}`));

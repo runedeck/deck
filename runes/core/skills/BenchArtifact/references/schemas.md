@@ -130,9 +130,26 @@ Preferences remain separate from assertions and checker findings.
 
 ## Blind preference result
 
+The optional manifest `judging` object formalizes the criteria:
+
+```json
+{
+  "judging": {
+    "dimensions": [
+      {"id": "clarity", "label": "Clarity", "criterion": "Prefer the text that a reader can understand without resolving ambiguity."}
+    ],
+    "guards": [
+      "Do not judge factual accuracy or completeness. Deterministic assertions test those requirements."
+    ]
+  }
+}
+```
+
+The judge builds its prompt from these dimensions and guards. The aggregator copies the block into `benchmark.json`, and the report shows each criterion beside its scores. Without the block, the judge uses the default clarity, fluency, and directness criteria.
+
 Store judgments under `preferences/<comparison>/eval-<ID>/<model>/run-<R>.json`.
 
-Record the blind order. Record separate winners for clarity, fluency, and directness.
+Record the blind order. Record one winner and one reason for each judging dimension.
 
 Each winner is the primary arm, baseline arm, or `tie`.
 

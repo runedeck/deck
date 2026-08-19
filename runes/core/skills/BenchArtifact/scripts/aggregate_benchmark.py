@@ -388,6 +388,7 @@ def generate(root: Path, manifest_path: Path | None, artifact_name: str, artifac
         "summaries": summaries,
         "runs": runs,
         "preference_judgments": judgments,
+        "judging": manifest.get("judging"),
         "notes": manifest.get("notes", []),
         "limitations": manifest.get("limitations", [
             "Compare results only within one model.",
