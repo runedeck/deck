@@ -2,9 +2,9 @@ provenance:
   _type: https://in-toto.io/Statement/v1
   predicateType: https://slsa.dev/provenance/v1
   subject:
-  - name: rules/UseRTK.md
+  - name: rules/UseEfficientCLI.md
     digest:
-      sha256: 2de9b16699645b241d1f4de80157e28a3ad1e0ec15a0f18e819fc43894ff8751
+      sha256: 1437ea234ac7a748a747a4859e3151e6a57699cdbd6735daeff0ea6298ea9d90
   predicate:
     buildDefinition:
       buildType: adopt/v1

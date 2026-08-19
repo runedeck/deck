@@ -101,7 +101,7 @@ Each harness has its own integration path. All rewrite logic lives in the rtk bi
 - Claude Code: `rtk init --global` registers a `PreToolUse` hook (`rtk hook claude`) in `~/.claude/settings.json`. The hook rewrites eligible commands before execution. Do not add manual prefixes where the hook is active.
 - OpenCode: `rtk init --opencode` writes `~/.config/opencode/plugins/rtk.ts`. OpenCode auto-loads that directory; the plugin disables itself when the binary is absent.
 - Antigravity: project-scoped only. `rtk init --agent antigravity` writes `.agents/rules/antigravity-rtk-rules.md` into the current project and ignores `--global`.
-- Codex has no hook mechanism. The UseRTK rule is the codex path: the model adds the prefix itself.
+- Codex has no hook mechanism. The UseEfficientCLI rule is the codex path: the model adds the prefix itself.
 
 ## Verification
 
