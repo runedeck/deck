@@ -10,54 +10,54 @@
   --content-max: 1280px;
   --page-pad: 1.5rem;
   --radius: 14px;
-  --bg: #f2f4f8;
-  --surface: #ffffff;
-  --card: #eef1f6;
-  --ink: #16202e;
-  --muted: #64748b;
-  --line: #dfe4ec;
-  --code-bg: #f4f6fa;
-  --primary: #2f7ce8;
-  --ok: #1fa055;
-  --warn: #d98b1f;
-  --fail: #dc3d43;
-  --neutral: #4b8ba6;
-  --violet: #7c5ce8;
+  --bg: #fbfbfd;
+  --surface: #f3f3f7;
+  --card: #ececf2;
+  --ink: #1d1e24;
+  --muted: #6b6d78;
+  --line: #e0e0e8;
+  --code-bg: #f3f3f7;
+  --primary: #5a55c9;
+  --ok: #2f8f4e;
+  --warn: #b07724;
+  --fail: #c03546;
+  --neutral: #3d7f95;
+  --violet: #7a4fd0;
   --serif: -apple-system, "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0a0e18;
-    --surface: #10192b;
-    --card: #16213a;
-    --ink: #e6ecf6;
-    --muted: #7d8ba1;
-    --line: #1f2c47;
-    --code-bg: #0d1526;
-    --primary: #4d9aff;
-    --ok: #2bd576;
-    --warn: #f4b13e;
-    --fail: #f4504f;
-    --neutral: #57aecb;
-    --violet: #9d7bff;
+    --bg: #0e0f13;
+    --surface: #16171d;
+    --card: #1a1b22;
+    --ink: #e8e8ee;
+    --muted: #8b8d98;
+    --line: #26272f;
+    --code-bg: #14151a;
+    --primary: #a3a0e8;
+    --ok: #6fd08c;
+    --warn: #e0a95e;
+    --fail: #e06c75;
+    --neutral: #7fb4c9;
+    --violet: #b39bf0;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0a0e18;
-  --surface: #10192b;
-  --card: #16213a;
-  --ink: #e6ecf6;
-  --muted: #7d8ba1;
-  --line: #1f2c47;
-  --code-bg: #0d1526;
-  --primary: #4d9aff;
-  --ok: #2bd576;
-  --warn: #f4b13e;
-  --fail: #f4504f;
-  --neutral: #57aecb;
-  --violet: #9d7bff;
+  --bg: #0e0f13;
+  --surface: #16171d;
+  --card: #1a1b22;
+  --ink: #e8e8ee;
+  --muted: #8b8d98;
+  --line: #26272f;
+  --code-bg: #14151a;
+  --primary: #a3a0e8;
+  --ok: #6fd08c;
+  --warn: #e0a95e;
+  --fail: #e06c75;
+  --neutral: #7fb4c9;
+  --violet: #b39bf0;
 }
 :root[data-theme="light"] { color-scheme: light; }
 * { box-sizing: border-box; }
@@ -86,8 +86,10 @@ body { margin: 0; background: var(--bg); color: var(--ink);
 .muted { color: var(--muted); font-size: 0.85rem; }
 .layout { width: 100%; max-width: var(--content-max); margin: 0 auto;
           padding: 0 var(--page-pad) 5rem; }
-nav.side { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.05em;
-           text-transform: uppercase; padding: 0.6rem 0 0.2rem; }
+nav.side { position: sticky; top: 0; z-index: 15; background: var(--bg);
+           font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.05em;
+           text-transform: uppercase; padding: 0.6rem 0 0.5rem;
+           border-bottom: 1px solid var(--line); }
 nav.side ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap;
               gap: 0.15rem 1.1rem; }
 nav.side a { text-decoration: none; color: var(--muted); }
@@ -138,7 +140,12 @@ a { color: var(--primary); text-underline-offset: 0.18em; }
 .verdict-row[data-verdict="warn"] { border-left-color: var(--warn); }
 .verdict-row[data-verdict="fail"] { border-left-color: var(--fail); }
 .verdict-row h3 { flex: 1 1 13rem; min-width: 0; font-family: var(--mono); font-size: 0.85rem; }
-.verdict-row p { margin: 0; flex: 1 0 100%; font-size: 0.88rem; color: var(--muted); }
+.verdict-row .verdict-points { margin: 0; flex: 1 0 100%; font-size: 0.86rem; color: var(--muted);
+                               padding-left: 1.05rem; }
+.verdict-row .verdict-points li { margin: 0.22rem 0; }
+.verdict-row .verdict-points li::marker { color: var(--primary); }
+.verdict-artifact { display: block; font-family: var(--mono); font-size: 0.68rem; font-weight: 400;
+                    color: var(--muted); margin-top: 0.15rem; }
 .prose-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
               padding: 0.9rem 1.15rem; margin-bottom: 0.6rem; }
 .prose-card p { margin: 0.3rem 0; font-size: 0.9rem; }
@@ -159,12 +166,13 @@ table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nu
 th, td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line);
          text-align: right; white-space: nowrap; font-size: 0.83rem; }
 td { font-family: var(--mono); font-size: 0.78rem; }
-th { color: var(--muted); font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em;
+th { color: var(--muted); font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.06em;
      text-transform: uppercase; position: sticky; top: 0; z-index: 2; background: var(--surface); }
 th:first-child, td:first-child { text-align: left; position: sticky; left: 0; z-index: 1;
                                  background: var(--surface); }
 th:first-child { z-index: 3; }
 tr:last-child td { border-bottom: 0; }
+tbody tr:hover td { background: color-mix(in srgb, var(--primary) 7%, transparent); }
 tr.delta td { font-weight: 700; border-top: 2px solid var(--line); }
 .good { color: var(--ok); }
 .bad { color: var(--fail); }
@@ -180,7 +188,9 @@ summary:hover { background: var(--card); }
 .pair pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere;
             background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px;
             padding: 0.7rem 0.9rem; font-size: 0.79rem; font-family: var(--mono);
-            max-height: 26rem; overflow-y: auto; }
+            max-height: 26rem; overflow-y: auto; scrollbar-width: thin; }
+.pair > div:first-child pre { border-top: 2px solid var(--neutral); }
+.pair > div:last-child pre { border-top: 2px solid var(--primary); }
 .pair .stats { margin-top: 0.35rem; font-family: var(--mono); font-size: 0.72rem;
                color: var(--muted); font-variant-numeric: tabular-nums; }
 .pair-controls { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center;
@@ -240,6 +250,11 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
 .schematic a:hover rect, .schematic a:focus rect { stroke: var(--primary); stroke-width: 2; }
 .judge-meta { font-family: var(--mono); font-size: 0.64rem; color: var(--muted);
               letter-spacing: 0.06em; text-transform: uppercase; font-weight: 400; }
+.glossary { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.7rem;
+            margin-bottom: 0.7rem; }
+.glossary .gloss { margin-bottom: 0; }
+.glossary h3 { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase;
+               letter-spacing: 0.08em; color: var(--primary); margin-bottom: 0.35rem; }
 .metric-card h3 { font-family: var(--mono); font-size: 0.8rem; text-transform: uppercase;
                   letter-spacing: 0.08em; color: var(--primary); }
 .metric-example { margin-top: 0.35rem; }
@@ -262,16 +277,24 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
 .notes-list { margin: 0.3rem 0 1.2rem 1.15rem; padding: 0; font-size: 0.9rem; }
 .notes-list li { margin: 0.35rem 0; }
 .forensics { margin-bottom: 0.9rem; }
-.waffle { margin-bottom: 1rem; }
-.waffle-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.16rem 0; }
-.waffle-row .who { font-family: var(--mono); font-size: 0.72rem; color: var(--muted);
-                   min-width: 12.5rem; text-align: right; }
-.waffle-cells { display: flex; gap: 0.22rem; flex-wrap: wrap; }
-.waffle-cell { width: 0.85rem; height: 0.85rem; border-radius: 3px; background: var(--card); }
+.waffle { margin-bottom: 1.1rem; display: inline-block; }
+.waffle-row { display: grid; grid-template-columns: 15rem 6.5rem auto; align-items: center;
+              gap: 0 0.9rem; padding: 0.14rem 0; }
+.waffle-row .who { font-family: var(--mono); font-size: 0.72rem; color: var(--ink);
+                   text-align: right; white-space: nowrap; overflow: hidden;
+                   text-overflow: ellipsis; }
+.waffle-row .arm-name { font-family: var(--mono); font-size: 0.66rem; color: var(--muted); }
+.waffle-row.model-first .who { visibility: visible; }
+.waffle-row:not(.model-first) .who { visibility: hidden; }
+.waffle-cells { display: flex; gap: 0.24rem; }
+.waffle-cell { width: 0.8rem; height: 0.8rem; border-radius: 3px; background: var(--card); }
 .waffle-cell.ok { background: var(--ok); }
 .waffle-cell.fail { background: var(--fail); }
+.waffle-head { color: var(--muted); font-family: var(--mono); font-size: 0.62rem;
+               display: flex; gap: 0.24rem; }
+.waffle-head span { width: 0.8rem; text-align: center; }
 .waffle-legend { display: flex; gap: 1.2rem; font-family: var(--mono); font-size: 0.66rem;
-                 color: var(--muted); margin: 0.4rem 0 0 13.1rem; }
+                 color: var(--muted); margin-top: 0.5rem; justify-content: flex-end; }
 .waffle-legend .waffle-cell { display: inline-block; vertical-align: -0.15rem; margin-right: 0.3rem; }
 .info { display: inline-flex; align-items: center; justify-content: center;
         width: 0.95rem; height: 0.95rem; margin-left: 0.3rem; border: 1px solid var(--line);
@@ -331,6 +354,20 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
     <h2 id="how-heading">How to read this report</h2>
     <div class="prose-card">
       <p>The benchmark asks one question: does the artifact change model behavior enough to earn its context cost? Each model ran the same tasks twice. Only the artifact differs between the two runs.</p>
+    </div>
+    <div class="glossary">
+      <div class="prose-card gloss">
+        <h3>The grader</h3>
+        <p>A deterministic script, not a model. It reads each response and checks every frozen fact check. Each check names one required fact, figure, or restriction. The result is pass or fail, with evidence.</p>
+      </div>
+      <div class="prose-card gloss">
+        <h3>The checker</h3>
+        <p>A deterministic program that scans the response for rule violations. One violation is one finding. This benchmark uses the checker named under Identities. It counts Simplified Technical English violations, for example a passive sentence or a banned word. Findings for each 100 words makes short and long responses comparable.</p>
+      </div>
+      <div class="prose-card gloss">
+        <h3>The blind judge</h3>
+        <p>A language model from a different vendor than the model under test. It reads both responses with shuffled A and B labels. It never learns which response used the artifact. It picks a winner for each judging dimension and gives one reason.</p>
+      </div>
     </div>
     <figure class="schematic">
       <svg viewBox="0 0 900 240" role="img" aria-label="Each case runs twice per model, with and without the artifact; both responses are graded and judged blind">
@@ -394,7 +431,7 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
     </div>
     <div id="limits"></div>
     <div class="prose-card" id="threshold-panel">
-      <h3>Explore the verdict thresholds <span id="threshold-state" class="badge b-warn" hidden>custom \u00b7 not the recorded verdict</span></h3>
+      <h3>Explore the verdict thresholds <span id="threshold-state" class="badge b-warn" hidden>custom, not the recorded verdict</span></h3>
       <p class="muted">Move a slider to re-mark every verdict live. The recorded verdicts use the recommended values. This exploration resets on reload.</p>
       <div class="threshold-row">
         <label>Trade-off below <output id="tradeoff-value"></output>
@@ -678,8 +715,8 @@ const pairedDelta = (data, name) => {
 function verdict(data) {
   const paired = data.paired_samples || 0;
   const planned = data.planned_pairs || 0;
-  if (!paired) return { cls: "b-neutral", label: "Not comparable", sentence: "No matched pairs are available for this model. Do not draw a conclusion." };
-  if (planned && paired * 2 < planned) return { cls: "b-neutral", label: "Not comparable", sentence: `Only ${paired} of ${planned} planned pairs were valid. The sample is too small for a verdict.` };
+  if (!paired) return { cls: "b-neutral", label: "Not comparable", parts: ["No matched pairs are available for this model. Do not draw a conclusion."] };
+  if (planned && paired * 2 < planned) return { cls: "b-neutral", label: "Not comparable", parts: [`Only ${paired} of ${planned} planned pairs were valid. The sample is too small for a verdict.`] };
   const lint = pairedDelta(data, "lint_per100w");
   const assertion = pairedDelta(data, "assertion_pass_rate");
   const clarity = mean(data.primary?.metrics?.clarity_preference);
@@ -690,28 +727,26 @@ function verdict(data) {
   const assertionsTotal = data.paired_corpus?.primary?.assertions_total;
   if (Number.isFinite(assertion)) {
     if (assertion === 0 && Number.isFinite(assertionsPassed) && Number.isFinite(assertionsTotal)) {
-      parts.push(assertionsPassed === assertionsTotal
-        ? `Every required fact survived (${assertionsPassed} of ${assertionsTotal} checks in both arms).`
-        : `Fact checks matched the baseline (${assertionsPassed} of ${assertionsTotal} passed).`);
+      parts.push(`Fact checks: ${assertionsPassed} of ${assertionsTotal} passed in both arms.`);
     } else if (assertion !== 0) {
-      parts.push(`The artifact ${assertion > 0 ? "recovered" : "lost"} required facts: pass rate ${assertion > 0 ? "rose" : "fell"} ${Math.abs(assertion * 100).toFixed(0)} points.`);
+      parts.push(`Fact checks: the pass rate ${assertion > 0 ? "rose" : "fell"} ${Math.abs(assertion * 100).toFixed(0)} points with the artifact.`);
     } else {
-      parts.push("Required meaning held.");
+      parts.push("Fact checks: the pass rate did not change.");
     }
   }
   const lintBase = pairedMetric(data, "baseline", "lint_per100w");
   const lintTreat = pairedMetric(data, "primary", "lint_per100w");
   if (Number.isFinite(lint)) parts.push(lint === 0
-    ? "The style checker found the same number of violations in both arms."
-    : `The style checker found ${lint < 0 ? "fewer" : "more"} violations with the artifact: ${fmt(lintBase)} \u2192 ${fmt(lintTreat)} per 100 words.`);
+    ? "Checker findings: no change."
+    : `Checker findings: ${fmt(lintBase)} \u2192 ${fmt(lintTreat)} per 100 words.`);
   const paired2 = data.paired_samples || 0;
   const preferenceCount = value => {
     const wins = value * paired2;
     return Number.isInteger(wins) ? `${wins} of ${paired2}` : `${wins.toFixed(1)} of ${paired2}`;
   };
-  if (clarity !== null) parts.push(`The blind judge preferred the artifact's clarity in ${preferenceCount(clarity)} pairs.`);
-  if (fluency !== null) parts.push(`The blind judge preferred the artifact's fluency in ${preferenceCount(fluency)} pairs.`);
-  if (directness !== null) parts.push(`The blind judge preferred the artifact's directness in ${preferenceCount(directness)} pairs (ties count one half).`);
+  if (clarity !== null) parts.push(`Clarity: the judge chose the artifact in ${preferenceCount(clarity)} pairs.`);
+  if (fluency !== null) parts.push(`Fluency: the judge chose the artifact in ${preferenceCount(fluency)} pairs.`);
+  if (directness !== null) parts.push(`Directness: the judge chose the artifact in ${preferenceCount(directness)} pairs. A tie counts one half.`);
   if (paired < planned) parts.push(`Only ${paired} of ${planned} planned pairs were valid.`);
   if (!Number.isFinite(assertion)) parts.unshift("Required meaning data is unavailable.");
   const assertionBroken = Number.isFinite(assertion) && assertion < 0;
@@ -719,18 +754,18 @@ function verdict(data) {
   const clarityImproved = clarity !== null && clarity > THRESHOLDS.win;
   const directnessImproved = directness !== null && directness > THRESHOLDS.win;
   const improved = checkerImproved || clarityImproved || directnessImproved;
-  if (!Number.isFinite(assertion)) return { cls: "b-neutral", label: "No meaning data", sentence: parts.join(" ") };
-  if (assertionBroken) return { cls: "b-fail", label: "Regresses required meaning", sentence: parts.join(" ") };
-  if (!improved) return { cls: "b-neutral", label: "No material improvement", sentence: parts.join(" ") };
+  if (!Number.isFinite(assertion)) return { cls: "b-neutral", label: "No meaning data", parts };
+  if (assertionBroken) return { cls: "b-fail", label: "Regresses required meaning", parts };
+  if (!improved) return { cls: "b-neutral", label: "No material improvement", parts };
   const tradeoffs = [];
   if (clarity !== null && clarity < THRESHOLDS.trade_off) tradeoffs.push("clarity");
   if (fluency !== null && fluency < THRESHOLDS.trade_off) tradeoffs.push("fluency");
   if (directness !== null && directness < THRESHOLDS.trade_off) tradeoffs.push("directness");
   if (tradeoffs.length === 1 && tradeoffs[0] === "fluency") {
-    return { cls: "b-warn", label: "Improves with a fluency trade-off", sentence: parts.join(" ") };
+    return { cls: "b-warn", label: "Improves with a fluency trade-off", parts };
   }
-  if (tradeoffs.length) return { cls: "b-warn", label: "Improves with trade-offs", sentence: parts.join(" ") };
-  return { cls: "b-ok", label: "Improves controlled English", sentence: parts.join(" ") };
+  if (tradeoffs.length) return { cls: "b-warn", label: "Improves with trade-offs", parts };
+  return { cls: "b-ok", label: "Improves controlled English", parts };
 }
 
 const nav = document.getElementById("nav");
@@ -828,8 +863,11 @@ for (const comparison of shownComparisons) {
     row.dataset.comparison = comparison.id;
     row.setAttribute("aria-label", `${model}: ${summary.label}`);
     const rowBadge = el("span", summary.label, `badge ${summary.cls}`);
-    const rowSentence = el("p", summary.sentence);
-    row.append(el("h3", `${model} · ${armLabel(comparison.primary).replace(/^the /, "")}`), rowBadge, rowSentence);
+    const rowSentence = el("ul", null, "verdict-points");
+    for (const point of summary.parts) rowSentence.appendChild(el("li", point));
+    const rowTitle = el("h3", model);
+    rowTitle.appendChild(el("span", armLabel(comparison.primary).replace(/^the /, ""), "verdict-artifact"));
+    row.append(rowTitle, rowBadge, rowSentence);
     verdictRoot.appendChild(row);
     const registryEntry = { data, row, badges: [rowBadge], sentence: rowSentence };
     verdictRegistry.push(registryEntry);
@@ -1132,7 +1170,8 @@ const applyThresholds = () => {
   for (const entry of verdictRegistry) {
     const summary = verdict(entry.data);
     entry.row.dataset.verdict = summary.cls.replace(/^b-/, "");
-    entry.sentence.textContent = summary.sentence;
+    entry.sentence.replaceChildren();
+    for (const point of summary.parts) entry.sentence.appendChild(el("li", point));
     for (const badge of entry.badges) {
       badge.textContent = summary.label;
       badge.className = `badge ${summary.cls}`;
@@ -1163,14 +1202,23 @@ const runRoot = document.getElementById("runs");
 const waffle = el("div", null, "waffle");
 const waffleModels = [...new Set(runs.map(run => run.model))].sort();
 const waffleArms = [...new Set(runs.map(run => run.arm))].sort();
+const waffleCases = [...new Set(runs.map(run => `${run.eval_id}|${run.run_number}`))]
+  .sort((a, b) => Number(a.split("|")[0]) - Number(b.split("|")[0]) || Number(a.split("|")[1]) - Number(b.split("|")[1]));
+const headRowEl = el("div", null, "waffle-row model-first");
+headRowEl.append(el("span", "", "who"), el("span", "case", "arm-name"));
+const headCells = el("div", null, "waffle-head");
+for (const key of waffleCases) headCells.appendChild(el("span", key.split("|")[0]));
+headRowEl.appendChild(headCells);
+waffle.appendChild(headRowEl);
 for (const model of waffleModels) {
+  let first = true;
   for (const arm of waffleArms) {
     const rowRuns = runs
       .filter(run => run.model === model && run.arm === arm)
       .sort((a, b) => Number(a.eval_id) - Number(b.eval_id) || a.run_number - b.run_number);
     if (!rowRuns.length) continue;
-    const rowEl = el("div", null, "waffle-row");
-    rowEl.appendChild(el("span", `${model} \u00b7 ${arm}`, "who"));
+    const rowEl = el("div", null, `waffle-row${first ? " model-first" : ""}`);
+    rowEl.append(el("span", model, "who"), el("span", arm, "arm-name"));
     const cells = el("div", null, "waffle-cells");
     for (const run of rowRuns) {
       const cell = el("span", null, `waffle-cell ${run.valid ? "ok" : "fail"}`);
@@ -1179,6 +1227,7 @@ for (const model of waffleModels) {
     }
     rowEl.appendChild(cells);
     waffle.appendChild(rowEl);
+    first = false;
   }
 }
 const waffleLegend = el("div", null, "waffle-legend");
