@@ -1,81 +1,104 @@
 ---
 name: BenchArtifact
-description: "Benchmark a skill, rule, or agent against a baseline across models: run test cases with and without the artifact, grade, aggregate per model, and render one comparison report. USE WHEN benchmarking an artifact, evaluating a rule, measuring whether a skill helps, comparing model behavior with and without an artifact, or deciding whether an adoption earns its context cost. NOT FOR authoring artifacts (BuildSkill, BuildRule) or reviewing imports (AdoptArtifact)."
+description: "Benchmark one skill, rule, or agent against a baseline. Use native harness agents by default, or select explicit cross-harness execution. USE WHEN evaluating an artifact, comparing model behavior, or measuring context cost. NOT FOR authoring artifacts or reviewing imports."
+compatibility: "Native mode requires a harness with agent support. Cross-harness mode requires Python 3.11 and Rune."
 metadata:
-    version: 0.1.0
+    version: 0.3.0
 allowed-tools: Bash(python3 *), Bash(mkdir *), Bash(cp *), Read, Write, Edit, Grep, Glob, Agent
 ---
 
 # BenchArtifact
 
-Measure whether an artifact changes model behavior enough to earn its place. Every benchmark runs the same test cases in two configurations, with the artifact and without it, grades both against the same assertions, and reports the delta per model. The loop ends with a human reading the comparison, not with a number.
+Measure how one artifact changes model behavior. Compare the treatment and baseline only within one model.
 
-Results live in the benchmarks working layer outside the repository, `~/Data/Benchmarks/<deck>/<artifact-name>/`, organized by iteration (`iteration-1/`, `iteration-2/`), one directory per test case named `eval-<ID>-<descriptive-name>`. Each configuration directory is named `<config>@<model>` (for example `with_rule@claude-opus-5`) and holds `run-<R>/` subdirectories containing `outputs/`, `grading.json`, and `timing.json`. The aggregator discovers only `eval-*` directories and `run-*` subdirectories; files placed elsewhere are ignored. Create directories as you go, not upfront.
+Store results in `$ROOT_BENCHMARK/<deck>/<artifact-name>/iteration-<N>/`. The root defaults to `~/Data/Benchmarks`.
 
 ## Prerequisites
 
-- The artifact under test: a skill directory, a rule file, or an agent definition.
-- The configuration pair for its kind:
-    - **Skill**: `with_skill` runs with the skill loaded; `without_skill` runs bare.
-    - **Rule**: `with_rule` runs with the rule text prepended to the task context as a project rule; `without_rule` runs the identical prompt without it.
-    - **Agent**: `with_agent` runs the agent definition; `without_agent` runs a general-purpose baseline.
-    - Improving an existing artifact: snapshot it first (`cp -r <artifact> <workspace>/artifact-snapshot/`) and use `new_artifact` against `old_artifact`.
-- The model list. One model is a valid benchmark; several models answer how the artifact behaves down the capability curve. Name each model by an identifier the harness resolves. State the total run count (cases × configurations × models × repeats) before spawning, and get the user's go-ahead when it is large.
+- Read [NativeBench.md](NativeBench.md) for the default native procedure.
+- Read [RuneBench.md](RuneBench.md) only when the user requests cross-harness execution.
+- Snapshot the artifact before execution.
+- Confirm two or three realistic cases with the user.
 
 ## Constraints
 
-- Both configurations of a pair run the same prompts, the same assertions, and the same model; only the artifact differs. A delta computed across different models is meaningless, and the aggregator never averages across models.
-- Spawn every evaluation subagent (runners, graders, comparators, analyzers) on the model that configuration names, never the session's frontier model by default.
-- Grade with the exact schema the tooling depends on: `grading.json` carries an `expectations` array with `text`, `passed`, `evidence` fields and a `summary` object with `passed`, `failed`, `total`, `pass_rate`. Check programmatically verifiable assertions with a script, not by eyeballing.
-- Capture `timing.json` (`total_tokens`, `duration_ms`, `total_duration_seconds`, `model`) from each completion notification as it arrives; the notification is the only place this data exists. Record unavailable values as `null`, never estimates.
-- The comparison report is generated, never hand-written, and stays self-contained: it renders offline with no external requests.
+- Change only the artifact between paired runs.
+- Keep prompts, files, assertions, models, and repeat counts identical.
+- Use only models that the active harness exposes in native mode.
+- Do not start another harness in native mode.
+- Stop native execution when the baseline already contains the tested artifact.
+- Keep provider failures, timeouts, invalid outputs, and exclusions separate.
+- Keep missing numbers as `null`. Do not estimate token counts.
+- Compute deltas from matched case and repeat pairs only.
+- Do not average results across models.
+- Generate each report from `benchmark.json`.
 
 ## Instructions
 
-### Write test cases
+### Define the benchmark
 
-Draft 2-3 realistic test prompts, the kind that exercise exactly the behavior the artifact should change, and confirm them with the user before running. For a rule, each case is a task where the rule should alter the output; the baseline reveals what the model does on its own. Save prompts to `evals/evals.json` and one `eval_metadata.json` per case (`eval_id`, `eval_name`, `prompt`, `assertions`, which may start empty).
+Copy [templates/benchmark.md](templates/benchmark.md) to the iteration directory as `benchmark.md`.
 
-### Spawn all runs in the same turn
+Freeze the treatment instructions as `artifact.md`. Keep source files beside it when a skill needs support files.
 
-For each test case, model, and configuration, spawn a runner subagent in the same turn so everything finishes together. The run prompt names the task, the input files, and the output directory `<workspace>/iteration-<N>/eval-<ID>-<name>/<config>@<model>/run-<R>/outputs/`. The with-artifact runner gets the artifact (skill path, rule text in context, or agent definition); the baseline runner gets the identical prompt without it. Draft assertions while runs are in progress; good assertions are objectively verifiable and read clearly in the report.
+Define one `baseline` arm and one `with_artifact` arm. Use a separate native comparison for another artifact.
 
-### Grade and aggregate
+State the run count before execution. The count is cases times arms times models times repeats.
 
-Spawn a grader per run ([templates/agents/grader.md](templates/agents/grader.md)) writing `grading.json` into each `run-<R>/`. Then aggregate from this skill's directory:
+Get explicit approval when the count exceeds 20 runs.
+
+### Execute the benchmark
+
+Use the native procedure unless the user requests cross-harness execution.
+
+Use the active harness agent tool with [templates/agents/runner.md](templates/agents/runner.md).
+
+Give `artifact.md` only to treatment runners. Never give it to baseline runners.
+
+Report each case, arm, model, completion, and failure while the matrix runs.
+
+### Grade and compare
+
+Grade each valid run against the frozen assertions. Use [templates/agents/grader.md](templates/agents/grader.md).
+
+Use [templates/agents/comparator.md](templates/agents/comparator.md) for blind clarity, fluency, and directness judgments.
+
+Aggregate the normalized results:
 
 ```sh
 python3 -m scripts.aggregate_benchmark <workspace>/iteration-<N> --artifact-name <name>
 ```
 
-This produces `benchmark.json` and `benchmark.md` with per-configuration, per-model statistics and one delta per model. Read the results for patterns the aggregates hide (non-discriminating assertions, high-variance cases, time and token tradeoffs); [templates/agents/analyzer.md](templates/agents/analyzer.md) has the analyst instructions.
-
-### Render the comparison
+Render the report:
 
 ```sh
 python3 -m scripts.build_report <workspace>/iteration-<N>/benchmark.json
 ```
 
-The report is one self-contained HTML file: the summary matrix by model, the per-model deltas, and per-case grading detail. Put it in front of the user. For interactive per-case feedback on outputs, the bundled viewer serves the run outputs on loopback (`eval-viewer/generate_review.py <workspace>/iteration-<N> --skill-name <name> --benchmark <workspace>/iteration-<N>/benchmark.json`; add `--static <path>` in headless environments). Ask before opening a browser.
+### Review the result
 
-### Iterate or conclude
+Read the paired outputs and the aggregate metrics. Assertions protect required meaning.
 
-Read the user's feedback. Improving the artifact means generalizing from the feedback, not patching to the test set; rerun everything into `iteration-<N+1>/`, baselines included. Stop when the user is happy, the feedback comes back empty, or progress stalls. A benchmark can also conclude negatively: an artifact whose delta stays at zero on every model it targets does not earn its context cost, and that is a result.
+Checker density measures the claimed behavior. Blind judgments measure prose quality.
 
-### Blind comparison
-
-For a rigorous "is the new version better" answer, give two outputs to an independent judge without revealing which configuration produced them ([templates/agents/comparator.md](templates/agents/comparator.md)), then analyze why the winner won. Optional; the human review loop is usually sufficient.
+Show the generated report to the user. Record sample gaps and failure causes.
 
 ## Verification
 
-- Every planned configuration-model pair has the same number of graded runs.
-- `benchmark.json` reports one delta per model and no cross-model aggregate.
-- The report file renders with the network disabled.
-- The user has seen the comparison and their conclusion is recorded in the workspace.
+- Each pair uses one model, prompt, file set, assertion set, and repeat number.
+- Each treatment run receives the frozen artifact. Each baseline run does not.
+- Every planned run has a result or an explicit exclusion.
+- `benchmark.json` contains no cross-model aggregate.
+- The report renders without network access.
+- The report gives no verdict when fewer than half of the planned pairs are valid.
 
 ## Troubleshooting
 
-- **No subagents** (for example claude.ai): run cases yourself one at a time; skip baselines and quantitative claims, and present outputs inline.
-- **Aggregator finds nothing**: check the directory contract; only `eval-*` directories with `<config>@<model>/run-<R>/grading.json` are discovered.
-- **Delta missing for a model**: that model lacks one side of the configuration pair; rerun the missing side.
-- **Unknown configuration names**: pass `--primary-config` and `--baseline-config` (base names, without the `@model` suffix).
+- If native context contains the artifact, use an isolated project or explicit cross-harness mode.
+- If the harness cannot create agents, run one case at a time and record this limitation.
+- If a model is unavailable, remove it from `benchmark.md` before any run.
+- If aggregation reports a missing pair, execute that exact case, arm, model, and repeat.
+
+## References
+
+- [references/schemas.md](references/schemas.md) defines normalized records and report data.

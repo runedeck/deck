@@ -3,212 +3,646 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
 <title>Artifact Benchmark</title>
 <style>
-    :root {
-        --bg: #0a0f1a;
-        --surface: #121a2a;
-        --surface-2: #1a2438;
-        --border: #2a3a56;
-        --text: #e8ecf4;
-        --dim: #a1aec5;
-        --accent: #5b8def;
-        --ok: #44b77a;
-        --warn: #e0a94a;
-        --bad: #e15555;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-        background: var(--bg);
-        color: var(--text);
-        font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        padding: 2rem 1.25rem 4rem;
-    }
-    main { max-width: 64rem; margin: 0 auto; }
-    h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
-    h2 { font-size: 1.1rem; margin: 2rem 0 0.75rem; }
-    .meta { color: var(--dim); font-size: 0.85rem; margin-bottom: 1.5rem; }
-    .meta code {
-        font-family: ui-monospace, "SF Mono", Menlo, monospace;
-        font-size: 0.8rem;
-    }
-    .eyebrow {
-        font-size: 10.5px; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.08em; color: var(--dim); margin-bottom: 0.35rem;
-    }
-    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 6px; }
-    table { border-collapse: collapse; width: 100%; background: var(--surface); }
-    th, td {
-        padding: 0.5rem 0.9rem; text-align: left; white-space: nowrap;
-        border-top: 1px solid var(--border); font-size: 0.85rem;
-    }
-    thead th {
-        border-top: none; background: var(--surface-2); color: var(--dim);
-        font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
-    }
-    td.num, th.num { text-align: right; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
-    .model-cell { color: var(--accent); font-weight: 600; }
-    .delta-pos { color: var(--ok); font-weight: 600; }
-    .delta-neg { color: var(--bad); font-weight: 600; }
-    .delta-zero { color: var(--dim); }
-    .badge {
-        display: inline-block; padding: 0.05rem 0.5rem; border-radius: 999px;
-        font-size: 0.72rem; font-weight: 600; border: 1px solid var(--border);
-    }
-    .badge.pass { color: var(--ok); border-color: var(--ok); }
-    .badge.fail { color: var(--bad); border-color: var(--bad); }
-    details {
-        background: var(--surface); border: 1px solid var(--border);
-        border-radius: 6px; margin-bottom: 0.6rem;
-    }
-    details summary {
-        cursor: pointer; padding: 0.6rem 0.9rem; font-size: 0.9rem;
-        display: flex; gap: 0.75rem; align-items: baseline; flex-wrap: wrap;
-    }
-    details summary .dim { color: var(--dim); font-size: 0.8rem; }
-    .expectations { padding: 0 0.9rem 0.75rem; }
-    .expectation {
-        display: flex; gap: 0.6rem; align-items: baseline;
-        padding: 0.3rem 0; border-top: 1px solid var(--border); font-size: 0.85rem;
-    }
-    .expectation .evidence { color: var(--dim); font-size: 0.78rem; }
-    footer { color: var(--dim); font-size: 0.78rem; margin-top: 3rem; }
+:root {
+  --content-max: 1280px;
+  --page-pad: 1.25rem;
+  --radius: 10px;
+  --bg: #eff1f5;
+  --surface: #e6e9ef;
+  --card: #dce0e8;
+  --ink: #4c4f69;
+  --muted: #6c6f85;
+  --line: #bcc0cc;
+  --code-bg: #dce0e8;
+  --primary: #1e66f5;
+  --ok: #40a02b;
+  --warn: #df8e1d;
+  --fail: #d20f39;
+  --neutral: #179299;
+  --mauve: #8839ef;
+  --peach: #fe640b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1e1e2e;
+    --surface: #181825;
+    --card: #313244;
+    --ink: #cdd6f4;
+    --muted: #a6adc8;
+    --line: #45475a;
+    --code-bg: #11111b;
+    --primary: #89b4fa;
+    --ok: #a6e3a1;
+    --warn: #f9e2af;
+    --fail: #f38ba8;
+    --neutral: #94e2d5;
+    --mauve: #cba6f7;
+    --peach: #fab387;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1e1e2e;
+  --surface: #181825;
+  --card: #313244;
+  --ink: #cdd6f4;
+  --muted: #a6adc8;
+  --line: #45475a;
+  --code-bg: #11111b;
+  --primary: #89b4fa;
+  --ok: #a6e3a1;
+  --warn: #f9e2af;
+  --fail: #f38ba8;
+  --neutral: #94e2d5;
+  --mauve: #cba6f7;
+  --peach: #fab387;
+}
+:root[data-theme="light"] { color-scheme: light; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { color-scheme: light dark; scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+       font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.skip { position: fixed; left: 0.75rem; top: 0.75rem; z-index: 30; transform: translateY(-200%);
+        background: var(--primary); color: var(--bg); border-radius: 6px; padding: 0.45rem 0.7rem; }
+.skip:focus { transform: translateY(0); }
+.topbar { position: sticky; top: 0; z-index: 10; background: var(--surface);
+          border-bottom: 1px solid var(--line); }
+.topbar-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem;
+                width: 100%; max-width: var(--content-max); margin: 0 auto;
+                padding: 0.6rem var(--page-pad); }
+.topbar h1 { margin: 0; font-size: 1.1rem; }
+.topbar .spacer { flex: 1; }
+.theme-control { display: flex; align-items: center; gap: 0.15rem; border: 1px solid var(--line);
+                 border-radius: 7px; background: var(--card); padding: 0.12rem; }
+.theme-control button { border: 0; border-radius: 5px; background: transparent; color: var(--muted);
+                        font: inherit; font-size: 0.75rem; padding: 0.2rem 0.45rem; cursor: pointer; }
+.theme-control button[aria-checked="true"] { background: var(--surface); color: var(--ink);
+                                              box-shadow: 0 0 0 1px var(--line); }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.78rem; }
+.muted { color: var(--muted); font-size: 0.85rem; }
+.layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 1.5rem;
+          width: 100%; max-width: var(--content-max); margin: 0 auto;
+          padding: 1rem var(--page-pad) 4rem; }
+nav.side { position: sticky; top: 3.6rem; align-self: start; max-height: calc(100vh - 4.5rem);
+           overflow-y: auto; font-size: 0.82rem; padding-right: 0.75rem;
+           border-right: 1px solid var(--line); }
+nav.side ul { margin: 0; padding: 0; list-style: none; }
+nav.side li { margin: 0.35rem 0; }
+nav.side a { text-decoration: none; color: inherit; display: block;
+             padding: 0.12rem 0.35rem; border-radius: 6px; }
+nav.side a:hover { background: var(--card); }
+main { min-width: 0; }
+section { margin-top: 2rem; scroll-margin-top: 4rem; }
+section h2 { font-size: 1.2rem; margin: 0 0 0.6rem; border-left: 3px solid var(--mauve);
+             padding-left: 0.55rem; }
+h3 { font-size: 0.98rem; margin: 0; }
+h1, h2, h3, h4, p, summary, .run-line { overflow-wrap: anywhere; }
+a { color: var(--primary); text-underline-offset: 0.16em; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+         gap: 0.7rem; margin: 0.5rem 0; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+        padding: 0.6rem 0.9rem; }
+.card .value { font-size: 1.35rem; font-weight: 700; line-height: 1.2;
+               font-variant-numeric: tabular-nums; }
+.card .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
+               color: var(--muted); }
+.badge { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.1rem 0.55rem;
+         border-radius: 999px; font-size: 0.72rem; font-weight: 700;
+         letter-spacing: 0.03em; white-space: nowrap; }
+.badge::before { width: 0.48em; height: 0.48em; border-radius: 50%; background: currentColor; content: ""; }
+.b-ok { background: color-mix(in srgb, var(--ok) 24%, var(--surface)); color: var(--ok); }
+.b-warn { background: color-mix(in srgb, var(--warn) 24%, var(--surface));
+          color: color-mix(in srgb, var(--warn) 70%, var(--ink)); }
+.b-fail { background: color-mix(in srgb, var(--fail) 24%, var(--surface)); color: var(--fail); }
+.b-neutral { background: color-mix(in srgb, var(--neutral) 24%, var(--surface)); color: var(--neutral); }
+.verdict-tabs { display: inline-grid; grid-auto-flow: column; grid-auto-columns: minmax(7rem, 1fr);
+                gap: 0.2rem; margin: 0.7rem 0; border: 1px solid var(--line);
+                border-radius: 8px; background: var(--card); padding: 0.2rem; }
+.verdict-tabs:empty { display: none; }
+.verdict-tabs button { --tab-accent: var(--neutral); display: inline-flex; align-items: center;
+                       justify-content: center; gap: 0.5rem; border: 0; border-radius: 6px;
+                       background: transparent; color: var(--muted); font: inherit; font-weight: 700;
+                       padding: 0.45rem 0.8rem; cursor: pointer; }
+.verdict-tabs button[data-kind="rule"] { --tab-accent: var(--mauve); }
+.verdict-tabs button[data-kind="skill"] { --tab-accent: var(--primary); }
+.verdict-tabs button::before { width: 0.55rem; height: 0.55rem; border-radius: 50%;
+                               background: var(--tab-accent); content: ""; }
+.verdict-tabs button[aria-selected="true"] {
+  background: color-mix(in srgb, var(--tab-accent) 14%, var(--surface));
+  color: var(--ink);
+  box-shadow: inset 0 -3px 0 var(--tab-accent), 0 0 0 1px var(--tab-accent);
+}
+.verdict-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 0.7rem; }
+.verdict-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.6rem;
+               background: var(--surface); border: 1px solid var(--line);
+               border-left-width: 3px; border-radius: var(--radius); padding: 0.75rem 0.9rem; }
+.verdict-row[data-verdict="ok"] { border-left-color: var(--ok); }
+.verdict-row[data-verdict="warn"] { border-left-color: var(--warn); }
+.verdict-row[data-verdict="fail"] { border-left-color: var(--fail); }
+.verdict-row[data-verdict="neutral"] { border-left-color: var(--neutral); }
+.verdict-row h3 { flex: 1 1 13rem; min-width: 0; }
+.verdict-row p { margin: 0; flex: 1 0 100%; font-size: 0.88rem; }
+.prose-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+              padding: 0.8rem 1.1rem; margin-bottom: 0.6rem; }
+.prose-card p { margin: 0.25rem 0; font-size: 0.9rem; }
+.prose-card h3 { margin-bottom: 0.25rem; }
+.model-block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+               margin-bottom: 0.8rem; overflow: hidden; }
+.model-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+              padding: 0.6rem 1rem; border-bottom: 1px solid var(--line); }
+.model-head .spacer { flex: 1; }
+.scroll { width: 100%; max-width: 100%; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { padding: 0.42rem 0.65rem; border-bottom: 1px solid var(--line);
+         text-align: right; white-space: nowrap; font-size: 0.84rem; }
+th { color: var(--muted); font-size: 0.7rem; letter-spacing: 0.04em;
+     text-transform: uppercase; position: sticky; top: 0; z-index: 2; background: var(--surface); }
+th:first-child, td:first-child { text-align: left; position: sticky; left: 0; z-index: 1;
+                                 background: var(--surface); }
+th:first-child { z-index: 3; }
+tbody tr:nth-child(odd) td { background: color-mix(in srgb, var(--card) 38%, var(--surface)); }
+tr:last-child td { border-bottom: 0; }
+tr.delta td { font-weight: 700; border-top: 2px solid var(--line); }
+.good { color: var(--ok); }
+.bad { color: var(--fail); }
+.null { color: var(--muted); }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+          margin-bottom: 0.6rem; overflow: hidden; }
+summary { cursor: pointer; padding: 0.6rem 1rem; font-weight: 600; font-size: 0.9rem; }
+summary:hover { background: var(--card); }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem;
+        padding: 0.8rem 1rem 1rem; border-top: 1px solid var(--line); }
+.pair h4 { margin: 0 0 0.3rem; font-size: 0.78rem; text-transform: uppercase;
+           letter-spacing: 0.05em; color: var(--muted); }
+.pair pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere;
+            background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px;
+            padding: 0.6rem 0.8rem; font-size: 0.8rem; max-height: 26rem; overflow-y: auto; }
+.pair .stats { margin-top: 0.3rem; font-size: 0.78rem; color: var(--muted);
+               font-variant-numeric: tabular-nums; }
+.run-line { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; padding: 0.5rem 1rem;
+            border-top: 1px solid var(--line); font-size: 0.82rem; align-items: baseline; }
+.run-line .who { min-width: 17rem; font-weight: 600; }
+.artifact-identity { display: inline-block; margin: 0 0 0.8rem; border-radius: 6px;
+                     background: var(--code-bg); padding: 0.3rem 0.6rem; }
+.artifact-identity a { font-weight: 600; text-decoration-style: dotted; }
+.artifact-identity a::after { content: " ↗"; }
+.identity-entry { margin-bottom: 0.55rem; border: 1px solid var(--line); border-radius: 8px;
+                  background: var(--code-bg); padding: 0.65rem 0.8rem; overflow-wrap: anywhere;
+                  white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                  font-size: 0.8rem; }
+.syntax-key { color: var(--mauve); }
+.syntax-string { color: var(--ok); }
+.syntax-number { color: var(--peach); }
+.syntax-literal { color: var(--fail); }
+.syntax-punct { color: var(--muted); }
+.identity-link { color: var(--ok); }
+.empty { color: var(--muted); }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+@media (max-width: 900px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  nav.side { position: static; max-height: none; overflow: visible; padding: 0 0 0.6rem;
+             border-right: 0; border-bottom: 1px solid var(--line); }
+  nav.side ul { display: flex; gap: 0.25rem; overflow-x: auto; padding-bottom: 0.2rem; }
+  nav.side li { flex: 0 0 auto; }
+  .pair { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  :root { --page-pad: 0.75rem; }
+  .topbar-inner { gap: 0.45rem; }
+  .topbar h1 { flex: 1 0 100%; }
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .verdict-tabs { display: grid; grid-auto-columns: minmax(0, 1fr); width: 100%; }
+  .verdict-grid { grid-template-columns: minmax(0, 1fr); }
+  th, td { font-size: 0.78rem; }
+  .pair pre { max-height: 18rem; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
 </head>
 <body>
+<a class="skip" href="#verdicts">Skip to verdicts</a>
+<div class="topbar">
+<div class="topbar-inner">
+  <h1 id="title">Artifact benchmark</h1>
+  <span class="mono" id="meta"></span>
+  <span class="spacer"></span>
+  <span class="muted" id="model-count"></span>
+  <div class="theme-control" role="radiogroup" aria-label="Theme">
+    <button type="button" data-theme-value="system" role="radio" aria-checked="true">System</button>
+    <button type="button" data-theme-value="light" role="radio" aria-checked="false">Light</button>
+    <button type="button" data-theme-value="dark" role="radio" aria-checked="false">Dark</button>
+  </div>
+</div>
+</div>
+<div class="layout">
+<nav class="side" aria-label="Report sections"><ul id="nav"></ul></nav>
 <main>
-    <div class="eyebrow">Artifact benchmark</div>
-    <h1 id="artifact-name"></h1>
-    <p class="meta" id="meta-line"></p>
-
-    <h2>Summary by model</h2>
-    <div class="table-wrap">
-        <table id="summary-table">
-            <thead>
-                <tr>
-                    <th>Model</th><th>Configuration</th>
-                    <th class="num">Pass rate</th><th class="num">Δ pass</th>
-                    <th class="num">Time</th><th class="num">Tokens</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+  <section id="verdicts" aria-labelledby="verdict-heading">
+    <h2 id="verdict-heading">Verdicts</h2>
+    <p id="tested"></p>
+    <div class="cards" id="summary"></div>
+    <div class="verdict-tabs" id="verdict-tabs" role="tablist" aria-label="Verdict comparison"></div>
+    <div class="verdict-grid" id="verdict-rows"></div>
+  </section>
+  <section id="how" aria-labelledby="how-heading">
+    <h2 id="how-heading">How to read this report</h2>
+    <div class="prose-card">
+      <p>The benchmark asks one question: does an artifact change model behavior enough to earn its context cost? Each model ran the same tasks in every named arm. Only the treatment artifact differs between compared arms.</p>
     </div>
-
-    <h2>Cases</h2>
-    <div id="cases"></div>
-
-    <footer>Self-contained report; data inlined at build time by build_report.py.</footer>
+    <div class="prose-card">
+      <p><b>Assertion pass rate (0–1, higher is better).</b> The case assertions measure required behavior. A drop means the artifact harmed a requirement.</p>
+      <p><b>Checker findings (per 100 words, lower is better).</b> The report divides total findings by total words across matched outputs.</p>
+      <p><b>Clarity (0–1, higher favors the artifact).</b> A blind judge selects the output with less ambiguity.</p>
+      <p><b>Fluency (0–1, higher favors the artifact).</b> A blind judge selects the more natural output.</p>
+      <p><b>Directness (0–1, higher favors the artifact).</b> A blind judge selects the output that states useful information sooner.</p>
+    </div>
+    <div class="prose-card">
+      <p><b>Verdict rule:</b> required meaning must not regress. Checker, clarity, or directness gains can support a positive result. Lower fluency creates a trade-off, not an automatic failure. The report never averages models.</p>
+    </div>
+    <div id="limits"></div>
+  </section>
+  <section id="comparisons" aria-label="Comparisons"></section>
+  <section id="examples" aria-labelledby="example-heading">
+    <h2 id="example-heading">Read one pair yourself</h2>
+    <p class="muted">Each entry shows the same task answered by the same model with and without the artifact. One read explains the numbers.</p>
+    <div id="example-list"></div>
+  </section>
+  <section id="cases" aria-labelledby="case-heading">
+    <h2 id="case-heading">Run records by case</h2>
+    <div id="runs"></div>
+  </section>
+  <section id="notes-section" aria-labelledby="notes-heading">
+    <h2 id="notes-heading">Notes and caveats</h2>
+    <div id="notes"></div>
+  </section>
+  <section id="identity" aria-labelledby="identity-heading">
+    <h2 id="identity-heading">Identities</h2>
+    <div id="identities"></div>
+  </section>
 </main>
+</div>
 <script>
-    "use strict";
-    var DATA = JSON.parse(new TextDecoder().decode(
-        Uint8Array.from(atob("__BENCHMARK_DATA_BASE64__"), function (c) { return c.charCodeAt(0); })
-    ));
+"use strict";
+const DATA = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob("__BENCHMARK_DATA_BASE64__"), c => c.charCodeAt(0))));
+const el = (tag, text, cls) => { const node = document.createElement(tag); if (text !== undefined && text !== null) node.textContent = String(text); if (cls) node.className = cls; return node; };
+const fmt = value => value === null || value === undefined ? "—" : typeof value === "number" ? (Number.isInteger(value) ? String(value) : value.toFixed(2)) : String(value);
+const listText = values => new Intl.ListFormat("en", { style: "long", type: "conjunction" }).format(values);
+const mean = summary => summary && summary.mean !== null && summary.mean !== undefined ? summary.mean : null;
+const metadata = DATA.metadata || {};
+const artifact = metadata.artifact_name || "Artifact benchmark";
+const themeButtons = [...document.querySelectorAll("[data-theme-value]")];
+const setTheme = value => {
+  if (value === "system") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.dataset.theme = value;
+  themeButtons.forEach(button => button.setAttribute("aria-checked", String(button.dataset.themeValue === value)));
+  try { localStorage.setItem("bench-theme", value); } catch {}
+};
+let savedTheme = "system";
+try { savedTheme = localStorage.getItem("bench-theme") || "system"; } catch {}
+if (!new Set(["system", "light", "dark"]).has(savedTheme)) savedTheme = "system";
+themeButtons.forEach(button => button.addEventListener("click", () => setTheme(button.dataset.themeValue)));
+setTheme(savedTheme);
+document.title = `${artifact} benchmark`;
+document.getElementById("title").textContent = `${artifact} benchmark`;
+document.getElementById("meta").textContent = metadata.timestamp || "";
+document.getElementById("model-count").textContent = `${(metadata.models || []).length} models`;
 
-    function el(tag, className, text) {
-        var node = document.createElement(tag);
-        if (className) node.className = className;
-        if (text !== undefined && text !== null) node.textContent = text;
-        return node;
+const counts = metadata.run_counts || {};
+[[counts.total || 0, "runs recorded"], [counts.valid || 0, "valid"], [counts.excluded || 0, "excluded"],
+ [(DATA.comparisons || []).length, "comparisons"]].forEach(([number, label]) => {
+  const card = el("div", null, "card");
+  card.append(el("div", number, "value"), el("div", label, "label"));
+  document.getElementById("summary").appendChild(card);
+});
+
+const armLabel = arm => {
+  const spec = (DATA.arms || {})[arm] || {};
+  const kind = typeof spec.artifact_kind === "string" ? spec.artifact_kind : "artifact";
+  const name = typeof spec.artifact_name === "string" ? spec.artifact_name
+    : typeof spec.artifact_path === "string" ? spec.artifact_path.split(/[\\/]/).pop() : null;
+  return name ? `the ${kind} ${name}` : `the ${arm} arm`;
+};
+const artifactHref = spec => {
+  if (typeof spec.artifact_url === "string" && spec.artifact_url) return spec.artifact_url;
+  if (typeof spec.artifact_path !== "string" || !spec.artifact_path) return null;
+  let path = spec.artifact_path.replace(/\\/g, "/");
+  if (spec.artifact_kind === "skill" && !path.endsWith(".md")) path = `${path.replace(/\/$/, "")}/SKILL.md`;
+  return path;
+};
+const armIdentity = arm => {
+  const spec = (DATA.arms || {})[arm] || {};
+  const line = el("p", null, "muted mono artifact-identity");
+  const href = artifactHref(spec);
+  if (typeof spec.artifact_source === "string") {
+    line.append("source ");
+    if (href) {
+      const link = el("a", spec.artifact_source);
+      link.href = href;
+      link.target = "_blank";
+      link.rel = "noopener";
+      line.append(link);
+    } else line.append(spec.artifact_source);
+  }
+  if (typeof spec.artifact_path === "string") line.append("  ·  ", `snapshot ${spec.artifact_path.split(/[\\/]/).pop()}`);
+  if (typeof spec.artifact_sha256 === "string") line.append("  ·  ", `sha256 ${spec.artifact_sha256.slice(0, 12)}…`);
+  return line.childNodes.length ? line : null;
+};
+const tested = (DATA.comparisons || []).map(comparison => armLabel(comparison.primary));
+const baselines = [...new Set((DATA.comparisons || []).map(comparison => comparison.baseline))];
+const comparisonScope = baselines.length === 1
+  ? ` against the shared ${baselines[0]} arm`
+  : " across the named comparisons";
+document.getElementById("tested").textContent = tested.length
+  ? `This benchmark tests ${listText(tested)}${comparisonScope}. Each verdict names the arm it judges.`
+  : "No comparisons are defined.";
+
+const LOWER_IS_BETTER = new Set(["lint_violations", "lint_per100w", "duration_seconds",
+  "input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens", "total_tokens"]);
+const deltaClass = (name, delta) => {
+  if (!Number.isFinite(delta) || delta === 0 || name === "word_count") return "";
+  return (LOWER_IS_BETTER.has(name) ? delta < 0 : delta > 0) ? "good" : "bad";
+};
+const pairedMetric = (data, side, name) => {
+  const value = data.paired_corpus?.[side]?.[name];
+  return Number.isFinite(value) ? value : mean(data[side]?.metrics?.[name]);
+};
+const pairedDelta = (data, name) => {
+  const value = data.paired_corpus?.deltas?.[name];
+  return Number.isFinite(value) ? value : data.deltas?.[name];
+};
+
+function verdict(data) {
+  const paired = data.paired_samples || 0;
+  const planned = data.planned_pairs || 0;
+  if (!paired) return { cls: "b-neutral", label: "Not comparable", sentence: "No matched pairs are available for this model. Do not draw a conclusion." };
+  if (planned && paired * 2 < planned) return { cls: "b-neutral", label: "Not comparable", sentence: `Only ${paired} of ${planned} planned pairs were valid. The sample is too small for a verdict.` };
+  const lint = pairedDelta(data, "lint_per100w");
+  const assertion = pairedDelta(data, "assertion_pass_rate");
+  const clarity = mean(data.primary?.metrics?.clarity_preference);
+  const fluency = mean(data.primary?.metrics?.fluency_preference);
+  const directness = mean(data.primary?.metrics?.directness_preference);
+  const parts = [];
+  if (Number.isFinite(assertion)) parts.push(assertion === 0 ? "Required meaning held." : `Required meaning ${assertion > 0 ? "improved" : "fell"} by ${Math.abs(assertion * 100).toFixed(0)} points.`);
+  if (Number.isFinite(lint)) parts.push(lint === 0
+    ? "Checker findings did not change."
+    : `Checker findings ${lint < 0 ? "fell" : "rose"} by ${Math.abs(lint).toFixed(1)} per 100 words.`);
+  if (clarity !== null) parts.push(`Judges preferred artifact clarity in ${(clarity * 100).toFixed(0)}% of pairs.`);
+  if (fluency !== null) parts.push(`Judges preferred artifact fluency in ${(fluency * 100).toFixed(0)}% of pairs.`);
+  if (directness !== null) parts.push(`Judges preferred artifact directness in ${(directness * 100).toFixed(0)}% of pairs.`);
+  if (paired < planned) parts.push(`Only ${paired} of ${planned} planned pairs were valid.`);
+  if (!Number.isFinite(assertion)) parts.unshift("Required meaning data is unavailable.");
+  const assertionBroken = Number.isFinite(assertion) && assertion < 0;
+  const checkerImproved = Number.isFinite(lint) && lint < 0;
+  const clarityImproved = clarity !== null && clarity > 0.5;
+  const directnessImproved = directness !== null && directness > 0.5;
+  const improved = checkerImproved || clarityImproved || directnessImproved;
+  if (!Number.isFinite(assertion)) return { cls: "b-neutral", label: "No meaning data", sentence: parts.join(" ") };
+  if (assertionBroken) return { cls: "b-fail", label: "Regresses required meaning", sentence: parts.join(" ") };
+  if (!improved) return { cls: "b-neutral", label: "No material improvement", sentence: parts.join(" ") };
+  const tradeoffs = [];
+  if (clarity !== null && clarity < 0.4) tradeoffs.push("clarity");
+  if (fluency !== null && fluency < 0.4) tradeoffs.push("fluency");
+  if (directness !== null && directness < 0.4) tradeoffs.push("directness");
+  if (tradeoffs.length === 1 && tradeoffs[0] === "fluency") {
+    return { cls: "b-warn", label: "Improves with a fluency trade-off", sentence: parts.join(" ") };
+  }
+  if (tradeoffs.length) return { cls: "b-warn", label: "Improves with trade-offs", sentence: parts.join(" ") };
+  return { cls: "b-ok", label: "Improves controlled English", sentence: parts.join(" ") };
+}
+
+const nav = document.getElementById("nav");
+const addNav = (id, label) => { const item = el("li"); const link = el("a", label); link.href = `#${id}`; item.appendChild(link); nav.appendChild(item); };
+addNav("verdicts", "Verdicts");
+addNav("how", "How to read");
+
+const verdictRoot = document.getElementById("verdict-rows");
+const verdictTabs = document.getElementById("verdict-tabs");
+const comparisonsRoot = document.getElementById("comparisons");
+const comparisonList = DATA.comparisons || [];
+const setVerdictComparison = comparisonId => {
+  verdictTabs.querySelectorAll("button").forEach(button => {
+    const selected = button.dataset.comparison === comparisonId;
+    button.setAttribute("aria-selected", String(selected));
+    button.tabIndex = selected ? 0 : -1;
+  });
+  verdictRoot.querySelectorAll("[data-comparison]").forEach(row => {
+    const hidden = row.dataset.comparison !== comparisonId;
+    row.hidden = hidden;
+    row.setAttribute("aria-hidden", String(hidden));
+  });
+};
+if (comparisonList.length > 1) {
+  for (const comparison of comparisonList) {
+    const spec = (DATA.arms || {})[comparison.primary] || {};
+    const kind = typeof spec.artifact_kind === "string" ? spec.artifact_kind : null;
+    const label = comparison.tab_label || (kind ? kind.charAt(0).toUpperCase() + kind.slice(1) : comparison.label || comparison.id);
+    const button = el("button", label);
+    button.type = "button";
+    button.role = "tab";
+    button.dataset.comparison = comparison.id;
+    button.dataset.kind = kind || "artifact";
+    button.setAttribute("aria-controls", "verdict-rows");
+    button.setAttribute("aria-selected", "false");
+    button.tabIndex = -1;
+    button.addEventListener("click", () => setVerdictComparison(comparison.id));
+    verdictTabs.appendChild(button);
+  }
+  verdictTabs.addEventListener("keydown", event => {
+    const tabs = [...verdictTabs.querySelectorAll("button")];
+    const current = tabs.indexOf(document.activeElement);
+    let next = current;
+    if (event.key === "ArrowRight") next = (current + 1) % tabs.length;
+    else if (event.key === "ArrowLeft") next = (current - 1 + tabs.length) % tabs.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = tabs.length - 1;
+    else return;
+    event.preventDefault();
+    setVerdictComparison(tabs[next].dataset.comparison);
+    tabs[next].focus();
+  });
+}
+for (const comparison of comparisonList) {
+  const sectionId = `cmp-${comparison.id}`;
+  addNav(sectionId, comparison.label || comparison.id);
+  const section = el("section");
+  section.id = sectionId;
+  const heading = el("h2", comparison.label || comparison.id);
+  section.append(heading, el("p", `Artifact under test: ${armLabel(comparison.primary)} (arm ${comparison.primary}), against ${comparison.baseline}. Matched pairs only.`, "muted"));
+  const identity = armIdentity(comparison.primary);
+  if (identity) section.append(identity);
+  const models = Object.entries(comparison.models || {});
+  if (!models.length) section.appendChild(el("p", "No run records are available for this comparison.", "empty"));
+  for (const [model, data] of models) {
+    const summary = verdict(data);
+    const row = el("article", null, "verdict-row");
+    row.dataset.verdict = summary.cls.replace(/^b-/, "");
+    row.dataset.comparison = comparison.id;
+    row.setAttribute("aria-label", `${model}: ${summary.label}`);
+    row.append(el("h3", `${model} · ${armLabel(comparison.primary).replace(/^the /, "")}`), el("span", summary.label, `badge ${summary.cls}`), el("p", summary.sentence));
+    verdictRoot.appendChild(row);
+
+    const block = el("article", null, "model-block");
+    const head = el("div", null, "model-head");
+    head.append(el("h3", model), el("span", summary.label, `badge ${summary.cls}`), el("span", null, "spacer"),
+      el("span", `${data.paired_samples || 0}/${data.planned_pairs || 0} pairs`, "muted"));
+    block.appendChild(head);
+    const table = el("table");
+    const columns = [["assertion_pass_rate", "Assertions"], ["lint_per100w", "Checker /100w"],
+      ["word_count", "Words"], ["clarity_preference", "Clarity"],
+      ["fluency_preference", "Fluency"], ["directness_preference", "Directness"],
+      ["duration_seconds", "Seconds"], ["output_tokens", "Output tokens"]]
+      .filter(([name]) => pairedMetric(data, "primary", name) !== null
+        || pairedMetric(data, "baseline", name) !== null || Number.isFinite(pairedDelta(data, name)));
+    const headRow = el("tr");
+    ["Arm", "Valid", "Excluded", ...columns.map(item => item[1])].forEach(label => headRow.appendChild(el("th", label)));
+    const thead = el("thead"); thead.appendChild(headRow); table.appendChild(thead);
+    const tbody = el("tbody");
+    for (const [arm, side, sideName] of [[comparison.primary, data.primary, "primary"], [comparison.baseline, data.baseline, "baseline"]]) {
+      const tr = el("tr");
+      tr.append(el("td", arm), el("td", side?.valid_samples ?? 0), el("td", side?.exclusions ?? 0));
+      for (const [name] of columns) {
+        const cell = pairedMetric(data, sideName, name);
+        tr.appendChild(el("td", fmt(cell), cell === null ? "null" : ""));
+      }
+      tbody.appendChild(tr);
     }
-
-    function splitConfig(name) {
-        var at = name.indexOf("@");
-        if (at === -1) return { base: name, model: "default" };
-        return { base: name.slice(0, at), model: name.slice(at + 1) || "default" };
+    const deltaRow = el("tr", null, "delta");
+    deltaRow.append(el("td", "Difference"), el("td", "—"), el("td", "—"));
+    for (const [name] of columns) {
+      const delta = pairedDelta(data, name);
+      deltaRow.appendChild(el("td", fmt(delta), deltaClass(name, delta) || (delta === null ? "null" : "")));
     }
+    tbody.appendChild(deltaRow);
+    table.appendChild(tbody);
+    const wrap = el("div", null, "scroll");
+    wrap.appendChild(table);
+    block.appendChild(wrap);
+    section.appendChild(block);
+  }
+  comparisonsRoot.appendChild(section);
+}
+if (comparisonList.length > 1) setVerdictComparison(comparisonList[0].id);
+addNav("examples", "Read one pair");
+addNav("cases", "Run records");
+addNav("notes-section", "Notes");
+addNav("identity", "Identities");
 
-    function pct(stats) {
-        if (!stats) return "—";
-        return (stats.mean * 100).toFixed(0) + "% ± " + (stats.stddev * 100).toFixed(0) + "%";
+const runs = DATA.runs || [];
+const byKey = new Map();
+for (const run of runs) {
+  if (run.valid && typeof run.response === "string") {
+    byKey.set(`${run.arm}|${run.model}|${run.eval_id}|${run.run_number}`, run);
+  }
+}
+const exampleRoot = document.getElementById("example-list");
+let examples = 0;
+const exampleRuns = [...runs].sort((a, b) => Number(b.eval_id) - Number(a.eval_id));
+for (const comparison of DATA.comparisons || []) {
+  for (const model of Object.keys(comparison.models || {})) {
+    const seenEvals = new Set();
+    for (const run of exampleRuns) {
+      if (run.model !== model || run.arm !== comparison.primary || !run.valid) continue;
+      if (seenEvals.has(run.eval_id)) continue;
+      const baseline = byKey.get(`${comparison.baseline}|${model}|${run.eval_id}|${run.run_number}`);
+      const treatment = byKey.get(`${comparison.primary}|${model}|${run.eval_id}|${run.run_number}`);
+      if (!baseline || !treatment) continue;
+      seenEvals.add(run.eval_id);
+      const detail = el("details");
+      detail.appendChild(el("summary", `${comparison.label || comparison.id} · ${model} · case ${run.eval_id} ${run.eval_name || ""} · run ${run.run_number}`));
+      const pair = el("div", null, "pair");
+      for (const [label, record] of [["Baseline (no artifact)", baseline], [armLabel(comparison.primary).replace(/^the /, "With the "), treatment]]) {
+        const cell = el("div");
+        cell.appendChild(el("h4", label));
+        cell.appendChild(el("pre", record.response));
+        cell.appendChild(el("p", `fact checks ${fmt(record.result?.assertion_pass_rate)} · lint ${fmt(record.result?.lint_per100w)}/100w · ${fmt(record.result?.word_count)} words`, "stats"));
+        pair.appendChild(cell);
+      }
+      detail.appendChild(pair);
+      exampleRoot.appendChild(detail);
+      examples += 1;
+      break;
     }
+  }
+}
+if (!examples) exampleRoot.appendChild(el("p", "No matched pair with stored outputs is available.", "empty"));
 
-    function deltaClass(value) {
-        var number = parseFloat(value);
-        if (!isFinite(number) || number === 0) return "delta-zero";
-        return number > 0 ? "delta-pos" : "delta-neg";
-    }
+const runRoot = document.getElementById("runs");
+const caseIds = [...new Set(runs.map(run => `${run.eval_id}|${run.eval_name || ""}`))]
+  .sort((a, b) => Number(a.split("|")[0]) - Number(b.split("|")[0]));
+for (const key of caseIds) {
+  const [caseId, caseName] = key.split("|");
+  const caseRuns = runs.filter(run => `${run.eval_id}|${run.eval_name || ""}` === key);
+  const valid = caseRuns.filter(run => run.valid).length;
+  const detail = el("details");
+  detail.appendChild(el("summary", `Case ${caseId} ${caseName} · ${valid}/${caseRuns.length} valid`));
+  for (const run of caseRuns) {
+    const line = el("div", null, "run-line");
+    line.appendChild(el("span", `${run.arm} · ${run.model} · run ${run.run_number}`, "who"));
+    line.appendChild(el("span", run.state, `badge ${run.valid ? "b-ok" : "b-fail"}`));
+    const bits = [`fact checks ${fmt(run.result?.assertion_pass_rate)}`, `lint ${fmt(run.result?.lint_per100w)}/100w`, `${fmt(run.result?.duration_seconds)}s`];
+    if (run.exclusion_reason) bits.push(typeof run.exclusion_reason === "string" ? run.exclusion_reason : JSON.stringify(run.exclusion_reason));
+    line.appendChild(el("span", bits.join(" · "), "muted"));
+    detail.appendChild(line);
+  }
+  runRoot.appendChild(detail);
+}
 
-    var metadata = DATA.metadata || {};
-    document.title = "Benchmark: " + (metadata.artifact_name || "artifact");
-    document.getElementById("artifact-name").textContent = metadata.artifact_name || "artifact";
-    document.getElementById("meta-line").textContent =
-        (metadata.timestamp || "") + " — evals " +
-        ((metadata.evals_run || []).join(", ") || "?") + " — " +
-        (metadata.runs_per_configuration || "?") + " runs per configuration";
+const notesRoot = document.getElementById("notes");
+const notes = [...(DATA.notes || []), ...(DATA.limitations || [])];
+if (!notes.length) notesRoot.appendChild(el("p", "No notes were recorded.", "empty"));
+for (const note of notes) {
+  const card = el("div", null, "prose-card");
+  card.appendChild(el("p", typeof note === "string" ? note : JSON.stringify(note)));
+  notesRoot.appendChild(card);
+}
 
-    var summary = DATA.run_summary || {};
-    var configKeys = Object.keys(summary).filter(function (key) { return key.indexOf("delta") !== 0; });
-    var models = [];
-    configKeys.forEach(function (key) {
-        var model = splitConfig(key).model;
-        if (models.indexOf(model) === -1) models.push(model);
+const identities = metadata.identities || {};
+const identityRoot = document.getElementById("identities");
+if (!Object.keys(identities).length) identityRoot.textContent = "No identities were recorded.";
+const appendJson = (root, value, key = "", depth = 0, pathUrl = null) => {
+  if (value && typeof value === "object") {
+    const entries = Array.isArray(value) ? value.map((item, index) => [index, item]) : Object.entries(value);
+    root.append(el("span", Array.isArray(value) ? "[" : "{", "syntax-punct"));
+    if (entries.length) root.append("\n");
+    entries.forEach(([name, item], index) => {
+      root.append("  ".repeat(depth + 1));
+      if (!Array.isArray(value)) {
+        root.append(el("span", JSON.stringify(name), "syntax-key"), el("span", ": ", "syntax-punct"));
+      }
+      appendJson(root, item, String(name), depth + 1, pathUrl);
+      if (index < entries.length - 1) root.append(el("span", ",", "syntax-punct"));
+      root.append("\n");
     });
-    var singleModel = models.length <= 1;
-
-    var tbody = document.querySelector("#summary-table tbody");
-    models.forEach(function (model) {
-        var delta = summary[singleModel ? "delta" : "delta@" + model] || {};
-        var rows = configKeys.filter(function (key) { return splitConfig(key).model === model; });
-        rows.forEach(function (key, index) {
-            var stats = summary[key];
-            var row = el("tr");
-            row.appendChild(el("td", index === 0 ? "model-cell" : null, index === 0 ? model : ""));
-            row.appendChild(el("td", null, splitConfig(key).base.replace(/_/g, " ")));
-            row.appendChild(el("td", "num", pct(stats.pass_rate)));
-            var deltaCell = el("td", "num");
-            if (index === 0 && delta.pass_rate !== undefined) {
-                deltaCell.appendChild(el("span", deltaClass(delta.pass_rate), delta.pass_rate));
-            }
-            row.appendChild(deltaCell);
-            row.appendChild(el("td", "num",
-                stats.time_seconds ? stats.time_seconds.mean.toFixed(1) + "s" : "—"));
-            row.appendChild(el("td", "num",
-                stats.tokens ? Math.round(stats.tokens.mean).toLocaleString() : "—"));
-            tbody.appendChild(row);
-        });
-    });
-
-    var casesRoot = document.getElementById("cases");
-    var byEval = {};
-    (DATA.runs || []).forEach(function (run) {
-        var key = run.eval_id + "|" + (run.eval_name || "");
-        (byEval[key] = byEval[key] || []).push(run);
-    });
-    Object.keys(byEval).sort().forEach(function (key) {
-        var runs = byEval[key];
-        var parts = key.split("|");
-        var detail = el("details");
-        var summaryLine = el("summary");
-        summaryLine.appendChild(el("span", null, "eval " + parts[0] + (parts[1] ? " — " + parts[1] : "")));
-        summaryLine.appendChild(el("span", "dim", runs.length + " runs"));
-        detail.appendChild(summaryLine);
-        runs.sort(function (a, b) {
-            return (a.configuration + a.run_number).localeCompare(b.configuration + b.run_number);
-        }).forEach(function (run) {
-            var block = el("div", "expectations");
-            var head = el("div", "expectation");
-            var passRate = run.result ? (run.result.pass_rate * 100).toFixed(0) + "%" : "—";
-            head.appendChild(el("span", "badge " + (run.result && run.result.pass_rate >= 1 ? "pass" : "fail"), passRate));
-            head.appendChild(el("strong", null, run.configuration + " · run " + run.run_number));
-            block.appendChild(head);
-            (run.expectations || []).forEach(function (expectation) {
-                var line = el("div", "expectation");
-                line.appendChild(el("span", "badge " + (expectation.passed ? "pass" : "fail"),
-                    expectation.passed ? "pass" : "fail"));
-                var body = el("span");
-                body.appendChild(el("span", null, expectation.text || ""));
-                if (expectation.evidence) {
-                    body.appendChild(el("div", "evidence", expectation.evidence));
-                }
-                line.appendChild(body);
-                block.appendChild(line);
-            });
-            detail.appendChild(block);
-        });
-        casesRoot.appendChild(detail);
-    });
+    if (entries.length) root.append("  ".repeat(depth));
+    root.append(el("span", Array.isArray(value) ? "]" : "}", "syntax-punct"));
+  } else if (typeof value === "string") {
+    const token = el("span", JSON.stringify(value), "syntax-string");
+    if (key === "path") {
+      const link = el("a", null, "identity-link");
+      link.href = pathUrl || value;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.append(token);
+      root.append(link);
+    } else root.append(token);
+  } else if (typeof value === "number") root.append(el("span", value, "syntax-number"));
+  else root.append(el("span", String(value), "syntax-literal"));
+};
+for (const [name, data] of Object.entries(identities)) {
+  const safe = data && typeof data === "object" ? { ...data } : data;
+  const pathUrl = safe && typeof safe.path_url === "string" ? safe.path_url : null;
+  if (safe && typeof safe === "object") delete safe.path_url;
+  if (safe && typeof safe.path === "string") safe.path = safe.path.split(/[\\/]/).pop();
+  const entry = el("div", null, "identity-entry");
+  entry.append(el("span", `${name}: `, "syntax-key"));
+  appendJson(entry, safe, "", 0, pathUrl);
+  identityRoot.appendChild(entry);
+}
 </script>
 </body>
 </html>

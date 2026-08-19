@@ -709,10 +709,10 @@
 
       // Config badge
       const badge = document.getElementById("config-badge");
-      const configMatch = run.id.match(/(with_skill|without_skill|new_skill|old_skill)/);
+      const configMatch = run.id.match(/(baseline|with_rule|with_skill|with_agent|new_artifact|old_artifact)/);
       if (configMatch) {
         const config = configMatch[1];
-        const isBaseline = config === "without_skill" || config === "old_skill";
+        const isBaseline = config === "baseline" || config === "old_artifact";
         badge.textContent = config.replace(/_/g, " ");
         badge.className = "config-badge " + (isBaseline ? "config-baseline" : "config-primary");
         badge.style.display = "inline-block";
@@ -1150,11 +1150,58 @@
         return "";
       }
 
-      // Discover config names dynamically (everything except delta entries);
-      // run_summary order already puts the primary configuration first within
-      // each model. A configuration may carry an `@model` suffix; each model
-      // gets its own summary table paired with its own delta entry
-      // (`delta` for a single model, `delta@<model>` for several).
+      // Schema version 2 uses named arms and explicit comparisons.
+      if (data.schema_version === 2 && Array.isArray(data.comparisons)) {
+        for (const comparison of data.comparisons) {
+          const heading = el("h3", null, comparison.label || comparison.id);
+          heading.style.cssText = "font-family: ui-sans-serif, system-ui, sans-serif; margin: 1rem 0 0.5rem;";
+          container.appendChild(heading);
+          for (const [model, values] of Object.entries(comparison.models || {})) {
+            const table = el("table", "benchmark-table");
+            const head = el("thead");
+            const paired = values.paired_samples || 0;
+            const planned = values.planned_pairs || 0;
+            head.appendChild(headerRow([`${model} · ${paired}/${planned} pairs`, "Valid", "Excluded", "Assertion Pass", "Lint / 100 Words", "Words", "Duration", "Total Tokens"]));
+            table.appendChild(head);
+            const body = el("tbody");
+            for (const [arm, result] of [[comparison.primary, values.primary], [comparison.baseline, values.baseline]]) {
+              const metrics = result ? result.metrics || {} : {};
+              const mean = name => metrics[name] && metrics[name].mean != null ? metrics[name].mean : "—";
+              const row = el("tr");
+              row.appendChild(el("td", null, arm));
+              row.appendChild(el("td", null, result ? result.valid_samples : 0));
+              row.appendChild(el("td", null, result ? result.exclusions : 0));
+              row.appendChild(el("td", null, mean("assertion_pass_rate")));
+              row.appendChild(el("td", null, mean("lint_per100w")));
+              row.appendChild(el("td", null, mean("word_count")));
+              row.appendChild(el("td", null, mean("duration_seconds")));
+              row.appendChild(el("td", null, mean("total_tokens")));
+              body.appendChild(row);
+            }
+            const deltas = values.deltas || {};
+            const delta = el("tr");
+            delta.appendChild(el("td", null, "Difference"));
+            delta.appendChild(el("td", null, `${paired}/${planned} pairs`));
+            delta.appendChild(el("td", null, "—"));
+            for (const name of ["assertion_pass_rate", "lint_per100w", "word_count", "duration_seconds", "total_tokens"]) {
+              delta.appendChild(el("td", null, deltas[name] == null ? "—" : deltas[name]));
+            }
+            body.appendChild(delta);
+            table.appendChild(body);
+            container.appendChild(table);
+          }
+        }
+        if ((data.limitations || []).length) {
+          const limits = el("div", "benchmark-notes");
+          limits.appendChild(el("h3", null, "How to read this report"));
+          const list = el("ul");
+          for (const item of data.limitations) list.appendChild(el("li", null, item));
+          limits.appendChild(list);
+          container.appendChild(limits);
+        }
+        return;
+      }
+
       const configKeys = Object.keys(summary).filter(k => !k.startsWith("delta"));
       const modelOf = k => { const at = k.indexOf("@"); return at === -1 ? "" : k.slice(at + 1); };
       const baseOf = k => { const at = k.indexOf("@"); return at === -1 ? k : k.slice(0, at); };

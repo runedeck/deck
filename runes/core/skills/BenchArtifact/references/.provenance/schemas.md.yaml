@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BenchArtifact/references/schemas.md
     digest:
-      sha256: 14bbb8fca5e8a0df05bdd76c9bc447c394a119cc3d9c168a801107ab8abf9582
+      sha256: e470280af53134b147b1e77517b3eadf638c5b15f28d1957e2a0c39a16e1bdbf
   predicate:
     buildDefinition:
       buildType: adopt/v1
@@ -13,7 +13,7 @@ provenance:
         upstream_url: https://github.com/N4M3Z/forge-core
         upstream_commit: ''
         transforms_applied:
-        - copy
+        - align
       resolvedDependencies:
       - name: upstream
         uri: https://github.com/N4M3Z/forge-core

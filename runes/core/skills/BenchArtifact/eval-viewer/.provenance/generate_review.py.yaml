@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BenchArtifact/eval-viewer/generate_review.py
     digest:
-      sha256: 5f4a5b92484c179bf3b56454d877e15e60a62073bc9c1423ce03a84fa04368f5
+      sha256: f82b9e4a88fa24d2f8afef6bd16ace2c6faf5a671762df2b718717eb92e54316
   predicate:
     buildDefinition:
       buildType: adopt/v1
