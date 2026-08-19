@@ -7,54 +7,57 @@
 <title>Artifact Benchmark</title>
 <style>
 :root {
-  --content-max: 1120px;
+  --content-max: 1280px;
   --page-pad: 1.5rem;
-  --radius: 10px;
-  --bg: #fbfbfd;
-  --surface: #f3f3f7;
-  --card: #ececf2;
-  --ink: #1d1e24;
-  --muted: #6b6d78;
-  --line: #e0e0e8;
-  --code-bg: #f3f3f7;
-  --primary: #5a55c9;
-  --ok: #2f8f4e;
-  --warn: #b07724;
-  --fail: #c03546;
-  --neutral: #3d7f95;
-  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --radius: 14px;
+  --bg: #f2f4f8;
+  --surface: #ffffff;
+  --card: #eef1f6;
+  --ink: #16202e;
+  --muted: #64748b;
+  --line: #dfe4ec;
+  --code-bg: #f4f6fa;
+  --primary: #2f7ce8;
+  --ok: #1fa055;
+  --warn: #d98b1f;
+  --fail: #dc3d43;
+  --neutral: #4b8ba6;
+  --violet: #7c5ce8;
+  --serif: -apple-system, "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e0f13;
-    --surface: #16171d;
-    --card: #1a1b22;
-    --ink: #e8e8ee;
-    --muted: #8b8d98;
-    --line: #26272f;
-    --code-bg: #14151a;
-    --primary: #a3a0e8;
-    --ok: #6fd08c;
-    --warn: #e0a95e;
-    --fail: #e06c75;
-    --neutral: #7fb4c9;
+    --bg: #0a0e18;
+    --surface: #10192b;
+    --card: #16213a;
+    --ink: #e6ecf6;
+    --muted: #7d8ba1;
+    --line: #1f2c47;
+    --code-bg: #0d1526;
+    --primary: #4d9aff;
+    --ok: #2bd576;
+    --warn: #f4b13e;
+    --fail: #f4504f;
+    --neutral: #57aecb;
+    --violet: #9d7bff;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0e0f13;
-  --surface: #16171d;
-  --card: #1a1b22;
-  --ink: #e8e8ee;
-  --muted: #8b8d98;
-  --line: #26272f;
-  --code-bg: #14151a;
-  --primary: #a3a0e8;
-  --ok: #6fd08c;
-  --warn: #e0a95e;
-  --fail: #e06c75;
-  --neutral: #7fb4c9;
+  --bg: #0a0e18;
+  --surface: #10192b;
+  --card: #16213a;
+  --ink: #e6ecf6;
+  --muted: #7d8ba1;
+  --line: #1f2c47;
+  --code-bg: #0d1526;
+  --primary: #4d9aff;
+  --ok: #2bd576;
+  --warn: #f4b13e;
+  --fail: #f4504f;
+  --neutral: #57aecb;
+  --violet: #9d7bff;
 }
 :root[data-theme="light"] { color-scheme: light; }
 * { box-sizing: border-box; }
@@ -69,8 +72,8 @@ body { margin: 0; background: var(--bg); color: var(--ink);
            text-transform: uppercase; color: var(--muted); }
 .masthead { width: 100%; max-width: var(--content-max); margin: 0 auto;
             padding: 3rem var(--page-pad) 0.5rem; }
-.masthead h1 { margin: 0.4rem 0 0.5rem; font-family: var(--serif); font-weight: 500;
-               font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1.08; letter-spacing: 0.01em; }
+.masthead h1 { margin: 0.4rem 0 0.5rem; font-weight: 700;
+               font-size: clamp(1.5rem, 3.5vw, 2.1rem); line-height: 1.15; letter-spacing: -0.01em; }
 .masthead .meta-line { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
 .theme-control { position: fixed; top: 0.9rem; right: 0.9rem; z-index: 20;
                  display: flex; align-items: center; gap: 0.1rem; border: 1px solid var(--line);
@@ -90,21 +93,26 @@ nav.side ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap:
 nav.side a { text-decoration: none; color: var(--muted); }
 nav.side a:hover { color: var(--primary); }
 main { min-width: 0; }
-section { margin-top: 3rem; scroll-margin-top: 1.5rem; padding-top: 1.6rem;
-          border-top: 1px solid var(--line); }
-section h2 { font-family: var(--serif); font-weight: 500; font-size: 1.7rem;
-             margin: 0 0 0.8rem; letter-spacing: 0.01em; }
+section { margin-top: 1.4rem; scroll-margin-top: 1.5rem; padding: 1.2rem 1.4rem 1.4rem;
+          background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+section h2 { font-weight: 700; font-size: 1.05rem; margin: 0 0 0.9rem; letter-spacing: 0;
+             border-left: 3px solid var(--primary); padding-left: 0.6rem; }
 h3 { font-size: 0.95rem; margin: 0; }
 h1, h2, h3, h4, p, summary, .run-line { overflow-wrap: anywhere; }
 a { color: var(--primary); text-underline-offset: 0.18em; }
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
          gap: 0.7rem; margin: 0.8rem 0 1rem; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-        padding: 0.7rem 0.95rem 0.6rem; }
-.card .value { font-family: var(--serif); font-size: 1.7rem; line-height: 1.15;
-               color: var(--primary); font-variant-numeric: tabular-nums; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+        padding: 0.8rem 1rem 0.7rem; }
+.card .icon { display: inline-flex; align-items: center; justify-content: center;
+              width: 1.7rem; height: 1.7rem; border-radius: 8px; font-size: 0.85rem;
+              margin-bottom: 0.45rem;
+              background: color-mix(in srgb, var(--chip, var(--primary)) 18%, transparent);
+              color: var(--chip, var(--primary)); }
+.card .value { font-size: 1.65rem; font-weight: 700; line-height: 1.15;
+               font-variant-numeric: tabular-nums; }
 .card .label { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase;
-               letter-spacing: 0.1em; color: var(--muted); margin-top: 0.15rem; }
+               letter-spacing: 0.1em; color: var(--muted); margin-top: 0.1rem; }
 .badge { display: inline-flex; align-items: center; padding: 0.14rem 0.6rem;
          border-radius: 999px; font-family: var(--mono); font-size: 0.68rem; font-weight: 600;
          letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
@@ -254,6 +262,17 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
 .notes-list { margin: 0.3rem 0 1.2rem 1.15rem; padding: 0; font-size: 0.9rem; }
 .notes-list li { margin: 0.35rem 0; }
 .forensics { margin-bottom: 0.9rem; }
+.waffle { margin-bottom: 1rem; }
+.waffle-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.16rem 0; }
+.waffle-row .who { font-family: var(--mono); font-size: 0.72rem; color: var(--muted);
+                   min-width: 12.5rem; text-align: right; }
+.waffle-cells { display: flex; gap: 0.22rem; flex-wrap: wrap; }
+.waffle-cell { width: 0.85rem; height: 0.85rem; border-radius: 3px; background: var(--card); }
+.waffle-cell.ok { background: var(--ok); }
+.waffle-cell.fail { background: var(--fail); }
+.waffle-legend { display: flex; gap: 1.2rem; font-family: var(--mono); font-size: 0.66rem;
+                 color: var(--muted); margin: 0.4rem 0 0 13.1rem; }
+.waffle-legend .waffle-cell { display: inline-block; vertical-align: -0.15rem; margin-right: 0.3rem; }
 .info { display: inline-flex; align-items: center; justify-content: center;
         width: 0.95rem; height: 0.95rem; margin-left: 0.3rem; border: 1px solid var(--line);
         border-radius: 50%; color: var(--muted); font-family: var(--mono); font-size: 0.6rem;
@@ -593,10 +612,14 @@ document.getElementById("meta").textContent = metadata.timestamp || "";
 document.getElementById("model-count").textContent = `${(metadata.models || []).length} models`;
 
 const counts = metadata.run_counts || {};
-[[counts.total || 0, "runs recorded"], [counts.valid || 0, "valid"], [counts.excluded || 0, "excluded"],
- [(DATA.comparisons || []).length, "comparisons"]].forEach(([number, label]) => {
+[[counts.total || 0, "runs recorded", "\u25a4", "var(--primary)"],
+ [counts.valid || 0, "valid", "\u2713", "var(--ok)"],
+ [counts.excluded || 0, "excluded", "\u2715", "var(--fail)"],
+ [(DATA.comparisons || []).length, "comparisons", "\u21c4", "var(--violet)"]].forEach(([number, label, glyph, color]) => {
   const card = el("div", null, "card");
-  card.append(el("div", number, "value"), el("div", label, "label"));
+  const icon = el("div", glyph, "icon");
+  icon.style.setProperty("--chip", color);
+  card.append(icon, el("div", number, "value"), el("div", label, "label"));
   document.getElementById("summary").appendChild(card);
 });
 
@@ -1137,6 +1160,35 @@ document.getElementById("threshold-reset").addEventListener("click", () => {
 applyThresholds();
 
 const runRoot = document.getElementById("runs");
+const waffle = el("div", null, "waffle");
+const waffleModels = [...new Set(runs.map(run => run.model))].sort();
+const waffleArms = [...new Set(runs.map(run => run.arm))].sort();
+for (const model of waffleModels) {
+  for (const arm of waffleArms) {
+    const rowRuns = runs
+      .filter(run => run.model === model && run.arm === arm)
+      .sort((a, b) => Number(a.eval_id) - Number(b.eval_id) || a.run_number - b.run_number);
+    if (!rowRuns.length) continue;
+    const rowEl = el("div", null, "waffle-row");
+    rowEl.appendChild(el("span", `${model} \u00b7 ${arm}`, "who"));
+    const cells = el("div", null, "waffle-cells");
+    for (const run of rowRuns) {
+      const cell = el("span", null, `waffle-cell ${run.valid ? "ok" : "fail"}`);
+      cell.title = `case ${run.eval_id} ${run.eval_name || ""} \u00b7 run ${run.run_number} \u00b7 ${run.state}`;
+      cells.appendChild(cell);
+    }
+    rowEl.appendChild(cells);
+    waffle.appendChild(rowEl);
+  }
+}
+const waffleLegend = el("div", null, "waffle-legend");
+for (const [cls, label] of [["ok", "valid"], ["fail", "excluded"]]) {
+  const item = el("span");
+  item.append(el("span", null, `waffle-cell ${cls}`), label);
+  waffleLegend.appendChild(item);
+}
+waffle.appendChild(waffleLegend);
+runRoot.appendChild(waffle);
 const excludedRuns = runs.filter(run => !run.valid);
 if (excludedRuns.length) {
   const groups = new Map();
