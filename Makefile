@@ -1,8 +1,9 @@
-.PHONY: help install validate
+.PHONY: help install validate validate-schemas
 
 help:
 	@echo "  make install    activate hooks (git + jj)"
 	@echo "  make validate   run commit-stage checks"
+	@echo "  make validate-schemas   compare Stable shell schemas"
 
 install:
 	git config core.hooksPath .githooks
@@ -16,3 +17,9 @@ install:
 
 validate:
 	@bash .githooks/pre-commit --all-files
+
+validate-schemas:
+	@cmp runes/core/skills/.mdschema runes/meta/skills/.mdschema
+	@if [ -f ../cli/templates/init/skills/.mdschema ]; then \
+	    cmp runes/core/skills/.mdschema ../cli/templates/init/skills/.mdschema; \
+	fi
