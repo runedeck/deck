@@ -147,6 +147,18 @@ The optional manifest `judging` object formalizes the criteria:
 
 The judge builds its prompt from these dimensions and guards. The aggregator copies the block into `benchmark.json`, and the report shows each criterion beside its scores. Without the block, the judge uses the default clarity, fluency, and directness criteria.
 
+The optional manifest `metrics` array replaces the report's metric definitions:
+
+```json
+{
+  "metrics": [
+    {"id": "checker", "label": "Checker /100w", "definition": "Checker findings for each 100 checked words.", "example": "4.89 to 1.09 means most findings disappeared."}
+  ]
+}
+```
+
+The aggregator copies the array into `benchmark.json` as `metric_definitions`. The report renders each entry in its Metric definitions section and in the matching column popup. Without the array, the report uses its default definitions.
+
 Store judgments under `preferences/<comparison>/eval-<ID>/<model>/run-<R>.json`.
 
 Record the blind order. Record one winner and one reason for each judging dimension.

@@ -103,7 +103,7 @@ class BuildReportTests(unittest.TestCase):
         self.assertIn('id="pair-view"', template)
         self.assertIn("const renderPair = () => {", template)
         self.assertIn("Blind judgment for this pair", template)
-        self.assertEqual(template.count("Every matched pair shows the same task answered"), 1)
+        self.assertEqual(template.count("Each pair shows one task and one model"), 1)
         self.assertNotIn("p { max-width: 76ch; }", template)
         self.assertNotIn("nav.side { display: none; }", template)
 

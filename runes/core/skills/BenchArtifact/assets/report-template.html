@@ -232,6 +232,9 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
 .schematic a:hover rect, .schematic a:focus rect { stroke: var(--primary); stroke-width: 2; }
 .judge-meta { font-family: var(--mono); font-size: 0.64rem; color: var(--muted);
               letter-spacing: 0.06em; text-transform: uppercase; font-weight: 400; }
+.metric-card h3 { font-family: var(--mono); font-size: 0.8rem; text-transform: uppercase;
+                  letter-spacing: 0.08em; color: var(--primary); }
+.metric-example { margin-top: 0.35rem; }
 .notes-list { margin: 0.3rem 0 1.2rem 1.15rem; padding: 0; font-size: 0.9rem; }
 .notes-list li { margin: 0.35rem 0; }
 .forensics { margin-bottom: 0.9rem; }
@@ -292,7 +295,7 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
   <section id="how" aria-labelledby="how-heading">
     <h2 id="how-heading">How to read this report</h2>
     <div class="prose-card">
-      <p>The benchmark asks one question: does an artifact change model behavior enough to earn its context cost? Each model ran the same tasks in every named arm. Only the treatment artifact differs between compared arms.</p>
+      <p>The benchmark asks one question: does the artifact change model behavior enough to earn its context cost? Each model ran the same tasks twice. Only the artifact differs between the two runs.</p>
     </div>
     <figure class="schematic">
       <svg viewBox="0 0 900 240" role="img" aria-label="Each case runs twice per model, with and without the artifact; both responses are graded and judged blind">
@@ -342,7 +345,7 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
           <a href="#examples" aria-label="Jump to pair review"><rect x="698" y="88" width="194" height="64" rx="9"/></a>
         </g>
       </svg>
-      <figcaption class="muted">Every case runs twice per model: identical prompt, files, and mode; only the artifact differs. Assertions guard meaning, the checker measures the claimed behavior, and a blind judge from another vendor compares the shuffled pair. The verdicts above read those three signals together, within one model. The boxes link to the matching report sections.</figcaption>
+      <figcaption class="muted">Each case runs twice for each model with the same prompt, files, and mode. Only the artifact differs. Assertions guard meaning. The checker measures the claimed behavior. A blind judge from another vendor compares the shuffled pair. The verdict reads the three signals together, within one model. The boxes link to the matching report sections.</figcaption>
     </figure>
     <div class="prose-card">
       <p><b>Assertion pass rate (0–1, higher is better).</b> The case assertions measure required behavior. A drop means the artifact harmed a requirement.</p>
@@ -359,7 +362,7 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
   <section id="comparisons" aria-label="Comparisons"></section>
   <section id="examples" aria-labelledby="example-heading">
     <h2 id="example-heading">Review the pairs</h2>
-    <p class="muted">Every matched pair shows the same task answered by the same model with and without the artifact, beside the blind judgment for that pair.</p>
+    <p class="muted">Each pair shows one task and one model, once with the artifact and once without it. The blind judgment for the pair appears below the texts.</p>
     <div class="pair-controls">
       <label>Model <select id="pair-model"></select></label>
       <label>Case <select id="pair-case"></select></label>
@@ -373,6 +376,11 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
   <section id="cases" aria-labelledby="case-heading">
     <h2 id="case-heading">Run records by case</h2>
     <div id="runs"></div>
+  </section>
+  <section id="metrics-section" aria-labelledby="metrics-heading">
+    <h2 id="metrics-heading">Metric definitions</h2>
+    <p class="muted">Each metric with its method and one example. A manifest can replace these definitions.</p>
+    <div id="metric-list"></div>
   </section>
   <section id="notes-section" aria-labelledby="notes-heading">
     <h2 id="notes-heading">Notes and caveats</h2>
@@ -423,22 +431,49 @@ const gauge = value => {
   return holder;
 };
 const mean = summary => summary && summary.mean !== null && summary.mean !== undefined ? summary.mean : null;
+const DEFAULT_METRICS = [
+  { id: "valid", label: "Valid",
+    definition: "The count of runs that returned a parseable final response. Only valid runs get grades and pairs.",
+    example: "6 of 6 planned runs returned a response, so all 6 count." },
+  { id: "excluded", label: "Excluded",
+    definition: "The count of runs that failed before grading. Causes include provider failure, timeout, and invalid output. An excluded run reduces the sample. It never counts as a failed assertion.",
+    example: "A provider that returns exit code 1 six times shows 6 excluded runs and no verdict." },
+  { id: "assertions", label: "Assertions",
+    definition: "The share of frozen fact checks that passed. Each check names one required fact, figure, or restriction. The value is the mean over this side's valid runs. A drop means the output lost required content.",
+    example: "1.00 means 18 of 18 checks passed. 0.83 means 15 of 18 passed." },
+  { id: "checker", label: "Checker /100w",
+    definition: "Checker findings for each 100 checked words. The formula divides total findings by total checked words across matched outputs, then multiplies by 100. The checker is the program named under Identities. A lower value is better. The checker measures the claimed writing behavior, not overall quality.",
+    example: "4.89 \u2192 1.09 means the artifact removed most style violations from the same tasks." },
+  { id: "words", label: "Words",
+    definition: "The mean word count of this side's responses in matched pairs. Strong growth against the baseline usually signals meta text instead of the deliverable.",
+    example: "463 \u2192 1447 words showed that one model answered with plans instead of the requested text." },
+  { id: "clarity", label: "Clarity",
+    definition: "The share of blind pairs where the judge selected this side as easier to understand. A judge from another vendor reads each pair with shuffled labels. A tie adds one half. 0.50 equals a coin flip. A value below 0.40 counts as a trade-off in the verdict.",
+    example: "0.33 over 6 pairs means the judge chose this side 2 times." },
+  { id: "fluency", label: "Fluency",
+    definition: "The share of blind pairs where the judge selected this side as the more natural prose. Same blind method: shuffled labels, another vendor, ties add one half. A value below 0.40 counts as a trade-off.",
+    example: "0.25 over 6 pairs means the judge chose this side 1.5 times, with one tie." },
+  { id: "directness", label: "Directness",
+    definition: "The share of blind pairs where the judge selected this side as the one that states useful information sooner. Same blind method. Planning narration and filler lower this score.",
+    example: "0.75 over 6 pairs means the judge chose this side 4.5 times." },
+  { id: "seconds", label: "Seconds",
+    definition: "The mean provider wall-clock seconds for one run on this side.",
+    example: "28.25 \u2192 36.55 means the artifact added about 8 seconds for each run." },
+  { id: "output_tokens", label: "Output tokens",
+    definition: "The mean output tokens the provider reported for this side. A missing value stays blank. The report never estimates tokens.",
+    example: "400.67 \u2192 467.33 means the artifact made responses about 17% longer in tokens." },
+];
+const METRICS = (Array.isArray(DATA.metric_definitions) && DATA.metric_definitions.length)
+  ? DATA.metric_definitions : DEFAULT_METRICS;
 const COLUMN_INFO = {
-  "Arm": "The configuration that produced these runs. The treatment arm carries the artifact; the baseline arm runs the identical prompt without it.",
-  "Valid": "Runs that returned a parseable final response. Only valid runs are graded and paired.",
-  "Excluded": "Runs dropped for provider failure, timeout, or invalid output. Exclusions reduce the sample and are never counted as failed assertions.",
-  "Assertions": "The share of frozen fact checks that passed, averaged over this arm's valid runs. The checks name required facts, figures, and restrictions; 1.00 means every one survived. A drop means the artifact damaged required meaning.",
-  "Assertions \u0394": "Treatment assertion pass rate minus baseline pass rate over matched pairs. Negative means the artifact damaged required meaning.",
-  "Checker /100w": "Total checker findings divided by total checked words across this arm's matched outputs, times 100. The checker is the deterministic program named under Identities; lower is better. It measures the claimed writing behavior, not overall quality.",
-  "Words": "Mean word count of this arm's responses in matched pairs. Large growth against baseline usually means the model added meta text instead of the deliverable.",
-  "Clarity": "The share of blind pairs where the judge picked this side's output as easier to understand. A judge from another vendor reads each pair with labels shuffled; ties count one half. 0.50 is a coin flip; below 0.40 counts as a trade-off in the verdict.",
-  "Fluency": "The share of blind pairs where the judge picked this side's output as the more natural prose. Shuffled labels, other-vendor judge, ties count one half. Below 0.40 counts as a trade-off.",
-  "Directness": "The share of blind pairs where the judge picked this side's output as stating useful information sooner. Shuffled labels, other-vendor judge, ties count one half. Below 0.40 counts as a trade-off.",
-  "Seconds": "Mean provider wall-clock seconds per run in this arm's matched pairs.",
-  "Output tokens": "Mean output tokens the provider reported for this arm. Missing values stay blank; nothing is estimated.",
-  "Verdict": "Three signals read together within this model: assertions must hold, the checker must improve, and blind preference must stay acceptable. Below 0.40 on a preference is a trade-off; a verdict is withheld when fewer than half of planned pairs are valid.",
+  "Arm": "The configuration that produced these runs. The treatment arm carries the artifact. The baseline arm runs the identical prompt without it.",
+  "Assertions \u0394": "Treatment assertion pass rate minus baseline pass rate over matched pairs. A negative value means the artifact removed required content.",
+  "Verdict": "Three signals read together within one model: assertions must hold, the checker must improve, and blind preference must stay acceptable. A preference below 0.40 is a trade-off. The report withholds a verdict when fewer than half of the planned pairs are valid.",
   "Pairs": "Matched pairs: the same case and run number valid in both arms, out of the planned count. Deltas use matched pairs only.",
 };
+for (const item of METRICS) {
+  COLUMN_INFO[item.label] = item.definition;
+}
 const JUDGING = DATA.judging || null;
 if (JUDGING) {
   for (const dimension of JUDGING.dimensions || []) {
@@ -804,6 +839,7 @@ for (const comparison of shownComparisons) {
 if (shownComparisons.length > 1) setVerdictComparison(shownComparisons[0].id);
 addNav("examples", "Review pairs");
 addNav("cases", "Run records");
+addNav("metrics-section", "Metrics");
 addNav("notes-section", "Notes");
 addNav("identity", "Identities");
 
@@ -1041,6 +1077,16 @@ for (const key of caseIds) {
     detail.appendChild(line);
   }
   runRoot.appendChild(detail);
+}
+
+const metricRoot = document.getElementById("metric-list");
+for (const item of METRICS) {
+  const card = el("div", null, "prose-card metric-card");
+  const title = el("h3", item.label);
+  card.appendChild(title);
+  card.appendChild(el("p", item.definition));
+  if (item.example) card.appendChild(el("p", `Example: ${item.example}`, "muted mono metric-example"));
+  metricRoot.appendChild(card);
 }
 
 const notesRoot = document.getElementById("notes");
