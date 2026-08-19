@@ -411,6 +411,62 @@ def generate(root: Path, manifest_path: Path | None, artifact_name: str, artifac
     }
 
 
+DEFAULT_TRADE_OFF = 0.4
+DEFAULT_WIN = 0.5
+
+
+def dimension_config(judging: dict | None, dimension: str) -> dict:
+    for item in (judging or {}).get("dimensions", []):
+        if item.get("id") == dimension:
+            return item
+    return {}
+
+
+def verdict_label(cell: dict, judging: dict | None, thresholds: dict | None) -> str:
+    """Mirror the report template's verdict rule for the markdown summary."""
+    paired = cell.get("paired_samples") or 0
+    planned = cell.get("planned_pairs") or 0
+    if not paired or (planned and paired * 2 < planned):
+        return "Not comparable"
+    trade_off = (thresholds or {}).get("trade_off", DEFAULT_TRADE_OFF)
+    win = (thresholds or {}).get("win", DEFAULT_WIN)
+    corpus = cell.get("paired_corpus") or {}
+    deltas = corpus.get("deltas") or cell.get("deltas") or {}
+    assertion = deltas.get("assertion_pass_rate")
+    lint = deltas.get("lint_per100w")
+    metrics = (cell.get("primary") or {}).get("metrics") or {}
+    def preference(dimension):
+        stats_entry = metrics.get(f"{dimension}_preference") or {}
+        return stats_entry.get("mean")
+    def weight(dimension):
+        value = dimension_config(judging, dimension).get("weight")
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            return value
+        return 0.5 if dimension == "fluency" else 1
+    def limit(dimension, key, default):
+        value = dimension_config(judging, dimension).get(key)
+        return value if isinstance(value, (int, float)) and not isinstance(value, bool) else default
+    if assertion is None:
+        return "No meaning data"
+    if assertion < 0:
+        return "Regresses required meaning"
+    improved = (lint is not None and lint < 0) or any(
+        preference(d) is not None and weight(d) >= 1 and preference(d) > limit(d, "win", win)
+        for d in ("clarity", "fluency", "directness")
+    )
+    if not improved:
+        return "No material improvement"
+    lows = [d for d in ("clarity", "fluency", "directness")
+            if preference(d) is not None and weight(d) > 0 and preference(d) < limit(d, "trade_off", trade_off)]
+    hard = [d for d in lows if weight(d) >= 1]
+    soft = [d for d in lows if weight(d) < 1]
+    if not hard and len(soft) == 1:
+        return f"Improves with a {soft[0]} trade-off"
+    if lows:
+        return "Improves with trade-offs"
+    return "Improves the claimed behavior"
+
+
 def format_cell(value, digits=2):
     return "—" if value is None else f"{value:.{digits}f}"
 
@@ -432,16 +488,24 @@ def markdown(data: dict) -> str:
             "Deltas are treatment minus baseline within one model. "
             "Lower lint density is better. Preferences run from -1 (baseline) to +1 (treatment)."
         )
+        arm_spec = (data.get("arms") or {}).get(comparison.get("primary"), {})
+        identity_bits = [part for part in (
+            f"{arm_spec.get('artifact_kind')} {arm_spec.get('artifact_name')}" if arm_spec.get("artifact_name") else None,
+            f"source {arm_spec.get('artifact_source')}" if arm_spec.get("artifact_source") else None,
+            f"sha256 {arm_spec.get('artifact_sha256', '')[:12]}" if arm_spec.get("artifact_sha256") else None,
+        ) if part]
         lines.extend([
             f"## {comparison.get('label', comparison['id'])}", "",
+            *([" \u00b7 ".join(identity_bits), ""] if identity_bits else []),
             explainer, "",
-            "| Model | Pairs | Assertions | Lint /100w | Clarity | Fluency | Directness |",
-            "|---|---:|---|---|---:|---:|---:|",
+            "| Model | Verdict | Pairs | Assertions | Lint /100w | Clarity | Fluency | Directness |",
+            "|---|---|---:|---|---|---:|---:|---:|",
         ])
         for model, values in cells.items():
             pairs = values.get("paired_samples") or 0
+            label = verdict_label(values, data.get("judging"), data.get("verdict_thresholds"))
             if pairs == 0:
-                lines.append(f"| {model} | 0 | — | — | — | — | — |")
+                lines.append(f"| {model} | {label} | 0 | — | — | — | — | — |")
                 continue
             corpus = values.get("paired_corpus") or {}
             base, treat = corpus.get("baseline", {}), corpus.get("primary", {})
@@ -455,12 +519,23 @@ def markdown(data: dict) -> str:
                 f"{format_cell(treat.get('lint_per100w'))}"
             )
             lines.append(
-                f"| {model} | {pairs} | {assertion} | {lint} "
+                f"| {model} | {label} | {pairs} | {assertion} | {lint} "
                 f"| {preference_cell(deltas.get('clarity_preference'))} "
                 f"| {preference_cell(deltas.get('fluency_preference'))} "
                 f"| {preference_cell(deltas.get('directness_preference'))} |"
             )
         lines.append("")
+        judging = data.get("judging") or {}
+        weights = " ".join(
+            f"{item.get('id')} \u00d7{item.get('weight', 0.5 if item.get('id') == 'fluency' else 1)}"
+            for item in judging.get("dimensions", [])
+        )
+        thresholds = data.get("verdict_thresholds") or {}
+        lines.extend([
+            f"Verdict rule: facts must hold, findings must fall, and blind preference must stay acceptable "
+            f"(trade-off below {thresholds.get('trade_off', DEFAULT_TRADE_OFF)}, win above {thresholds.get('win', DEFAULT_WIN)}"
+            + (f"; weights {weights}" if weights else "") + ").", "",
+        ])
     if data["limitations"]:
         lines.extend(["## Limitations", "", *(f"- {item}" for item in data["limitations"]), ""])
     return "\n".join(lines)

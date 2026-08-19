@@ -878,7 +878,9 @@ for (const comparison of shownComparisons) {
     legendDot("var(--fail)", "below 0.40 \u00b7 baseline preferred (trade-off)"),
     legendDot("var(--warn)", "0.40\u20130.50 \u00b7 near a coin flip"),
     legendDot("var(--ok)", "above 0.50 \u00b7 artifact preferred"),
-    el("span", "dumbbell: faint dot = baseline, solid dot = treatment; green when the artifact improves"));
+    el("span", "dumbbell: faint dot = baseline, solid dot = treatment; green when the artifact improves"),
+    el("span", "weights: " + ["clarity", "fluency", "directness"]
+      .map(id => `${metricLabel(id).replace(/ wins$/, "")} \u00d7${dimensionWeight(id)}`).join(" \u00b7 ")));
   document.getElementById("matrix-wrap").appendChild(legend);
   for (const [model, data] of models) {
     const summary = verdict(data);
