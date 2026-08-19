@@ -1,6 +1,6 @@
 # Real before/after samples
 
-Actual `claude-sonnet` outputs from the upstream blog experiment: the same prompt with a baseline system prompt and with the STE writing rules in context. Scores are heuristic anti-slop violations per 100 words, and lower is cleaner. Upstream measured them with an earlier version of the checker, so the bundled `scripts/ste-lint.py` gives close but not identical numbers. Read these samples for the shape of the difference, not for exact scores.
+Actual `claude-sonnet` outputs from the upstream blog experiment: the same prompt with a baseline system prompt and with the STE writing rules in context. Scores are heuristic anti-slop violations per 100 words, and lower is cleaner. Upstream measured them with an earlier version of the checker, so the bundled `scripts/lint.py` gives close but not identical numbers. Read these samples for the shape of the difference, not for exact scores.
 
 ## README intro — the hero example
 

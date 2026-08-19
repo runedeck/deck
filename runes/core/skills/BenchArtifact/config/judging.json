@@ -1,0 +1,27 @@
+{
+  "dimensions": [
+    {
+      "id": "clarity",
+      "label": "Clarity",
+      "criterion": "Prefer the text that a reader can understand without resolving ambiguity.",
+      "weight": 1
+    },
+    {
+      "id": "fluency",
+      "label": "Fluency",
+      "criterion": "Prefer natural connected prose. Penalize awkward or staccato wording.",
+      "weight": 0.5
+    },
+    {
+      "id": "directness",
+      "label": "Directness",
+      "criterion": "Prefer the text that states useful information sooner. Penalize planning narration and filler.",
+      "weight": 1
+    }
+  ],
+  "guards": [
+    "Do not judge factual accuracy or completeness. Deterministic assertions test those requirements.",
+    "Do not judge compliance with a named writing standard.",
+    "Use a tie when neither output has a material advantage."
+  ]
+}

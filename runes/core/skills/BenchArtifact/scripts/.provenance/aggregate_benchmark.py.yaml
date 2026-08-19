@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BenchArtifact/scripts/aggregate_benchmark.py
     digest:
-      sha256: 6a6a4fd439206f72d004901b3924db1f19a88ab47cff22cce1bed3c4b673a695
+      sha256: 6b516384bdebc7c19cbf95b7fabc8a389eedaceafbfc619dfb122107f0bd6887
   predicate:
     buildDefinition:
       buildType: adopt/v1
@@ -13,7 +13,7 @@ provenance:
         upstream_url: https://github.com/N4M3Z/forge-core
         upstream_commit: ''
         transforms_applied:
-        - copy
+        - align
       resolvedDependencies:
       - name: upstream
         uri: https://github.com/N4M3Z/forge-core

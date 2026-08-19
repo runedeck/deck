@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BenchArtifact/templates/agents/grader.md
     digest:
-      sha256: 2858fb6ab68a8bee60819d06ab75b02c66eaf8638dfab12eb69a9291286bba23
+      sha256: 16e7d3661b488ca352ab07ca9584aa16835915206bb4da843620de2459822b1b
   predicate:
     buildDefinition:
       buildType: adopt/v1
@@ -13,7 +13,7 @@ provenance:
         upstream_url: https://github.com/N4M3Z/forge-core
         upstream_commit: ''
         transforms_applied:
-        - copy
+        - align
       resolvedDependencies:
       - name: upstream
         uri: https://github.com/N4M3Z/forge-core
