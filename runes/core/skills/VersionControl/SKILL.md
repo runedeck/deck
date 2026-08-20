@@ -57,9 +57,18 @@ case "$source_branch" in
         exit 1
         ;;
 esac
-git branch backup-pre-squash "$source_branch"
-base=$(git merge-base "$source_branch" origin/main)
-git switch -c squashed-tmp "$base"
+git branch backup-pre-squash "$source_branch" || {
+    echo "Cannot create backup-pre-squash. Resolve the branch error before the rewrite." >&2
+    exit 1
+}
+base=$(git merge-base "$source_branch" origin/main) || {
+    echo "Cannot resolve the merge base with origin/main." >&2
+    exit 1
+}
+git switch -c squashed-tmp "$base" || {
+    echo "Cannot create squashed-tmp. Resolve the branch error before the rewrite." >&2
+    exit 1
+}
 git read-tree -u --reset <end-of-group-sha>
 git commit -m "<new message>"
 # Repeat read-tree and commit for each remaining group.

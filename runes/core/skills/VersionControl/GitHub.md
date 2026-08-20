@@ -93,8 +93,8 @@ Lives in `.github/CODEOWNERS` (preferred), repo root, or `docs/`. Requires `requ
 * @OWNER
 
 # Per-directory ownership
-/src/payments/ @payments-team
 /src/           @OWNER
+/src/payments/ @payments-team
 ```
 
 ### Quick Reference
