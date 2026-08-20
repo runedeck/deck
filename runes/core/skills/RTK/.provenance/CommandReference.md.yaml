@@ -2,9 +2,9 @@ provenance:
   _type: https://in-toto.io/Statement/v1
   predicateType: https://slsa.dev/provenance/v1
   subject:
-  - name: rules/UseEfficientCLI.md
+  - name: skills/RTK/CommandReference.md
     digest:
-      sha256: 92ecea82776ee14b26eb61dc4d4d5bcec082a73fc9612030fcf2975e2e320bfc
+      sha256: bbe546089cc09ddc4f56c6250e7a0eda96439e8e412fbe72927315a939aa28a1
   predicate:
     buildDefinition:
       buildType: adopt/v1
@@ -18,7 +18,7 @@ provenance:
       - name: upstream
         uri: https://github.com/N4M3Z/forge-core/tree/132e0589
         digest:
-          sha256: d3220f2bd3807e8e0738f21c1c5b77cf51db632efce1f3dc7c3e42947fa51463
+          sha256: 964da6b6dff70dde08b57e3dc800af09fefa3e1ee7fd0775032910199edb8ab2
     runDetails:
       builder:
         id: rune-cli

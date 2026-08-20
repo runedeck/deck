@@ -1,7 +1,13 @@
 Use the efficient CLI tools.
 
-When the `rtk` binary is installed, prefix every shell command with `rtk` (Rust Token Killer: <https://github.com/rtk-ai/rtk>). This is a hard requirement, not a preference. RTK compresses command output before it reaches the model. RTK passes unknown commands through unchanged, so the prefix is always safe. Prefix each command in a chain. RTK calls binaries directly and bypasses aliases. When `rtk` is not installed, run the plain command.
+If `rtk` is installed, prefix each external command with `rtk` (Rust Token Killer: <https://github.com/rtk-ai/rtk>). RTK compresses command output before it reaches the model. RTK passes unknown external commands through unchanged. Prefix each external command in a chain.
 
-Search selectively. Use `fd` to find files. Use `rg` to search content. Use `ast-grep` to search code structure: a structural match returns fewer and more precise results than a regex over code. Ask GitHub for fields, not pages: `gh ... --json <fields>`, with `--jq` to select. Read only what the task needs. Never load whole directories or repositories into context.
+Do not prefix shell builtins, shell keywords, variable assignments, redirections, or control operators. Examples include `cd`, `export`, `source`, `set`, `if`, and `for`. Use `cd repo && rtk git status`, not `rtk cd repo && rtk git status`. The shell processes these items before RTK starts an external program.
+
+RTK calls external binaries directly and bypasses aliases. If RTK is absent, run the external command without the prefix.
+
+Search selectively. Use `fd` to find files. Use `rg` to search content. Use `ast-grep` to search code structure. A structural match returns fewer results than a regular expression over code.
+
+Request selected GitHub fields with `gh ... --json <fields>` and `--jq`. Read only what the task needs. Never load a complete directory or repository into context.
 
 For the rtk command tables and verification, use the RTK skill.
