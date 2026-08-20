@@ -30,12 +30,14 @@ allowed-tools: Read Write Edit Bash(git status *)
 
 Agent Skills requires `name` and `description`. It defines `license`, `compatibility`, `metadata`, and `allowed-tools` as optional top-level fields.[AGENTSKILLS]
 
-- `name`: equal to the directory and the H1. Providers deploy the authored casing verbatim; only a provider with the `kebab-case-skills` assembly rule (here, agentskills) converts to lowercase on deployment. What must hold in source is that the three agree.
+- `name`: Use the same value for the directory, frontmatter name, and H1. Providers deploy the authored casing without changes. A provider can use `kebab-case-skills` to convert the name to lowercase. This deck uses that rule for agentskills.
 - `description`: one line with concrete `USE WHEN` triggers and a `NOT FOR` boundary for adjacent skills.
 - `compatibility`: required providers, binaries, operating systems, or network access.
 - `metadata`: string-valued information such as version and upstream attribution.
 
-Canonical source carries Agent Skills fields at the top level, plus three assembly directives: `targets` routes the skill to named providers, and `disable-model-invocation` and `user-invocable` set Claude Code invocation controls. Assembly consumes `targets` and deploys the invocation controls. Other provider-specific fields arrive through per-provider overlays during assembly. Validate with the nearest `.mdschema`, the official `skills-ref` validator, and the project's own validator.
+Canonical source supports Agent Skills fields and three assembly directives at the top level. `targets` routes the skill to named providers. `disable-model-invocation` and `user-invocable` set Claude Code invocation controls.
+
+Assembly consumes `targets` and deploys the invocation controls. Provider overlays supply all other provider-specific fields. Validate the source with the nearest `.mdschema`, the official `skills-ref` validator, and the project validator.
 
 ## Section convention
 

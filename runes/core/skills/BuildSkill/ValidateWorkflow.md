@@ -2,7 +2,7 @@
 
 > Check a skill against the Agent Skills spec, the section convention, progressive disclosure, and content quality, then report a verdict with concrete repairs.
 
-You are auditing an existing skill, not improving it. Every check below is pass or fail; opinions about style belong in the create workflow.
+You are auditing an existing skill, not improving it. Every check below is pass or fail. The create workflow covers style opinions.
 
 ## OBJECTIVE
 
@@ -29,9 +29,11 @@ Read `SKILL.md` and note the companions, scripts, references, and assets it link
 
 ## Step 2: Check canonical frontmatter
 
-- [ ] `name` equals the skill directory and the H1. This deck authors PascalCase; the agentskills provider converts to lowercase on deployment.
+- [ ] `name` equals the skill directory and the H1.
+- [ ] This deck authors names in PascalCase. The agentskills provider converts them to lowercase during deployment.
 - [ ] `description` is one line with concrete `USE WHEN` triggers and a useful `NOT FOR` boundary.
-- [ ] Top-level fields are limited to `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`, and the assembly directives `targets`, `disable-model-invocation`, and `user-invocable`.
+- [ ] Top-level fields use only `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`, or an assembly directive.
+- [ ] The assembly directives are `targets`, `disable-model-invocation`, and `user-invocable`.
 - [ ] `compatibility` names required providers, binaries, operating systems, or network access.
 - [ ] Additional string-valued information lives under `metadata`.
 - [ ] The official `skills-ref` validator accepts the skill.
@@ -48,7 +50,7 @@ Read `SKILL.md` and note the companions, scripts, references, and assets it link
 - [ ] More than four H3 headings beneath `Instructions` receives an advisory warning.
 - [ ] Standalone `mdschema` validates the entrypoint when strict section validation is required.
 
-A project's own schema checker may be a partial fallback that reports required sections and heading depth without covering section vocabulary, ordering, uniqueness, or subsection placement. Where that is the case, standalone `mdschema` is the strict check; see [RuneDeck.md](RuneDeck.md) for how the two relate in a Rune deck.
+A project's schema checker can be a partial fallback. It can report required sections and heading depth without checking vocabulary, order, uniqueness, or subsection placement. In that case, standalone `mdschema` is the strict check. See [RuneDeck.md](RuneDeck.md) for their relationship in a Rune deck.
 
 ## Step 4: Check progressive disclosure
 
@@ -87,7 +89,7 @@ mdschema check --schema <nearest-skill-schema> <skill-path>/SKILL.md
 skills-ref validate <skill-path>
 ```
 
-Run the project's own validator alongside these; in a Rune deck that is `rune validate --source .` (see [RuneDeck.md](RuneDeck.md)).
+Run the project's validator with these commands. In a Rune deck, use `rune validate --source .`. See [RuneDeck.md](RuneDeck.md).
 
 Fix errors before declaring the skill valid. A breadth warning remains advisory unless another error is present.
 

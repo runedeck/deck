@@ -14,7 +14,7 @@ Casts name a selection of runes for a consumer to install together. A new skill 
 
 ## What validation expects
 
-The heading convention and length limits the other companions describe are enforced here at validation time. The `.mdschema` beside each `skills/` directory checks the section shell; its diagnostics call it `stable shell identity`. A `SKILL.md` body warns after 100 lines and fails after 150, excluding frontmatter; Markdown companions stay under 150.
+The validators enforce the heading convention. The deck applies the length limits during review. The `.mdschema` beside each `skills/` directory checks the section shell. Its diagnostics call this check `stable shell identity`. Rune warns when a `SKILL.md` body exceeds 100 lines, excluding frontmatter. Deck review treats 150 lines as the limit. Markdown companions must stay under 150 lines.
 
 ## Validation
 
@@ -38,14 +38,18 @@ rune install
 
 Assembly maps canonical content into each provider's native format without changing the canonical contract: frontmatter is stripped to the fields a provider keeps, tool names are remapped, and provider-specific fields come from `claude/` and other qualifier variants rather than from the canonical file.
 
-A deck that authors skills in PascalCase enables the `kebab-case-skills` assembly rule for the providers that require lowercase names (here, agentskills). Directory segments and Markdown companions convert, the frontmatter `name` converts with them, and relative Markdown links are retargeted so companions stay reachable. `SKILL.md`, bundled scripts, and assets keep their exact names, because harnesses, Python module paths, and in-document references all resolve those by spelling.
+This deck authors skill names in PascalCase. It enables `kebab-case-skills` for providers that require lowercase names, such as agentskills.
 
-Never edit a deployed file under a provider directory. Edit the source and reinstall; a local exception belongs in the rune's `user/` override.
+The rule converts directory segments, Markdown companion names, and the frontmatter `name`. It also updates relative Markdown links. These changes keep companion links valid.
+
+`SKILL.md`, bundled scripts, and assets keep their exact names. Harnesses, Python module paths, and in-document references use those exact names.
+
+Never edit a deployed file under a provider directory. Edit the source and reinstall. Put a local exception in the rune's `user/` override.
 
 ## Per-user configuration
 
-A skill that needs per-user runtime data reads one file at `~/.config/rune/<artifact>.{ext}`. [UserConfigSchema.md](UserConfigSchema.md) has the shape; [SkillInstallation.md](SkillInstallation.md) has the setup step.
+A skill that needs per-user runtime data reads one file at `~/.config/rune/<artifact>.{ext}`. [UserConfigSchema.md](UserConfigSchema.md) describes the file. [SkillInstallation.md](SkillInstallation.md) has the setup step.
 
 ## Adopting rather than authoring
 
-Third-party artifacts do not go through this skill. They enter through `rune adopt`, which records a maintainer verdict on every block and seals a review record. Use the `AdoptArtifact` skill for that; use this one only for what you write yourself.
+Third-party artifacts do not go through this skill. They enter through `rune adopt`, which records a maintainer verdict on every block and seals a review record. Use the `AdoptArtifact` skill for that. Use this skill only for artifacts that you author.

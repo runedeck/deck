@@ -1,6 +1,8 @@
 # Claude Code skill features
 
-Canonical skills use Agent Skills frontmatter, with directory, name, and H1 in agreement; providers deploy the authored casing verbatim, and only the agentskills provider converts names to lowercase. Canonical frontmatter also carries three assembly directives — `targets`, `disable-model-invocation`, and `user-invocable`; see [SkillStructure.md](SkillStructure.md). Claude Code provider data supplies every other extension during assembly instead of adding nonstandard top-level fields to canonical `SKILL.md`.
+Canonical skills use Agent Skills frontmatter. The directory, name, and H1 use identical casing. Providers deploy the authored casing without changes. Only the agentskills provider converts names to lowercase.
+
+Canonical frontmatter also supports three assembly directives: `targets`, `disable-model-invocation`, and `user-invocable`. See [SkillStructure.md](SkillStructure.md) for details. Claude Code provider data supplies all other extensions during assembly. These extensions do not appear as nonstandard top-level fields in canonical `SKILL.md`.
 
 ## Feature map
 
