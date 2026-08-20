@@ -37,6 +37,7 @@ The route registry invokes Rune, not `grok` or `agy`:
     "grok-cliproxy": {
       "binary": "rune",
       "model": "grok-4.6",
+      "vendor": "xai",
       "argv": [
         "--json", "run", "grok@claude", "--model", "grok-4.6",
         "--repo", "{scratch}", "--mode", "read-only",

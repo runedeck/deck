@@ -51,6 +51,7 @@ class PreferenceParserTests(unittest.TestCase):
         route = {
             "binary": sys.executable,
             "model": "judge-model",
+            "vendor": "judge-vendor",
             "response": "json",
             "env": {"JUDGE_RESULT": "{prompt}"},
             "argv": [
@@ -80,6 +81,7 @@ class PreferenceMainTests(unittest.TestCase):
         self.route = {
             "binary": sys.executable,
             "model": "judge-model",
+            "vendor": "judge-vendor",
             "argv": ["-c", "print('unused')"],
             "response": "text",
             "context_canary": "List visible artifact rules.",
@@ -138,7 +140,15 @@ class PreferenceMainTests(unittest.TestCase):
                 }],
                 "evals": evals,
                 "run_plan": {
-                    "routes": [{"id": "subject", "model": "subject-model"}],
+                    "routes": [{
+                        "id": "subject",
+                        "model": "subject-model",
+                        "vendor": "subject-vendor",
+                    }],
+                    "registry_path": str(self.routes.resolve()),
+                    "registry_sha256": (
+                        judge_preferences.run_benchmark.artifact_digest(self.routes)
+                    ),
                     "repeats": 1,
                 },
             }),
@@ -212,6 +222,60 @@ class PreferenceMainTests(unittest.TestCase):
         provider.assert_not_called()
         self.assertFalse((self.iteration / "preferences").exists())
 
+    def test_unknown_model_is_rejected_before_provider_calls(self):
+        self.prepare_pairs(1)
+        errors = io.StringIO()
+
+        with mock.patch.object(
+            judge_preferences.run_benchmark, "invoke",
+        ) as provider, redirect_stderr(errors):
+            status = judge_preferences.main(
+                self.arguments("--plan", "--model", "unknown-model")
+            )
+
+        self.assertEqual(status, 1)
+        self.assertIn("unknown --model values: unknown-model", errors.getvalue())
+        provider.assert_not_called()
+
+    def test_same_vendor_pair_is_rejected_before_provider_calls(self):
+        self.prepare_pairs(1)
+        manifest = json.loads(self.manifest.read_text(encoding="utf-8"))
+        manifest["run_plan"]["routes"][0]["vendor"] = self.route["vendor"]
+        self.manifest.write_text(json.dumps(manifest), encoding="utf-8")
+        errors = io.StringIO()
+
+        with mock.patch.object(
+            judge_preferences.run_benchmark, "invoke",
+        ) as provider, redirect_stderr(errors):
+            status = judge_preferences.main(self.arguments("--plan"))
+
+        self.assertEqual(status, 1)
+        self.assertIn(
+            "the judge and subject models have the same vendor: subject-model",
+            errors.getvalue(),
+        )
+        provider.assert_not_called()
+
+    def test_tampered_route_registry_is_rejected_before_provider_calls(self):
+        self.prepare_pairs(1)
+        self.routes.write_text(
+            json.dumps({"routes": {"judge": self.route}}, indent=2),
+            encoding="utf-8",
+        )
+        errors = io.StringIO()
+
+        with mock.patch.object(
+            judge_preferences.run_benchmark, "invoke",
+        ) as provider, redirect_stderr(errors):
+            status = judge_preferences.main(self.arguments("--plan"))
+
+        self.assertEqual(status, 1)
+        self.assertIn(
+            "the route registry digest does not match the frozen run plan",
+            errors.getvalue(),
+        )
+        provider.assert_not_called()
+
     def test_approval_counts_judgments_and_route_checks(self):
         self.prepare_pairs(19)
         errors = io.StringIO()
@@ -236,6 +300,10 @@ class PreferenceMainTests(unittest.TestCase):
 
         self.assertEqual(status, 0)
         self.assertEqual(provider.call_count, 21)
+        record = json.loads(next(
+            (self.iteration / "preferences").glob("**/run-1.json")
+        ).read_text(encoding="utf-8"))
+        self.assertEqual(record["judge_vendor"], "judge-vendor")
 
     def test_resolved_model_mismatch_stops_after_preflight(self):
         self.prepare_pairs(1)

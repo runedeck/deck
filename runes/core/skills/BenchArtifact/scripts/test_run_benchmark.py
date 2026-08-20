@@ -2,6 +2,7 @@ import importlib.util
 import io
 import json
 import os
+import sys
 import tempfile
 import unittest
 from contextlib import redirect_stdout
@@ -78,7 +79,7 @@ class RunBenchmarkTests(unittest.TestCase):
         })
         routes = self.root / "routes.json"
         self.write_json(routes, {"routes": {"fake": {
-            "binary": "fake-harness", "model": "model1m",
+            "binary": "fake-harness", "model": "model1m", "vendor": "test",
             "argv": ["--prompt-file", "{prompt_file}"],
             "system_argv": ["--artifact", "{artifact}"], "response": "text",
             "context_canary": "List visible artifact rules.",
@@ -112,7 +113,9 @@ class RunBenchmarkTests(unittest.TestCase):
         self.assertEqual(run_manifest["arms"]["with_rule"]["artifact_path"], str((manifest_dir / "rule.md").resolve()))
         self.assertEqual(run_manifest["arms"]["with_rule"]["artifact_sha256"], RUN.artifact_digest(manifest_dir / "rule.md"))
         self.assertEqual(run_manifest["source_manifest"], str(manifest.resolve()))
-        self.assertEqual(run_manifest["run_plan"]["routes"], [{"id": "fake", "model": "model1m"}])
+        self.assertEqual(run_manifest["run_plan"]["routes"], [{
+            "id": "fake", "model": "model1m", "vendor": "test",
+        }])
         self.assertEqual(run_manifest["run_plan"]["registry_path"], str(routes.resolve()))
         self.assertEqual(run_manifest["run_plan"]["registry_sha256"], RUN.artifact_digest(routes))
         self.assertEqual(run_manifest["run_plan"]["repeats"], 1)
@@ -131,7 +134,7 @@ class RunBenchmarkTests(unittest.TestCase):
         })
         routes = self.root / "routes.json"
         self.write_json(routes, {"routes": {"fake": {
-            "binary": "fake-harness", "model": "model",
+            "binary": "fake-harness", "model": "model", "vendor": "test",
             "argv": ["--prompt-file", "{prompt_file}"], "response": "text",
             "context_canary": "List visible artifact rules.",
             "forbidden_context_markers": ["SECRET_ARTIFACT"],
@@ -226,7 +229,7 @@ class RunBenchmarkTests(unittest.TestCase):
         })
         routes = self.root / "routes.json"
         self.write_json(routes, {"routes": {"fake": {
-            "binary": "fake-harness", "model": "model",
+            "binary": "fake-harness", "model": "model", "vendor": "test",
             "argv": ["--prompt-file", "{prompt_file}"], "response": "text",
             "context_canary": "List visible artifact rules.",
             "forbidden_context_markers": ["SECRET_ARTIFACT"],
@@ -514,7 +517,7 @@ class RunBenchmarkTests(unittest.TestCase):
         inspection_log = self.root / "inspection.jsonl"
         routes = self.root / "portable-routes.json"
         self.write_json(routes, {"routes": {"fake": {
-            "binary": "artifact-harness", "model": "model",
+            "binary": "artifact-harness", "model": "model", "vendor": "test",
             "argv": ["--prompt-file", "{prompt_file}"],
             "artifact_argv": ["--artifact", "{artifact}", "--artifact-source", "{artifact_source}"],
             "response": "text", "env": {"INSPECTION_LOG": str(inspection_log)},
@@ -554,7 +557,7 @@ class RunBenchmarkTests(unittest.TestCase):
         })
         routes = self.root / "routes.json"
         self.write_json(routes, {"routes": {"fake": {
-            "binary": "fake-harness", "model": "model", "argv": ["--prompt-file", "{prompt_file}"], "response": "text",
+            "binary": "fake-harness", "model": "model", "vendor": "test", "argv": ["--prompt-file", "{prompt_file}"], "response": "text",
             "context_canary": "List visible artifact rules.",
             "forbidden_context_markers": ["SECRET_ARTIFACT"],
         }}})
@@ -573,7 +576,12 @@ class RunBenchmarkTests(unittest.TestCase):
             encoding="utf-8",
         )
         failing.chmod(0o755)
-        route = {"binary": "failing-harness", "model": "model", "response": "json"}
+        route = {
+            "binary": "failing-harness",
+            "model": "model",
+            "vendor": "test",
+            "response": "json",
+        }
 
         result = RUN.invoke("failing", route, "prompt", None, [], 10)
 
@@ -584,13 +592,53 @@ class RunBenchmarkTests(unittest.TestCase):
         invalid = self.bin / "invalid-harness"
         invalid.write_text("#!/bin/sh\nprintf '[]\\n'\n", encoding="utf-8")
         invalid.chmod(0o755)
-        route = {"binary": "invalid-harness", "model": "model", "response": "json"}
+        route = {
+            "binary": "invalid-harness",
+            "model": "model",
+            "vendor": "test",
+            "response": "json",
+        }
 
         result = RUN.invoke("invalid", route, "prompt", None, [], 10)
 
         self.assertEqual(result["state"], "invalid_output")
         self.assertEqual(result["provider_output"], "[]\n")
         self.assertEqual(result["error"], "provider output must contain a JSON object")
+
+    def test_invoke_preserves_nested_paths_with_equal_basenames(self):
+        first = self.root / "inputs" / "first" / "draft.md"
+        second = self.root / "inputs" / "second" / "draft.md"
+        first.parent.mkdir(parents=True)
+        second.parent.mkdir(parents=True)
+        first.write_text("first", encoding="utf-8")
+        second.write_text("second", encoding="utf-8")
+        route = {
+            "binary": sys.executable,
+            "model": "model",
+            "vendor": "test",
+            "argv": [
+                "-c",
+                (
+                    "from pathlib import Path; "
+                    "print(Path('first/draft.md').read_text() + '|' + "
+                    "Path('second/draft.md').read_text())"
+                ),
+            ],
+            "response": "text",
+        }
+
+        result = RUN.invoke(
+            "fake",
+            route,
+            "prompt",
+            None,
+            [first, second],
+            10,
+            relative_files=["first/draft.md", "second/draft.md"],
+        )
+
+        self.assertEqual(result["state"], "valid")
+        self.assertEqual(result["response"], "first|second")
 
     def test_word_limits_belong_to_grading_not_execution_validity(self):
         result = {
@@ -623,7 +671,7 @@ class RunBenchmarkTests(unittest.TestCase):
         })
         routes = self.root / "routes.json"
         self.write_json(routes, {"routes": {"fake": {
-            "binary": "leaking-harness", "model": "model",
+            "binary": "leaking-harness", "model": "model", "vendor": "test",
             "argv": ["--prompt-file", "{prompt_file}"], "response": "text",
             "context_canary": "List visible writing rules.",
             "forbidden_context_markers": ["ASD-STE100"],
@@ -645,7 +693,7 @@ class RunBenchmarkTests(unittest.TestCase):
             "evals": [{"id": 1, "name": "sample", "prompt": "Rewrite.", "files": [], "assertions": ASSERTIONS}],
         })
         route = {
-            "binary": "fake-harness", "model": "model1m",
+            "binary": "fake-harness", "model": "model1m", "vendor": "test",
             "argv": ["--prompt-file", "{prompt_file}"], "response": "text",
             "context_canary": "List visible artifact rules.",
             "forbidden_context_markers": ["SECRET_ARTIFACT"],
@@ -670,7 +718,7 @@ class RunBenchmarkTests(unittest.TestCase):
         routes = self.root / "routes.json"
         call_log = self.root / "calls.log"
         self.write_json(routes, {"routes": {"fake": {
-            "binary": "fake-harness", "model": "model", "argv": ["--prompt-file", "{prompt_file}"], "response": "text",
+            "binary": "fake-harness", "model": "model", "vendor": "test", "argv": ["--prompt-file", "{prompt_file}"], "response": "text",
             "env": {"CALL_LOG": str(call_log)},
             "context_canary": "List visible artifact rules.",
             "forbidden_context_markers": ["SECRET_ARTIFACT"],
@@ -717,7 +765,7 @@ class RunBenchmarkTests(unittest.TestCase):
         call_log = self.root / "calls.log"
         routes = self.root / "routes.json"
         self.write_json(routes, {"routes": {"fake": {
-            "binary": "fake-harness", "model": "model",
+            "binary": "fake-harness", "model": "model", "vendor": "test",
             "argv": ["--prompt-file", "{prompt_file}"], "response": "text",
             "env": {"CALL_LOG": str(call_log)},
             "context_canary": "List visible artifact rules.",
@@ -746,7 +794,7 @@ class RunBenchmarkTests(unittest.TestCase):
         call_log = self.root / "invalid-route-calls.log"
         routes = self.root / "invalid-routes.json"
         self.write_json(routes, {"routes": {"fake": {
-            "binary": "fake-harness", "model": "model",
+            "binary": "fake-harness", "model": "model", "vendor": "test",
             "argv": ["--prompt-file", "{unknown}"], "response": "text",
             "env": {"CALL_LOG": str(call_log)},
             "context_canary": "List visible artifact rules.",
@@ -777,7 +825,7 @@ class RunBenchmarkTests(unittest.TestCase):
         call_log = self.root / "invalid-assertion-calls.log"
         routes = self.root / "invalid-assertion-routes.json"
         self.write_json(routes, {"routes": {"fake": {
-            "binary": "fake-harness", "model": "model",
+            "binary": "fake-harness", "model": "model", "vendor": "test",
             "argv": ["--prompt-file", "{prompt_file}"], "response": "text",
             "env": {"CALL_LOG": str(call_log)},
             "context_canary": "List visible artifact rules.",

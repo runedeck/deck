@@ -143,6 +143,10 @@ class BuildReportTests(unittest.TestCase):
         self.assertEqual(verdict["status"], "ok")
         self.assertEqual(verdict["label"], "Improves the claimed behavior")
         self.assertIn("across 1 judged pair", " ".join(verdict["parts"]))
+        self.assertEqual(
+            data["verdict_thresholds"],
+            {"trade_off": 0.4, "win": 0.5},
+        )
 
 
 if __name__ == "__main__":

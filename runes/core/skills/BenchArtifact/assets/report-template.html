@@ -554,8 +554,8 @@ const DEFAULT_METRICS = [
 const METRICS = (Array.isArray(DATA.metric_definitions) && DATA.metric_definitions.length)
   ? DATA.metric_definitions : DEFAULT_METRICS;
 const VERDICT_THRESHOLDS = {
-  trade_off: Number(DATA.verdict_thresholds?.trade_off ?? 0.4),
-  win: Number(DATA.verdict_thresholds?.win ?? 0.5),
+  trade_off: Number(DATA.verdict_thresholds.trade_off),
+  win: Number(DATA.verdict_thresholds.win),
 };
 const metricLabel = id => METRICS.find(item => item.id === id)?.label
   || DEFAULT_METRICS.find(item => item.id === id)?.label || id;

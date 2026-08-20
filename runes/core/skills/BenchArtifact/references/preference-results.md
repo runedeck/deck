@@ -88,6 +88,7 @@ The native parent adds arm mappings after the blind judge writes its raw result:
   "model": "reported-model-name",
   "repeat": 1,
   "judge_model": "other-vendor-model",
+  "judge_vendor": "other-vendor",
   "seed": 123,
   "blind_order": {"A": "with_artifact", "B": "baseline"},
   "state": "valid",
@@ -98,6 +99,8 @@ The native parent adds arm mappings after the blind judge writes its raw result:
 ```
 
 Add the equivalent winner, arm, and reason fields for fluency and directness.
+
+Cross-harness judgments record the judge vendor from the frozen route registry.
 
 ## Aggregated benchmark
 

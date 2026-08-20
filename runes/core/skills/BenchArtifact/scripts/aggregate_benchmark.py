@@ -15,7 +15,10 @@ from urllib.parse import unquote
 
 if __package__:
     from .run_benchmark import (
+        DEFAULT_TRADE_OFF,
+        DEFAULT_WIN,
         normalize_run_plan,
+        validate_execution,
         validate_judging_config,
         validate_manifest,
     )
@@ -26,7 +29,10 @@ else:
     )
     contract = importlib.util.module_from_spec(contract_spec)
     contract_spec.loader.exec_module(contract)
+    DEFAULT_TRADE_OFF = contract.DEFAULT_TRADE_OFF
+    DEFAULT_WIN = contract.DEFAULT_WIN
     normalize_run_plan = contract.normalize_run_plan
+    validate_execution = contract.validate_execution
     validate_judging_config = contract.validate_judging_config
     validate_manifest = contract.validate_manifest
 
@@ -52,6 +58,14 @@ def default_judging():
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return None
+
+
+def effective_verdict_thresholds(thresholds: dict | None) -> dict:
+    values = thresholds or {}
+    return {
+        "trade_off": values.get("trade_off", DEFAULT_TRADE_OFF),
+        "win": values.get("win", DEFAULT_WIN),
+    }
 
 
 def read_json(path: Path) -> dict:
@@ -111,11 +125,19 @@ def safe_exclusion_reason(state: str, error) -> str:
     return state
 
 
-def load_run(run_dir: Path, eval_id, eval_name, arm: str, model: str) -> dict:
+def load_run(
+    run_dir: Path,
+    eval_id,
+    eval_name,
+    arm: str,
+    model: str,
+    execution: dict | None = None,
+) -> dict:
     execution_path = run_dir / "result.json"
     grading_path = run_dir / "grading.json"
     timing_path = run_dir / "timing.json"
-    execution = read_json(execution_path) if execution_path.is_file() else {}
+    if execution is None:
+        execution = read_json(execution_path) if execution_path.is_file() else {}
     grading = read_json(grading_path) if grading_path.is_file() else {}
     timing = read_json(timing_path) if timing_path.is_file() else {}
     summary = grading.get("summary") if isinstance(grading.get("summary"), dict) else {}
@@ -231,8 +253,12 @@ def apply_run_plan(runs: list[dict], manifest: dict) -> list[dict]:
         )
         for case, arm, route, repeat in planned
     ]
-def discover(root: Path) -> list[dict]:
+def discover(root: Path, manifest: dict | None = None) -> list[dict]:
     runs = []
+    schema_v2 = isinstance(manifest, dict) and manifest.get("schema_version") == 2
+    if schema_v2:
+        cases = {int(case["id"]): case for case in manifest["evals"]}
+        run_plan = normalize_run_plan(manifest, required=True)
     for eval_dir in sorted(root.glob("eval-*")):
         metadata_path = eval_dir / "eval_metadata.json"
         metadata = read_json(metadata_path) if metadata_path.is_file() else {}
@@ -243,8 +269,30 @@ def discover(root: Path) -> list[dict]:
             arm, model = split_arm(arm_dir.name)
             for run_dir in sorted(arm_dir.glob("run-*")):
                 try:
-                    runs.append(load_run(run_dir, eval_id, eval_name, arm, model))
-                except (json.JSONDecodeError, OSError, ValueError) as error:
+                    execution_path = run_dir / "result.json"
+                    execution = (
+                        read_json(execution_path) if execution_path.is_file() else {}
+                    )
+                    if schema_v2:
+                        validate_execution(
+                            execution_path,
+                            execution,
+                            root,
+                            manifest,
+                            cases,
+                            run_plan,
+                        )
+                    runs.append(
+                        load_run(
+                            run_dir,
+                            eval_id,
+                            eval_name,
+                            arm,
+                            model,
+                            execution,
+                        )
+                    )
+                except (json.JSONDecodeError, OSError, TypeError, ValueError) as error:
                     print(f"Warning: cannot load {run_dir}: {error}", file=sys.stderr)
     return runs
 
@@ -444,7 +492,7 @@ def generate(root: Path, manifest_path: Path | None, artifact_name: str, artifac
     manifest = read_json(manifest_path) if manifest_path else {}
     if manifest.get("schema_version") == SCHEMA_VERSION:
         validate_manifest(manifest, require_run_plan=True)
-    runs = apply_run_plan(discover(root), manifest)
+    runs = apply_run_plan(discover(root, manifest), manifest)
     discovered_arms = sorted({run["arm"] for run in runs})
     arms = list(manifest.get("arms", {})) or discovered_arms
     comparisons = manifest.get("comparisons", [])
@@ -459,6 +507,7 @@ def generate(root: Path, manifest_path: Path | None, artifact_name: str, artifac
         judging = default_judging()
     thresholds = manifest.get("verdict_thresholds")
     validate_judging_config(judging, thresholds)
+    thresholds = effective_verdict_thresholds(thresholds)
     identities = copy.deepcopy(manifest.get("identities", {}))
     if manifest_path:
         identities["manifest"] = {"path": str(manifest_path.resolve()), "sha256": digest(manifest_path)}
@@ -481,7 +530,7 @@ def generate(root: Path, manifest_path: Path | None, artifact_name: str, artifac
         "preference_judgments": judgments,
         "judging": judging,
         "metric_definitions": manifest.get("metrics"),
-        "verdict_thresholds": manifest.get("verdict_thresholds"),
+        "verdict_thresholds": thresholds,
         "notes": manifest.get("notes", []),
         "limitations": manifest.get("limitations", [
             "Compare results only within one model.",
@@ -492,10 +541,6 @@ def generate(root: Path, manifest_path: Path | None, artifact_name: str, artifac
             "The report does not average models.",
         ]),
     }
-
-
-DEFAULT_TRADE_OFF = 0.4
-DEFAULT_WIN = 0.5
 
 
 def dimension_config(judging: dict | None, dimension: str) -> dict:

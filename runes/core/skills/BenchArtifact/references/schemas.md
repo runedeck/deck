@@ -93,6 +93,23 @@ Native mode freezes each exact model name in `run_plan.models` and the repeat co
 
 Cross-harness mode writes equivalent `run_plan.routes` entries into the iteration manifest.
 
+Each cross-harness route freezes its route identifier, model identifier, and vendor identifier:
+
+```json
+{
+  "run_plan": {
+    "routes": [
+      {"id": "claude", "model": "claude-opus-5", "vendor": "anthropic"}
+    ],
+    "repeats": 1
+  }
+}
+```
+
+The judge rejects a pair when its vendor equals the frozen subject vendor.
+
+Cross-harness judging rejects a registry whose path or digest differs from the frozen run plan.
+
 The grader and aggregator reject a schema-v2 iteration manifest without a frozen run plan.
 
 Resolve relative artifact and input paths from the source manifest directory.

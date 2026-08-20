@@ -364,7 +364,9 @@ class AggregateTests(unittest.TestCase):
                 {"id": 2, "name": "second"},
             ],
             "run_plan": {
-                "routes": [{"id": "fake", "model": "model"}],
+                "routes": [{
+                    "id": "fake", "model": "model", "vendor": "test",
+                }],
                 "repeats": 2,
                 "seed": 1,
                 "timeout_seconds": 300,
@@ -380,6 +382,50 @@ class AggregateTests(unittest.TestCase):
         self.assertEqual(result["planned_pairs"], 4)
         self.assertEqual(result["primary"]["exclusion_reasons"], {"missing_execution": 3})
         self.assertEqual(result["baseline"]["exclusion_reasons"], {"missing_execution": 3})
+
+    def test_schema_v2_aggregate_rejects_execution_identity_mismatch(self):
+        self.write_run("baseline", 1)
+        result_path = (
+            self.root / "eval-1-case" / "baseline@model" / "run-1"
+            / "result.json"
+        )
+        result = json.loads(result_path.read_text(encoding="utf-8"))
+        result.update({
+            "schema_version": 2,
+            "eval_id": 1,
+            "eval_name": "wrong-name",
+            "arm": "baseline",
+            "repeat": 1,
+        })
+        result_path.write_text(json.dumps(result), encoding="utf-8")
+        manifest = self.root / "manifest.json"
+        manifest.write_text(json.dumps({
+            "schema_version": 2,
+            "arms": {"baseline": {}},
+            "comparisons": [],
+            "evals": [{
+                "id": 1,
+                "name": "case",
+                "prompt": "Rewrite the sample.",
+                "assertions": [{
+                    "kind": "required_patterns",
+                    "text": "The response contains its required marker.",
+                    "patterns": ["response"],
+                }],
+            }],
+            "run_plan": {
+                "routes": [{
+                    "id": "fake", "model": "model", "vendor": "test",
+                }],
+                "repeats": 1,
+            },
+        }), encoding="utf-8")
+
+        data = AGG.generate(self.root, manifest, "Skill", "")
+        summary = data["summaries"]["model"]["baseline"]
+
+        self.assertEqual(summary["valid_samples"], 0)
+        self.assertEqual(summary["exclusion_reasons"], {"missing_execution": 1})
 
     def test_native_run_plan_adds_absent_planned_models(self):
         self.write_run("baseline", 1)

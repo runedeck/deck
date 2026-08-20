@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BenchArtifact/scripts/aggregate_benchmark.py
     digest:
-      sha256: 68088e77182cdb48e358546c5332e16df143a082de72800de3153a3b56afc8bf
+      sha256: e0b245cc5f1e28db0f39290ebf8ca0194989ffec68ecfa69db1759f49a4e8145
   predicate:
     buildDefinition:
       buildType: adopt/v1

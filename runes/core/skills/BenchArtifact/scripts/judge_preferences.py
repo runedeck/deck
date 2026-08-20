@@ -93,6 +93,49 @@ def judgment_schedule(
     return schedule
 
 
+def validate_assignment(
+    run_plan: dict,
+    route: dict,
+    schedule: list[dict],
+    selected_models: set[str],
+) -> None:
+    frozen_routes = run_plan["routes"]
+    planned_models = {entry["model"] for entry in frozen_routes}
+    unknown = selected_models - planned_models
+    if unknown:
+        raise ValueError(f"unknown --model values: {', '.join(sorted(unknown))}")
+    vendors = {entry["model"]: entry.get("vendor") for entry in frozen_routes}
+    if any(not isinstance(vendor, str) or not vendor for vendor in vendors.values()):
+        raise ValueError("the frozen run plan needs one vendor for each model")
+    judge_vendor = route["vendor"].casefold()
+    same_vendor = sorted({
+        item["model"]
+        for item in schedule
+        if vendors[item["model"]].casefold() == judge_vendor
+    })
+    if same_vendor:
+        raise ValueError(
+            "the judge and subject models have the same vendor: "
+            f"{', '.join(same_vendor)}"
+        )
+
+
+def validate_frozen_registry(run_plan: dict, routes_path: Path) -> None:
+    if "models" in run_plan:
+        return
+    frozen_path = run_plan.get("registry_path")
+    frozen_digest = run_plan.get("registry_sha256")
+    if not isinstance(frozen_path, str) or not frozen_path:
+        raise ValueError("the frozen run plan needs a route registry path")
+    if not isinstance(frozen_digest, str) or not frozen_digest:
+        raise ValueError("the frozen run plan needs a route registry digest")
+    if routes_path != Path(frozen_path).expanduser().resolve():
+        raise ValueError("the route registry path does not match the frozen run plan")
+    actual_digest = run_benchmark.artifact_digest(routes_path)
+    if actual_digest.casefold() != frozen_digest.casefold():
+        raise ValueError("the route registry digest does not match the frozen run plan")
+
+
 def prompt(case: dict, left: str, right: str, judging: dict) -> str:
     criteria = "\n".join(
         f"{dimension['label']}: {dimension['criterion']}" for dimension in judging["dimensions"]
@@ -188,6 +231,7 @@ def main(argv=None) -> int:
             raise ValueError("cross-harness execution requires --cross-harness")
         manifest = load(args.manifest.resolve())
         run_benchmark.validate_manifest(manifest, require_run_plan=True)
+        run_plan = run_benchmark.normalize_run_plan(manifest, required=True)
         if not run_benchmark.finite_number(args.timeout) or args.timeout <= 0:
             raise ValueError("timeout must be greater than zero")
         judging = manifest.get("judging")
@@ -195,7 +239,9 @@ def main(argv=None) -> int:
             judging = DEFAULT_JUDGING
         dimension_ids = run_benchmark.SUPPORTED_JUDGING_DIMENSIONS
         cases = {int(case["id"]): case for case in manifest["evals"]}
-        registry = load(args.routes.resolve()).get("routes")
+        routes_path = args.routes.resolve()
+        validate_frozen_registry(run_plan, routes_path)
+        registry = load(routes_path).get("routes")
         if not isinstance(registry, dict):
             raise TypeError("route registry routes must be an object")
         route = registry[args.judge_route]
@@ -210,6 +256,7 @@ def main(argv=None) -> int:
         schedule = judgment_schedule(
             manifest, collect(iteration, manifest), output_root, selected_models,
         )
+        validate_assignment(run_plan, route, schedule, selected_models)
         route_checks = 2 if schedule else 0
         provider_calls = len(schedule) + route_checks
         print(
@@ -302,6 +349,7 @@ def main(argv=None) -> int:
                 "repeat": repeat,
                 "judge_route": args.judge_route,
                 "judge_model": route["model"],
+                "judge_vendor": route["vendor"],
                 "seed": args.seed,
                 "blind_order": blind,
                 "state": result["state"],

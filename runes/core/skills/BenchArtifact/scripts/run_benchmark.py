@@ -196,10 +196,14 @@ def normalize_run_plan(manifest: dict, required: bool = False) -> dict | None:
                 and route["id"]
                 and isinstance(route.get("model"), str)
                 and route["model"]
+                and isinstance(route.get("vendor"), str)
+                and route["vendor"]
                 for route in routes
             )
         ):
-            raise ValueError("manifest run_plan routes need non-empty id and model strings")
+            raise ValueError(
+                "manifest run_plan routes need non-empty id, model, and vendor strings"
+            )
         entries = routes
     else:
         raise ValueError("manifest run_plan needs routes or models")
@@ -400,7 +404,7 @@ def artifact_arguments(route: dict) -> list[str]:
 def validate_route(name: str, route: dict) -> None:
     if not isinstance(route, dict):
         raise TypeError(f"route {name} must be an object")
-    for field in ("binary", "model"):
+    for field in ("binary", "model", "vendor"):
         if not isinstance(route.get(field), str) or not route[field]:
             raise ValueError(f"route {name} needs {field}")
     argv = route.get("argv", [])
@@ -511,16 +515,39 @@ def validate_resolved_model(result: dict, expected_model: str) -> dict:
     return result
 
 
-def invoke(route_name: str, route: dict, prompt: str, artifact: Path | None, files: list[Path], timeout: float) -> dict:
+def invoke(
+    route_name: str,
+    route: dict,
+    prompt: str,
+    artifact: Path | None,
+    files: list[Path],
+    timeout: float,
+    relative_files: list[str] | None = None,
+) -> dict:
     started = time.monotonic()
     with tempfile.TemporaryDirectory(prefix="bench-input-") as scratch_name, tempfile.TemporaryDirectory(prefix="bench-control-") as control_name:
         scratch, control = Path(scratch_name), Path(control_name)
         artifact_context, artifact_source = stage_artifact(artifact, scratch, control)
         prompt = treatment_prompt(prompt, artifact_context, route)
-        for source in files:
-            target = scratch / source.name
+        declared_paths = (
+            [source.name for source in files]
+            if relative_files is None
+            else relative_files
+        )
+        if len(declared_paths) != len(files):
+            raise ValueError("declared input paths do not match the input files")
+        for source, relative_value in zip(files, declared_paths):
+            relative = Path(relative_value)
+            if (
+                not relative_value
+                or relative.is_absolute()
+                or ".." in relative.parts
+            ):
+                raise ValueError("declared input paths must stay below the case directory")
+            target = scratch / relative
             if target.exists():
-                raise ValueError(f"duplicate input name: {source.name}")
+                raise ValueError(f"duplicate input path: {relative.as_posix()}")
+            target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(source, target)
         context = make_context(
             scratch, control, prompt, artifact_context, artifact_source, route["model"],
@@ -867,7 +894,12 @@ def main(argv=None) -> int:
                 "registry_path": str(routes_path),
                 "registry_sha256": artifact_digest(routes_path),
                 "routes": [
-                    {"id": name, "model": route["model"]} for name, route in routes
+                    {
+                        "id": name,
+                        "model": route["model"],
+                        "vendor": route["vendor"],
+                    }
+                    for name, route in routes
                 ],
                 "repeats": args.repeats,
                 "seed": args.seed,
@@ -936,7 +968,15 @@ def main(argv=None) -> int:
             )
             try:
                 result = validate_output(
-                    invoke(route_name, route, case["prompt"], artifact, files, args.timeout),
+                    invoke(
+                        route_name,
+                        route,
+                        case["prompt"],
+                        artifact,
+                        files,
+                        args.timeout,
+                        relative_files=case.get("files", []),
+                    ),
                     case,
                 )
             except (OSError, TypeError, ValueError, json.JSONDecodeError):

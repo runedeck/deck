@@ -30,7 +30,7 @@ TEMPLATE_PATH = Path(__file__).resolve().parent.parent / "assets" / "report-temp
 DATA_PLACEHOLDER = "__BENCHMARK_DATA_BASE64__"
 JUDGMENT_FIELDS = {
     "schema_version", "comparison", "eval_id", "model", "repeat", "run_number",
-    "judge_route", "judge_model", "seed", "blind_order", "state",
+    "judge_route", "judge_model", "judge_vendor", "seed", "blind_order", "state",
     "clarity_winner", "clarity_winner_arm", "clarity_reason",
     "fluency_winner", "fluency_winner_arm", "fluency_reason",
     "directness_winner", "directness_winner_arm", "directness_reason",
@@ -76,7 +76,10 @@ def sanitize_report_data(benchmark: dict) -> dict:
 def backfill_legacy_verdicts(benchmark: dict) -> None:
     """Add stored verdicts to schema-v2 aggregates that predate the field."""
     judging = benchmark.get("judging")
-    thresholds = benchmark.get("verdict_thresholds")
+    thresholds = aggregate_benchmark.effective_verdict_thresholds(
+        benchmark.get("verdict_thresholds")
+    )
+    benchmark["verdict_thresholds"] = thresholds
     for comparison in benchmark.get("comparisons", []):
         models = comparison.get("models") if isinstance(comparison, dict) else None
         if not isinstance(models, dict):
