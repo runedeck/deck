@@ -17,7 +17,7 @@ Reference companions with relative Markdown links, state when to read each one (
 
 ```yaml
 ---
-name: build-skill
+name: BuildSkill
 description: Create and validate skills. USE WHEN creating, revising, evaluating, or checking a skill. NOT FOR adopting third-party artifacts.
 license: EUPL-1.2
 compatibility: Requires Python 3.11+ for the evaluation scripts.
@@ -30,19 +30,21 @@ allowed-tools: Read Write Edit Bash(git status *)
 
 Agent Skills requires `name` and `description`. It defines `license`, `compatibility`, `metadata`, and `allowed-tools` as optional top-level fields.[AGENTSKILLS]
 
-- `name`: equal to the directory and the H1. Providers deploy the authored casing verbatim; only a provider with the `kebab-case-skills` assembly rule (here, agentskills) converts to lowercase on deployment. What must hold in source is that the three agree.
+- `name`: Use the same value for the directory, frontmatter name, and H1. Providers deploy the authored casing without changes. A provider can use `kebab-case-skills` to convert the name to lowercase. The opt-in `agentskills` provider in Rune uses that rule.
 - `description`: one line with concrete `USE WHEN` triggers and a `NOT FOR` boundary for adjacent skills.
 - `compatibility`: required providers, binaries, operating systems, or network access.
 - `metadata`: string-valued information such as version and upstream attribution.
 
-Canonical source carries Agent Skills fields at the top level, plus three assembly directives: `targets` routes the skill to named providers, and `disable-model-invocation` and `user-invocable` set Claude Code invocation controls. Assembly consumes `targets` and deploys the invocation controls. Other provider-specific fields arrive through per-provider overlays during assembly. Validate with the nearest `.mdschema`, the official `skills-ref` validator, and the project's own validator.
+Canonical source supports Agent Skills fields and three assembly directives at the top level. `targets` routes the skill to named providers. `disable-model-invocation` and `user-invocable` set Claude Code invocation controls.
+
+Assembly consumes `targets` and deploys the invocation controls. Provider overlays supply all other provider-specific fields. Validate the source with the nearest `.mdschema`, the official `skills-ref` validator, and the project validator.
 
 ## Section convention
 
 Agent Skills does not prescribe body headings.[AGENTSKILLS] Here, these are the body headings:
 
 ```markdown
-# skill-name
+# SkillName
 
 ## Prerequisites
 
@@ -86,7 +88,7 @@ Anthropic's spec allows 500 lines.[AGENTSKILLS] The tighter target is deliberate
 
 ## Naming
 
-- Skill directory: a clear scope and focus (`build-skill`, `daily-plan`, `vault-operations`).
+- Skill directory: a clear scope and focus (`BuildSkill`, `DailyPlan`, `VaultOperations`).
 - Frontmatter `name`: equals the directory.
 - H1: equals the directory and frontmatter name.
 - Entrypoint: `SKILL.md` with exact casing, in every project and every deployment.
