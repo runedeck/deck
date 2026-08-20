@@ -105,3 +105,12 @@ repos:
             language: system
             pass_filenames: false
             stages: [pre-push]
+
+          # The same rules as the ci/authorship workflow, applied before the
+          # push so a bad identity fails as a local amend, not a CI rewrite.
+          - id: check-authorship
+            name: authorship (push range)
+            entry: bash scripts/check-authorship
+            language: system
+            pass_filenames: false
+            stages: [pre-push]
