@@ -266,6 +266,8 @@ def validate_judging_config(judging, thresholds) -> None:
             raise ValueError(
                 f"judging dimension {dimension} trade_off must be less than win"
             )
+    if not any(item.get("weight", 1) > 0 for item in dimensions):
+        raise ValueError("judging must enable at least one preference dimension")
 
 
 def validate_manifest(manifest: dict, require_run_plan: bool = False) -> None:

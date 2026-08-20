@@ -360,6 +360,12 @@ class RunBenchmarkTests(unittest.TestCase):
                     *dimensions[1:],
                 ],
             }, None),
+            "no enabled dimensions": ({
+                "dimensions": [
+                    {**dimension, "weight": 0}
+                    for dimension in dimensions
+                ],
+            }, None),
             "threshold below zero": ({"dimensions": dimensions}, {"trade_off": -0.1}),
             "reversed thresholds": ({"dimensions": dimensions}, {"trade_off": 0.7, "win": 0.5}),
         }
