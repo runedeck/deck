@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/VersionControl/GitHub.md
     digest:
-      sha256: 16f9dbc02b574a8ca5ae48cc9620a9212fe4867e5764ab5985f9f7271bd50129
+      sha256: aa5332940f901c927f0ab1e52e5527d37cba3d1c97807df0f49d873cec9ad1cb
   predicate:
     buildDefinition:
       buildType: adopt/v1

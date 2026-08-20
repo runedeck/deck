@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/VersionControl/GitLab.md
     digest:
-      sha256: af0c3690700d8d03fa5b17e9745e3618bfff32819ce9742bbb272e9fc93a084c
+      sha256: 42f7366a79fecb0be6c5b1430f6a31a2ae813797cbee2be1c6dac8db6fb450b1
   predicate:
     buildDefinition:
       buildType: adopt/v1
