@@ -23,7 +23,8 @@ validate:
 worktree:
 	@[ -n "$(BRANCH)" ] && [ -n "$(IDENTITY)" ] \
 	    || { echo "usage: make worktree BRANCH=change/x IDENTITY=<model-id>"; exit 2; }
-	@identity=$$(grep -E '^    - .+ \($(IDENTITY)\) <.+>$$' authors.yaml | sed 's/^    - //'); \
+	@set -e; \
+	identity=$$(grep -E '^    - .+ \($(IDENTITY)\) <.+>$$' authors.yaml | sed 's/^    - //'); \
 	[ -n "$$identity" ] || { echo "identity '$(IDENTITY)' is not in authors.yaml"; exit 1; }; \
 	name=$$(printf '%s' "$(BRANCH)" | tr '/' '-'); \
 	git worktree add ".worktrees/$$name" -b "$(BRANCH)"; \

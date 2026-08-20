@@ -88,13 +88,16 @@ jobs:
               run: |
                   if [ -n "${{ github.event.pull_request.base.sha }}" ]; then
                       from="${{ github.event.pull_request.base.sha }}"
+                      to="${{ github.event.pull_request.head.sha }}"
                   elif [ -n "${{ github.event.before }}" ] && ! printf '%s' "${{ github.event.before }}" | grep -q '^0*$'; then
                       from="${{ github.event.before }}"
+                      to="${{ github.sha }}"
                   else
                       from=""
+                      to="${{ github.sha }}"
                   fi
                   if [ -n "$from" ] && git cat-file -e "$from" 2>/dev/null; then
-                      prek run --stage pre-push --from-ref "$from" --to-ref "${{ github.sha }}"
+                      prek run --stage pre-push --from-ref "$from" --to-ref "$to"
                   else
-                      GITLEAKS_PUSH_TO_REF="${{ github.sha }}" prek run --stage pre-push --all-files
+                      GITLEAKS_PUSH_TO_REF="$to" prek run --stage pre-push --all-files
                   fi
