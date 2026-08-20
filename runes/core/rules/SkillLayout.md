@@ -12,14 +12,7 @@ Both lowercase skill types still use identical directory, frontmatter name, and 
 
 A companion named `CreateWorkflow.md` belongs to `BuildSkill`. A lowercase name uses a different naming system.
 
-Supporting material uses these directories and no others:
-
-- `scripts/`: executable helpers the skill invokes.
-- `agents/`: agent definitions the skill dispatches.
-- `assets/`: files the skill reads or copies verbatim.
-- `references/`: material the skill cites but does not execute.
-
-Anything that does not fit one of those four belongs in a companion document, not a new directory. Two directories holding the same kind of thing is the defect this list exists to prevent.
+Supporting material belongs in directories that `SKILL.md` or a routed file references, with one directory for each role.
 
 Provenance sidecars live in `.provenance/`, one per tracked file, named for the file they cover.
 
