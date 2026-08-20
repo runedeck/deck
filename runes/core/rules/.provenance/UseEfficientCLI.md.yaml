@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: rules/UseEfficientCLI.md
     digest:
-      sha256: 92ecea82776ee14b26eb61dc4d4d5bcec082a73fc9612030fcf2975e2e320bfc
+      sha256: dd04d461801c05b37af369182b55d7bc99fda1578922c84b398f06699db4ec0f
   predicate:
     buildDefinition:
       buildType: adopt/v1
