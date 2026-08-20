@@ -12,7 +12,7 @@ If `.jj/` exists at the repo root, do NOT use git worktrees. `git worktree add` 
 
 ## Directory selection
 
-1. Use an existing `.worktrees/` or `worktrees/` directory at the repo root. Prefer `.worktrees/` when both exist. Deck repos provide `make worktree BRANCH=<branch> IDENTITY=<model-id>`, which also sets the commit identity.
+1. Use an existing `.worktrees/` or `worktrees/` directory at the repo root. Prefer `.worktrees/` when both exist. Use a documented repository helper when it exists.
 2. Respect a documented worktree location in the project instructions.
 3. Ask the user only when neither applies.
 
