@@ -33,7 +33,7 @@ repos:
 
           - id: check-review-ledgers
             name: temporary review ledgers are not tracked
-            entry: sh -c 'ledgers=$(git ls-files -- "**/.provenance/review.yaml" "**/.provenance/*.review.yaml" | while IFS= read -r path; do [ ! -e "$path" ] || printf "%s\n" "$path"; done); [ -z "$ledgers" ] || { printf "temporary adoption state must not be committed:\n%s\n" "$ledgers"; exit 1; }'
+            entry: sh -c 'ledgers=$(git ls-files -- ":(glob)**/.provenance/review.yaml" ":(glob)**/.provenance/*.review.yaml"); [ -z "$ledgers" ] || { printf "temporary adoption state must not be committed:\n%s\n" "$ledgers"; exit 1; }'
             language: system
             pass_filenames: false
 
