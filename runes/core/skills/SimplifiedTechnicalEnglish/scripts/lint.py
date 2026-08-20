@@ -7,7 +7,7 @@ import re
 import sys
 from pathlib import Path
 
-# Score v5 skips verb-only banned words in noun position. It lints prose
+# Score v6 skips verb-only banned words in noun position. It lints prose
 # inside Markdown fences, keeps other fenced content masked, protects
 # uncertainty, and reports short-text density as advisory.
 SCORE_VERSION = 6
