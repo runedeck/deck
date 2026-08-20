@@ -3,212 +3,1356 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
 <title>Artifact Benchmark</title>
 <style>
-    :root {
-        --bg: #0a0f1a;
-        --surface: #121a2a;
-        --surface-2: #1a2438;
-        --border: #2a3a56;
-        --text: #e8ecf4;
-        --dim: #a1aec5;
-        --accent: #5b8def;
-        --ok: #44b77a;
-        --warn: #e0a94a;
-        --bad: #e15555;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-        background: var(--bg);
-        color: var(--text);
-        font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        padding: 2rem 1.25rem 4rem;
-    }
-    main { max-width: 64rem; margin: 0 auto; }
-    h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
-    h2 { font-size: 1.1rem; margin: 2rem 0 0.75rem; }
-    .meta { color: var(--dim); font-size: 0.85rem; margin-bottom: 1.5rem; }
-    .meta code {
-        font-family: ui-monospace, "SF Mono", Menlo, monospace;
-        font-size: 0.8rem;
-    }
-    .eyebrow {
-        font-size: 10.5px; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.08em; color: var(--dim); margin-bottom: 0.35rem;
-    }
-    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 6px; }
-    table { border-collapse: collapse; width: 100%; background: var(--surface); }
-    th, td {
-        padding: 0.5rem 0.9rem; text-align: left; white-space: nowrap;
-        border-top: 1px solid var(--border); font-size: 0.85rem;
-    }
-    thead th {
-        border-top: none; background: var(--surface-2); color: var(--dim);
-        font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;
-    }
-    td.num, th.num { text-align: right; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
-    .model-cell { color: var(--accent); font-weight: 600; }
-    .delta-pos { color: var(--ok); font-weight: 600; }
-    .delta-neg { color: var(--bad); font-weight: 600; }
-    .delta-zero { color: var(--dim); }
-    .badge {
-        display: inline-block; padding: 0.05rem 0.5rem; border-radius: 999px;
-        font-size: 0.72rem; font-weight: 600; border: 1px solid var(--border);
-    }
-    .badge.pass { color: var(--ok); border-color: var(--ok); }
-    .badge.fail { color: var(--bad); border-color: var(--bad); }
-    details {
-        background: var(--surface); border: 1px solid var(--border);
-        border-radius: 6px; margin-bottom: 0.6rem;
-    }
-    details summary {
-        cursor: pointer; padding: 0.6rem 0.9rem; font-size: 0.9rem;
-        display: flex; gap: 0.75rem; align-items: baseline; flex-wrap: wrap;
-    }
-    details summary .dim { color: var(--dim); font-size: 0.8rem; }
-    .expectations { padding: 0 0.9rem 0.75rem; }
-    .expectation {
-        display: flex; gap: 0.6rem; align-items: baseline;
-        padding: 0.3rem 0; border-top: 1px solid var(--border); font-size: 0.85rem;
-    }
-    .expectation .evidence { color: var(--dim); font-size: 0.78rem; }
-    footer { color: var(--dim); font-size: 0.78rem; margin-top: 3rem; }
+:root {
+  --content-max: 1280px;
+  --page-pad: 1.5rem;
+  --radius: 14px;
+  --bg: #eff1f5;
+  --surface: #e6e9ef;
+  --card: #dce0e8;
+  --ink: #4c4f69;
+  --muted: #6c6f85;
+  --line: #ccd0da;
+  --code-bg: #e6e9ef;
+  --primary: #7287fd;
+  --ok: #40a02b;
+  --warn: #df8e1d;
+  --fail: #d20f39;
+  --neutral: #209fb5;
+  --violet: #8839ef;
+  --primary-text: color-mix(in srgb, var(--primary) 25%, var(--ink));
+  --ok-text: color-mix(in srgb, var(--ok) 30%, var(--ink));
+  --warn-text: color-mix(in srgb, var(--warn) 20%, var(--ink));
+  --fail-text: color-mix(in srgb, var(--fail) 75%, var(--ink));
+  --neutral-text: color-mix(in srgb, var(--neutral) 25%, var(--ink));
+  --muted-text: color-mix(in srgb, var(--muted) 50%, var(--ink));
+  --serif: -apple-system, "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1e1e2e;
+    --surface: #181825;
+    --card: #313244;
+    --ink: #cdd6f4;
+    --muted: #a6adc8;
+    --line: #45475a;
+    --code-bg: #11111b;
+    --primary: #b4befe;
+    --ok: #a6e3a1;
+    --warn: #f9e2af;
+    --fail: #f38ba8;
+    --neutral: #74c7ec;
+    --violet: #cba6f7;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1e1e2e;
+  --surface: #181825;
+  --card: #313244;
+  --ink: #cdd6f4;
+  --muted: #a6adc8;
+  --line: #45475a;
+  --code-bg: #11111b;
+  --primary: #b4befe;
+  --ok: #a6e3a1;
+  --warn: #f9e2af;
+  --fail: #f38ba8;
+  --neutral: #74c7ec;
+  --violet: #cba6f7;
+}
+:root[data-theme="light"] { color-scheme: light; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { color-scheme: light dark; scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+       font: 15px/1.6 -apple-system, "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+.skip { position: fixed; left: 0.75rem; top: 0.75rem; z-index: 30; transform: translateY(-200%);
+        background: var(--primary); color: var(--bg); border-radius: 6px; padding: 0.45rem 0.7rem; }
+.skip:focus { transform: translateY(0); }
+.eyebrow { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em;
+           text-transform: uppercase; color: var(--muted-text); }
+.masthead { width: 100%; max-width: var(--content-max); margin: 0 auto;
+            padding: 3rem var(--page-pad) 0.5rem; }
+.masthead h1 { margin: 0.4rem 0 0.5rem; font-weight: 700;
+               font-size: clamp(1.5rem, 3.5vw, 2.1rem); line-height: 1.15; letter-spacing: -0.01em; }
+.masthead .meta-line { font-family: var(--mono); font-size: 0.8rem; color: var(--muted-text); }
+.theme-control { position: fixed; top: 0.9rem; right: 0.9rem; z-index: 20;
+                 display: flex; align-items: center; gap: 0.1rem; border: 1px solid var(--line);
+                 border-radius: 999px; background: var(--surface); padding: 0.15rem; }
+.theme-control button { border: 0; border-radius: 999px; background: transparent; color: var(--muted-text);
+                        font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.04em;
+                        padding: 0.22rem 0.55rem; cursor: pointer; }
+.theme-control button[aria-checked="true"] { background: var(--card); color: var(--ink); }
+.mono { font-family: var(--mono); font-size: 0.78rem; }
+.muted { color: var(--muted-text); font-size: 0.85rem; }
+.layout { width: 100%; max-width: var(--content-max); margin: 0 auto;
+          padding: 0 var(--page-pad) 5rem; }
+nav.side { position: sticky; top: 0; z-index: 15; background: var(--bg);
+           font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.05em;
+           text-transform: uppercase; padding: 0.6rem 0 0.5rem;
+           border-bottom: 1px solid var(--line); }
+nav.side ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap;
+              gap: 0.15rem 1.1rem; }
+nav.side a { text-decoration: none; color: var(--muted-text); }
+nav.side a:hover { color: var(--primary-text); }
+main { min-width: 0; }
+section { margin-top: 1.4rem; scroll-margin-top: 1.5rem; padding: 1.2rem 1.4rem 1.4rem;
+          background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+section h2 { font-weight: 700; font-size: 1.05rem; margin: 0 0 0.9rem; letter-spacing: 0;
+             border-left: 3px solid var(--primary); padding-left: 0.6rem; }
+h3 { font-size: 0.95rem; margin: 0; }
+h1, h2, h3, h4, p, summary, .run-line { overflow-wrap: anywhere; }
+a { color: var(--primary-text); text-underline-offset: 0.18em; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+         gap: 0.7rem; margin: 0.8rem 0 1rem; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+        padding: 0.8rem 1rem 0.7rem; }
+.card .icon { display: inline-flex; align-items: center; justify-content: center;
+              width: 1.7rem; height: 1.7rem; border-radius: 8px; font-size: 0.85rem;
+              margin-bottom: 0.45rem;
+              background: color-mix(in srgb, var(--chip, var(--primary)) 18%, transparent);
+              color: var(--ink); }
+.card .value { font-size: 1.65rem; font-weight: 700; line-height: 1.15;
+               font-variant-numeric: tabular-nums; }
+.card .label { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase;
+               letter-spacing: 0.1em; color: var(--muted-text); margin-top: 0.1rem; }
+.badge { display: inline-flex; align-items: center; padding: 0.14rem 0.6rem;
+         border-radius: 999px; font-family: var(--mono); font-size: 0.68rem; font-weight: 600;
+         letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+.b-ok { background: color-mix(in srgb, var(--ok) 16%, var(--bg)); color: var(--ok-text); }
+.b-warn { background: color-mix(in srgb, var(--warn) 16%, var(--bg)); color: var(--warn-text); }
+.b-fail { background: color-mix(in srgb, var(--fail) 16%, var(--bg)); color: var(--fail-text); }
+.b-neutral { background: color-mix(in srgb, var(--neutral) 16%, var(--bg)); color: var(--neutral-text); }
+.verdict-tabs { display: inline-flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.4rem 0 1rem; }
+.verdict-tabs:empty { display: none; }
+.verdict-tabs button { border: 1px solid var(--line); border-radius: 999px;
+                       background: var(--surface); color: var(--muted-text); font-family: var(--mono);
+                       font-size: 0.72rem; letter-spacing: 0.05em;
+                       padding: 0.32rem 0.9rem; cursor: pointer; }
+.verdict-tabs button[aria-selected="true"] { border-color: var(--primary); color: var(--primary-text);
+                                             background: color-mix(in srgb, var(--primary) 10%, var(--bg)); }
+.verdict-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 0.7rem; }
+.verdict-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 0.6rem;
+               background: var(--surface); border: 1px solid var(--line);
+               border-left: 3px solid var(--neutral); border-radius: var(--radius);
+               padding: 0.8rem 1rem; }
+.verdict-row[data-verdict="ok"] { border-left-color: var(--ok); }
+.verdict-row[data-verdict="warn"] { border-left-color: var(--warn); }
+.verdict-row[data-verdict="fail"] { border-left-color: var(--fail); }
+.verdict-row h3 { flex: 1 1 13rem; min-width: 0; font-family: var(--mono); font-size: 0.85rem; }
+.verdict-row .verdict-points { margin: 0; flex: 1 0 100%; font-size: 0.86rem; color: var(--muted-text);
+                               padding-left: 1.05rem; }
+.verdict-row .verdict-points li { margin: 0.22rem 0; }
+.verdict-row .verdict-points li::marker { color: var(--primary-text); }
+.verdict-artifact { display: block; font-family: var(--mono); font-size: 0.68rem; font-weight: 400;
+                    color: var(--muted-text); margin-top: 0.15rem; }
+.prose-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+              padding: 0.9rem 1.15rem; margin-bottom: 0.6rem; }
+.prose-card p { margin: 0.3rem 0; font-size: 0.9rem; }
+.prose-card h3 { margin-bottom: 0.25rem; }
+.schematic { margin: 1rem 0; border: 1px solid var(--line); border-radius: var(--radius);
+             background: var(--surface); padding: 1rem 1.1rem 0.5rem; overflow-x: auto; }
+.schematic svg { display: block; max-width: 100%; height: auto; min-width: 640px; margin: 0 auto; }
+.schematic figcaption { padding: 0.6rem 0.2rem 0.5rem; border-top: 1px solid var(--line);
+                        margin-top: 0.6rem; font-size: 0.82rem; }
+.model-block { border: 1px solid var(--line); border-radius: var(--radius);
+               margin-bottom: 0.9rem; overflow: hidden; background: var(--surface); }
+.model-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+              padding: 0.65rem 1rem; border-bottom: 1px solid var(--line); }
+.model-head h3 { font-family: var(--mono); font-size: 0.85rem; }
+.model-head .spacer { flex: 1; }
+.scroll { width: 100%; max-width: 100%; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line);
+         text-align: right; white-space: nowrap; font-size: 0.83rem; }
+td { font-family: var(--mono); font-size: 0.78rem; }
+th { color: var(--muted-text); font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.06em;
+     text-transform: uppercase; position: sticky; top: 0; z-index: 2; background: var(--surface); }
+th:first-child, td:first-child { text-align: left; position: sticky; left: 0; z-index: 1;
+                                 background: var(--surface); }
+th:first-child { z-index: 3; }
+tr:last-child td { border-bottom: 0; }
+tbody tr:hover td { background: color-mix(in srgb, var(--primary) 7%, transparent); }
+tr.delta td { font-weight: 700; border-top: 2px solid var(--line); }
+.good { color: var(--ok-text); }
+.bad { color: var(--fail-text); }
+.null { color: var(--muted-text); }
+details { border: 1px solid var(--line); border-radius: var(--radius);
+          margin-bottom: 0.6rem; overflow: hidden; background: var(--surface); }
+summary { cursor: pointer; padding: 0.6rem 1rem; font-weight: 600; font-size: 0.88rem; }
+summary:hover { background: var(--card); }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem;
+        padding: 0.8rem 1rem 1rem; border-top: 1px solid var(--line); }
+.pair h4 { margin: 0 0 0.35rem; font-family: var(--mono); font-size: 0.66rem;
+           text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted-text); }
+.pair pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere;
+            background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px;
+            padding: 0.7rem 0.9rem; font-size: 0.79rem; font-family: var(--mono);
+            max-height: 26rem; overflow-y: auto; scrollbar-width: thin; }
+.pair > div:first-child pre { border-top: 2px solid var(--neutral); }
+.pair > div:last-child pre { border-top: 2px solid var(--primary); }
+.pair .stats { margin-top: 0.35rem; font-family: var(--mono); font-size: 0.72rem;
+               color: var(--muted-text); font-variant-numeric: tabular-nums; }
+.pair-controls { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center;
+                 margin: 0.8rem 0; font-size: 0.85rem; }
+.pair-controls label { display: inline-flex; gap: 0.45rem; align-items: center;
+                       font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em;
+                       text-transform: uppercase; color: var(--muted-text); }
+.pair-controls select, .pair-controls button {
+  font: inherit; font-size: 0.82rem; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 999px; padding: 0.28rem 0.75rem; cursor: pointer; }
+#pair-view .pair { border: 1px solid var(--line); border-radius: var(--radius);
+                   background: var(--surface); }
+.judgment { margin-top: 0.8rem; border: 1px solid color-mix(in srgb, var(--primary) 45%, var(--line));
+            border-radius: var(--radius); padding: 0.8rem 1.05rem; font-size: 0.84rem;
+            background: var(--surface); }
+.judgment h4 { margin: 0 0 0.5rem; font-family: var(--mono); font-size: 0.66rem;
+               text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary-text); }
+.judgment .dim { display: flex; flex-wrap: wrap; gap: 0.4rem 0.8rem; align-items: baseline;
+                 padding: 0.28rem 0; }
+.judgment .dim b { min-width: 6.5rem; font-family: var(--mono); font-size: 0.72rem;
+                   text-transform: uppercase; letter-spacing: 0.06em; }
+.run-line { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; padding: 0.5rem 1rem;
+            border-top: 1px solid var(--line); font-size: 0.82rem; align-items: baseline; }
+.run-line .who { min-width: 17rem; font-weight: 600; font-family: var(--mono); font-size: 0.76rem; }
+.artifact-identity { display: inline-block; margin: 0 0 0.9rem; border-radius: 6px;
+                     background: var(--code-bg); border: 1px solid var(--line);
+                     padding: 0.35rem 0.65rem; }
+.artifact-identity a { font-weight: 600; text-decoration-style: dotted; }
+.artifact-identity a::after { content: " \2197"; }
+.identity-entry { margin-bottom: 0.55rem; border: 1px solid var(--line); border-radius: 8px;
+                  background: var(--code-bg); padding: 0.65rem 0.8rem; overflow-wrap: anywhere;
+                  white-space: pre-wrap; font-family: var(--mono); font-size: 0.78rem; }
+.syntax-key { color: var(--primary-text); }
+.syntax-string { color: var(--ok-text); }
+.syntax-number { color: var(--warn-text); }
+.syntax-literal { color: var(--fail-text); }
+.syntax-punct { color: var(--muted-text); }
+.identity-link { color: var(--ok-text); }
+.empty { color: var(--muted-text); }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.chip { display: inline-flex; align-items: center; font-family: var(--mono); font-size: 0.62rem;
+        letter-spacing: 0.05em; color: var(--muted-text); border: 1px solid var(--line);
+        border-radius: 999px; padding: 0.08rem 0.5rem; white-space: nowrap; }
+.chip.warn { color: var(--warn-text); border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); }
+#verdict-panels table td { font-size: 0.76rem; }
+#verdict-panels .modelcell a { text-decoration: none; font-weight: 600; }
+.cellviz { display: inline-block; vertical-align: middle; margin-left: 0.45rem; }
+.cellviz svg { display: block; }
+mark.diff-a { background: color-mix(in srgb, var(--warn) 30%, transparent); color: inherit;
+              border-radius: 3px; padding: 0 1px; }
+mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); color: inherit;
+              border-radius: 3px; padding: 0 1px; }
+.pair-controls button[aria-pressed] { border-style: dashed; }
+.pair-controls button[aria-pressed="true"] { border-style: solid; border-color: var(--primary);
+                                             color: var(--primary-text); }
+.schematic a rect { pointer-events: all; }
+.schematic a:hover rect, .schematic a:focus rect { stroke: var(--primary); stroke-width: 2; }
+.judge-meta { font-family: var(--mono); font-size: 0.64rem; color: var(--muted-text);
+              letter-spacing: 0.06em; text-transform: uppercase; font-weight: 400; }
+.glossary { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.7rem;
+            margin-bottom: 0.7rem; }
+.glossary .gloss { margin-bottom: 0; }
+.glossary h3 { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase;
+               letter-spacing: 0.08em; color: var(--primary-text); margin-bottom: 0.35rem; }
+.metric-card h3 { font-family: var(--mono); font-size: 0.8rem; text-transform: uppercase;
+                  letter-spacing: 0.08em; color: var(--primary-text); }
+.metric-example { margin-top: 0.35rem; }
+.metric-formula { font-family: var(--mono); font-size: 0.78rem; display: flex; flex-wrap: wrap;
+                  align-items: center; gap: 0.45rem; margin: 0.45rem 0 0.1rem; }
+.frac { display: inline-flex; flex-direction: column; text-align: center; vertical-align: middle;
+        line-height: 1.3; }
+.frac .den { border-top: 1px solid var(--muted); padding-top: 0.05rem; }
+.notes-list { margin: 0.3rem 0 1.2rem 1.15rem; padding: 0; font-size: 0.9rem; }
+.notes-list li { margin: 0.35rem 0; }
+.forensics { margin-bottom: 0.9rem; }
+.waffle { margin-bottom: 1.1rem; display: inline-block; }
+.waffle-row { display: grid; grid-template-columns: 15rem 6.5rem auto; align-items: center;
+              gap: 0 0.9rem; padding: 0.14rem 0; }
+.waffle-row .who { font-family: var(--mono); font-size: 0.72rem; color: var(--ink);
+                   text-align: right; white-space: nowrap; overflow: hidden;
+                   text-overflow: ellipsis; }
+.waffle-row .arm-name { font-family: var(--mono); font-size: 0.66rem; color: var(--muted-text); }
+.waffle-row.model-first .who { visibility: visible; }
+.waffle-row:not(.model-first) .who { visibility: hidden; }
+.waffle-cells { display: flex; gap: 0.24rem; }
+.waffle-cell { width: 0.8rem; height: 0.8rem; border-radius: 3px; background: var(--card); }
+.waffle-cell.ok { background: var(--ok); }
+.waffle-cell.fail { background: var(--fail); }
+.waffle-head { color: var(--muted-text); font-family: var(--mono); font-size: 0.62rem;
+               display: flex; gap: 0.24rem; }
+.waffle-head span { width: 0.8rem; text-align: center; }
+.waffle-legend { display: flex; gap: 1.2rem; font-family: var(--mono); font-size: 0.66rem;
+                 color: var(--muted-text); margin-top: 0.5rem; justify-content: flex-end; }
+.waffle-legend .waffle-cell { display: inline-block; vertical-align: -0.15rem; margin-right: 0.3rem; }
+.info { display: inline-flex; align-items: center; justify-content: center;
+        width: 0.95rem; height: 0.95rem; margin-left: 0.3rem; border: 1px solid var(--line);
+        border-radius: 50%; color: var(--muted-text); font-family: var(--mono); font-size: 0.6rem;
+        font-weight: 400; cursor: help; vertical-align: middle; text-transform: none; }
+.info:hover, .info:focus-visible { color: var(--primary-text); border-color: var(--primary); }
+#tooltip { position: fixed; z-index: 50; max-width: 21rem; background: var(--surface);
+           color: var(--ink); border: 1px solid color-mix(in srgb, var(--primary) 45%, var(--line));
+           border-radius: 8px; padding: 0.55rem 0.75rem; font-size: 0.78rem; line-height: 1.45;
+           font-family: -apple-system, "Avenir Next", "Segoe UI", system-ui, sans-serif;
+           font-weight: 400; letter-spacing: normal; text-transform: none; text-align: left;
+           white-space: normal; box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+           pointer-events: none; }
+.legend { font-family: var(--mono); font-size: 0.68rem; color: var(--muted-text);
+          letter-spacing: 0.03em; margin: 0.35rem 0 1rem; display: flex; flex-wrap: wrap;
+          gap: 0.3rem 1.4rem; align-items: center; }
+.legend .swatch { display: inline-block; width: 0.55rem; height: 0.55rem; border-radius: 50%;
+                  margin-right: 0.3rem; vertical-align: -0.05rem; }
+@media (max-width: 900px) {
+  .pair { grid-template-columns: 1fr; }
+  .masthead { padding-top: 3.4rem; }
+}
+@media (max-width: 480px) {
+  :root { --page-pad: 0.9rem; }
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .verdict-grid { grid-template-columns: minmax(0, 1fr); }
+  th, td { font-size: 0.74rem; }
+  .pair pre { max-height: 18rem; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
 </head>
 <body>
+<a class="skip" href="#verdicts">Skip to verdicts</a>
+<div class="theme-control" role="radiogroup" aria-label="Theme">
+  <button type="button" data-theme-value="system" role="radio" aria-checked="true">system</button>
+  <button type="button" data-theme-value="light" role="radio" aria-checked="false">light</button>
+  <button type="button" data-theme-value="dark" role="radio" aria-checked="false">dark</button>
+</div>
+<header class="masthead">
+  <div class="eyebrow">Artifact benchmark · matched-pair comparison</div>
+  <h1 id="title">Artifact benchmark</h1>
+  <p class="meta-line"><span id="meta"></span> · <span id="model-count"></span></p>
+</header>
+<div class="layout">
+<nav class="side" aria-label="Report sections"><ul id="nav"></ul></nav>
 <main>
-    <div class="eyebrow">Artifact benchmark</div>
-    <h1 id="artifact-name"></h1>
-    <p class="meta" id="meta-line"></p>
-
-    <h2>Summary by model</h2>
-    <div class="table-wrap">
-        <table id="summary-table">
-            <thead>
-                <tr>
-                    <th>Model</th><th>Configuration</th>
-                    <th class="num">Pass rate</th><th class="num">Δ pass</th>
-                    <th class="num">Time</th><th class="num">Tokens</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+  <section id="verdicts" aria-labelledby="verdict-heading">
+    <h2 id="verdict-heading">Verdicts</h2>
+    <p id="tested"></p>
+    <div class="cards" id="summary"></div>
+    <div class="verdict-tabs" id="verdict-tabs" role="tablist" aria-label="Verdict comparison"></div>
+    <div id="verdict-panels"></div>
+  </section>
+  <section id="how" aria-labelledby="how-heading">
+    <h2 id="how-heading">How to read this report</h2>
+    <div class="prose-card">
+      <p>The benchmark asks one question: does the artifact change model behavior enough to earn its context cost? Each model ran the same tasks twice. Only the artifact differs between the two runs.</p>
     </div>
-
-    <h2>Cases</h2>
-    <div id="cases"></div>
-
-    <footer>Self-contained report; data inlined at build time by build_report.py.</footer>
+    <div class="glossary">
+      <div class="prose-card gloss">
+        <h3>The grader</h3>
+        <p>A deterministic script, not a model. It reads each response and checks every frozen fact check. Each check names one required fact, figure, or restriction. The result is pass or fail, with evidence.</p>
+      </div>
+      <div class="prose-card gloss">
+        <h3>The checker</h3>
+        <p>A deterministic program that scans the response for rule violations. One violation is one finding. This benchmark uses the checker named under Identities. It counts Simplified Technical English violations, for example a passive sentence or a banned word. Findings for each 100 words makes short and long responses comparable.</p>
+      </div>
+      <div class="prose-card gloss">
+        <h3>The blind judge</h3>
+        <p>A language model from a different vendor than the model under test. It reads both responses with shuffled A and B labels. It never learns which response used the artifact. It picks a winner for each judging dimension and gives one reason.</p>
+      </div>
+    </div>
+    <figure class="schematic">
+      <svg viewBox="0 0 900 240" role="img" aria-label="Each case runs twice per model, with and without the artifact; both responses are graded and judged blind">
+        <defs>
+          <marker id="flow-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <g stroke="currentColor" fill="none" stroke-width="1.2">
+          <rect x="16"  y="90"  width="130" height="56" rx="9"/>
+          <rect x="216" y="26"  width="170" height="56" rx="9"/>
+          <rect x="216" y="156" width="170" height="56" rx="9" stroke="var(--primary)" stroke-width="1.8"/>
+          <rect x="466" y="26"  width="160" height="56" rx="9"/>
+          <rect x="466" y="156" width="160" height="56" rx="9"/>
+          <rect x="698" y="88"  width="194" height="64" rx="9"/>
+        </g>
+        <g fill="currentColor" font-size="12.5" text-anchor="middle" font-family="var(--mono)">
+          <text x="81"  y="112">case + files</text>
+          <text x="81"  y="130" font-size="10.5" opacity="0.6">frozen assertions</text>
+          <text x="301" y="50">baseline arm</text>
+          <text x="301" y="68" font-size="10.5" opacity="0.6">no artifact</text>
+          <text x="301" y="180" fill="var(--primary)">treatment arm</text>
+          <text x="301" y="198" font-size="10.5" opacity="0.6">artifact in context</text>
+          <text x="546" y="50">response A</text>
+          <text x="546" y="68" font-size="10.5" opacity="0.6">assertions · checker</text>
+          <text x="546" y="180">response B</text>
+          <text x="546" y="198" font-size="10.5" opacity="0.6">assertions · checker</text>
+          <text x="795" y="110">blind judge</text>
+          <text x="795" y="126" font-size="10.5" opacity="0.6">other-vendor model</text>
+          <text x="795" y="142" font-size="9.8" opacity="0.6">clarity · fluency · directness</text>
+        </g>
+        <g stroke="currentColor" fill="none" stroke-width="1.2" marker-end="url(#flow-arrow)">
+          <path d="M146 106 L186 106 L186 54  L212 54"/>
+          <path d="M146 130 L186 130 L186 184 L212 184"/>
+          <line x1="386" y1="54"  x2="462" y2="54"/>
+          <line x1="386" y1="184" x2="462" y2="184"/>
+          <path d="M626 54  L666 54  L666 108 L702 108"/>
+          <path d="M626 184 L666 184 L666 132 L702 132"/>
+        </g>
+        <text x="795" y="172" fill="currentColor" opacity="0.6" font-size="10.5" text-anchor="middle" font-family="var(--mono)">responses arrive shuffled as A and B</text>
+        <g fill="transparent" stroke="none">
+          <a href="#cases" aria-label="Jump to run records"><rect x="16" y="90" width="130" height="56" rx="9"/></a>
+          <a href="#comparisons" aria-label="Jump to comparisons"><rect x="216" y="26" width="170" height="56" rx="9"/></a>
+          <a href="#comparisons" aria-label="Jump to comparisons"><rect x="216" y="156" width="170" height="56" rx="9"/></a>
+          <a href="#examples" aria-label="Jump to pair review"><rect x="466" y="26" width="160" height="56" rx="9"/></a>
+          <a href="#examples" aria-label="Jump to pair review"><rect x="466" y="156" width="160" height="56" rx="9"/></a>
+          <a href="#examples" aria-label="Jump to pair review"><rect x="698" y="88" width="194" height="64" rx="9"/></a>
+        </g>
+      </svg>
+      <figcaption class="muted">Each case runs twice for each model with the same prompt, files, and mode. Only the artifact differs. Assertions guard meaning. The checker measures the claimed behavior. A blind judge from another vendor compares the shuffled pair. The verdict reads the three signals together, within one model. The boxes link to the matching report sections.</figcaption>
+    </figure>
+    <div class="prose-card">
+      <p><b>Assertion pass rate (0–1, higher is better).</b> The case assertions measure required behavior. A drop means the artifact harmed a requirement.</p>
+      <p><b>Checker findings (per 100 words, lower is better).</b> The report divides total findings by total words across matched outputs.</p>
+      <p><b>Clarity (0–1, higher favors the artifact).</b> A blind judge selects the output with less ambiguity.</p>
+      <p><b>Fluency (0–1, higher favors the artifact).</b> A blind judge selects the more natural output.</p>
+      <p><b>Directness (0–1, higher favors the artifact).</b> A blind judge selects the output that states useful information sooner.</p>
+    </div>
+    <div class="prose-card">
+      <p><b>Verdict rule:</b> Required meaning must not regress. Checker findings must decrease. Every enabled preference dimension must meet its threshold. A lower score produces a trade-off verdict. The report never averages models.</p>
+    </div>
+    <div class="prose-card" id="threshold-panel">
+      <h3>Verdict settings</h3>
+      <p class="muted">The aggregate stores the recorded verdict. A manifest can set a weight and thresholds for each judge dimension.</p>
+      <p class="muted mono" id="threshold-line"></p>
+      <p class="muted mono" id="weight-line"></p>
+    </div>
+  </section>
+  <div id="comparisons" aria-label="Comparisons"></div>
+  <section id="examples" aria-labelledby="example-heading">
+    <h2 id="example-heading">Review the pairs</h2>
+    <p class="muted">Each pair shows one task and one model, once with the artifact and once without it. The blind judgment for the pair appears below the texts.</p>
+    <div class="pair-controls">
+      <label>Artifact <select id="pair-comparison"></select></label>
+      <label>Model <select id="pair-model"></select></label>
+      <label>Case <select id="pair-case"></select></label>
+      <button type="button" id="pair-prev" aria-label="Previous pair">←</button>
+      <button type="button" id="pair-next" aria-label="Next pair">→</button>
+      <button type="button" id="pair-diff" aria-pressed="true">highlight differences</button>
+      <span id="pair-position" class="muted"></span>
+    </div>
+    <div id="pair-view"></div>
+  </section>
+  <section id="cases" aria-labelledby="case-heading">
+    <h2 id="case-heading">Run records by case</h2>
+    <div id="runs"></div>
+  </section>
+  <section id="metrics-section" aria-labelledby="metrics-heading">
+    <h2 id="metrics-heading">Metric definitions</h2>
+    <p class="muted">Each metric with its method and one example. A manifest can replace these definitions.</p>
+    <div id="metric-list"></div>
+  </section>
+  <section id="notes-section" aria-labelledby="notes-heading">
+    <h2 id="notes-heading">Notes and caveats</h2>
+    <div id="notes"></div>
+  </section>
+  <section id="identity" aria-labelledby="identity-heading">
+    <h2 id="identity-heading">Identities</h2>
+    <div id="identities"></div>
+  </section>
 </main>
+</div>
 <script>
-    "use strict";
-    var DATA = JSON.parse(new TextDecoder().decode(
-        Uint8Array.from(atob("__BENCHMARK_DATA_BASE64__"), function (c) { return c.charCodeAt(0); })
-    ));
+"use strict";
+const DATA = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob("__BENCHMARK_DATA_BASE64__"), c => c.charCodeAt(0))));
+const el = (tag, text, cls) => { const node = document.createElement(tag); if (text !== undefined && text !== null) node.textContent = String(text); if (cls) node.className = cls; return node; };
+const fmt = value => value === null || value === undefined ? "—" : typeof value === "number" ? (Number.isInteger(value) ? String(value) : value.toFixed(2)) : String(value);
+const listText = values => new Intl.ListFormat("en", { style: "long", type: "conjunction" }).format(values);
+const SVG_NS = "http://www.w3.org/2000/svg";
+const svg = (tag, attrs) => { const node = document.createElementNS(SVG_NS, tag);
+  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value); return node; };
+const dumbbell = (base, treat, lowerBetter) => {
+  if (!Number.isFinite(base) || !Number.isFinite(treat)) return null;
+  const box = svg("svg", { width: 58, height: 12, viewBox: "0 0 58 12", "aria-hidden": "true" });
+  const low = Math.min(base, treat), high = Math.max(base, treat);
+  const span = high - low || 1;
+  const x = value => 6 + 46 * ((value - low) / span);
+  const improved = lowerBetter ? treat < base : treat > base;
+  box.append(
+    svg("line", { x1: x(base), y1: 6, x2: x(treat), y2: 6, stroke: "currentColor", "stroke-opacity": 0.35, "stroke-width": 1.4 }),
+    svg("circle", { cx: x(base), cy: 6, r: 2.4, fill: "currentColor", "fill-opacity": 0.45 }),
+    svg("circle", { cx: x(treat), cy: 6, r: 3.2, fill: treat === base ? "currentColor" : improved ? "var(--ok)" : "var(--fail)" }));
+  const holder = el("span", null, "cellviz");
+  holder.appendChild(box);
+  return holder;
+};
+const drawGauge = (holder, value, dimension) => {
+  holder.replaceChildren();
+  const low = dimensionThreshold(dimension, "trade_off");
+  const high = dimensionThreshold(dimension, "win");
+  const box = svg("svg", { width: 46, height: 12, viewBox: "0 0 46 12", "aria-hidden": "true" });
+  const x = share => 4 + 38 * Math.min(Math.max(share, 0), 1);
+  box.append(
+    svg("rect", { x: x(0), y: 4.5, width: x(low) - x(0), height: 3, rx: 1.5, fill: "var(--fail)", "fill-opacity": 0.22 }),
+    svg("rect", { x: x(low), y: 4.5, width: Math.max(x(high) - x(low), 0), height: 3, fill: "var(--warn)", "fill-opacity": 0.25 }),
+    svg("rect", { x: x(high), y: 4.5, width: Math.max(x(1) - x(high), 0), height: 3, rx: 1.5, fill: "var(--ok)", "fill-opacity": 0.22 }),
+    svg("circle", { cx: x(value), cy: 6, r: 3.1,
+      fill: value < low ? "var(--fail)" : value < high ? "var(--warn)" : "var(--ok)" }));
+  holder.appendChild(box);
+};
+const gauge = (value, dimension) => {
+  if (!Number.isFinite(value)) return null;
+  const holder = el("span", null, "cellviz");
+  drawGauge(holder, value, dimension);
+  return holder;
+};
+const mean = summary => summary && summary.mean !== null && summary.mean !== undefined ? summary.mean : null;
+const DEFAULT_METRICS = [
+  { id: "valid", label: "Valid runs",
+    definition: "The count of runs that returned a parseable final response. Only valid runs get grades and pairs.",
+    formula: { text: "count of runs with state valid" },
+    example: "6 of 6 planned runs returned a response, so all 6 count." },
+  { id: "excluded", label: "Excluded runs",
+    definition: "The count of runs that failed before grading. Causes include provider failure, timeout, and invalid output. An excluded run reduces the sample. It never counts as a failed fact check.",
+    formula: { text: "count of runs with a failure state" },
+    example: "A provider that returns exit code 1 six times shows 6 excluded runs and no verdict." },
+  { id: "assertions", label: "Facts kept",
+    definition: "The share of frozen fact checks that passed. Each check names one required fact, figure, or restriction. A drop means the output lost required content.",
+    formula: { numerator: "passed checks", denominator: "total checks", suffix: "mean over valid runs" },
+    example: "1.00 means 18 of 18 checks passed. 0.83 means 15 of 18 passed." },
+  { id: "checker", label: "Findings /100w",
+    definition: "Checker findings for each 100 checked words. The checker is the deterministic program named under Identities. A lower value is better. It measures the claimed writing behavior, not overall quality.",
+    formula: { numerator: "total checker findings", denominator: "total checked words", suffix: "\u00d7 100" },
+    example: "4.89 \u2192 1.09 means the artifact removed most style violations from the same tasks." },
+  { id: "words", label: "Words",
+    definition: "The mean word count of this side's responses in matched pairs. Strong growth against the baseline usually signals meta text instead of the deliverable.",
+    formula: { numerator: "total words", denominator: "matched responses" },
+    example: "463 \u2192 1447 words showed that one model answered with plans instead of the requested text." },
+  { id: "clarity", label: "Clarity wins",
+    definition: "The share of blind pairs where the judge selected this side as easier to understand. A judge from another vendor reads each pair with shuffled labels. 0.50 equals a coin flip. A value below the clarity trade-off threshold counts as a trade-off in the verdict.",
+    formula: { numerator: "wins + \u00bd ties", denominator: "judged pairs" },
+    example: "0.33 over 6 pairs means the judge chose this side 2 times." },
+  { id: "fluency", label: "Fluency wins",
+    definition: "The share of blind pairs where the judge selected this side as the more natural prose. Same blind method: shuffled labels, another vendor. A value below the fluency trade-off threshold counts as a trade-off.",
+    formula: { numerator: "wins + \u00bd ties", denominator: "judged pairs" },
+    example: "0.25 over 6 pairs means the judge chose this side 1.5 times, with one tie." },
+  { id: "directness", label: "Directness wins",
+    definition: "The share of blind pairs where the judge selected this side as the one that states useful information sooner. Same blind method. Planning narration and filler lower this score.",
+    formula: { numerator: "wins + \u00bd ties", denominator: "judged pairs" },
+    example: "0.75 over 6 pairs means the judge chose this side 4.5 times." },
+  { id: "seconds", label: "Seconds",
+    definition: "The mean provider wall-clock seconds for one run on this side.",
+    formula: { numerator: "total seconds", denominator: "runs" },
+    example: "28.25 \u2192 36.55 means the artifact added about 8 seconds for each run." },
+  { id: "output_tokens", label: "Output tokens",
+    definition: "The mean output tokens the provider reported for this side. A missing value stays blank. The report never estimates tokens.",
+    formula: { numerator: "total reported output tokens", denominator: "runs" },
+    example: "400.67 \u2192 467.33 means the artifact made responses about 17% longer in tokens." },
+];
+const METRICS = (Array.isArray(DATA.metric_definitions) && DATA.metric_definitions.length)
+  ? DATA.metric_definitions : DEFAULT_METRICS;
+const VERDICT_THRESHOLDS = {
+  trade_off: Number(DATA.verdict_thresholds.trade_off),
+  win: Number(DATA.verdict_thresholds.win),
+};
+const metricLabel = id => METRICS.find(item => item.id === id)?.label
+  || DEFAULT_METRICS.find(item => item.id === id)?.label || id;
+const JUDGING = DATA.judging || null;
+const JUDGE_DIMENSIONS = ["clarity", "fluency", "directness"];
+const dimensionSpec = id => JUDGING?.dimensions?.find(item => item.id === id) || {};
+const dimensionThreshold = (id, key) => {
+  const value = dimensionSpec(id)[key];
+  return Number.isFinite(value) ? value : VERDICT_THRESHOLDS[key];
+};
+const dimensionWeight = id => {
+  const weight = dimensionSpec(id).weight;
+  return Number.isFinite(weight) ? weight : (id === "fluency" ? 0.5 : 1);
+};
+const COLUMN_INFO = {
+  "Arm": "The configuration that produced these runs. The treatment arm carries the artifact. The baseline arm runs the identical prompt without it.",
+  [`${metricLabel("assertions")} \u0394`]: "Treatment pass rate minus baseline pass rate over matched pairs. A negative value means the artifact removed required content.",
+  "Verdict": "Three signals read together within one model: assertions must hold, the checker must improve, and blind preference must stay acceptable. Each preference dimension uses its listed thresholds. The report withholds a verdict when fewer than half of the planned pairs are valid.",
+  "Pairs": "Matched pairs: the same case and run number valid in both arms, out of the planned count. Deltas use matched pairs only.",
+};
+for (const item of METRICS) {
+  COLUMN_INFO[item.label] = item.definition;
+}
+if (JUDGING) {
+  for (const dimension of JUDGING.dimensions || []) {
+    const label = dimension.label || dimension.id;
+    const base = COLUMN_INFO[label] || "The share of blind pairs where the judge preferred this side, ties counting one half.";
+    COLUMN_INFO[label] = `Judge criterion: ${dimension.criterion} \u2014 ${base}`;
+  }
+}
+const weightSentence = id => {
+  const weight = dimensionWeight(id);
+  if (weight === 0) return " Weight 0: this dimension does not change the verdict.";
+  if (weight < 1) return ` Weight ${weight}: a low score here softens the verdict label. It does not downgrade the verdict.`;
+  return ` Weight ${weight}: a low score here counts as a full trade-off.`;
+};
+for (const id of ["clarity", "fluency", "directness"]) {
+  const label = metricLabel(id);
+  if (COLUMN_INFO[label]) COLUMN_INFO[label] += weightSentence(id);
+}
+const tooltip = el("div", null, null);
+tooltip.id = "tooltip";
+tooltip.hidden = true;
+document.body.appendChild(tooltip);
+const showTooltip = (target, message) => {
+  tooltip.textContent = message;
+  tooltip.hidden = false;
+  const anchorBox = target.getBoundingClientRect();
+  tooltip.style.left = "0px"; tooltip.style.top = "0px";
+  const box = tooltip.getBoundingClientRect();
+  const left = Math.min(Math.max(8, anchorBox.left - 12), window.innerWidth - box.width - 8);
+  const top = anchorBox.bottom + 8 + box.height > window.innerHeight
+    ? anchorBox.top - box.height - 8 : anchorBox.bottom + 8;
+  tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${Math.max(8, top)}px`;
+};
+const hideTooltip = () => { tooltip.hidden = true; };
+const infoDot = message => {
+  const dot = el("span", "i", "info");
+  dot.tabIndex = 0;
+  dot.setAttribute("role", "note");
+  dot.setAttribute("aria-label", message);
+  dot.addEventListener("mouseenter", () => showTooltip(dot, message));
+  dot.addEventListener("mouseleave", hideTooltip);
+  dot.addEventListener("focus", () => showTooltip(dot, message));
+  dot.addEventListener("blur", hideTooltip);
+  return dot;
+};
+const headerCell = label => {
+  const cell = el("th", label);
+  if (COLUMN_INFO[label]) cell.appendChild(infoDot(COLUMN_INFO[label]));
+  return cell;
+};
+const metadata = DATA.metadata || {};
+const artifact = metadata.artifact_name || "Artifact benchmark";
+const comparisonList = DATA.comparisons || [];
+const comparisonAttempted = comparison => Object.values(comparison.models || {}).some(data =>
+  (data.primary?.planned_samples || 0) > 0);
+const attemptedComparisons = comparisonList.filter(comparisonAttempted);
+const shownComparisons = attemptedComparisons.length ? attemptedComparisons : comparisonList;
+const themeButtons = [...document.querySelectorAll("[data-theme-value]")];
+const setTheme = value => {
+  if (value === "system") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.dataset.theme = value;
+  themeButtons.forEach(button => button.setAttribute("aria-checked", String(button.dataset.themeValue === value)));
+  try { localStorage.setItem("bench-theme", value); } catch {}
+};
+let savedTheme = "system";
+try { savedTheme = localStorage.getItem("bench-theme") || "system"; } catch {}
+if (!new Set(["system", "light", "dark"]).has(savedTheme)) savedTheme = "system";
+themeButtons.forEach(button => button.addEventListener("click", () => setTheme(button.dataset.themeValue)));
+setTheme(savedTheme);
+document.title = `${artifact} benchmark`;
+document.getElementById("title").textContent = `${artifact} benchmark`;
+document.getElementById("meta").textContent = metadata.timestamp || "";
+document.getElementById("model-count").textContent = `${(metadata.models || []).length} models`;
 
-    function el(tag, className, text) {
-        var node = document.createElement(tag);
-        if (className) node.className = className;
-        if (text !== undefined && text !== null) node.textContent = text;
-        return node;
+const counts = metadata.run_counts || {};
+[[counts.total || 0, "runs recorded", "\u25a4", "var(--primary)"],
+ [counts.valid || 0, "valid", "\u2713", "var(--ok)"],
+ [counts.excluded || 0, "excluded", "\u2715", "var(--fail)"],
+ [attemptedComparisons.length, "comparisons attempted", "\u21c4", "var(--violet)"]].forEach(([number, label, glyph, color]) => {
+  const card = el("div", null, "card");
+  const icon = el("div", glyph, "icon");
+  icon.style.setProperty("--chip", color);
+  card.append(icon, el("div", number, "value"), el("div", label, "label"));
+  document.getElementById("summary").appendChild(card);
+});
+
+const armLabel = arm => {
+  const spec = (DATA.arms || {})[arm] || {};
+  const kind = typeof spec.artifact_kind === "string" ? spec.artifact_kind : "artifact";
+  const name = typeof spec.artifact_name === "string" ? spec.artifact_name
+    : typeof spec.artifact_path === "string" ? spec.artifact_path.split(/[\\/]/).pop() : null;
+  return name ? `the ${kind} ${name}` : `the ${arm} arm`;
+};
+const artifactHref = spec => typeof spec.artifact_url === "string" && spec.artifact_url
+  ? spec.artifact_url : null;
+const armIdentity = arm => {
+  const spec = (DATA.arms || {})[arm] || {};
+  const line = el("p", null, "muted mono artifact-identity");
+  const href = artifactHref(spec);
+  if (typeof spec.artifact_source === "string") {
+    line.append("source ", spec.artifact_source);
+  }
+  if (typeof spec.artifact_path === "string") {
+    if (line.childNodes.length) line.append("  ·  ");
+    line.append("snapshot ");
+    const snapshotName = spec.artifact_path.split(/[\\/]/).pop();
+    if (href) {
+      const link = el("a", snapshotName);
+      link.href = href;
+      link.target = "_blank";
+      link.rel = "noopener";
+      line.append(link);
+    } else line.append(snapshotName);
+  }
+  if (typeof spec.artifact_sha256 === "string") {
+    if (line.childNodes.length) line.append("  ·  ");
+    line.append(`sha256 ${spec.artifact_sha256.slice(0, 12)}…`);
+  }
+  return line.childNodes.length ? line : null;
+};
+const tested = attemptedComparisons.map(comparison => armLabel(comparison.primary));
+document.getElementById("tested").textContent = tested.length
+  ? `This benchmark tests ${listText(tested)}. Each model answered every task twice: once with the artifact in context and once without it.`
+  : comparisonList.length ? "No comparison has treatment run records." : "No comparisons are defined.";
+
+const LOWER_IS_BETTER = new Set(["lint_violations", "lint_per100w", "duration_seconds",
+  "input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens", "total_tokens"]);
+const deltaClass = (name, delta) => {
+  if (!Number.isFinite(delta) || delta === 0 || name === "word_count") return "";
+  return (LOWER_IS_BETTER.has(name) ? delta < 0 : delta > 0) ? "good" : "bad";
+};
+const pairedMetric = (data, side, name) => {
+  if (name === "assertion_pass_rate" || name === "lint_per100w") {
+    const corpusValue = data.paired_corpus?.[side]?.[name];
+    if (Number.isFinite(corpusValue)) return corpusValue;
+  }
+  const pairedValue = mean(data.paired_metrics?.[side]?.[name]);
+  return pairedValue === null ? mean(data[side]?.metrics?.[name]) : pairedValue;
+};
+const pairedDelta = (data, name) => {
+  const value = data.paired_corpus?.deltas?.[name];
+  return Number.isFinite(value) ? value : data.deltas?.[name];
+};
+
+const VERDICT_CLASSES = {
+  neutral: "b-neutral",
+  fail: "b-fail",
+  warn: "b-warn",
+  ok: "b-ok",
+};
+const recordedVerdict = data => {
+  const record = data.verdict || {};
+  const status = Object.hasOwn(VERDICT_CLASSES, record.status) ? record.status : "neutral";
+  const label = typeof record.label === "string" && record.label
+    ? record.label : "Verdict unavailable";
+  const parts = Array.isArray(record.parts)
+    ? record.parts.filter(part => typeof part === "string") : [];
+  return { cls: VERDICT_CLASSES[status], label, parts };
+};
+
+const nav = document.getElementById("nav");
+const addNav = (id, label) => { const item = el("li"); const link = el("a", label); link.href = `#${id}`; item.appendChild(link); nav.appendChild(item); };
+addNav("verdicts", "Verdicts");
+addNav("how", "How to read");
+
+const verdictPanelsRoot = document.getElementById("verdict-panels");
+const verdictTabs = document.getElementById("verdict-tabs");
+const comparisonsRoot = document.getElementById("comparisons");
+const comparisonDomIds = new Map(shownComparisons.map((comparison, index) => [
+  comparison.id,
+  { tab: `verdict-tab-${index}`, panel: `verdict-panel-${index}` },
+]));
+const pairHashFor = (comparisonId, model, evalId, runNumber) => {
+  const parts = [comparisonId, model];
+  if (evalId !== undefined && runNumber !== undefined) parts.push(evalId, runNumber);
+  return `#pair=${parts.map(value => encodeURIComponent(String(value))).join("/")}`;
+};
+const setActiveComparison = comparisonId => {
+  verdictTabs.querySelectorAll("button").forEach(button => {
+    const selected = button.dataset.comparison === comparisonId;
+    button.setAttribute("aria-selected", String(selected));
+    button.tabIndex = selected ? 0 : -1;
+  });
+  document.querySelectorAll(".verdict-panel, .comparison-detail").forEach(panel => {
+    const hidden = panel.dataset.comparison !== comparisonId;
+    panel.hidden = hidden;
+    panel.setAttribute("aria-hidden", String(hidden));
+  });
+};
+for (const comparison of shownComparisons) {
+  const spec = (DATA.arms || {})[comparison.primary] || {};
+  const kind = typeof spec.artifact_kind === "string" ? spec.artifact_kind : null;
+  const label = comparison.tab_label || spec.artifact_name || comparison.label
+    || (kind ? kind.charAt(0).toUpperCase() + kind.slice(1) : comparison.id);
+  const ids = comparisonDomIds.get(comparison.id);
+  const button = el("button", label);
+  button.id = ids.tab;
+  button.type = "button";
+  button.role = "tab";
+  button.dataset.comparison = comparison.id;
+  button.dataset.kind = kind || "artifact";
+  button.setAttribute("aria-controls", ids.panel);
+  button.setAttribute("aria-selected", "false");
+  button.tabIndex = -1;
+  button.addEventListener("click", () => setActiveComparison(comparison.id));
+  verdictTabs.appendChild(button);
+}
+if (shownComparisons.length) {
+  verdictTabs.addEventListener("keydown", event => {
+    const tabs = [...verdictTabs.querySelectorAll("button")];
+    const focused = tabs.indexOf(document.activeElement);
+    const current = focused >= 0 ? focused : 0;
+    let next = current;
+    if (event.key === "ArrowRight") next = (current + 1) % tabs.length;
+    else if (event.key === "ArrowLeft") next = (current - 1 + tabs.length) % tabs.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = tabs.length - 1;
+    else return;
+    event.preventDefault();
+    event.stopPropagation();
+    setActiveComparison(tabs[next].dataset.comparison);
+    tabs[next].focus();
+  });
+}
+addNav("comparisons", "Comparison details");
+for (const comparison of shownComparisons) {
+  const sectionId = `cmp-${comparison.id}`;
+  const ids = comparisonDomIds.get(comparison.id);
+  const panel = el("div", null, "verdict-panel");
+  panel.id = ids.panel;
+  panel.role = "tabpanel";
+  panel.dataset.comparison = comparison.id;
+  panel.setAttribute("aria-labelledby", ids.tab);
+  const verdictGrid = el("div", null, "verdict-grid");
+  const section = el("section", null, "comparison-detail");
+  section.id = sectionId;
+  section.dataset.comparison = comparison.id;
+  const heading = el("h2", comparison.label || comparison.id);
+  section.append(heading, el("p", `Artifact under test: ${armLabel(comparison.primary)} (arm ${comparison.primary}), against ${comparison.baseline}. Matched pairs only.`, "muted"));
+  const identity = armIdentity(comparison.primary);
+  if (identity) section.append(identity);
+  const models = Object.entries(comparison.models || {});
+  if (!models.length) section.appendChild(el("p", "No run records are available for this comparison.", "empty"));
+  const matrixScroll = el("div", null, "scroll");
+  matrixScroll.dataset.comparison = comparison.id;
+  const matrix = el("table");
+  matrix.setAttribute("aria-label", `Scoring matrix for ${comparison.label || comparison.id}`);
+  const matrixHead = el("tr");
+  ["Model", "Verdict", "Pairs", `${metricLabel("assertions")} \u0394`, metricLabel("checker"),
+    metricLabel("clarity"), metricLabel("fluency"), metricLabel("directness")]
+    .forEach(label => matrixHead.appendChild(headerCell(label)));
+  const matrixThead = el("thead"); matrixThead.appendChild(matrixHead); matrix.appendChild(matrixThead);
+  const matrixBody = el("tbody"); matrix.appendChild(matrixBody);
+  matrixScroll.appendChild(matrix);
+  const legend = el("p", null, "legend");
+  const legendDot = (color, label) => {
+    const item = el("span");
+    const swatch = el("span", null, "swatch");
+    swatch.style.background = color;
+    item.append(swatch, label);
+    return item;
+  };
+  legend.append(
+    legendDot("var(--fail)", "below the dimension trade-off threshold"),
+    legendDot("var(--warn)", "between the dimension thresholds"),
+    legendDot("var(--ok)", "above the dimension win threshold"),
+    el("span", "thresholds: " + JUDGE_DIMENSIONS.map(id =>
+      `${metricLabel(id).replace(/ wins$/, "")}: trade-off < ${dimensionThreshold(id, "trade_off").toFixed(2)}, win > ${dimensionThreshold(id, "win").toFixed(2)}`
+    ).join(" \u00b7 ")),
+    el("span", "dumbbell: faint dot = baseline, solid dot = treatment; green when the artifact improves"),
+    el("span", "weights: " + ["clarity", "fluency", "directness"]
+      .map(id => `${metricLabel(id).replace(/ wins$/, "")} \u00d7${dimensionWeight(id)}`).join(" \u00b7 ")));
+  panel.append(matrixScroll, legend, verdictGrid);
+  for (const [model, data] of models) {
+    const summary = recordedVerdict(data);
+    const row = el("article", null, "verdict-row");
+    row.dataset.verdict = summary.cls.replace(/^b-/, "");
+    row.setAttribute("aria-label", `${model}: ${summary.label}`);
+    const rowBadge = el("span", summary.label, `badge ${summary.cls}`);
+    const rowSentence = el("ul", null, "verdict-points");
+    for (const point of summary.parts) rowSentence.appendChild(el("li", point));
+    const rowTitle = el("h3", model);
+    rowTitle.appendChild(el("span", armLabel(comparison.primary).replace(/^the /, ""), "verdict-artifact"));
+    row.append(rowTitle, rowBadge, rowSentence);
+    verdictGrid.appendChild(row);
+    const matrixRow = el("tr");
+    const modelCell = el("td", null, "modelcell");
+    if ((data.paired_samples || 0) > 0) {
+      const modelLink = el("a", model);
+      modelLink.href = pairHashFor(comparison.id, model);
+      modelLink.title = "Review this model's pairs";
+      modelCell.appendChild(modelLink);
+    } else {
+      modelCell.textContent = model;
     }
-
-    function splitConfig(name) {
-        var at = name.indexOf("@");
-        if (at === -1) return { base: name, model: "default" };
-        return { base: name.slice(0, at), model: name.slice(at + 1) || "default" };
+    const verdictCell = el("td");
+    const matrixBadge = el("span", summary.label, `badge ${summary.cls}`);
+    verdictCell.appendChild(matrixBadge);
+    const pairsCell = el("td", `${data.paired_samples || 0}/${data.planned_pairs || 0}`);
+    const assertionDelta = pairedDelta(data, "assertion_pass_rate");
+    const assertionCell = el("td", fmt(assertionDelta), deltaClass("assertion_pass_rate", assertionDelta));
+    const checkerCell = el("td");
+    const checkerBase = pairedMetric(data, "baseline", "lint_per100w");
+    const checkerTreat = pairedMetric(data, "primary", "lint_per100w");
+    checkerCell.append(`${fmt(checkerBase)} \u2192 ${fmt(checkerTreat)}`);
+    const checkerViz = dumbbell(checkerBase, checkerTreat, true);
+    if (checkerViz) checkerCell.appendChild(checkerViz);
+    matrixRow.append(modelCell, verdictCell, pairsCell, assertionCell, checkerCell);
+    for (const dimension of ["clarity_preference", "fluency_preference", "directness_preference"]) {
+      const value = mean(data.primary?.metrics?.[dimension]);
+      const cell = el("td", fmt(value), value === null ? "null" : "");
+      const viz = gauge(value, dimension.replace(/_preference$/, ""));
+      if (viz) cell.appendChild(viz);
+      matrixRow.appendChild(cell);
     }
+    matrixBody.appendChild(matrixRow);
 
-    function pct(stats) {
-        if (!stats) return "—";
-        return (stats.mean * 100).toFixed(0) + "% ± " + (stats.stddev * 100).toFixed(0) + "%";
+    const block = el("article", null, "model-block");
+    const head = el("div", null, "model-head");
+    const headBadge = el("span", summary.label, `badge ${summary.cls}`);
+    head.append(el("h3", model), headBadge);
+    const routeInfo = (DATA.runs || []).find(run => run.model === model && run.route)?.route;
+    if (routeInfo) {
+      const routeName = routeInfo.resolved_route || routeInfo.requested_route || routeInfo.requested_provider;
+      if (routeName) head.appendChild(el("span", routeInfo.clean_harness_state ? `${routeName} \u00b7 clean state` : routeName, "chip"));
     }
-
-    function deltaClass(value) {
-        var number = parseFloat(value);
-        if (!isFinite(number) || number === 0) return "delta-zero";
-        return number > 0 ? "delta-pos" : "delta-neg";
+    const wordsBase = pairedMetric(data, "baseline", "word_count");
+    const wordsTreat = pairedMetric(data, "primary", "word_count");
+    if (Number.isFinite(wordsBase) && Number.isFinite(wordsTreat) && wordsBase > 0 && wordsTreat / wordsBase >= 1.8) {
+      head.appendChild(el("span", `output \u00d7${(wordsTreat / wordsBase).toFixed(1)}`, "chip warn"));
     }
+    const secondsBase = pairedMetric(data, "baseline", "duration_seconds");
+    const secondsTreat = pairedMetric(data, "primary", "duration_seconds");
+    if (Number.isFinite(secondsBase) && Number.isFinite(secondsTreat) && secondsBase > 0 && secondsTreat / secondsBase >= 2) {
+      head.appendChild(el("span", `slower \u00d7${(secondsTreat / secondsBase).toFixed(1)}`, "chip warn"));
+    }
+    head.append(el("span", null, "spacer"),
+      el("span", `${data.paired_samples || 0}/${data.planned_pairs || 0} pairs`, "muted"));
+    block.appendChild(head);
+    const table = el("table");
+    const columns = [["assertion_pass_rate", metricLabel("assertions")], ["lint_per100w", metricLabel("checker")],
+      ["word_count", metricLabel("words")], ["clarity_preference", metricLabel("clarity")],
+      ["fluency_preference", metricLabel("fluency")], ["directness_preference", metricLabel("directness")],
+      ["duration_seconds", metricLabel("seconds")], ["output_tokens", metricLabel("output_tokens")]]
+      .filter(([name]) => pairedMetric(data, "primary", name) !== null
+        || pairedMetric(data, "baseline", name) !== null || Number.isFinite(pairedDelta(data, name)));
+    const headRow = el("tr");
+    ["Arm", metricLabel("valid"), metricLabel("excluded"), ...columns.map(item => item[1])].forEach(label => headRow.appendChild(headerCell(label)));
+    const thead = el("thead"); thead.appendChild(headRow); table.appendChild(thead);
+    const tbody = el("tbody");
+    for (const [arm, side, sideName] of [[comparison.primary, data.primary, "primary"], [comparison.baseline, data.baseline, "baseline"]]) {
+      const tr = el("tr");
+      tr.append(el("td", arm), el("td", side?.valid_samples ?? 0), el("td", side?.exclusions ?? 0));
+      for (const [name] of columns) {
+        const cell = pairedMetric(data, sideName, name);
+        tr.appendChild(el("td", fmt(cell), cell === null ? "null" : ""));
+      }
+      tbody.appendChild(tr);
+    }
+    const deltaRow = el("tr", null, "delta");
+    deltaRow.append(el("td", "Difference"), el("td", "—"), el("td", "—"));
+    for (const [name] of columns) {
+      const delta = pairedDelta(data, name);
+      deltaRow.appendChild(el("td", fmt(delta), deltaClass(name, delta) || (delta === null ? "null" : "")));
+    }
+    tbody.appendChild(deltaRow);
+    table.appendChild(tbody);
+    const wrap = el("div", null, "scroll");
+    wrap.appendChild(table);
+    block.appendChild(wrap);
+    section.appendChild(block);
+  }
+  verdictPanelsRoot.appendChild(panel);
+  comparisonsRoot.appendChild(section);
+}
+if (shownComparisons.length) setActiveComparison(shownComparisons[0].id);
+addNav("examples", "Review pairs");
+addNav("cases", "Run records");
+addNav("metrics-section", "Metrics");
+addNav("notes-section", "Notes");
+addNav("identity", "Identities");
 
-    var metadata = DATA.metadata || {};
-    document.title = "Benchmark: " + (metadata.artifact_name || "artifact");
-    document.getElementById("artifact-name").textContent = metadata.artifact_name || "artifact";
-    document.getElementById("meta-line").textContent =
-        (metadata.timestamp || "") + " — evals " +
-        ((metadata.evals_run || []).join(", ") || "?") + " — " +
-        (metadata.runs_per_configuration || "?") + " runs per configuration";
+const runs = DATA.runs || [];
+const byKey = new Map();
+for (const run of runs) {
+  if (run.valid && typeof run.response === "string") {
+    byKey.set(`${run.arm}|${run.model}|${run.eval_id}|${run.run_number}`, run);
+  }
+}
+// Pair browser: every matched pair is reviewable with its blind judgment.
+const pairView = document.getElementById("pair-view");
+const pairComparisonSelect = document.getElementById("pair-comparison");
+const pairModelSelect = document.getElementById("pair-model");
+const pairCaseSelect = document.getElementById("pair-case");
+const pairPosition = document.getElementById("pair-position");
+const judgments = DATA.preference_judgments || [];
+const pairs = [];
+for (const comparison of DATA.comparisons || []) {
+  for (const model of Object.keys(comparison.models || {})) {
+    for (const run of runs) {
+      if (run.model !== model || run.arm !== comparison.primary || !run.valid) continue;
+      const baseline = byKey.get(`${comparison.baseline}|${model}|${run.eval_id}|${run.run_number}`);
+      if (!baseline || typeof baseline.response !== "string" || typeof run.response !== "string") continue;
+      const judgment = judgments.find(j =>
+        j.comparison === comparison.id && j.model === model
+        && String(j.eval_id) === String(run.eval_id) && j.run_number === run.run_number);
+      pairs.push({ comparison, model, treatment: run, baseline, judgment });
+    }
+  }
+}
+const comparisonOrder = new Map(comparisonList.map((comparison, index) => [comparison.id, index]));
+pairs.sort((a, b) =>
+  (comparisonOrder.get(a.comparison.id) ?? 0) - (comparisonOrder.get(b.comparison.id) ?? 0)
+  || a.model.localeCompare(b.model)
+  || String(a.treatment.eval_id).localeCompare(String(b.treatment.eval_id), undefined, { numeric: true })
+  || Number(a.treatment.run_number) - Number(b.treatment.run_number));
+let pairIndex = 0;
+let pairInteracted = false;
+let diffEnabled = true;
+const tokenize = value => value.split(/(\s+)/);
+const diffPre = (own, other, cls) => {
+  const pre = el("pre");
+  const ownTokens = tokenize(own), otherTokens = tokenize(other);
+  if (!diffEnabled || ownTokens.length > 1600 || otherTokens.length > 1600) {
+    pre.textContent = own;
+    return pre;
+  }
+  const rows = ownTokens.length, cols = otherTokens.length;
+  const lcs = Array.from({ length: rows + 1 }, () => new Uint16Array(cols + 1));
+  for (let i = rows - 1; i >= 0; i--) {
+    for (let j = cols - 1; j >= 0; j--) {
+      lcs[i][j] = ownTokens[i] === otherTokens[j] ? lcs[i + 1][j + 1] + 1 : Math.max(lcs[i + 1][j], lcs[i][j + 1]);
+    }
+  }
+  let i = 0, j = 0, run = [];
+  const flush = unique => {
+    if (!run.length) return;
+    const chunk = run.join("");
+    if (unique && chunk.trim()) {
+      const markNode = el("mark", chunk, cls);
+      pre.appendChild(markNode);
+    } else {
+      pre.appendChild(document.createTextNode(chunk));
+    }
+    run = [];
+  };
+  let uniqueRun = false;
+  while (i < rows) {
+    const match = j < cols && ownTokens[i] === otherTokens[j] && lcs[i][j] === lcs[i + 1][j + 1] + 1;
+    if (match) {
+      if (uniqueRun) { flush(true); uniqueRun = false; }
+      run.push(ownTokens[i]); i += 1; j += 1;
+    } else if (j < cols && lcs[i][j + 1] >= lcs[i + 1][j]) {
+      j += 1;
+    } else {
+      if (!uniqueRun) { flush(false); uniqueRun = true; }
+      run.push(ownTokens[i]); i += 1;
+    }
+  }
+  flush(uniqueRun);
+  return pre;
+};
+const pairHash = entry => pairHashFor(
+  entry.comparison.id, entry.model, entry.treatment.eval_id, entry.treatment.run_number,
+);
+const findPairFromHash = () => {
+  const match = /^#pair=([^/]+)\/([^/]+)(?:\/([^/]+)\/([^/]+))?$/.exec(location.hash);
+  if (!match) return -1;
+  const comparisonId = decodeURIComponent(match[1]);
+  const model = decodeURIComponent(match[2]);
+  const evalId = match[3] === undefined ? undefined : decodeURIComponent(match[3]);
+  const runNumber = match[4] === undefined ? undefined : decodeURIComponent(match[4]);
+  return pairs.findIndex(pair => pair.comparison.id === comparisonId && pair.model === model
+    && (evalId === undefined || String(pair.treatment.eval_id) === evalId)
+    && (runNumber === undefined || String(pair.treatment.run_number) === runNumber));
+};
+const fillSelect = (select, values, current) => {
+  select.replaceChildren();
+  for (const [value, label] of values) {
+    const option = el("option", label);
+    option.value = value;
+    if (value === current) option.selected = true;
+    select.appendChild(option);
+  }
+};
+const renderPair = () => {
+  pairView.replaceChildren();
+  if (!pairs.length) {
+    pairView.appendChild(el("p", "No matched pair with stored outputs is available.", "empty"));
+    return;
+  }
+  pairIndex = Math.max(0, Math.min(pairIndex, pairs.length - 1));
+  const entry = pairs[pairIndex];
+  fillSelect(
+    pairComparisonSelect,
+    [...new Map(pairs.map(pair => [
+      pair.comparison.id,
+      pair.comparison.tab_label || pair.comparison.label || pair.comparison.id,
+    ])).entries()],
+    entry.comparison.id,
+  );
+  fillSelect(
+    pairModelSelect,
+    [...new Set(pairs
+      .filter(pair => pair.comparison.id === entry.comparison.id)
+      .map(pair => pair.model))].map(model => [model, model]),
+    entry.model,
+  );
+  fillSelect(
+    pairCaseSelect,
+    pairs.filter(pair => pair.comparison.id === entry.comparison.id && pair.model === entry.model)
+      .map(pair => [pairHash(pair), `case ${pair.treatment.eval_id} ${pair.treatment.eval_name || ""} · run ${pair.treatment.run_number}`]),
+    pairHash(entry));
+  pairPosition.textContent = `${pairIndex + 1} of ${pairs.length} \u00b7 \u2190 \u2192 keys`;
+  if (pairInteracted) history.replaceState(null, "", pairHash(entry));
+  const pair = el("div", null, "pair");
+  for (const [label, record, other, cls] of [
+    ["Baseline (no artifact)", entry.baseline, entry.treatment, "diff-a"],
+    [armLabel(entry.comparison.primary).replace(/^the /, "With the "), entry.treatment, entry.baseline, "diff-b"],
+  ]) {
+    const cell = el("div");
+    cell.appendChild(el("h4", label));
+    cell.appendChild(diffPre(record.response, other.response, cls));
+    cell.appendChild(el("p", `fact checks ${fmt(record.result?.assertion_pass_rate)} · lint ${fmt(record.result?.lint_per100w)}/100w · ${fmt(record.result?.word_count)} words · ${fmt(record.result?.duration_seconds)}s`, "stats"));
+    pair.appendChild(cell);
+  }
+  pairView.appendChild(pair);
+  const judgmentCard = el("div", null, "judgment");
+  const judgmentTitle = el("h4", "Blind judgment for this pair");
+  if (entry.judgment && (entry.judgment.judge_model || entry.judgment.judge_route)) {
+    judgmentTitle.append(" ", el("span",
+      `judge ${entry.judgment.judge_model || "?"} via ${entry.judgment.judge_route || "?"}`, "judge-meta"));
+  }
+  judgmentCard.appendChild(judgmentTitle);
+  if (entry.judgment && entry.judgment.state !== "provider_failure") {
+    for (const dimension of JUDGE_DIMENSIONS) {
+      const winner = entry.judgment[`${dimension}_winner_arm`];
+      const reason = entry.judgment[`${dimension}_reason`] || "";
+      const row = el("div", null, "dim");
+      const dimLabel = el("b", dimension);
+      const spec = JUDGING?.dimensions?.find(item => item.id === dimension);
+      if (spec?.criterion) dimLabel.appendChild(infoDot(spec.criterion));
+      row.appendChild(dimLabel);
+      const label = winner === "tie" ? "tie"
+        : winner === entry.comparison.primary ? "treatment" : "baseline";
+      row.appendChild(el("span", label, `badge ${winner === "tie" ? "b-neutral" : winner === entry.comparison.primary ? "b-ok" : "b-warn"}`));
+      row.appendChild(el("span", reason, "muted"));
+      judgmentCard.appendChild(row);
+    }
+  } else {
+    judgmentCard.appendChild(el("p", "No valid blind judgment exists for this pair.", "empty"));
+  }
+  pairView.appendChild(judgmentCard);
+};
+pairComparisonSelect.addEventListener("change", () => {
+  pairInteracted = true;
+  const found = pairs.findIndex(pair => pair.comparison.id === pairComparisonSelect.value);
+  if (found >= 0) pairIndex = found;
+  renderPair();
+});
+pairModelSelect.addEventListener("change", () => {
+  pairInteracted = true;
+  const found = pairs.findIndex(pair =>
+    pair.comparison.id === pairComparisonSelect.value && pair.model === pairModelSelect.value);
+  if (found >= 0) pairIndex = found;
+  renderPair();
+});
+pairCaseSelect.addEventListener("change", () => {
+  pairInteracted = true;
+  const found = pairs.findIndex(pair => pairHash(pair) === pairCaseSelect.value);
+  if (found >= 0) pairIndex = found;
+  renderPair();
+});
+document.getElementById("pair-prev").addEventListener("click", () => { pairInteracted = true; pairIndex -= 1; renderPair(); });
+document.getElementById("pair-next").addEventListener("click", () => { pairInteracted = true; pairIndex += 1; renderPair(); });
+const diffToggle = document.getElementById("pair-diff");
+diffToggle.addEventListener("click", () => {
+  diffEnabled = !diffEnabled;
+  diffToggle.setAttribute("aria-pressed", String(diffEnabled));
+  renderPair();
+});
+document.addEventListener("keydown", event => {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+  if (event.target instanceof Element
+      && event.target.closest('button, a, select, input, textarea, [role="tab"]')) return;
+  if (event.key === "ArrowLeft") { pairInteracted = true; pairIndex -= 1; renderPair(); }
+  else if (event.key === "ArrowRight") { pairInteracted = true; pairIndex += 1; renderPair(); }
+  else return;
+  event.preventDefault();
+});
+const applyHash = () => {
+  const found = findPairFromHash();
+  if (found >= 0) {
+    pairInteracted = true;
+    pairIndex = found;
+    renderPair();
+    document.getElementById("examples").scrollIntoView();
+  }
+};
+window.addEventListener("hashchange", applyHash);
+const initialPair = findPairFromHash();
+if (initialPair >= 0) pairIndex = initialPair;
+renderPair();
+if (initialPair >= 0) document.getElementById("examples").scrollIntoView();
 
-    var summary = DATA.run_summary || {};
-    var configKeys = Object.keys(summary).filter(function (key) { return key.indexOf("delta") !== 0; });
-    var models = [];
-    configKeys.forEach(function (key) {
-        var model = splitConfig(key).model;
-        if (models.indexOf(model) === -1) models.push(model);
-    });
-    var singleModel = models.length <= 1;
+document.getElementById("threshold-line").textContent =
+  JUDGE_DIMENSIONS.map(id =>
+    `${id}: trade-off below ${dimensionThreshold(id, "trade_off").toFixed(2)}, `
+    + `win above ${dimensionThreshold(id, "win").toFixed(2)}`
+  ).join(" \u00b7 ");
+document.getElementById("weight-line").textContent =
+  "dimension weights: " + JUDGE_DIMENSIONS.map(id => `${id} \u00d7${dimensionWeight(id)}`).join(" \u00b7 ")
+  + " (a weight below 1 softens the label, 0 removes the dimension)";
 
-    var tbody = document.querySelector("#summary-table tbody");
-    models.forEach(function (model) {
-        var delta = summary[singleModel ? "delta" : "delta@" + model] || {};
-        var rows = configKeys.filter(function (key) { return splitConfig(key).model === model; });
-        rows.forEach(function (key, index) {
-            var stats = summary[key];
-            var row = el("tr");
-            row.appendChild(el("td", index === 0 ? "model-cell" : null, index === 0 ? model : ""));
-            row.appendChild(el("td", null, splitConfig(key).base.replace(/_/g, " ")));
-            row.appendChild(el("td", "num", pct(stats.pass_rate)));
-            var deltaCell = el("td", "num");
-            if (index === 0 && delta.pass_rate !== undefined) {
-                deltaCell.appendChild(el("span", deltaClass(delta.pass_rate), delta.pass_rate));
-            }
-            row.appendChild(deltaCell);
-            row.appendChild(el("td", "num",
-                stats.time_seconds ? stats.time_seconds.mean.toFixed(1) + "s" : "—"));
-            row.appendChild(el("td", "num",
-                stats.tokens ? Math.round(stats.tokens.mean).toLocaleString() : "—"));
-            tbody.appendChild(row);
-        });
-    });
+const runRoot = document.getElementById("runs");
+const waffle = el("div", null, "waffle");
+const waffleModels = [...new Set(runs.map(run => run.model))].sort();
+const waffleArms = [...new Set(runs.map(run => run.arm))].sort();
+const waffleCases = [...new Set(runs.map(run => `${run.eval_id}|${run.run_number}`))]
+  .sort((a, b) => Number(a.split("|")[0]) - Number(b.split("|")[0]) || Number(a.split("|")[1]) - Number(b.split("|")[1]));
+const headRowEl = el("div", null, "waffle-row model-first");
+headRowEl.append(el("span", "", "who"), el("span", "case", "arm-name"));
+const headCells = el("div", null, "waffle-head");
+for (const key of waffleCases) headCells.appendChild(el("span", key.split("|")[0]));
+headRowEl.appendChild(headCells);
+waffle.appendChild(headRowEl);
+for (const model of waffleModels) {
+  let first = true;
+  for (const arm of waffleArms) {
+    const rowRuns = runs
+      .filter(run => run.model === model && run.arm === arm)
+      .sort((a, b) => Number(a.eval_id) - Number(b.eval_id) || a.run_number - b.run_number);
+    if (!rowRuns.length) continue;
+    const rowEl = el("div", null, `waffle-row${first ? " model-first" : ""}`);
+    rowEl.append(el("span", model, "who"), el("span", arm, "arm-name"));
+    const cells = el("div", null, "waffle-cells");
+    for (const run of rowRuns) {
+      const cell = el("span", null, `waffle-cell ${run.valid ? "ok" : "fail"}`);
+      cell.title = `case ${run.eval_id} ${run.eval_name || ""} \u00b7 run ${run.run_number} \u00b7 ${run.state}`;
+      cells.appendChild(cell);
+    }
+    rowEl.appendChild(cells);
+    waffle.appendChild(rowEl);
+    first = false;
+  }
+}
+const waffleLegend = el("div", null, "waffle-legend");
+for (const [cls, label] of [["ok", "valid"], ["fail", "excluded"]]) {
+  const item = el("span");
+  item.append(el("span", null, `waffle-cell ${cls}`), label);
+  waffleLegend.appendChild(item);
+}
+waffle.appendChild(waffleLegend);
+runRoot.appendChild(waffle);
+const excludedRuns = runs.filter(run => !run.valid);
+if (excludedRuns.length) {
+  const groups = new Map();
+  for (const run of excludedRuns) {
+    const reason = typeof run.exclusion_reason === "string" ? run.exclusion_reason : run.state;
+    const key = `${run.model}|${reason}`;
+    if (!groups.has(key)) groups.set(key, { model: run.model, reason, count: 0, seconds: [] });
+    const group = groups.get(key);
+    group.count += 1;
+    const seconds = run.result?.duration_seconds;
+    if (Number.isFinite(seconds)) group.seconds.push(seconds);
+  }
+  const forensics = el("div", null, "prose-card forensics");
+  forensics.appendChild(el("h3", "Excluded runs by failure signature"));
+  const list = el("ul", null, "notes-list");
+  for (const group of groups.values()) {
+    const range = group.seconds.length
+      ? ` \u00b7 ${Math.min(...group.seconds).toFixed(0)}\u2013${Math.max(...group.seconds).toFixed(0)}s`
+      : "";
+    list.appendChild(el("li", `${group.count} \u00d7 ${group.model} \u00b7 ${group.reason}${range}`));
+  }
+  forensics.appendChild(list);
+  runRoot.appendChild(forensics);
+}
+const caseIds = [...new Set(runs.map(run => `${run.eval_id}|${run.eval_name || ""}`))]
+  .sort((a, b) => Number(a.split("|")[0]) - Number(b.split("|")[0]));
+for (const key of caseIds) {
+  const [caseId, caseName] = key.split("|");
+  const caseRuns = runs.filter(run => `${run.eval_id}|${run.eval_name || ""}` === key);
+  const valid = caseRuns.filter(run => run.valid).length;
+  const detail = el("details");
+  detail.appendChild(el("summary", `Case ${caseId} ${caseName} · ${valid}/${caseRuns.length} valid`));
+  for (const run of caseRuns) {
+    const line = el("div", null, "run-line");
+    line.appendChild(el("span", `${run.arm} · ${run.model} · run ${run.run_number}`, "who"));
+    line.appendChild(el("span", run.state, `badge ${run.valid ? "b-ok" : "b-fail"}`));
+    const bits = [`fact checks ${fmt(run.result?.assertion_pass_rate)}`, `lint ${fmt(run.result?.lint_per100w)}/100w`, `${fmt(run.result?.duration_seconds)}s`];
+    if (run.exclusion_reason) bits.push(typeof run.exclusion_reason === "string" ? run.exclusion_reason : JSON.stringify(run.exclusion_reason));
+    line.appendChild(el("span", bits.join(" · "), "muted"));
+    detail.appendChild(line);
+  }
+  runRoot.appendChild(detail);
+}
 
-    var casesRoot = document.getElementById("cases");
-    var byEval = {};
-    (DATA.runs || []).forEach(function (run) {
-        var key = run.eval_id + "|" + (run.eval_name || "");
-        (byEval[key] = byEval[key] || []).push(run);
+const metricRoot = document.getElementById("metric-list");
+for (const item of METRICS) {
+  const card = el("div", null, "prose-card metric-card");
+  const title = el("h3", item.label);
+  card.appendChild(title);
+  card.appendChild(el("p", item.definition));
+  if (item.formula) {
+    const formulaRow = el("p", null, "metric-formula");
+    formulaRow.append(el("span", "Formula:", "muted"), " ");
+    if (item.formula.numerator && item.formula.denominator) {
+      const frac = el("span", null, "frac");
+      frac.append(el("span", item.formula.numerator, "num"), el("span", item.formula.denominator, "den"));
+      formulaRow.appendChild(frac);
+      if (item.formula.suffix) formulaRow.append(" ", el("span", item.formula.suffix, "muted"));
+    } else if (item.formula.text) {
+      formulaRow.append(item.formula.text);
+    }
+    card.appendChild(formulaRow);
+  }
+  if (item.example) card.appendChild(el("p", `Example: ${item.example}`, "muted mono metric-example"));
+  metricRoot.appendChild(card);
+}
+
+const notesRoot = document.getElementById("notes");
+const noteGroups = [["Notes", DATA.notes || []], ["Limitations", DATA.limitations || []]]
+  .filter(([, items]) => items.length);
+if (!noteGroups.length) notesRoot.appendChild(el("p", "No notes were recorded.", "empty"));
+for (const [title, items] of noteGroups) {
+  notesRoot.appendChild(el("h3", title));
+  const list = el("ul", null, "notes-list");
+  for (const note of items) list.appendChild(el("li", typeof note === "string" ? note : JSON.stringify(note)));
+  notesRoot.appendChild(list);
+}
+
+const identities = metadata.identities || {};
+const identityRoot = document.getElementById("identities");
+if (!Object.keys(identities).length) identityRoot.textContent = "No identities were recorded.";
+const appendJson = (root, value, key = "", depth = 0, pathUrl = null) => {
+  if (value && typeof value === "object") {
+    const entries = Array.isArray(value) ? value.map((item, index) => [index, item]) : Object.entries(value);
+    root.append(el("span", Array.isArray(value) ? "[" : "{", "syntax-punct"));
+    if (entries.length) root.append("\n");
+    entries.forEach(([name, item], index) => {
+      root.append("  ".repeat(depth + 1));
+      if (!Array.isArray(value)) {
+        root.append(el("span", JSON.stringify(name), "syntax-key"), el("span", ": ", "syntax-punct"));
+      }
+      appendJson(root, item, String(name), depth + 1, pathUrl);
+      if (index < entries.length - 1) root.append(el("span", ",", "syntax-punct"));
+      root.append("\n");
     });
-    Object.keys(byEval).sort().forEach(function (key) {
-        var runs = byEval[key];
-        var parts = key.split("|");
-        var detail = el("details");
-        var summaryLine = el("summary");
-        summaryLine.appendChild(el("span", null, "eval " + parts[0] + (parts[1] ? " — " + parts[1] : "")));
-        summaryLine.appendChild(el("span", "dim", runs.length + " runs"));
-        detail.appendChild(summaryLine);
-        runs.sort(function (a, b) {
-            return (a.configuration + a.run_number).localeCompare(b.configuration + b.run_number);
-        }).forEach(function (run) {
-            var block = el("div", "expectations");
-            var head = el("div", "expectation");
-            var passRate = run.result ? (run.result.pass_rate * 100).toFixed(0) + "%" : "—";
-            head.appendChild(el("span", "badge " + (run.result && run.result.pass_rate >= 1 ? "pass" : "fail"), passRate));
-            head.appendChild(el("strong", null, run.configuration + " · run " + run.run_number));
-            block.appendChild(head);
-            (run.expectations || []).forEach(function (expectation) {
-                var line = el("div", "expectation");
-                line.appendChild(el("span", "badge " + (expectation.passed ? "pass" : "fail"),
-                    expectation.passed ? "pass" : "fail"));
-                var body = el("span");
-                body.appendChild(el("span", null, expectation.text || ""));
-                if (expectation.evidence) {
-                    body.appendChild(el("div", "evidence", expectation.evidence));
-                }
-                line.appendChild(body);
-                block.appendChild(line);
-            });
-            detail.appendChild(block);
-        });
-        casesRoot.appendChild(detail);
-    });
+    if (entries.length) root.append("  ".repeat(depth));
+    root.append(el("span", Array.isArray(value) ? "]" : "}", "syntax-punct"));
+  } else if (typeof value === "string") {
+    const token = el("span", JSON.stringify(value), "syntax-string");
+    if (key === "path" && pathUrl) {
+      const link = el("a", null, "identity-link");
+      link.href = pathUrl;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.append(token);
+      root.append(link);
+    } else root.append(token);
+  } else if (typeof value === "number") root.append(el("span", value, "syntax-number"));
+  else root.append(el("span", String(value), "syntax-literal"));
+};
+for (const [name, data] of Object.entries(identities)) {
+  const safe = data && typeof data === "object" ? { ...data } : data;
+  const pathUrl = safe && typeof safe.path_url === "string" ? safe.path_url : null;
+  if (safe && typeof safe === "object") delete safe.path_url;
+  if (safe && typeof safe.path === "string") safe.path = safe.path.split(/[\\/]/).pop();
+  const entry = el("div", null, "identity-entry");
+  entry.append(el("span", `${name}: `, "syntax-key"));
+  appendJson(entry, safe, "", 0, pathUrl);
+  identityRoot.appendChild(entry);
+}
 </script>
 </body>
 </html>

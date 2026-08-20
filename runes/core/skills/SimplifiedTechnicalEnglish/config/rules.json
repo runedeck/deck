@@ -68,7 +68,15 @@
     "plethora",
     "provide",
     "provides",
-    "provided"
+    "provided",
+    "arm",
+    "arms",
+    "knob",
+    "knobs",
+    "gate",
+    "gated",
+    "gates",
+    "gating"
   ],
   "bannedPhrases": [
     "prior to",
@@ -76,7 +84,19 @@
     "in order to",
     "a variety of",
     "in the event that",
-    "due to the fact that"
+    "due to the fact that",
+    "wire up",
+    "wires up",
+    "wired up",
+    "wiring up",
+    "plumb through",
+    "plumbs through",
+    "plumbed through",
+    "plumbing through",
+    "flesh out",
+    "fleshes out",
+    "fleshed out",
+    "fleshing out"
   ],
   "strictBannedWords": [
     "however",
@@ -106,12 +126,42 @@
     "spun up",
     "reaching out"
   ],
-  "modalHedges": [
+  "fillerPhrases": [
     "it is important to note",
     "it should be noted",
     "it is worth noting",
     "please note that",
     "as mentioned",
     "as noted above"
+  ],
+  "verbOnlyWords": [
+    "bake",
+    "baked",
+    "bakes",
+    "baking",
+    "harden",
+    "hardened",
+    "hardening",
+    "hardens",
+    "land",
+    "landed",
+    "landing",
+    "lands",
+    "orchestrate",
+    "orchestrated",
+    "orchestrates",
+    "orchestrating",
+    "scaffold",
+    "scaffolded",
+    "scaffolding",
+    "scaffolds",
+    "ship",
+    "shipped",
+    "shipping",
+    "ships",
+    "surface",
+    "surfaced",
+    "surfaces",
+    "surfacing"
   ]
 }

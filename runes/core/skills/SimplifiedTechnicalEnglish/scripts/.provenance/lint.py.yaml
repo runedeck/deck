@@ -2,9 +2,9 @@ provenance:
   _type: https://in-toto.io/Statement/v1
   predicateType: https://slsa.dev/provenance/v1
   subject:
-  - name: skills/SimplifiedTechnicalEnglish/scripts/ste-lint.py
+  - name: skills/SimplifiedTechnicalEnglish/scripts/lint.py
     digest:
-      sha256: 857c1af6bb9cbcf0d7fbe2784128d9162c5821a05134aff3bc1bedc270dcc3b3
+      sha256: 4f54b81538901ce1150787a5e7bb6aead870eb5d5be09b78434e59a7d3bce6fe
   predicate:
     buildDefinition:
       buildType: adopt/v1
@@ -13,7 +13,7 @@ provenance:
         upstream_url: https://github.com/danyuchn/asd-ste100-skill/tree/d5ce157 + https://github.com/woosal1337/blog/tree/51100c9/videos/ep01-the-cure-for-ai-slop
         upstream_commit: ''
         transforms_applied:
-        - copy
+        - align
       resolvedDependencies:
       - name: upstream
         uri: https://github.com/danyuchn/asd-ste100-skill/tree/d5ce157 + https://github.com/woosal1337/blog/tree/51100c9/videos/ep01-the-cure-for-ai-slop
