@@ -36,7 +36,7 @@ Read `SKILL.md` and note the companions, scripts, references, and assets it link
 - [ ] The assembly directives are `targets`, `disable-model-invocation`, and `user-invocable`.
 - [ ] `compatibility` names required providers, binaries, operating systems, or network access.
 - [ ] Additional string-valued information lives under `metadata`.
-- [ ] The official `skills-ref` validator accepts the skill.
+- [ ] The official `skills-ref` validator accepts the installed `agentskills` copy.
 
 ## Step 3: Check the section convention
 
@@ -86,10 +86,13 @@ When the skill wraps a CLI:
 
 ```sh
 mdschema check --schema <nearest-skill-schema> <skill-path>/SKILL.md
-skills-ref validate <skill-path>
+rune install --source runes/<domain> --target <scratch> --provider agentskills --only skills/<SkillName>
+skills-ref validate <scratch>/.agents/skills/<skill-name>
 ```
 
-Run the project's validator with these commands. In a Rune deck, use `rune validate --source .`. See [RuneDeck.md](RuneDeck.md).
+Run the project validator with these commands. In a Rune deck, use `rune validate --source .`. See [RuneDeck.md](RuneDeck.md).
+
+The source can use PascalCase. `skills-ref` checks the lowercase copy after the provider transform.
 
 Fix errors before declaring the skill valid. A breadth warning remains advisory unless another error is present.
 
