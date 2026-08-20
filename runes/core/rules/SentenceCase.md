@@ -4,7 +4,7 @@ Headings use sentence case: capitalize the first word and proper nouns, nothing 
 - Correct: `## Claude Code skill features` (proper noun stays capitalized)
 - Wrong: `## Supporting Files`
 
-Two exceptions: an exact artifact identifier used as an H1 keeps its casing (`# build-skill`), and quoted or referenced titles keep their original casing.
+Two exceptions: an exact artifact identifier used as an H1 keeps its casing (`# BuildSkill`), and quoted or referenced titles keep their original casing.
 
 If a heading reads as Title Case, rewrite it.
 

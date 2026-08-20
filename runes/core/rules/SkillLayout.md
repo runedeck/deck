@@ -1,6 +1,8 @@
 A skill directory carries one entrypoint and everything that entrypoint routes to. `SKILL.md` is the entrypoint. Its name is fixed; nothing else in the directory shares it.
 
-Companion documents sit beside `SKILL.md` and take the skill's own casing: lowercase kebab-case, matching the directory and the frontmatter `name`. A companion named `create-workflow.md` belongs to `build-skill`; one named `CreateWorkflow.md` reads as a different naming system living in the same directory.
+Companion documents sit beside `SKILL.md` and use PascalCase. The canonical skill directory and frontmatter `name` also use PascalCase.
+
+A companion named `CreateWorkflow.md` belongs to `BuildSkill`. A lowercase name uses a different naming system.
 
 Supporting material uses these directories and no others:
 
@@ -13,4 +15,4 @@ Anything that does not fit one of those four belongs in a companion document, no
 
 Provenance sidecars live in `.provenance/`, one per tracked file, named for the file they cover.
 
-Renaming a file under sealed provenance rewrites the `subject.name` its sidecar records, which is evidence rather than metadata. Rename such a file only through Rune tooling that reseals the record. `build-skill` predates this rule and keeps PascalCase companions for that reason; it conforms once a supported rename exists.
+Renaming a file under sealed provenance rewrites the `subject.name` its sidecar records, which is evidence rather than metadata. Rename such a file only through Rune tooling that reseals the record.
