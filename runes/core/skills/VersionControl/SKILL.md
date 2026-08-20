@@ -12,10 +12,10 @@ Commit discipline, staging hygiene, push policy, and repo governance. In a jj co
 
 ## Constraints
 
-- Author every commit with an identity that `authors.yaml` lists. Use `make worktree BRANCH=<branch> IDENTITY=<model-id>` to create a worktree with the identity set. Do not export identity env variables for each command.
+- Author every commit with an identity that `authors.yaml` lists. Use the repository worktree helper when available. In Deck, run `make worktree BRANCH=<branch> IDENTITY=<model-id>`. Do not export identity env variables for each command.
 - Stage files by name. Never use `git add -A` or `git add .`.
 - Commit with a pathspec (`git commit -- <path>...`), never a bare `git commit`. A bare commit snapshots the whole index and sweeps in the user's staged work. When unsure, run `git diff --cached --stat` first.
-- Never commit files that contain secrets. The prek hooks run gitleaks at commit and at push; never bypass them with `--no-verify`.
+- Never commit files that contain secrets. The prek hooks run gitleaks at commit and at push. Never bypass them with `--no-verify`.
 - Do not push unless the user asks. A commit and a push are separate actions.
 - Never force-push unless the user explicitly asks. When a force-push is sanctioned, use `--force-with-lease`, not `--force`.
 - Use `git switch <branch>`, not `git checkout <branch>`.
@@ -33,7 +33,7 @@ Use a conventional prefix. Explain why, not what. Keep the first line under 72 c
 - `chore:`: Maintenance, such as dependencies, configuration, or CI.
 - `test:`: Add or repair tests.
 
-Name other model contributors with `Co-Authored-By` trailers in the `authors.yaml` format. Do not repeat the author as a trailer. Run `scripts/check-authorship` to verify the outgoing range; the prek pre-push hook runs it automatically.
+Name other model contributors with `Co-Authored-By` trailers in the `authors.yaml` format. Do not repeat the author as a trailer. If the repository includes `scripts/check-authorship`, run it. The prek pre-push hook runs the repository check automatically.
 
 ### Open the pull request
 
@@ -58,7 +58,8 @@ case "$source_branch" in
         ;;
 esac
 git branch backup-pre-squash "$source_branch"
-git switch --orphan squashed-tmp
+base=$(git merge-base "$source_branch" origin/main)
+git switch -c squashed-tmp "$base"
 git read-tree -u --reset <end-of-group-sha>
 git commit -m "<new message>"
 # Repeat read-tree and commit for each remaining group.
@@ -83,7 +84,7 @@ For local branches whose remote is gone: `git fetch --prune`, then delete the br
 
 ### Work in parallel
 
-In git-only repos, use git worktrees; deck repos provide `make worktree`. In jj colocated repos, use jj workspaces instead. See [GitWorktrees.md](GitWorktrees.md).
+In git-only repos, use git worktrees. Deck repos include `make worktree`. In jj colocated repos, use jj workspaces instead. See [GitWorktrees.md](GitWorktrees.md).
 
 ### Govern the repository
 
@@ -95,7 +96,7 @@ Model commits in runedeck repositories are unsigned by specification, and no bra
 
 ## Verification
 
-- `scripts/check-authorship` passes on the outgoing range.
+- The repository authorship check passes on the outgoing range.
 - The prek commit-stage and pre-push hooks pass.
 - After a history rewrite, the rewritten tree matches the backup branch (`git diff backup-pre-<op> HEAD` is empty).
 
