@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/VersionControl/SKILL.md
     digest:
-      sha256: 289ca0dad920726f525108d14bab542f922acf1795258595c9792fdc1e22473b
+      sha256: 8333db5729996599d117750f3d4f147c19b19869ed017bcd5844f249463c57ec
   predicate:
     buildDefinition:
       buildType: adopt/v1

@@ -46,13 +46,25 @@ Name other model contributors with `Co-Authored-By` trailers in the `authors.yam
 `git read-tree -u --reset <sha>` snaps the index and working tree to a commit's tree without a merge or a rebase. To squash or regroup a linear history:
 
 ```sh
-git branch backup-pre-squash            # always create a safety branch first
-git checkout --orphan squashed-tmp
+test -z "$(git status --porcelain)" || {
+    echo "The worktree must be clean before the rewrite." >&2
+    exit 1
+}
+source_branch=$(git branch --show-current)
+case "$source_branch" in
+    ""|main|master)
+        echo "Run this rewrite only on a named feature branch." >&2
+        exit 1
+        ;;
+esac
+git branch backup-pre-squash "$source_branch"
+git switch --orphan squashed-tmp
 git read-tree -u --reset <end-of-group-sha>
 git commit -m "<new message>"
-# repeat for each group, then swap branches
-git branch -f main squashed-tmp
-git switch main
+# Repeat read-tree and commit for each remaining group.
+git branch -f "$source_branch" squashed-tmp
+git switch "$source_branch"
+git branch -d squashed-tmp
 ```
 
 Group along the chronological spine. A tree snapshot inherits every earlier commit's content, so a theme-based group carries unrelated work. Create a backup branch before every destructive rewrite and diff the result against it before any push.
