@@ -30,7 +30,7 @@ allowed-tools: Read Write Edit Bash(git status *)
 
 Agent Skills requires `name` and `description`. It defines `license`, `compatibility`, `metadata`, and `allowed-tools` as optional top-level fields.[AGENTSKILLS]
 
-- `name`: Use the same value for the directory, frontmatter name, and H1. Providers deploy the authored casing without changes. A provider can use `kebab-case-skills` to convert the name to lowercase. This deck uses that rule for agentskills.
+- `name`: Use the same value for the directory, frontmatter name, and H1. Providers deploy the authored casing without changes. A provider can use `kebab-case-skills` to convert the name to lowercase. The opt-in `agentskills` provider in Rune uses that rule.
 - `description`: one line with concrete `USE WHEN` triggers and a `NOT FOR` boundary for adjacent skills.
 - `compatibility`: required providers, binaries, operating systems, or network access.
 - `metadata`: string-valued information such as version and upstream attribution.

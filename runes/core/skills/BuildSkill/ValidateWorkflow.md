@@ -30,7 +30,7 @@ Read `SKILL.md` and note the companions, scripts, references, and assets it link
 ## Step 2: Check canonical frontmatter
 
 - [ ] `name` equals the skill directory and the H1.
-- [ ] This deck authors names in PascalCase. The agentskills provider converts them to lowercase during deployment.
+- [ ] This deck authors names in PascalCase. The opt-in `agentskills` provider in Rune converts them to lowercase during deployment.
 - [ ] `description` is one line with concrete `USE WHEN` triggers and a useful `NOT FOR` boundary.
 - [ ] Top-level fields use only `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`, or an assembly directive.
 - [ ] The assembly directives are `targets`, `disable-model-invocation`, and `user-invocable`.

@@ -38,7 +38,7 @@ rune install
 
 Assembly maps canonical content into each provider's native format without changing the canonical contract: frontmatter is stripped to the fields a provider keeps, tool names are remapped, and provider-specific fields come from `claude/` and other qualifier variants rather than from the canonical file.
 
-This deck authors skill names in PascalCase. It enables `kebab-case-skills` for providers that require lowercase names, such as agentskills.
+This deck authors skill names in PascalCase. The opt-in `agentskills` provider in Rune enables `kebab-case-skills` because it requires lowercase names.
 
 The rule converts directory segments, Markdown companion names, and the frontmatter `name`. It also updates relative Markdown links. These changes keep companion links valid.
 
