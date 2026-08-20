@@ -1,18 +1,18 @@
 # Rune adopt commands
 
-> Drive the adoption state machine with the rune CLI: start or resume a session, record a verdict per block, and finalize the sealed review record.
+> Drive the adoption state machine with the rune CLI: start or resume a session, record a verdict per block, and finalize concise source provenance.
 
 The `rune` CLI owns adoption state in a Rune deck. The ceremony lives in the entrypoint; this workflow is its deck-side mechanics.
 
 ## OBJECTIVE
 
-An adoption session driven from start to sealed record, with every block verdict recorded through the CLI.
+An adoption session driven from start to reviewed sidecars, with every block verdict enforced by the CLI.
 
 ## DONE WHEN
 
 - `rune adopt status --json` shows no pending review for the artifact.
-- Finalization reported reviewed provenance sidecars and a sealed review record.
-- The artifact, its sidecars, and the record are staged together.
+- Finalization reported reviewed provenance sidecars with final file digests.
+- The artifact and its sidecars are staged without a review ledger.
 
 ## TODO
 
@@ -41,7 +41,7 @@ rune adopt verdict <block-id> adapt --note "<user rationale>"
 rune adopt verdict <block-id> cut --note "<user rationale>"
 ```
 
-The default `--count` is 1; batch up to 4 for flow, and fetch an oversized or whole-file block alone. `--note` is required for adapt and cut. Apply an approved adapt to the imported file right after recording it; the ledger stores the rationale and the sealed record digests the final text. Re-record a changed decision with `--force` only after explicit confirmation. If a block id is unknown, re-run `next` and synchronize with the current ledger.
+The default `--count` is 1; batch up to 4 for flow, and fetch an oversized or whole-file block alone. `--note` is required for adapt and cut. Apply an approved adapt immediately; the temporary session stores the rationale until finalization writes the final file digest. Re-record a changed decision with `--force` only after explicit confirmation. If a block id is unknown, re-run `next` and synchronize with the current session.
 
 ## Step 3: Finalize or abandon
 
@@ -50,7 +50,7 @@ rune adopt finalize
 rune adopt abandon --yes
 ```
 
-Finalize mutates nothing: it refuses with reasons until the tree matches the ledger, so repair and re-run it until it seals. The record's reviewer identity defaults to git config `user.name` and `user.email`. Confirm it names the human maintainer; pass `--reviewer "Name <email>"` when the configuration holds an agent identity or nothing. On success, inspect the reported added entries and the record path. Abandon drops the session, the exit for an unresolvable name conflict with a first-party artifact.
+Finalize refuses with reasons until the tree matches the session. The reviewer identity defaults to git config `user.name` and `user.email`; pass `--reviewer "Name <email>"` when needed. On success, inspect the reviewed sidecars and confirm that no review ledger entered the working tree. Abandon drops the session and imported artifact.
 
 ## Maintenance
 
@@ -59,7 +59,7 @@ rune adopt doctor
 rune adopt reseal
 ```
 
-`doctor` verifies sealed records, open sessions, and unreviewed imports. `reseal` re-syncs a sealed record to the maintainer's own pre-commit touch-ups; it records the edit, it does not review it. Never use reseal to bless content the block verdicts did not cover.
+`doctor` verifies open sessions and reviewed sidecar digests. It reports legacy `review.yaml` and `*.review.yaml` files for removal. `reseal` updates reviewed sidecar digests after the maintainer's own touch-ups; it does not review new content. Never use reseal to bless content the block verdicts did not cover.
 
 ## EXECUTE NOW
 

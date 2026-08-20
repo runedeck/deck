@@ -78,8 +78,15 @@ trailer_identities=$(printf '%s\n' "$authors_text" \
     || { echo "check-authorship: cannot parse trailer identities from $authors_source"; exit 1; }
 [ -n "$identities" ] || { echo "$authors_source lists no author identities"; exit 1; }
 
+canonical_identity() {
+    printf '%s\n' "$1" | sed -E 's/([0-9])1m([)@ ])/\1\2/g'
+}
 listed() {
-    grep -qFx -- "$1" <<< "$identities"
+    candidate=$(canonical_identity "$1")
+    while IFS= read -r identity; do
+        [ "$candidate" = "$(canonical_identity "$identity")" ] && return 0
+    done <<< "$identities"
+    return 1
 }
 trailer_listed() {
     [ -n "$trailer_identities" ] && grep -qFx -- "$1" <<< "$trailer_identities"
@@ -96,11 +103,12 @@ while IFS=$'\t' read -r commit author; do
         echo "$commit: author '$author' is not in $authors_source (expected 'Display Name (model-id) <address>')"
         failures=1
     fi
+    canonical_author=$(canonical_identity "$author")
     trailers=$(git show -s --format='%(trailers:key=Co-Authored-By,valueonly)' "$commit") \
         || { echo "$commit: could not read Co-Authored-By trailers"; exit 1; }
     while read -r trailer; do
         [ -n "$trailer" ] || continue
-        if [ "$trailer" = "$author" ]; then
+        if [ "$(canonical_identity "$trailer")" = "$canonical_author" ]; then
             echo "$commit: author repeated as Co-Authored-By"
             failures=1
         elif ! listed "$trailer" && ! trailer_listed "$trailer"; then

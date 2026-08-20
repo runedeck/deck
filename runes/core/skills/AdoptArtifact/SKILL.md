@@ -8,7 +8,7 @@ allowed-tools: Bash(rune *), Bash(git add *), Bash(git status *), Bash(git diff 
 
 # AdoptArtifact
 
-Adopt an upstream artifact by reviewing it in blocks: every block gets a pass and a verdict before anything lands. The review is a state machine that owns import provenance, segmentation, the verdict ledger, final enforcement, and the sealed review record.
+Adopt an upstream artifact by reviewing it in blocks: every block gets a pass and a verdict before anything lands. The state machine keeps the verdict ledger as temporary session state. Finalization enforces those verdicts and writes concise source provenance beside the adopted files.
 
 The ceremony exists for accountability: the artifacts a user stacks on top of model weights stay owned, reviewed, and honest, and the stack stays easy to transfer between harnesses and scaffolds.
 
@@ -26,7 +26,7 @@ The ceremony exists for accountability: the artifacts a user stacks on top of mo
 - Every block receives a recorded verdict before the adoption finalizes. Adapt and cut verdicts require the user's rationale; ask for it before recording.
 - Never edit inside a kept block. Remove cut blocks completely. Rewrite adapted blocks so the original text no longer appears. When a kept block itself fails validation, do not repair it in place: re-record that block as adapt with the user's confirmation, then apply the fix.
 - Do not create files during an active review. Finalization rejects files that were not part of the imported artifact.
-- One adoption and its provenance evidence belong together in a single step and should thus land together in one commit.
+- One adoption and its source-level provenance sidecars belong together in one commit. Never stage `review.yaml` or `*.review.yaml`; those files are temporary or legacy session state.
 - First-party artifacts take precedence on name conflicts. Rename the adoption or abandon it.
 
 ## Instructions
@@ -35,13 +35,13 @@ The ceremony exists for accountability: the artifacts a user stacks on top of mo
 
 The state machine tracks open review sessions; list its pending sessions before starting. There is no resume command: block and verdict commands continue the open session, with a selector choosing among several; ask the user which to settle first. Otherwise start a new session from the upstream source, recording the destination module, artifact kind, name, and upstream attribution.
 
-A reviewed artifact refuses re-adoption. To take a new upstream revision, retire the existing adoption first, the artifact and its sealed record together in their own commit, then adopt the new revision as a fresh reviewed import.
+A reviewed artifact refuses re-adoption based on its provenance sidecar. To take a new upstream revision, retire the existing adoption and its sidecars in one commit, then adopt the revision as a fresh reviewed import.
 
 ### Review and record blocks
 
 Fetch the next few pending blocks. For each block, ask one focused question that invites clarification, refutation, or doubt: lead with any reported flag, explain what the suspect content does, and offer Keep, Adapt, and Cut with the drafted adapted text in the Adapt option whenever the fix is visible. Give an oversized code block or a whole-file block its own question, fetched alone rather than batched.
 
-Record each answer only after the user resolves it to a verdict, then apply an approved Adapt to the imported file immediately, so the working tree always reflects the ledger. An Other answer is clarification, not a verdict; ask a follow-up. Change a recorded decision only after explicit confirmation.
+Record each answer only after the user resolves it to a verdict, then apply an approved Adapt to the imported file immediately, so the working tree reflects the session. An Other answer is clarification, not a verdict; ask a follow-up. Change a recorded decision only after explicit confirmation.
 
 ### Apply the verdicts
 
@@ -49,13 +49,13 @@ Keep blocks unchanged, remove cut blocks, and rewrite adapted blocks. Conform th
 
 ### Finalize and stage
 
-Finalization mutates nothing: it refuses with reasons, and you repair and re-run it until it seals. Resolve each refusal according to the ledger: review pending blocks, restore missing kept content, remove surviving cut or adapted text, remove files that were not part of the import, and fix reported schema errors. Stage the artifact, its provenance sidecars, and the review record together. The user reviews the staged diff and commits it.
+Finalization refuses with reasons until the tree matches the session. Review pending blocks, restore missing kept content, remove surviving cut or adapted text, remove files outside the import, and fix schema errors. On success it marks the source-level sidecars reviewed, updates their final digests, and removes the temporary session. Stage only the artifact and those sidecars.
 
 ## Verification
 
 - No review remains pending for the finalized artifact.
-- Finalization reports reviewed provenance sidecars and a sealed review record.
-- The staged diff contains the artifact, its sidecars, and its review record without unrelated files.
+- Finalization reports reviewed source-level provenance sidecars with final file digests.
+- The staged diff contains the artifact and its sidecars, with no review ledger or unrelated files.
 - The final artifact validates against the nearest `.mdschema` and the applicable validator.
 
 ## Troubleshooting
