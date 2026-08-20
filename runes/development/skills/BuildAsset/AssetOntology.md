@@ -30,7 +30,7 @@ Worker attempt: one creative-worker invocation, including its status and all out
 
 Candidate emission: immutable raw output bytes with worker provenance, lineage, medium, and round identity.
 
-Presentation record: proof that the human reviewed a candidate, partial output, or safe failure card.
+Presentation record: a candidate, partial output, or safe failure card prepared for human review.
 
 Direction board: every candidate emission from one round, presented through a medium-appropriate comparison without technical ranking.
 
