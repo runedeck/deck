@@ -50,7 +50,7 @@ Context preview: exact normalized bytes presented in their intended scene, playb
 
 Approval record: human decision bound to exact reviewed bytes, configuration, verdict, and context evidence.
 
-Integration plan: target, expected changes, production derivations, and rollback boundary for approved bytes.
+Integration plan: target, expected changes, approved byte placements, and rollback boundary. It cannot include a byte-changing production derivation.
 
 Integration authorization: separate human permission to execute one integration plan.
 

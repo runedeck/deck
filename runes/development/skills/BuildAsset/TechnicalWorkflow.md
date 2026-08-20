@@ -26,11 +26,10 @@ Any operation that changes identity, expression, structure, rhythm, tone, timbre
 4. Run medium-specific checks from the technical profile.
 5. Preserve every failure and its evidence.
 6. Classify the candidate as `admissible`, `inadmissible`, or `indeterminate`.
-7. Treat `indeterminate` as technically blocked.
 
 A blocked result remains visible and can still inform creative direction. It cannot enter exact-byte approval.
 
-A technical steward can revise the technical profile. The revised profile requires a new verdict and does not waive the old verdict.
+A technical steward can revise the technical profile. The revised profile requires a new verdict.
 
 ## Present context evidence
 
@@ -73,9 +72,9 @@ Do not ask the human to compare hashes manually. The system uses hashes to prove
 1. Verify approval freshness before integration.
 2. Prepare one integration plan with its target, change boundary, and rollback boundary.
 3. Request separate human authorization for that integration plan.
-4. Prepare the smallest source and metadata change from approved bytes.
+4. Prepare the smallest source and metadata change. Copy the approved bytes without alteration.
 5. Prove unrelated source and output regions remain unchanged.
-6. Create an integration receipt with actual hashes and isolation evidence.
+6. Create an integration receipt. Prove each integrated asset hash equals its approved hash and include isolation evidence.
 7. Keep the integrated asset inactive.
 8. Request separate activation authorization for one integration receipt and one target context.
 9. Activate only the authorized receipt through the owning runtime gate.

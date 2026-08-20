@@ -26,7 +26,6 @@ Creative asset work is a dialogue before it is a pipeline. The human owns taste 
 - A useful candidate can fail technical checks. A technical pass can still be creatively wrong.
 - Use only the deterministic operations in the declared transform policy. A perceptible edit returns to human direction.
 - Bind final approval to exact reviewed bytes and evidence. Any bound change invalidates that approval.
-- Treat an indeterminate technical verdict as blocked. A human cannot waive an existing technical verdict.
 - Require one presentation record for each output, partial result, or safe failure card.
 - Keep generation, approval, integration, and activation as separate transitions. A creative worker cannot edit operational source, manifests, hashes, runtime lists, or version-control state.
 

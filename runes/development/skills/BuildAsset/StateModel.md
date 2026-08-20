@@ -8,7 +8,7 @@ Read this model when you start, resume, or audit creative asset work.
 
 `exploring`: worker attempts exist and await complete presentation.
 
-`awaiting-critique`: each attempt has a presentation record. The human must respond.
+`awaiting-critique`: every emission, partial output, and failed attempt has a presentation record. The human must respond.
 
 `directed`: human critique defines the next creative direction.
 
@@ -42,7 +42,7 @@ Read this model when you start, resume, or audit creative asset work.
 
 `briefed → exploring`: the human director opens a bounded round from one asset brief.
 
-`exploring → awaiting-critique`: each worker attempt has a presentation record.
+`exploring → awaiting-critique`: every emission, partial output, and failed attempt has a presentation record.
 
 `awaiting-critique → directed`: the human director records critique for another round.
 
@@ -82,7 +82,7 @@ A bound change moves dependent states to `stale`. Resume at the earliest state t
 
 ## Invariants
 
-Visibility invariant: each worker emission gets a presentation record before critique closes the round.
+Visibility invariant: every emission, partial output, and failed attempt gets a presentation record before critique closes the round.
 
 Failure visibility invariant: show partial outputs and safe failure cards. Never claim visibility when no accessible output exists.
 

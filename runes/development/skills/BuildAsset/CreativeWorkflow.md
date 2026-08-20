@@ -77,7 +77,7 @@ If the feedback can change the perceived result, stop and use it for a new round
 
 ## Near misses
 
-A request for conversion, encoding, subsetting, compression, or inspection is technical-only work when it makes no perceptible change. Approval state does not alter this boundary. Any operation that changes bytes makes the existing approval stale. Obtain approval for the changed bytes before integration or activation.
+Route conversion, encoding, subsetting, compression, or inspection outside BuildAsset when the request makes no perceptible change. Any byte change makes an existing BuildAsset approval stale. Obtain approval for the changed bytes before integration or activation.
 
 Route provenance-only requests to the project provenance audit process.
 
