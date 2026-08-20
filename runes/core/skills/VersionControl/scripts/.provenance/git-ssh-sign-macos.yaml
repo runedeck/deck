@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/VersionControl/scripts/git-ssh-sign-macos
     digest:
-      sha256: ad5f7963c4df42f3557e561800b0bcad65501ac2ca3529d2312cca7fb77822b9
+      sha256: cb11ccb9110b8a479ab843900ebcfd2b863fbf6e52be11efce5998376e4d8094
   predicate:
     buildDefinition:
       buildType: adopt/v1

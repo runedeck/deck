@@ -4,4 +4,19 @@
 # refuses to sign with sk-ssh-ed25519 (FIDO2) keys. By unsetting SSH_AUTH_SOCK,
 # ssh-keygen goes direct to libfido2 → YubiKey, which handles touch + PIN.
 # See ../CommitSigning.md for installation and diagnosis.
-exec env -u SSH_AUTH_SOCK /opt/homebrew/bin/ssh-keygen "$@"
+ssh_keygen=""
+for candidate in \
+    /opt/homebrew/opt/openssh/bin/ssh-keygen \
+    /usr/local/opt/openssh/bin/ssh-keygen \
+    /opt/homebrew/bin/ssh-keygen \
+    /usr/local/bin/ssh-keygen; do
+    [ -x "$candidate" ] || continue
+    ssh_keygen=$candidate
+    break
+done
+
+[ -n "$ssh_keygen" ] || {
+    echo "git-ssh-sign-macos: Homebrew ssh-keygen was not found" >&2
+    exit 127
+}
+exec env -u SSH_AUTH_SOCK "$ssh_keygen" "$@"
