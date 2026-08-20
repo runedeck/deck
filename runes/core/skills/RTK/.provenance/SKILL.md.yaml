@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/RTK/SKILL.md
     digest:
-      sha256: 3e4cac01f298417e160088a4b7bcdec8ef7929458d3df10bf7dcf131a431dba6
+      sha256: db162d3499d3a370eb780c7ab6420059962889daf8c7bd576e1adf78f2740421
   predicate:
     buildDefinition:
       buildType: adopt/v1
