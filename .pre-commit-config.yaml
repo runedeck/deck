@@ -80,7 +80,7 @@ repos:
 
           - id: mdschema-skills
             name: mdschema skill entrypoints
-            entry: sh -c 'if command -v mdschema >/dev/null 2>&1; then for schema in runes/*/skills/.mdschema; do [ -f "$schema" ] || continue; dir=$(dirname "$schema"); set -- "$dir"/*/SKILL.md; [ -e "$1" ] || { echo "no SKILL.md under $dir"; exit 1; }; mdschema check "$@" --schema "$schema" || exit 1; done; fi'
+            entry: sh -c 'if command -v mdschema >/dev/null 2>&1; then for skill in runes/*/skills/*/SKILL.md; do [ -f "$skill" ] || continue; dir=${skill%/SKILL.md}; schema="$dir/.mdschema"; [ -f "$schema" ] || schema="${dir%/*}/.mdschema"; [ -f "$schema" ] || { echo "no .mdschema for $skill"; exit 1; }; mdschema check "$skill" --schema "$schema" || exit 1; done; fi'
             language: system
             pass_filenames: false
 
@@ -102,6 +102,15 @@ repos:
           - id: gitleaks-range
             name: gitleaks (push range)
             entry: sh -c 'if [ -n "${PRE_COMMIT_FROM_REF:-}" ]; then gitleaks git --no-banner --log-opts "${PRE_COMMIT_FROM_REF}..${PRE_COMMIT_TO_REF:-HEAD}"; elif [ -n "${GITLEAKS_PUSH_TO_REF:-}" ]; then gitleaks git --no-banner --log-opts "$GITLEAKS_PUSH_TO_REF"; else bash .githooks/pre-commit --scan-only; fi'
+            language: system
+            pass_filenames: false
+            stages: [pre-push]
+
+          # The same rules as the ci/authorship workflow, applied before the
+          # push so a bad identity fails as a local amend, not a CI rewrite.
+          - id: check-authorship
+            name: authorship (push range)
+            entry: bash scripts/check-authorship
             language: system
             pass_filenames: false
             stages: [pre-push]

@@ -1,0 +1,25 @@
+# This schema preserves the current rune skill before its Stable shell migration.
+# The migration MUST delete this file before it adds the shared meta skill schema.
+frontmatter:
+    fields:
+        - name: name
+          type: string
+        - name: description
+          type: string
+
+heading_rules:
+    no_skip_levels: true
+    unique_per_level: true
+    max_depth: 3
+
+structure:
+    - heading:
+          pattern: "# .+"
+      count:
+          max: 1
+      children:
+          - heading: "## Orientation"
+          - heading: "## Consumer Flow"
+          - heading: "## Safe Scripting"
+          - heading: "## Spec Lifecycle"
+          - heading: "## Validation"
