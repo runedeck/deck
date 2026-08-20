@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BuildSkill/DynamicContextInjection.md
     digest:
-      sha256: 25c9bc487ed86dd156a60bea4c079232094d991dc9b32ba91593a9f16a1da4e0
+      sha256: a630f84629f1427cc4ad52e3b41684ee59e60cf136684fdb842daffe6b27c86e
   predicate:
     buildDefinition:
       buildType: adopt/v1

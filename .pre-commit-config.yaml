@@ -1,13 +1,13 @@
 # One universal config for every scaffolded repository: each hook gates on
 # the file types present in the change, so hooks for absent languages never
 # fire and language templates carry no lint config of their own.
-# Sealed adoption evidence stays byte-stable under every hook.
+# Durable provenance sidecars stay byte-stable under every hook.
 repos:
     - repo: builtin
       hooks:
-          # Everything under .provenance/ is sealed, digest-bound evidence:
-          # an auto-fixing hook that rewrites it destroys what it touches.
-          # All records remain covered by validators and secret scanning.
+          # Source-level sidecars under .provenance/ are digest-bound evidence:
+          # an auto-fixing hook that rewrites one destroys what it touches.
+          # Temporary block-review ledgers must never be committed here.
           - id: trailing-whitespace
             exclude: '(^|/)\.provenance/'
           - id: check-yaml
@@ -28,6 +28,12 @@ repos:
           - id: check-reject-files
             name: reject files
             entry: sh -c 'rejects=$(git ls-files --cached --others --exclude-standard -- "*.rej"); [ -z "$rejects" ] || { printf "%s\n" "$rejects"; exit 1; }'
+            language: system
+            pass_filenames: false
+
+          - id: check-review-ledgers
+            name: temporary review ledgers are not tracked
+            entry: sh -c 'ledgers=$(git ls-files -- "**/.provenance/review.yaml" "**/.provenance/*.review.yaml" | while IFS= read -r path; do [ ! -e "$path" ] || printf "%s\n" "$path"; done); [ -z "$ledgers" ] || { printf "temporary adoption state must not be committed:\n%s\n" "$ledgers"; exit 1; }'
             language: system
             pass_filenames: false
 
@@ -80,7 +86,7 @@ repos:
 
           - id: mdschema-skills
             name: mdschema skill entrypoints
-            entry: sh -c 'if command -v mdschema >/dev/null 2>&1; then for schema in runes/*/skills/.mdschema; do [ -f "$schema" ] || continue; dir=$(dirname "$schema"); set -- "$dir"/*/SKILL.md; [ -e "$1" ] || { echo "no SKILL.md under $dir"; exit 1; }; mdschema check "$@" --schema "$schema" || exit 1; done; fi'
+            entry: sh -c 'if command -v mdschema >/dev/null 2>&1; then for skill in runes/*/skills/*/SKILL.md; do [ -f "$skill" ] || continue; dir=${skill%/SKILL.md}; schema="$dir/.mdschema"; [ -f "$schema" ] || schema="${dir%/*}/.mdschema"; [ -f "$schema" ] || { echo "no .mdschema for $skill"; exit 1; }; mdschema check "$skill" --schema "$schema" || exit 1; done; fi'
             language: system
             pass_filenames: false
 
@@ -102,6 +108,15 @@ repos:
           - id: gitleaks-range
             name: gitleaks (push range)
             entry: sh -c 'if [ -n "${PRE_COMMIT_FROM_REF:-}" ]; then gitleaks git --no-banner --log-opts "${PRE_COMMIT_FROM_REF}..${PRE_COMMIT_TO_REF:-HEAD}"; elif [ -n "${GITLEAKS_PUSH_TO_REF:-}" ]; then gitleaks git --no-banner --log-opts "$GITLEAKS_PUSH_TO_REF"; else bash .githooks/pre-commit --scan-only; fi'
+            language: system
+            pass_filenames: false
+            stages: [pre-push]
+
+          # The same rules as the ci/authorship workflow, applied before the
+          # push so a bad identity fails as a local amend, not a CI rewrite.
+          - id: check-authorship
+            name: authorship (push range)
+            entry: bash scripts/check-authorship
             language: system
             pass_filenames: false
             stages: [pre-push]

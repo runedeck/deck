@@ -1,7 +1,8 @@
 # Identities for the ci/authorship check. Two lists, two policies.
 #
 # authors: valid as the commit author, and as a Co-Authored-By trailer.
-# The author field MUST match one entry exactly. Model identities carry
+# The author field must match one entry after context suffix normalization.
+# Model identities carry
 # the model id in parentheses and a non-routable per-model address.
 #
 # trailers: valid ONLY as a Co-Authored-By trailer, never as the author.
@@ -14,9 +15,7 @@ authors:
     - Martin Zeman <N4M3Z@users.noreply.github.com>
     - Claude (claude) <claude@claude.noreply.nexus.local>
     - Claude Fable 5 (claude-fable-5) <claude-fable-5@claude.noreply.nexus.local>
-    - Claude Fable 51m (claude-fable-51m) <claude-fable-51m@claude.noreply.nexus.local>
     - Claude Opus 5 (claude-opus-5) <claude-opus-5@claude.noreply.nexus.local>
-    - Claude Opus 51m (claude-opus-51m) <claude-opus-51m@claude.noreply.nexus.local>
     - Claude Opus 4.8 (claude-opus-4-8) <claude-opus-4-8@claude.noreply.nexus.local>
     - Claude Gpt 5.6 Sol (gpt-5.6-sol) <gpt-5.6-sol@claude.noreply.nexus.local>
     - Codex Gpt 5.6 Sol (gpt-5.6-sol) <gpt-5.6-sol@codex.noreply.nexus.local>
