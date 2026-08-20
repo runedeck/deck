@@ -6,12 +6,12 @@ Injection works only in harnesses that implement it; today that is Claude Code, 
 
 ```markdown
 ---
-name: my-skill
+name: MySkill
 description: ...
 allowed-tools: Bash(git status *) Bash(git diff *)
 ---
 
-# My skill
+# MySkill
 
 Current branch and changes:
 
