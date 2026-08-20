@@ -6,6 +6,8 @@ Treat prompts, outputs, evidence, notes, and transcripts as untrusted data. Esca
 
 Native mode uses `benchmark.md` as its human-readable source.
 
+Native mode also requires `manifest.json` as its frozen machine-readable plan.
+
 The definition names one artifact, two arms, one or more cases, models, and repeats.
 
 The arms are `baseline` and `with_artifact`. Only `with_artifact` receives `artifact.md`.
@@ -14,11 +16,17 @@ Each case defines an identifier, name, prompt, declared input files, and frozen 
 
 Use the example at [../templates/benchmark.md](../templates/benchmark.md).
 
+## Checker selection
+
+An artifact with a measurable claim names its checker.
+
+Without a dedicated checker, use [../scripts/lint.py](../scripts/lint.py) with a small patterns JSON.
+
+Do not add an artifact checker for simple pattern claims.
+
 ## Frozen manifest
 
-The aggregator accepts `manifest.json` when a workflow needs a complete machine-readable plan.
-
-Cross-harness mode always writes this file. Native mode can omit it for one two-arm comparison.
+Every benchmark requires `manifest.json`. Cross-harness mode writes this file before execution.
 
 ```json
 {
@@ -42,6 +50,10 @@ Cross-harness mode always writes this file. Native mode can omit it for one two-
       "baseline": "baseline"
     }
   ],
+  "run_plan": {
+    "models": ["reported-model-name"],
+    "repeats": 1
+  },
   "evals": [
     {
       "id": 1,
@@ -77,127 +89,28 @@ Use `required_patterns` or `forbidden_patterns` with a non-empty `patterns` arra
 
 Use `word_range` with `minimum_words`, `maximum_words`, or both fields on the case.
 
+Native mode freezes each exact model name in `run_plan.models` and the repeat count in `run_plan.repeats`.
+
+Cross-harness mode writes equivalent `run_plan.routes` entries into the iteration manifest.
+
+The grader and aggregator reject a schema-v2 iteration manifest without a frozen run plan.
+
 Resolve relative artifact and input paths from the source manifest directory.
+
+Reject each path that resolves outside the source manifest directory.
 
 Use files for rules and agents. Use directories for skills that need support files.
 
 File digests use SHA-256 bytes. Directory digests include sorted relative paths and file contents.
 
-## Execution result
+Read [execution-results.md](execution-results.md) for execution, timing, and grading records.
 
-Write `result.json` in each run directory. Write the final response to `outputs/response.md`.
+Read [preference-results.md](preference-results.md) for judging and aggregate records.
 
-Cross-harness mode also writes unparsed stdout to `outputs/provider-output.txt`.
+## Report links
 
-```json
-{
-  "schema_version": 2,
-  "eval_id": 1,
-  "eval_name": "concise-rewrite",
-  "arm": "with_artifact",
-  "model": "reported-model-name",
-  "repeat": 1,
-  "state": "valid",
-  "duration_seconds": 12.4,
-  "response": "Final response.",
-  "word_count": 2,
-  "usage": {
-    "input_tokens": null,
-    "cache_creation_input_tokens": null,
-    "cache_read_input_tokens": null,
-    "output_tokens": null,
-    "total_tokens": null
-  },
-  "notes": []
-}
-```
+A local report shows each artifact source path without a link.
 
-Use these executor states:
+Its snapshot label links to the frozen artifact. Each identity path links to its local file.
 
-- `valid`
-- `provider_failure`
-- `timeout`
-- `invalid_output`
-- `preflight_failure`
-- `context_failure`
-- `model_mismatch`
-
-The aggregator can add `missing_execution` and `missing_grading`.
-
-## Timing result
-
-Native mode writes `timing.json` from the harness completion notification.
-
-Record `duration_seconds`, `total_tokens`, and `model`. Use `null` for unavailable values.
-
-## Grading result
-
-Write `grading.json` beside `result.json`.
-
-```json
-{
-  "expectations": [
-    {
-      "text": "The response keeps the stated limit.",
-      "passed": true,
-      "evidence": "The response states 25 jobs."
-    }
-  ],
-  "summary": {"passed": 1, "failed": 0, "total": 1, "pass_rate": 1.0},
-  "lint": {"total": 2, "total_per100w": 1.6, "words": 125},
-  "notes": []
-}
-```
-
-Preferences remain separate from assertions and checker findings.
-
-## Blind preference result
-
-The optional manifest `judging` object formalizes the criteria:
-
-```json
-{
-  "judging": {
-    "dimensions": [
-      {"id": "clarity", "label": "Clarity", "criterion": "Prefer the text that a reader can understand without resolving ambiguity."}
-    ],
-    "guards": [
-      "Do not judge factual accuracy or completeness. Deterministic assertions test those requirements."
-    ]
-  }
-}
-```
-
-The judge builds its prompt from these dimensions and guards. The aggregator copies the block into `benchmark.json`, and the report shows each criterion beside its scores. Without the block, the judge uses the default clarity, fluency, and directness criteria.
-
-Each dimension accepts an optional `weight`, `trade_off`, and `win` value. A weight of 0 removes the dimension from the verdict. A weight below 1 turns its trade-off into a label note instead of a downgrade. The default weights are 1, with 0.5 for fluency. Threshold values on a dimension replace the report defaults for that dimension.
-
-The optional manifest `metrics` array replaces the report's metric definitions:
-
-```json
-{
-  "metrics": [
-    {"id": "checker", "label": "Checker /100w", "definition": "Checker findings for each 100 checked words.", "example": "4.89 to 1.09 means most findings disappeared."}
-  ]
-}
-```
-
-The aggregator copies the array into `benchmark.json` as `metric_definitions`. The report renders each entry in its Metric definitions section and in the matching column popup. Without the array, the report uses its default definitions.
-
-Store judgments under `preferences/<comparison>/eval-<ID>/<model>/run-<R>.json`.
-
-Record the blind order. Record one winner and one reason for each judging dimension.
-
-Each winner is the primary arm, baseline arm, or `tie`.
-
-## Aggregated benchmark
-
-`aggregate_benchmark.py` writes `benchmark.json` and `benchmark.md`.
-
-The aggregate keeps named arms, explicit comparisons, matched pairs, exclusions, notes, and limitations.
-
-Corpus ratios use total findings and total words from matched outputs.
-
-The aggregate contains no cross-model average.
-
-The report omits a verdict when fewer than half of the planned pairs are valid.
+Use `--local-links` for local review. Omit it before you share the report.

@@ -12,6 +12,12 @@ SPEC = importlib.util.spec_from_file_location("run_benchmark", SCRIPT)
 RUN = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(RUN)
 
+ASSERTIONS = [{
+    "kind": "required_patterns",
+    "text": "The response contains its required marker.",
+    "patterns": ["response"],
+}]
+
 
 class RunBenchmarkTests(unittest.TestCase):
     def setUp(self):
@@ -68,7 +74,7 @@ class RunBenchmarkTests(unittest.TestCase):
             "input_root": "v2-inputs",
             "arms": {"baseline": {}, "with_rule": {"artifact_path": "rule.md"}},
             "comparisons": [{"id": "rule", "primary": "with_rule", "baseline": "baseline"}],
-            "evals": [{"id": 1, "name": "sample", "prompt": "Rewrite.", "files": ["draft.md"], "minimum_words": 10}],
+            "evals": [{"id": 1, "name": "sample", "prompt": "Rewrite.", "files": ["draft.md"], "minimum_words": 10, "assertions": ASSERTIONS}],
         })
         routes = self.root / "routes.json"
         self.write_json(routes, {"routes": {"fake": {
@@ -121,7 +127,7 @@ class RunBenchmarkTests(unittest.TestCase):
                 {"id": "rule", "primary": "with_rule", "baseline": "baseline"},
                 {"id": "skill", "primary": "with_skill", "baseline": "baseline"},
             ],
-            "evals": [{"id": 1, "name": "sample", "prompt": "Rewrite.", "files": []}],
+            "evals": [{"id": 1, "name": "sample", "prompt": "Rewrite.", "files": [], "assertions": ASSERTIONS}],
         })
         routes = self.root / "routes.json"
         self.write_json(routes, {"routes": {"fake": {
@@ -158,6 +164,22 @@ class RunBenchmarkTests(unittest.TestCase):
         self.assertEqual(without_deck, self.root / "bench-root" / "Rule")
         with self.assertRaisesRegex(ValueError, "artifact_name"):
             RUN.default_workspace({})
+        for manifest in (
+            {"artifact_name": "../outside"},
+            {"artifact_name": "Rule", "deck": "../outside"},
+        ):
+            with self.subTest(manifest=manifest), self.assertRaisesRegex(
+                ValueError, "safe path segment",
+            ):
+                RUN.default_workspace(manifest)
+
+    def test_manifest_resources_cannot_escape_the_manifest_directory(self):
+        manifest = self.root / "source" / "manifest.json"
+        manifest.parent.mkdir()
+
+        for value in ("../outside", str(self.root / "outside")):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                RUN.resolve_manifest_path(manifest, value, "input_root")
 
     def test_model_identifier_is_one_safe_directory_segment(self):
         target = RUN.result_dir(self.root, {"id": 1, "name": "case"}, "baseline", "proton-lumo/lumo-max", 1)
@@ -200,7 +222,7 @@ class RunBenchmarkTests(unittest.TestCase):
             "schema_version": 2,
             "arms": {"baseline": {}},
             "comparisons": [],
-            "evals": [{"id": 1, "name": "sample", "prompt": "Rewrite."}],
+            "evals": [{"id": 1, "name": "sample", "prompt": "Rewrite.", "assertions": ASSERTIONS}],
         })
         routes = self.root / "routes.json"
         self.write_json(routes, {"routes": {"fake": {
@@ -265,7 +287,7 @@ class RunBenchmarkTests(unittest.TestCase):
             "schema_version": 2,
             "arms": {"baseline": {}, "with_rule": {"artifact_kind": "rule"}},
             "comparisons": [{"id": "rule", "primary": "with_rule", "baseline": "baseline"}],
-            "evals": [{"id": 1, "name": "sample", "prompt": "Review."}],
+            "evals": [{"id": 1, "name": "sample", "prompt": "Review.", "assertions": ASSERTIONS}],
         }
 
         with self.assertRaisesRegex(ValueError, "needs artifact_path"):
@@ -276,7 +298,7 @@ class RunBenchmarkTests(unittest.TestCase):
             "schema_version": 2,
             "arms": {"baseline": {}},
             "comparisons": [{"id": "same", "primary": "baseline", "baseline": "baseline"}],
-            "evals": [{"id": 1, "name": "sample", "prompt": "Review."}],
+            "evals": [{"id": 1, "name": "sample", "prompt": "Review.", "assertions": ASSERTIONS}],
         }
 
         with self.assertRaisesRegex(ValueError, "must differ"):
@@ -289,10 +311,10 @@ class RunBenchmarkTests(unittest.TestCase):
             "comparisons": [
                 {"primary": "with_rule", "baseline": "baseline"},
             ],
-            "evals": [{"id": 1, "name": "sample", "prompt": "Review."}],
+            "evals": [{"id": 1, "name": "sample", "prompt": "Review.", "assertions": ASSERTIONS}],
         }
 
-        with self.assertRaisesRegex(ValueError, "safe id"):
+        with self.assertRaisesRegex(ValueError, "one safe path segment"):
             RUN.validate_manifest(manifest)
 
         manifest["comparisons"] = [
@@ -301,6 +323,47 @@ class RunBenchmarkTests(unittest.TestCase):
         ]
         with self.assertRaisesRegex(ValueError, "must be unique"):
             RUN.validate_manifest(manifest)
+
+    def test_fixed_judging_configuration_is_valid(self):
+        judging = {
+            "dimensions": [
+                {"id": "clarity", "label": "Clarity", "criterion": "Prefer clear text.", "weight": 1},
+                {"id": "fluency", "label": "Fluency", "criterion": "Prefer natural text.", "weight": 0.5},
+                {"id": "directness", "label": "Directness", "criterion": "Prefer direct text.", "weight": 1},
+            ],
+            "guards": ["Do not judge factual accuracy."],
+        }
+
+        RUN.validate_judging_config(judging, {"trade_off": 0.4, "win": 0.5})
+
+    def test_invalid_judging_configuration_is_rejected(self):
+        dimensions = [
+            {"id": "clarity", "label": "Clarity", "criterion": "Prefer clear text.", "weight": 1},
+            {"id": "fluency", "label": "Fluency", "criterion": "Prefer natural text.", "weight": 0.5},
+            {"id": "directness", "label": "Directness", "criterion": "Prefer direct text.", "weight": 1},
+        ]
+        invalid = {
+            "missing dimension": ({"dimensions": dimensions[:2]}, None),
+            "duplicate dimension": ({"dimensions": [*dimensions[:2], dimensions[1]]}, None),
+            "weight above one": ({
+                "dimensions": [
+                    {**dimensions[0], "weight": 1.1},
+                    *dimensions[1:],
+                ],
+            }, None),
+            "non-finite weight": ({
+                "dimensions": [
+                    {**dimensions[0], "weight": float("nan")},
+                    *dimensions[1:],
+                ],
+            }, None),
+            "threshold below zero": ({"dimensions": dimensions}, {"trade_off": -0.1}),
+            "reversed thresholds": ({"dimensions": dimensions}, {"trade_off": 0.7, "win": 0.5}),
+        }
+
+        for name, (judging, thresholds) in invalid.items():
+            with self.subTest(name=name), self.assertRaises((TypeError, ValueError)):
+                RUN.validate_judging_config(judging, thresholds)
 
     def test_write_result_stores_raw_provider_output(self):
         target = self.root / "run-1"
@@ -320,6 +383,14 @@ class RunBenchmarkTests(unittest.TestCase):
             '{"response":"Parsed response."}\n',
         )
         self.assertNotIn("provider_output", json.loads((target / "result.json").read_text()))
+
+    def test_write_result_rejects_nonfinite_json_numbers(self):
+        with self.assertRaises(ValueError):
+            RUN.write_result(
+                self.root / "nonfinite-run",
+                {"state": "valid", "usage": {"total_tokens": float("nan")}},
+                {"model": "test-model"},
+            )
 
     def test_prepend_treatment_combines_artifact_and_prompt(self):
         artifact = self.root / "rule.md"
@@ -437,6 +508,7 @@ class RunBenchmarkTests(unittest.TestCase):
             "evals": [{
                 "id": 1, "name": "sample", "prompt": "Review.",
                 "files": ["draft.md"], "minimum_words": 10,
+                "assertions": ASSERTIONS,
             }],
         })
         inspection_log = self.root / "inspection.jsonl"
@@ -478,7 +550,7 @@ class RunBenchmarkTests(unittest.TestCase):
         self.write_json(manifest, {
             "schema_version": 2, "input_root": "v2-inputs",
             "arms": {"baseline": {}}, "comparisons": [],
-            "evals": [{"id": 1, "name": "sample", "input_dir": "custom-case", "prompt": "Rewrite.", "files": ["draft.md"], "minimum_words": 10}],
+            "evals": [{"id": 1, "name": "sample", "input_dir": "custom-case", "prompt": "Rewrite.", "files": ["draft.md"], "minimum_words": 10, "assertions": ASSERTIONS}],
         })
         routes = self.root / "routes.json"
         self.write_json(routes, {"routes": {"fake": {
@@ -547,7 +619,7 @@ class RunBenchmarkTests(unittest.TestCase):
         manifest = self.root / "evals.json"
         self.write_json(manifest, {
             "schema_version": 2, "arms": {"baseline": {}}, "comparisons": [],
-            "evals": [{"id": 1, "name": "sample", "prompt": "Rewrite.", "files": []}],
+            "evals": [{"id": 1, "name": "sample", "prompt": "Rewrite.", "files": [], "assertions": ASSERTIONS}],
         })
         routes = self.root / "routes.json"
         self.write_json(routes, {"routes": {"fake": {
@@ -570,7 +642,7 @@ class RunBenchmarkTests(unittest.TestCase):
         manifest = self.root / "evals.json"
         self.write_json(manifest, {
             "schema_version": 2, "arms": {"baseline": {}}, "comparisons": [],
-            "evals": [{"id": 1, "name": "sample", "prompt": "Rewrite.", "files": []}],
+            "evals": [{"id": 1, "name": "sample", "prompt": "Rewrite.", "files": [], "assertions": ASSERTIONS}],
         })
         route = {
             "binary": "fake-harness", "model": "model1m",
@@ -588,12 +660,12 @@ class RunBenchmarkTests(unittest.TestCase):
 
         self.assertEqual(status, 1)
 
-    def test_large_matrix_requires_exact_approval(self):
+    def test_large_matrix_approval_counts_route_checks(self):
         manifest = self.root / "evals.json"
         self.write_json(manifest, {
             "schema_version": 2, "arms": {str(index): {} for index in range(21)},
             "comparisons": [],
-            "evals": [{"id": 1, "name": "sample", "prompt": "Rewrite.", "files": []}],
+            "evals": [{"id": 1, "name": "sample", "prompt": "Rewrite.", "files": [], "assertions": ASSERTIONS}],
         })
         routes = self.root / "routes.json"
         call_log = self.root / "calls.log"
@@ -613,6 +685,24 @@ class RunBenchmarkTests(unittest.TestCase):
         self.assertEqual(status, 1)
         self.assertFalse(call_log.exists())
 
+        status = self.run_cross_harness([
+            "--workspace", str(self.root / "workspace"), "--iteration", "1",
+            "--manifest", str(manifest), "--routes", str(routes),
+            "--seed", "1", "--approve", "21",
+        ])
+
+        self.assertEqual(status, 1)
+        self.assertFalse(call_log.exists())
+
+        status = self.run_cross_harness([
+            "--workspace", str(self.root / "workspace"), "--iteration", "1",
+            "--manifest", str(manifest), "--routes", str(routes),
+            "--seed", "1", "--approve", "23",
+        ])
+
+        self.assertEqual(status, 0)
+        self.assertEqual(call_log.read_text().splitlines(), ["call"] * 23)
+
     def test_plan_reports_all_calls_without_invoking_a_route(self):
         manifest = self.root / "evals.json"
         self.write_json(manifest, {
@@ -622,7 +712,7 @@ class RunBenchmarkTests(unittest.TestCase):
                 {"id": "agent", "primary": "with_agent", "baseline": "baseline"},
                 {"id": "rule", "primary": "with_rule", "baseline": "baseline"},
             ],
-            "evals": [{"id": 1, "name": "sample", "prompt": "Review.", "files": []}],
+            "evals": [{"id": 1, "name": "sample", "prompt": "Review.", "files": [], "assertions": ASSERTIONS}],
         })
         call_log = self.root / "calls.log"
         routes = self.root / "routes.json"
@@ -651,7 +741,7 @@ class RunBenchmarkTests(unittest.TestCase):
         manifest = self.root / "invalid-route-evals.json"
         self.write_json(manifest, {
             "schema_version": 2, "arms": {"baseline": {}}, "comparisons": [],
-            "evals": [{"id": 1, "name": "sample", "prompt": "Review.", "files": []}],
+            "evals": [{"id": 1, "name": "sample", "prompt": "Review.", "files": [], "assertions": ASSERTIONS}],
         })
         call_log = self.root / "invalid-route-calls.log"
         routes = self.root / "invalid-routes.json"
@@ -666,6 +756,38 @@ class RunBenchmarkTests(unittest.TestCase):
         status = self.run_cross_harness([
             "--workspace", str(self.root / "invalid-route-workspace"), "--iteration", "1",
             "--manifest", str(manifest), "--routes", str(routes), "--seed", "1", "--plan",
+        ])
+
+        self.assertEqual(status, 1)
+        self.assertFalse(call_log.exists())
+
+    def test_invalid_assertions_fail_before_a_provider_call(self):
+        manifest = self.root / "invalid-assertion-evals.json"
+        self.write_json(manifest, {
+            "schema_version": 2, "arms": {"baseline": {}}, "comparisons": [],
+            "evals": [{
+                "id": 1, "name": "sample", "prompt": "Review.", "files": [],
+                "assertions": [{
+                    "kind": "required_patterns",
+                    "text": "The response keeps the required fact.",
+                    "patterns": [],
+                }],
+            }],
+        })
+        call_log = self.root / "invalid-assertion-calls.log"
+        routes = self.root / "invalid-assertion-routes.json"
+        self.write_json(routes, {"routes": {"fake": {
+            "binary": "fake-harness", "model": "model",
+            "argv": ["--prompt-file", "{prompt_file}"], "response": "text",
+            "env": {"CALL_LOG": str(call_log)},
+            "context_canary": "List visible artifact rules.",
+            "forbidden_context_markers": ["SECRET_ARTIFACT"],
+        }}})
+
+        status = self.run_cross_harness([
+            "--workspace", str(self.root / "invalid-assertion-workspace"),
+            "--iteration", "1", "--manifest", str(manifest),
+            "--routes", str(routes), "--seed", "1",
         ])
 
         self.assertEqual(status, 1)

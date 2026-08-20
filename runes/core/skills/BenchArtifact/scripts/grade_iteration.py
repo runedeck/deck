@@ -2,10 +2,21 @@
 """Grade valid STE benchmark outputs with frozen deterministic checks."""
 
 import argparse
+import importlib.util
 import json
 import re
 import subprocess
 from pathlib import Path
+
+if __package__:
+    from . import run_benchmark
+else:
+    contract_path = Path(__file__).with_name("run_benchmark.py")
+    contract_spec = importlib.util.spec_from_file_location(
+        "bench_artifact_run_benchmark", contract_path,
+    )
+    run_benchmark = importlib.util.module_from_spec(contract_spec)
+    contract_spec.loader.exec_module(run_benchmark)
 
 
 def has_all(text: str, patterns: list[str]) -> tuple[bool, list[str]]:
@@ -68,23 +79,37 @@ def lint(checker: Path, mode: str, response: Path, checker_config: Path | None =
     return data.get("files", [data])[0] if isinstance(data.get("files"), list) else data
 
 
-def main() -> int:
+def main(argv=None) -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--iteration", type=Path, required=True)
+    parser.add_argument("--iteration", type=Path)
     parser.add_argument("--manifest", type=Path, required=True)
-    parser.add_argument("--checker", type=Path, required=True)
+    parser.add_argument("--checker", type=Path)
     parser.add_argument("--checker-config", type=Path)
-    args = parser.parse_args()
-    manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
+    parser.add_argument("--validate-only", action="store_true")
+    args = parser.parse_args(argv)
+    manifest_path = args.manifest.resolve()
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    run_benchmark.validate_manifest(manifest, require_run_plan=True)
+    if "models" in manifest["run_plan"]:
+        run_benchmark.resolve_manifest_resources(manifest_path, manifest)
+    if args.validate_only:
+        print("Manifest is valid.")
+        return 0
+    if args.iteration is None or args.checker is None:
+        parser.error("--iteration and --checker are required unless --validate-only is set")
     cases = {int(case["id"]): case for case in manifest["evals"]}
+    run_plan = run_benchmark.normalize_run_plan(manifest, required=True)
+    iteration = args.iteration.resolve()
     count = 0
-    for result_path in sorted(args.iteration.glob("eval-*/**/result.json")):
+    for result_path in sorted(iteration.glob("eval-*/**/result.json")):
+        if result_path.is_symlink() or not result_path.resolve().is_relative_to(iteration):
+            raise ValueError(f"{result_path} is not a local result file")
         execution = json.loads(result_path.read_text(encoding="utf-8"))
-        if execution.get("state") != "valid":
+        case, response, text = run_benchmark.validate_execution(
+            result_path, execution, iteration, manifest, cases, run_plan,
+        )
+        if response is None or text is None:
             continue
-        response = result_path.parent / "outputs" / "response.md"
-        text = response.read_text(encoding="utf-8")
-        case = cases[int(execution["eval_id"])]
         checks = grade_case(case, text)
         passed = sum(item["passed"] for item in checks)
         payload = {

@@ -10,54 +10,60 @@
   --content-max: 1280px;
   --page-pad: 1.5rem;
   --radius: 14px;
-  --bg: #fbfbfd;
-  --surface: #f3f3f7;
-  --card: #ececf2;
-  --ink: #1d1e24;
-  --muted: #6b6d78;
-  --line: #e0e0e8;
-  --code-bg: #f3f3f7;
-  --primary: #5a55c9;
-  --ok: #2f8f4e;
-  --warn: #b07724;
-  --fail: #c03546;
-  --neutral: #3d7f95;
-  --violet: #7a4fd0;
+  --bg: #eff1f5;
+  --surface: #e6e9ef;
+  --card: #dce0e8;
+  --ink: #4c4f69;
+  --muted: #6c6f85;
+  --line: #ccd0da;
+  --code-bg: #e6e9ef;
+  --primary: #7287fd;
+  --ok: #40a02b;
+  --warn: #df8e1d;
+  --fail: #d20f39;
+  --neutral: #209fb5;
+  --violet: #8839ef;
+  --primary-text: color-mix(in srgb, var(--primary) 25%, var(--ink));
+  --ok-text: color-mix(in srgb, var(--ok) 30%, var(--ink));
+  --warn-text: color-mix(in srgb, var(--warn) 20%, var(--ink));
+  --fail-text: color-mix(in srgb, var(--fail) 75%, var(--ink));
+  --neutral-text: color-mix(in srgb, var(--neutral) 25%, var(--ink));
+  --muted-text: color-mix(in srgb, var(--muted) 50%, var(--ink));
   --serif: -apple-system, "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e0f13;
-    --surface: #16171d;
-    --card: #1a1b22;
-    --ink: #e8e8ee;
-    --muted: #8b8d98;
-    --line: #26272f;
-    --code-bg: #14151a;
-    --primary: #a3a0e8;
-    --ok: #6fd08c;
-    --warn: #e0a95e;
-    --fail: #e06c75;
-    --neutral: #7fb4c9;
-    --violet: #b39bf0;
+    --bg: #1e1e2e;
+    --surface: #181825;
+    --card: #313244;
+    --ink: #cdd6f4;
+    --muted: #a6adc8;
+    --line: #45475a;
+    --code-bg: #11111b;
+    --primary: #b4befe;
+    --ok: #a6e3a1;
+    --warn: #f9e2af;
+    --fail: #f38ba8;
+    --neutral: #74c7ec;
+    --violet: #cba6f7;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0e0f13;
-  --surface: #16171d;
-  --card: #1a1b22;
-  --ink: #e8e8ee;
-  --muted: #8b8d98;
-  --line: #26272f;
-  --code-bg: #14151a;
-  --primary: #a3a0e8;
-  --ok: #6fd08c;
-  --warn: #e0a95e;
-  --fail: #e06c75;
-  --neutral: #7fb4c9;
-  --violet: #b39bf0;
+  --bg: #1e1e2e;
+  --surface: #181825;
+  --card: #313244;
+  --ink: #cdd6f4;
+  --muted: #a6adc8;
+  --line: #45475a;
+  --code-bg: #11111b;
+  --primary: #b4befe;
+  --ok: #a6e3a1;
+  --warn: #f9e2af;
+  --fail: #f38ba8;
+  --neutral: #74c7ec;
+  --violet: #cba6f7;
 }
 :root[data-theme="light"] { color-scheme: light; }
 * { box-sizing: border-box; }
@@ -69,21 +75,21 @@ body { margin: 0; background: var(--bg); color: var(--ink);
         background: var(--primary); color: var(--bg); border-radius: 6px; padding: 0.45rem 0.7rem; }
 .skip:focus { transform: translateY(0); }
 .eyebrow { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em;
-           text-transform: uppercase; color: var(--muted); }
+           text-transform: uppercase; color: var(--muted-text); }
 .masthead { width: 100%; max-width: var(--content-max); margin: 0 auto;
             padding: 3rem var(--page-pad) 0.5rem; }
 .masthead h1 { margin: 0.4rem 0 0.5rem; font-weight: 700;
                font-size: clamp(1.5rem, 3.5vw, 2.1rem); line-height: 1.15; letter-spacing: -0.01em; }
-.masthead .meta-line { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+.masthead .meta-line { font-family: var(--mono); font-size: 0.8rem; color: var(--muted-text); }
 .theme-control { position: fixed; top: 0.9rem; right: 0.9rem; z-index: 20;
                  display: flex; align-items: center; gap: 0.1rem; border: 1px solid var(--line);
                  border-radius: 999px; background: var(--surface); padding: 0.15rem; }
-.theme-control button { border: 0; border-radius: 999px; background: transparent; color: var(--muted);
+.theme-control button { border: 0; border-radius: 999px; background: transparent; color: var(--muted-text);
                         font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.04em;
                         padding: 0.22rem 0.55rem; cursor: pointer; }
 .theme-control button[aria-checked="true"] { background: var(--card); color: var(--ink); }
 .mono { font-family: var(--mono); font-size: 0.78rem; }
-.muted { color: var(--muted); font-size: 0.85rem; }
+.muted { color: var(--muted-text); font-size: 0.85rem; }
 .layout { width: 100%; max-width: var(--content-max); margin: 0 auto;
           padding: 0 var(--page-pad) 5rem; }
 nav.side { position: sticky; top: 0; z-index: 15; background: var(--bg);
@@ -92,8 +98,8 @@ nav.side { position: sticky; top: 0; z-index: 15; background: var(--bg);
            border-bottom: 1px solid var(--line); }
 nav.side ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap;
               gap: 0.15rem 1.1rem; }
-nav.side a { text-decoration: none; color: var(--muted); }
-nav.side a:hover { color: var(--primary); }
+nav.side a { text-decoration: none; color: var(--muted-text); }
+nav.side a:hover { color: var(--primary-text); }
 main { min-width: 0; }
 section { margin-top: 1.4rem; scroll-margin-top: 1.5rem; padding: 1.2rem 1.4rem 1.4rem;
           background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
@@ -101,7 +107,7 @@ section h2 { font-weight: 700; font-size: 1.05rem; margin: 0 0 0.9rem; letter-sp
              border-left: 3px solid var(--primary); padding-left: 0.6rem; }
 h3 { font-size: 0.95rem; margin: 0; }
 h1, h2, h3, h4, p, summary, .run-line { overflow-wrap: anywhere; }
-a { color: var(--primary); text-underline-offset: 0.18em; }
+a { color: var(--primary-text); text-underline-offset: 0.18em; }
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
          gap: 0.7rem; margin: 0.8rem 0 1rem; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
@@ -110,25 +116,25 @@ a { color: var(--primary); text-underline-offset: 0.18em; }
               width: 1.7rem; height: 1.7rem; border-radius: 8px; font-size: 0.85rem;
               margin-bottom: 0.45rem;
               background: color-mix(in srgb, var(--chip, var(--primary)) 18%, transparent);
-              color: var(--chip, var(--primary)); }
+              color: var(--ink); }
 .card .value { font-size: 1.65rem; font-weight: 700; line-height: 1.15;
                font-variant-numeric: tabular-nums; }
 .card .label { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase;
-               letter-spacing: 0.1em; color: var(--muted); margin-top: 0.1rem; }
+               letter-spacing: 0.1em; color: var(--muted-text); margin-top: 0.1rem; }
 .badge { display: inline-flex; align-items: center; padding: 0.14rem 0.6rem;
          border-radius: 999px; font-family: var(--mono); font-size: 0.68rem; font-weight: 600;
          letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
-.b-ok { background: color-mix(in srgb, var(--ok) 16%, var(--bg)); color: var(--ok); }
-.b-warn { background: color-mix(in srgb, var(--warn) 16%, var(--bg)); color: var(--warn); }
-.b-fail { background: color-mix(in srgb, var(--fail) 16%, var(--bg)); color: var(--fail); }
-.b-neutral { background: color-mix(in srgb, var(--neutral) 16%, var(--bg)); color: var(--neutral); }
+.b-ok { background: color-mix(in srgb, var(--ok) 16%, var(--bg)); color: var(--ok-text); }
+.b-warn { background: color-mix(in srgb, var(--warn) 16%, var(--bg)); color: var(--warn-text); }
+.b-fail { background: color-mix(in srgb, var(--fail) 16%, var(--bg)); color: var(--fail-text); }
+.b-neutral { background: color-mix(in srgb, var(--neutral) 16%, var(--bg)); color: var(--neutral-text); }
 .verdict-tabs { display: inline-flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.4rem 0 1rem; }
 .verdict-tabs:empty { display: none; }
 .verdict-tabs button { border: 1px solid var(--line); border-radius: 999px;
-                       background: var(--surface); color: var(--muted); font-family: var(--mono);
+                       background: var(--surface); color: var(--muted-text); font-family: var(--mono);
                        font-size: 0.72rem; letter-spacing: 0.05em;
                        padding: 0.32rem 0.9rem; cursor: pointer; }
-.verdict-tabs button[aria-selected="true"] { border-color: var(--primary); color: var(--primary);
+.verdict-tabs button[aria-selected="true"] { border-color: var(--primary); color: var(--primary-text);
                                              background: color-mix(in srgb, var(--primary) 10%, var(--bg)); }
 .verdict-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
                 gap: 0.7rem; }
@@ -140,12 +146,12 @@ a { color: var(--primary); text-underline-offset: 0.18em; }
 .verdict-row[data-verdict="warn"] { border-left-color: var(--warn); }
 .verdict-row[data-verdict="fail"] { border-left-color: var(--fail); }
 .verdict-row h3 { flex: 1 1 13rem; min-width: 0; font-family: var(--mono); font-size: 0.85rem; }
-.verdict-row .verdict-points { margin: 0; flex: 1 0 100%; font-size: 0.86rem; color: var(--muted);
+.verdict-row .verdict-points { margin: 0; flex: 1 0 100%; font-size: 0.86rem; color: var(--muted-text);
                                padding-left: 1.05rem; }
 .verdict-row .verdict-points li { margin: 0.22rem 0; }
-.verdict-row .verdict-points li::marker { color: var(--primary); }
+.verdict-row .verdict-points li::marker { color: var(--primary-text); }
 .verdict-artifact { display: block; font-family: var(--mono); font-size: 0.68rem; font-weight: 400;
-                    color: var(--muted); margin-top: 0.15rem; }
+                    color: var(--muted-text); margin-top: 0.15rem; }
 .prose-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
               padding: 0.9rem 1.15rem; margin-bottom: 0.6rem; }
 .prose-card p { margin: 0.3rem 0; font-size: 0.9rem; }
@@ -166,7 +172,7 @@ table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nu
 th, td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line);
          text-align: right; white-space: nowrap; font-size: 0.83rem; }
 td { font-family: var(--mono); font-size: 0.78rem; }
-th { color: var(--muted); font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.06em;
+th { color: var(--muted-text); font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.06em;
      text-transform: uppercase; position: sticky; top: 0; z-index: 2; background: var(--surface); }
 th:first-child, td:first-child { text-align: left; position: sticky; left: 0; z-index: 1;
                                  background: var(--surface); }
@@ -174,9 +180,9 @@ th:first-child { z-index: 3; }
 tr:last-child td { border-bottom: 0; }
 tbody tr:hover td { background: color-mix(in srgb, var(--primary) 7%, transparent); }
 tr.delta td { font-weight: 700; border-top: 2px solid var(--line); }
-.good { color: var(--ok); }
-.bad { color: var(--fail); }
-.null { color: var(--muted); }
+.good { color: var(--ok-text); }
+.bad { color: var(--fail-text); }
+.null { color: var(--muted-text); }
 details { border: 1px solid var(--line); border-radius: var(--radius);
           margin-bottom: 0.6rem; overflow: hidden; background: var(--surface); }
 summary { cursor: pointer; padding: 0.6rem 1rem; font-weight: 600; font-size: 0.88rem; }
@@ -184,7 +190,7 @@ summary:hover { background: var(--card); }
 .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem;
         padding: 0.8rem 1rem 1rem; border-top: 1px solid var(--line); }
 .pair h4 { margin: 0 0 0.35rem; font-family: var(--mono); font-size: 0.66rem;
-           text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+           text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted-text); }
 .pair pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere;
             background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px;
             padding: 0.7rem 0.9rem; font-size: 0.79rem; font-family: var(--mono);
@@ -192,12 +198,12 @@ summary:hover { background: var(--card); }
 .pair > div:first-child pre { border-top: 2px solid var(--neutral); }
 .pair > div:last-child pre { border-top: 2px solid var(--primary); }
 .pair .stats { margin-top: 0.35rem; font-family: var(--mono); font-size: 0.72rem;
-               color: var(--muted); font-variant-numeric: tabular-nums; }
+               color: var(--muted-text); font-variant-numeric: tabular-nums; }
 .pair-controls { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center;
                  margin: 0.8rem 0; font-size: 0.85rem; }
 .pair-controls label { display: inline-flex; gap: 0.45rem; align-items: center;
                        font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em;
-                       text-transform: uppercase; color: var(--muted); }
+                       text-transform: uppercase; color: var(--muted-text); }
 .pair-controls select, .pair-controls button {
   font: inherit; font-size: 0.82rem; color: var(--ink); background: var(--surface);
   border: 1px solid var(--line); border-radius: 999px; padding: 0.28rem 0.75rem; cursor: pointer; }
@@ -207,7 +213,7 @@ summary:hover { background: var(--card); }
             border-radius: var(--radius); padding: 0.8rem 1.05rem; font-size: 0.84rem;
             background: var(--surface); }
 .judgment h4 { margin: 0 0 0.5rem; font-family: var(--mono); font-size: 0.66rem;
-               text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); }
+               text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary-text); }
 .judgment .dim { display: flex; flex-wrap: wrap; gap: 0.4rem 0.8rem; align-items: baseline;
                  padding: 0.28rem 0; }
 .judgment .dim b { min-width: 6.5rem; font-family: var(--mono); font-size: 0.72rem;
@@ -223,20 +229,20 @@ summary:hover { background: var(--card); }
 .identity-entry { margin-bottom: 0.55rem; border: 1px solid var(--line); border-radius: 8px;
                   background: var(--code-bg); padding: 0.65rem 0.8rem; overflow-wrap: anywhere;
                   white-space: pre-wrap; font-family: var(--mono); font-size: 0.78rem; }
-.syntax-key { color: var(--primary); }
-.syntax-string { color: var(--ok); }
-.syntax-number { color: var(--warn); }
-.syntax-literal { color: var(--fail); }
-.syntax-punct { color: var(--muted); }
-.identity-link { color: var(--ok); }
-.empty { color: var(--muted); }
+.syntax-key { color: var(--primary-text); }
+.syntax-string { color: var(--ok-text); }
+.syntax-number { color: var(--warn-text); }
+.syntax-literal { color: var(--fail-text); }
+.syntax-punct { color: var(--muted-text); }
+.identity-link { color: var(--ok-text); }
+.empty { color: var(--muted-text); }
 :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .chip { display: inline-flex; align-items: center; font-family: var(--mono); font-size: 0.62rem;
-        letter-spacing: 0.05em; color: var(--muted); border: 1px solid var(--line);
+        letter-spacing: 0.05em; color: var(--muted-text); border: 1px solid var(--line);
         border-radius: 999px; padding: 0.08rem 0.5rem; white-space: nowrap; }
-.chip.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); }
-#matrix-wrap table td { font-size: 0.76rem; }
-#matrix-wrap .modelcell a { text-decoration: none; font-weight: 600; }
+.chip.warn { color: var(--warn-text); border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); }
+#verdict-panels table td { font-size: 0.76rem; }
+#verdict-panels .modelcell a { text-decoration: none; font-weight: 600; }
 .cellviz { display: inline-block; vertical-align: middle; margin-left: 0.45rem; }
 .cellviz svg { display: block; }
 mark.diff-a { background: color-mix(in srgb, var(--warn) 30%, transparent); color: inherit;
@@ -245,35 +251,24 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
               border-radius: 3px; padding: 0 1px; }
 .pair-controls button[aria-pressed] { border-style: dashed; }
 .pair-controls button[aria-pressed="true"] { border-style: solid; border-color: var(--primary);
-                                             color: var(--primary); }
+                                             color: var(--primary-text); }
 .schematic a rect { pointer-events: all; }
 .schematic a:hover rect, .schematic a:focus rect { stroke: var(--primary); stroke-width: 2; }
-.judge-meta { font-family: var(--mono); font-size: 0.64rem; color: var(--muted);
+.judge-meta { font-family: var(--mono); font-size: 0.64rem; color: var(--muted-text);
               letter-spacing: 0.06em; text-transform: uppercase; font-weight: 400; }
 .glossary { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.7rem;
             margin-bottom: 0.7rem; }
 .glossary .gloss { margin-bottom: 0; }
 .glossary h3 { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase;
-               letter-spacing: 0.08em; color: var(--primary); margin-bottom: 0.35rem; }
+               letter-spacing: 0.08em; color: var(--primary-text); margin-bottom: 0.35rem; }
 .metric-card h3 { font-family: var(--mono); font-size: 0.8rem; text-transform: uppercase;
-                  letter-spacing: 0.08em; color: var(--primary); }
+                  letter-spacing: 0.08em; color: var(--primary-text); }
 .metric-example { margin-top: 0.35rem; }
 .metric-formula { font-family: var(--mono); font-size: 0.78rem; display: flex; flex-wrap: wrap;
                   align-items: center; gap: 0.45rem; margin: 0.45rem 0 0.1rem; }
 .frac { display: inline-flex; flex-direction: column; text-align: center; vertical-align: middle;
         line-height: 1.3; }
 .frac .den { border-top: 1px solid var(--muted); padding-top: 0.05rem; }
-.threshold-row { display: flex; flex-wrap: wrap; gap: 0.8rem 1.6rem; align-items: center;
-                 margin-top: 0.5rem; }
-.threshold-row label { display: inline-flex; align-items: center; gap: 0.5rem;
-                       font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.05em;
-                       text-transform: uppercase; color: var(--muted); }
-.threshold-row output { color: var(--ink); min-width: 2.2rem; }
-.threshold-row input[type="range"] { accent-color: var(--primary); width: 9rem; }
-.threshold-row button { font: inherit; font-family: var(--mono); font-size: 0.72rem;
-                        color: var(--muted); background: var(--surface); border: 1px solid var(--line);
-                        border-radius: 999px; padding: 0.28rem 0.8rem; cursor: pointer; }
-#threshold-panel h3 .badge { margin-left: 0.5rem; vertical-align: middle; }
 .notes-list { margin: 0.3rem 0 1.2rem 1.15rem; padding: 0; font-size: 0.9rem; }
 .notes-list li { margin: 0.35rem 0; }
 .forensics { margin-bottom: 0.9rem; }
@@ -283,24 +278,24 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
 .waffle-row .who { font-family: var(--mono); font-size: 0.72rem; color: var(--ink);
                    text-align: right; white-space: nowrap; overflow: hidden;
                    text-overflow: ellipsis; }
-.waffle-row .arm-name { font-family: var(--mono); font-size: 0.66rem; color: var(--muted); }
+.waffle-row .arm-name { font-family: var(--mono); font-size: 0.66rem; color: var(--muted-text); }
 .waffle-row.model-first .who { visibility: visible; }
 .waffle-row:not(.model-first) .who { visibility: hidden; }
 .waffle-cells { display: flex; gap: 0.24rem; }
 .waffle-cell { width: 0.8rem; height: 0.8rem; border-radius: 3px; background: var(--card); }
 .waffle-cell.ok { background: var(--ok); }
 .waffle-cell.fail { background: var(--fail); }
-.waffle-head { color: var(--muted); font-family: var(--mono); font-size: 0.62rem;
+.waffle-head { color: var(--muted-text); font-family: var(--mono); font-size: 0.62rem;
                display: flex; gap: 0.24rem; }
 .waffle-head span { width: 0.8rem; text-align: center; }
 .waffle-legend { display: flex; gap: 1.2rem; font-family: var(--mono); font-size: 0.66rem;
-                 color: var(--muted); margin-top: 0.5rem; justify-content: flex-end; }
+                 color: var(--muted-text); margin-top: 0.5rem; justify-content: flex-end; }
 .waffle-legend .waffle-cell { display: inline-block; vertical-align: -0.15rem; margin-right: 0.3rem; }
 .info { display: inline-flex; align-items: center; justify-content: center;
         width: 0.95rem; height: 0.95rem; margin-left: 0.3rem; border: 1px solid var(--line);
-        border-radius: 50%; color: var(--muted); font-family: var(--mono); font-size: 0.6rem;
+        border-radius: 50%; color: var(--muted-text); font-family: var(--mono); font-size: 0.6rem;
         font-weight: 400; cursor: help; vertical-align: middle; text-transform: none; }
-.info:hover, .info:focus-visible { color: var(--primary); border-color: var(--primary); }
+.info:hover, .info:focus-visible { color: var(--primary-text); border-color: var(--primary); }
 #tooltip { position: fixed; z-index: 50; max-width: 21rem; background: var(--surface);
            color: var(--ink); border: 1px solid color-mix(in srgb, var(--primary) 45%, var(--line));
            border-radius: 8px; padding: 0.55rem 0.75rem; font-size: 0.78rem; line-height: 1.45;
@@ -308,7 +303,7 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
            font-weight: 400; letter-spacing: normal; text-transform: none; text-align: left;
            white-space: normal; box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
            pointer-events: none; }
-.legend { font-family: var(--mono); font-size: 0.68rem; color: var(--muted);
+.legend { font-family: var(--mono); font-size: 0.68rem; color: var(--muted-text);
           letter-spacing: 0.03em; margin: 0.35rem 0 1rem; display: flex; flex-wrap: wrap;
           gap: 0.3rem 1.4rem; align-items: center; }
 .legend .swatch { display: inline-block; width: 0.55rem; height: 0.55rem; border-radius: 50%;
@@ -347,8 +342,7 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
     <p id="tested"></p>
     <div class="cards" id="summary"></div>
     <div class="verdict-tabs" id="verdict-tabs" role="tablist" aria-label="Verdict comparison"></div>
-    <div id="matrix-wrap"></div>
-    <div class="verdict-grid" id="verdict-rows"></div>
+    <div id="verdict-panels"></div>
   </section>
   <section id="how" aria-labelledby="how-heading">
     <h2 id="how-heading">How to read this report</h2>
@@ -427,27 +421,21 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
       <p><b>Directness (0–1, higher favors the artifact).</b> A blind judge selects the output that states useful information sooner.</p>
     </div>
     <div class="prose-card">
-      <p><b>Verdict rule:</b> required meaning must not regress. Checker, clarity, or directness gains can support a positive result. Lower fluency creates a trade-off, not an automatic failure. The report never averages models.</p>
+      <p><b>Verdict rule:</b> Required meaning must not regress. Checker findings must decrease. Every enabled preference dimension must meet its threshold. A lower score produces a trade-off verdict. The report never averages models.</p>
     </div>
-    <div id="limits"></div>
     <div class="prose-card" id="threshold-panel">
-      <h3>Explore the verdict thresholds <span id="threshold-state" class="badge b-warn" hidden>custom, not the recorded verdict</span></h3>
-      <p class="muted">Move a slider to re-mark every verdict live. The recorded verdicts use the recommended values. This exploration resets on reload. A manifest can set a weight and its own thresholds for each judging dimension.</p>
+      <h3>Verdict settings</h3>
+      <p class="muted">The aggregate stores the recorded verdict. A manifest can set a weight and thresholds for each judge dimension.</p>
+      <p class="muted mono" id="threshold-line"></p>
       <p class="muted mono" id="weight-line"></p>
-      <div class="threshold-row">
-        <label>Trade-off below <output id="tradeoff-value"></output>
-          <input type="range" id="tradeoff-slider" min="0" max="0.5" step="0.05"></label>
-        <label>Win above <output id="win-value"></output>
-          <input type="range" id="win-slider" min="0.4" max="0.8" step="0.05"></label>
-        <button type="button" id="threshold-reset">reset to recommended</button>
-      </div>
     </div>
   </section>
-  <section id="comparisons" aria-label="Comparisons"></section>
+  <div id="comparisons" aria-label="Comparisons"></div>
   <section id="examples" aria-labelledby="example-heading">
     <h2 id="example-heading">Review the pairs</h2>
     <p class="muted">Each pair shows one task and one model, once with the artifact and once without it. The blind judgment for the pair appears below the texts.</p>
     <div class="pair-controls">
+      <label>Artifact <select id="pair-comparison"></select></label>
       <label>Model <select id="pair-model"></select></label>
       <label>Case <select id="pair-case"></select></label>
       <button type="button" id="pair-prev" aria-label="Previous pair">←</button>
@@ -500,9 +488,10 @@ const dumbbell = (base, treat, lowerBetter) => {
   holder.appendChild(box);
   return holder;
 };
-const drawGauge = (holder, value) => {
+const drawGauge = (holder, value, dimension) => {
   holder.replaceChildren();
-  const low = THRESHOLDS.trade_off, high = THRESHOLDS.win;
+  const low = dimensionThreshold(dimension, "trade_off");
+  const high = dimensionThreshold(dimension, "win");
   const box = svg("svg", { width: 46, height: 12, viewBox: "0 0 46 12", "aria-hidden": "true" });
   const x = share => 4 + 38 * Math.min(Math.max(share, 0), 1);
   box.append(
@@ -513,11 +502,10 @@ const drawGauge = (holder, value) => {
       fill: value < low ? "var(--fail)" : value < high ? "var(--warn)" : "var(--ok)" }));
   holder.appendChild(box);
 };
-const gauge = value => {
+const gauge = (value, dimension) => {
   if (!Number.isFinite(value)) return null;
   const holder = el("span", null, "cellviz");
-  drawGauge(holder, value);
-  gaugeRegistry.push({ holder, value });
+  drawGauge(holder, value, dimension);
   return holder;
 };
 const mean = summary => summary && summary.mean !== null && summary.mean !== undefined ? summary.mean : null;
@@ -543,11 +531,11 @@ const DEFAULT_METRICS = [
     formula: { numerator: "total words", denominator: "matched responses" },
     example: "463 \u2192 1447 words showed that one model answered with plans instead of the requested text." },
   { id: "clarity", label: "Clarity wins",
-    definition: "The share of blind pairs where the judge selected this side as easier to understand. A judge from another vendor reads each pair with shuffled labels. 0.50 equals a coin flip. A value below 0.40 counts as a trade-off in the verdict.",
+    definition: "The share of blind pairs where the judge selected this side as easier to understand. A judge from another vendor reads each pair with shuffled labels. 0.50 equals a coin flip. A value below the clarity trade-off threshold counts as a trade-off in the verdict.",
     formula: { numerator: "wins + \u00bd ties", denominator: "judged pairs" },
     example: "0.33 over 6 pairs means the judge chose this side 2 times." },
   { id: "fluency", label: "Fluency wins",
-    definition: "The share of blind pairs where the judge selected this side as the more natural prose. Same blind method: shuffled labels, another vendor. A value below 0.40 counts as a trade-off.",
+    definition: "The share of blind pairs where the judge selected this side as the more natural prose. Same blind method: shuffled labels, another vendor. A value below the fluency trade-off threshold counts as a trade-off.",
     formula: { numerator: "wins + \u00bd ties", denominator: "judged pairs" },
     example: "0.25 over 6 pairs means the judge chose this side 1.5 times, with one tie." },
   { id: "directness", label: "Directness wins",
@@ -565,25 +553,32 @@ const DEFAULT_METRICS = [
 ];
 const METRICS = (Array.isArray(DATA.metric_definitions) && DATA.metric_definitions.length)
   ? DATA.metric_definitions : DEFAULT_METRICS;
-const RECOMMENDED_THRESHOLDS = {
+const VERDICT_THRESHOLDS = {
   trade_off: Number(DATA.verdict_thresholds?.trade_off ?? 0.4),
   win: Number(DATA.verdict_thresholds?.win ?? 0.5),
 };
-const THRESHOLDS = { ...RECOMMENDED_THRESHOLDS };
-const verdictRegistry = [];
-const gaugeRegistry = [];
 const metricLabel = id => METRICS.find(item => item.id === id)?.label
   || DEFAULT_METRICS.find(item => item.id === id)?.label || id;
+const JUDGING = DATA.judging || null;
+const JUDGE_DIMENSIONS = ["clarity", "fluency", "directness"];
+const dimensionSpec = id => JUDGING?.dimensions?.find(item => item.id === id) || {};
+const dimensionThreshold = (id, key) => {
+  const value = dimensionSpec(id)[key];
+  return Number.isFinite(value) ? value : VERDICT_THRESHOLDS[key];
+};
+const dimensionWeight = id => {
+  const weight = dimensionSpec(id).weight;
+  return Number.isFinite(weight) ? weight : (id === "fluency" ? 0.5 : 1);
+};
 const COLUMN_INFO = {
   "Arm": "The configuration that produced these runs. The treatment arm carries the artifact. The baseline arm runs the identical prompt without it.",
   [`${metricLabel("assertions")} \u0394`]: "Treatment pass rate minus baseline pass rate over matched pairs. A negative value means the artifact removed required content.",
-  "Verdict": "Three signals read together within one model: assertions must hold, the checker must improve, and blind preference must stay acceptable. A preference below 0.40 is a trade-off. The report withholds a verdict when fewer than half of the planned pairs are valid.",
+  "Verdict": "Three signals read together within one model: assertions must hold, the checker must improve, and blind preference must stay acceptable. Each preference dimension uses its listed thresholds. The report withholds a verdict when fewer than half of the planned pairs are valid.",
   "Pairs": "Matched pairs: the same case and run number valid in both arms, out of the planned count. Deltas use matched pairs only.",
 };
 for (const item of METRICS) {
   COLUMN_INFO[item.label] = item.definition;
 }
-const JUDGING = DATA.judging || null;
 if (JUDGING) {
   for (const dimension of JUDGING.dimensions || []) {
     const label = dimension.label || dimension.id;
@@ -591,12 +586,6 @@ if (JUDGING) {
     COLUMN_INFO[label] = `Judge criterion: ${dimension.criterion} \u2014 ${base}`;
   }
 }
-const JUDGE_DIMENSIONS = JUDGING?.dimensions?.map(dimension => dimension.id)
-  || ["clarity", "fluency", "directness"];
-const dimensionWeight = id => {
-  const weight = JUDGING?.dimensions?.find(item => item.id === id)?.weight;
-  return Number.isFinite(weight) ? weight : (id === "fluency" ? 0.5 : 1);
-};
 const weightSentence = id => {
   const weight = dimensionWeight(id);
   if (weight === 0) return " Weight 0: this dimension does not change the verdict.";
@@ -643,9 +632,10 @@ const headerCell = label => {
 const metadata = DATA.metadata || {};
 const artifact = metadata.artifact_name || "Artifact benchmark";
 const comparisonList = DATA.comparisons || [];
-const hasPairs = comparison => Object.values(comparison.models || {}).some(data => (data.paired_samples || 0) > 0);
-const executedComparisons = comparisonList.filter(hasPairs);
-const shownComparisons = executedComparisons.length ? executedComparisons : comparisonList;
+const comparisonAttempted = comparison => Object.values(comparison.models || {}).some(data =>
+  (data.primary?.planned_samples || 0) > 0);
+const attemptedComparisons = comparisonList.filter(comparisonAttempted);
+const shownComparisons = attemptedComparisons.length ? attemptedComparisons : comparisonList;
 const themeButtons = [...document.querySelectorAll("[data-theme-value]")];
 const setTheme = value => {
   if (value === "system") document.documentElement.removeAttribute("data-theme");
@@ -667,7 +657,7 @@ const counts = metadata.run_counts || {};
 [[counts.total || 0, "runs recorded", "\u25a4", "var(--primary)"],
  [counts.valid || 0, "valid", "\u2713", "var(--ok)"],
  [counts.excluded || 0, "excluded", "\u2715", "var(--fail)"],
- [(DATA.comparisons || []).length, "comparisons", "\u21c4", "var(--violet)"]].forEach(([number, label, glyph, color]) => {
+ [attemptedComparisons.length, "comparisons attempted", "\u21c4", "var(--violet)"]].forEach(([number, label, glyph, color]) => {
   const card = el("div", null, "card");
   const icon = el("div", glyph, "icon");
   icon.style.setProperty("--chip", color);
@@ -682,35 +672,37 @@ const armLabel = arm => {
     : typeof spec.artifact_path === "string" ? spec.artifact_path.split(/[\\/]/).pop() : null;
   return name ? `the ${kind} ${name}` : `the ${arm} arm`;
 };
-const artifactHref = spec => {
-  if (typeof spec.artifact_url === "string" && spec.artifact_url) return spec.artifact_url;
-  if (typeof spec.artifact_path !== "string" || !spec.artifact_path) return null;
-  let path = spec.artifact_path.replace(/\\/g, "/");
-  if (spec.artifact_kind === "skill" && !path.endsWith(".md")) path = `${path.replace(/\/$/, "")}/SKILL.md`;
-  return path;
-};
+const artifactHref = spec => typeof spec.artifact_url === "string" && spec.artifact_url
+  ? spec.artifact_url : null;
 const armIdentity = arm => {
   const spec = (DATA.arms || {})[arm] || {};
   const line = el("p", null, "muted mono artifact-identity");
   const href = artifactHref(spec);
   if (typeof spec.artifact_source === "string") {
-    line.append("source ");
+    line.append("source ", spec.artifact_source);
+  }
+  if (typeof spec.artifact_path === "string") {
+    if (line.childNodes.length) line.append("  ·  ");
+    line.append("snapshot ");
+    const snapshotName = spec.artifact_path.split(/[\\/]/).pop();
     if (href) {
-      const link = el("a", spec.artifact_source);
+      const link = el("a", snapshotName);
       link.href = href;
       link.target = "_blank";
       link.rel = "noopener";
       line.append(link);
-    } else line.append(spec.artifact_source);
+    } else line.append(snapshotName);
   }
-  if (typeof spec.artifact_path === "string") line.append("  ·  ", `snapshot ${spec.artifact_path.split(/[\\/]/).pop()}`);
-  if (typeof spec.artifact_sha256 === "string") line.append("  ·  ", `sha256 ${spec.artifact_sha256.slice(0, 12)}…`);
+  if (typeof spec.artifact_sha256 === "string") {
+    if (line.childNodes.length) line.append("  ·  ");
+    line.append(`sha256 ${spec.artifact_sha256.slice(0, 12)}…`);
+  }
   return line.childNodes.length ? line : null;
 };
-const tested = shownComparisons.map(comparison => armLabel(comparison.primary));
+const tested = attemptedComparisons.map(comparison => armLabel(comparison.primary));
 document.getElementById("tested").textContent = tested.length
   ? `This benchmark tests ${listText(tested)}. Each model answered every task twice: once with the artifact in context and once without it.`
-  : "No comparisons are defined.";
+  : comparisonList.length ? "No comparison has treatment run records." : "No comparisons are defined.";
 
 const LOWER_IS_BETTER = new Set(["lint_violations", "lint_per100w", "duration_seconds",
   "input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens", "total_tokens"]);
@@ -719,118 +711,86 @@ const deltaClass = (name, delta) => {
   return (LOWER_IS_BETTER.has(name) ? delta < 0 : delta > 0) ? "good" : "bad";
 };
 const pairedMetric = (data, side, name) => {
-  const value = data.paired_corpus?.[side]?.[name];
-  return Number.isFinite(value) ? value : mean(data[side]?.metrics?.[name]);
+  if (name === "assertion_pass_rate" || name === "lint_per100w") {
+    const corpusValue = data.paired_corpus?.[side]?.[name];
+    if (Number.isFinite(corpusValue)) return corpusValue;
+  }
+  const pairedValue = mean(data.paired_metrics?.[side]?.[name]);
+  return pairedValue === null ? mean(data[side]?.metrics?.[name]) : pairedValue;
 };
 const pairedDelta = (data, name) => {
   const value = data.paired_corpus?.deltas?.[name];
   return Number.isFinite(value) ? value : data.deltas?.[name];
 };
 
-function verdict(data) {
-  const paired = data.paired_samples || 0;
-  const planned = data.planned_pairs || 0;
-  if (!paired) return { cls: "b-neutral", label: "Not comparable", parts: ["No matched pairs are available for this model. Do not draw a conclusion."] };
-  if (planned && paired * 2 < planned) return { cls: "b-neutral", label: "Not comparable", parts: [`Only ${paired} of ${planned} planned pairs were valid. The sample is too small for a verdict.`] };
-  const lint = pairedDelta(data, "lint_per100w");
-  const assertion = pairedDelta(data, "assertion_pass_rate");
-  const clarity = mean(data.primary?.metrics?.clarity_preference);
-  const fluency = mean(data.primary?.metrics?.fluency_preference);
-  const directness = mean(data.primary?.metrics?.directness_preference);
-  const parts = [];
-  const assertionsPassed = data.paired_corpus?.primary?.assertions_passed;
-  const assertionsTotal = data.paired_corpus?.primary?.assertions_total;
-  if (Number.isFinite(assertion)) {
-    if (assertion === 0 && Number.isFinite(assertionsPassed) && Number.isFinite(assertionsTotal)) {
-      parts.push(`Fact checks: ${assertionsPassed} of ${assertionsTotal} passed in both arms.`);
-    } else if (assertion !== 0) {
-      parts.push(`Fact checks: the pass rate ${assertion > 0 ? "rose" : "fell"} ${Math.abs(assertion * 100).toFixed(0)} points with the artifact.`);
-    } else {
-      parts.push("Fact checks: the pass rate did not change.");
-    }
-  }
-  const lintBase = pairedMetric(data, "baseline", "lint_per100w");
-  const lintTreat = pairedMetric(data, "primary", "lint_per100w");
-  if (Number.isFinite(lint)) parts.push(lint === 0
-    ? "Checker findings: no change."
-    : `Checker findings: ${fmt(lintBase)} \u2192 ${fmt(lintTreat)} per 100 words.`);
-  const paired2 = data.paired_samples || 0;
-  const preferenceCount = value => {
-    const wins = value * paired2;
-    return Number.isInteger(wins) ? `${wins} of ${paired2}` : `${wins.toFixed(1)} of ${paired2}`;
-  };
-  if (clarity !== null) parts.push(`Clarity: the judge chose the artifact in ${preferenceCount(clarity)} pairs.`);
-  if (fluency !== null) parts.push(`Fluency: the judge chose the artifact in ${preferenceCount(fluency)} pairs.`);
-  if (directness !== null) parts.push(`Directness: the judge chose the artifact in ${preferenceCount(directness)} pairs. A tie counts one half.`);
-  if (paired < planned) parts.push(`Only ${paired} of ${planned} planned pairs were valid.`);
-  if (!Number.isFinite(assertion)) parts.unshift("Required meaning data is unavailable.");
-  const assertionBroken = Number.isFinite(assertion) && assertion < 0;
-  const checkerImproved = Number.isFinite(lint) && lint < 0;
-  const dimensionValues = { clarity, fluency, directness };
-  const dimensionSpec = id => (DATA.judging?.dimensions || []).find(item => item.id === id) || {};
-  const weightOf = id => {
-    const weight = dimensionSpec(id).weight;
-    return Number.isFinite(weight) ? weight : (id === "fluency" ? 0.5 : 1);
-  };
-  const tradeOffAt = id => Number.isFinite(dimensionSpec(id).trade_off) ? dimensionSpec(id).trade_off : THRESHOLDS.trade_off;
-  const winAt = id => Number.isFinite(dimensionSpec(id).win) ? dimensionSpec(id).win : THRESHOLDS.win;
-  const judgeImproved = Object.entries(dimensionValues).some(([id, value]) =>
-    value !== null && weightOf(id) >= 1 && value > winAt(id));
-  const improved = checkerImproved || judgeImproved;
-  if (!Number.isFinite(assertion)) return { cls: "b-neutral", label: "No meaning data", parts };
-  if (assertionBroken) return { cls: "b-fail", label: "Regresses required meaning", parts };
-  if (!improved) return { cls: "b-neutral", label: "No material improvement", parts };
-  const lows = Object.entries(dimensionValues)
-    .filter(([id, value]) => value !== null && weightOf(id) > 0 && value < tradeOffAt(id))
-    .map(([id]) => id);
-  const hardLows = lows.filter(id => weightOf(id) >= 1);
-  const softLows = lows.filter(id => weightOf(id) < 1);
-  if (!hardLows.length && softLows.length === 1) {
-    return { cls: "b-warn", label: `Improves with a ${softLows[0]} trade-off`, parts };
-  }
-  if (lows.length) return { cls: "b-warn", label: "Improves with trade-offs", parts };
-  return { cls: "b-ok", label: "Improves controlled English", parts };
-}
+const VERDICT_CLASSES = {
+  neutral: "b-neutral",
+  fail: "b-fail",
+  warn: "b-warn",
+  ok: "b-ok",
+};
+const recordedVerdict = data => {
+  const record = data.verdict || {};
+  const status = Object.hasOwn(VERDICT_CLASSES, record.status) ? record.status : "neutral";
+  const label = typeof record.label === "string" && record.label
+    ? record.label : "Verdict unavailable";
+  const parts = Array.isArray(record.parts)
+    ? record.parts.filter(part => typeof part === "string") : [];
+  return { cls: VERDICT_CLASSES[status], label, parts };
+};
 
 const nav = document.getElementById("nav");
 const addNav = (id, label) => { const item = el("li"); const link = el("a", label); link.href = `#${id}`; item.appendChild(link); nav.appendChild(item); };
 addNav("verdicts", "Verdicts");
 addNav("how", "How to read");
 
-const verdictRoot = document.getElementById("verdict-rows");
+const verdictPanelsRoot = document.getElementById("verdict-panels");
 const verdictTabs = document.getElementById("verdict-tabs");
 const comparisonsRoot = document.getElementById("comparisons");
-const setVerdictComparison = comparisonId => {
+const comparisonDomIds = new Map(shownComparisons.map((comparison, index) => [
+  comparison.id,
+  { tab: `verdict-tab-${index}`, panel: `verdict-panel-${index}` },
+]));
+const pairHashFor = (comparisonId, model, evalId, runNumber) => {
+  const parts = [comparisonId, model];
+  if (evalId !== undefined && runNumber !== undefined) parts.push(evalId, runNumber);
+  return `#pair=${parts.map(value => encodeURIComponent(String(value))).join("/")}`;
+};
+const setActiveComparison = comparisonId => {
   verdictTabs.querySelectorAll("button").forEach(button => {
     const selected = button.dataset.comparison === comparisonId;
     button.setAttribute("aria-selected", String(selected));
     button.tabIndex = selected ? 0 : -1;
   });
-  document.querySelectorAll("#verdict-rows [data-comparison], #matrix-wrap [data-comparison]").forEach(row => {
-    const hidden = row.dataset.comparison !== comparisonId;
-    row.hidden = hidden;
-    row.setAttribute("aria-hidden", String(hidden));
+  document.querySelectorAll(".verdict-panel, .comparison-detail").forEach(panel => {
+    const hidden = panel.dataset.comparison !== comparisonId;
+    panel.hidden = hidden;
+    panel.setAttribute("aria-hidden", String(hidden));
   });
 };
-if (shownComparisons.length > 1) {
-  for (const comparison of shownComparisons) {
-    const spec = (DATA.arms || {})[comparison.primary] || {};
-    const kind = typeof spec.artifact_kind === "string" ? spec.artifact_kind : null;
-    const label = comparison.tab_label || (kind ? kind.charAt(0).toUpperCase() + kind.slice(1) : comparison.label || comparison.id);
-    const button = el("button", label);
-    button.type = "button";
-    button.role = "tab";
-    button.dataset.comparison = comparison.id;
-    button.dataset.kind = kind || "artifact";
-    button.setAttribute("aria-controls", "verdict-rows");
-    button.setAttribute("aria-selected", "false");
-    button.tabIndex = -1;
-    button.addEventListener("click", () => setVerdictComparison(comparison.id));
-    verdictTabs.appendChild(button);
-  }
+for (const comparison of shownComparisons) {
+  const spec = (DATA.arms || {})[comparison.primary] || {};
+  const kind = typeof spec.artifact_kind === "string" ? spec.artifact_kind : null;
+  const label = comparison.tab_label || spec.artifact_name || comparison.label
+    || (kind ? kind.charAt(0).toUpperCase() + kind.slice(1) : comparison.id);
+  const ids = comparisonDomIds.get(comparison.id);
+  const button = el("button", label);
+  button.id = ids.tab;
+  button.type = "button";
+  button.role = "tab";
+  button.dataset.comparison = comparison.id;
+  button.dataset.kind = kind || "artifact";
+  button.setAttribute("aria-controls", ids.panel);
+  button.setAttribute("aria-selected", "false");
+  button.tabIndex = -1;
+  button.addEventListener("click", () => setActiveComparison(comparison.id));
+  verdictTabs.appendChild(button);
+}
+if (shownComparisons.length) {
   verdictTabs.addEventListener("keydown", event => {
     const tabs = [...verdictTabs.querySelectorAll("button")];
-    const current = tabs.indexOf(document.activeElement);
+    const focused = tabs.indexOf(document.activeElement);
+    const current = focused >= 0 ? focused : 0;
     let next = current;
     if (event.key === "ArrowRight") next = (current + 1) % tabs.length;
     else if (event.key === "ArrowLeft") next = (current - 1 + tabs.length) % tabs.length;
@@ -838,15 +798,24 @@ if (shownComparisons.length > 1) {
     else if (event.key === "End") next = tabs.length - 1;
     else return;
     event.preventDefault();
-    setVerdictComparison(tabs[next].dataset.comparison);
+    event.stopPropagation();
+    setActiveComparison(tabs[next].dataset.comparison);
     tabs[next].focus();
   });
 }
+addNav("comparisons", "Comparison details");
 for (const comparison of shownComparisons) {
   const sectionId = `cmp-${comparison.id}`;
-  addNav(sectionId, comparison.label || comparison.id);
-  const section = el("section");
+  const ids = comparisonDomIds.get(comparison.id);
+  const panel = el("div", null, "verdict-panel");
+  panel.id = ids.panel;
+  panel.role = "tabpanel";
+  panel.dataset.comparison = comparison.id;
+  panel.setAttribute("aria-labelledby", ids.tab);
+  const verdictGrid = el("div", null, "verdict-grid");
+  const section = el("section", null, "comparison-detail");
   section.id = sectionId;
+  section.dataset.comparison = comparison.id;
   const heading = el("h2", comparison.label || comparison.id);
   section.append(heading, el("p", `Artifact under test: ${armLabel(comparison.primary)} (arm ${comparison.primary}), against ${comparison.baseline}. Matched pairs only.`, "muted"));
   const identity = armIdentity(comparison.primary);
@@ -864,9 +833,7 @@ for (const comparison of shownComparisons) {
   const matrixThead = el("thead"); matrixThead.appendChild(matrixHead); matrix.appendChild(matrixThead);
   const matrixBody = el("tbody"); matrix.appendChild(matrixBody);
   matrixScroll.appendChild(matrix);
-  document.getElementById("matrix-wrap").appendChild(matrixScroll);
   const legend = el("p", null, "legend");
-  legend.dataset.comparison = comparison.id;
   const legendDot = (color, label) => {
     const item = el("span");
     const swatch = el("span", null, "swatch");
@@ -875,18 +842,20 @@ for (const comparison of shownComparisons) {
     return item;
   };
   legend.append(
-    legendDot("var(--fail)", "below 0.40 \u00b7 baseline preferred (trade-off)"),
-    legendDot("var(--warn)", "0.40\u20130.50 \u00b7 near a coin flip"),
-    legendDot("var(--ok)", "above 0.50 \u00b7 artifact preferred"),
+    legendDot("var(--fail)", "below the dimension trade-off threshold"),
+    legendDot("var(--warn)", "between the dimension thresholds"),
+    legendDot("var(--ok)", "above the dimension win threshold"),
+    el("span", "thresholds: " + JUDGE_DIMENSIONS.map(id =>
+      `${metricLabel(id).replace(/ wins$/, "")}: trade-off < ${dimensionThreshold(id, "trade_off").toFixed(2)}, win > ${dimensionThreshold(id, "win").toFixed(2)}`
+    ).join(" \u00b7 ")),
     el("span", "dumbbell: faint dot = baseline, solid dot = treatment; green when the artifact improves"),
     el("span", "weights: " + ["clarity", "fluency", "directness"]
       .map(id => `${metricLabel(id).replace(/ wins$/, "")} \u00d7${dimensionWeight(id)}`).join(" \u00b7 ")));
-  document.getElementById("matrix-wrap").appendChild(legend);
+  panel.append(matrixScroll, legend, verdictGrid);
   for (const [model, data] of models) {
-    const summary = verdict(data);
+    const summary = recordedVerdict(data);
     const row = el("article", null, "verdict-row");
     row.dataset.verdict = summary.cls.replace(/^b-/, "");
-    row.dataset.comparison = comparison.id;
     row.setAttribute("aria-label", `${model}: ${summary.label}`);
     const rowBadge = el("span", summary.label, `badge ${summary.cls}`);
     const rowSentence = el("ul", null, "verdict-points");
@@ -894,19 +863,20 @@ for (const comparison of shownComparisons) {
     const rowTitle = el("h3", model);
     rowTitle.appendChild(el("span", armLabel(comparison.primary).replace(/^the /, ""), "verdict-artifact"));
     row.append(rowTitle, rowBadge, rowSentence);
-    verdictRoot.appendChild(row);
-    const registryEntry = { data, row, badges: [rowBadge], sentence: rowSentence };
-    verdictRegistry.push(registryEntry);
+    verdictGrid.appendChild(row);
     const matrixRow = el("tr");
     const modelCell = el("td", null, "modelcell");
-    const modelLink = el("a", model);
-    modelLink.href = `#pair=${encodeURIComponent(model)}`;
-    modelLink.title = "Review this model's pairs";
-    modelCell.appendChild(modelLink);
+    if ((data.paired_samples || 0) > 0) {
+      const modelLink = el("a", model);
+      modelLink.href = pairHashFor(comparison.id, model);
+      modelLink.title = "Review this model's pairs";
+      modelCell.appendChild(modelLink);
+    } else {
+      modelCell.textContent = model;
+    }
     const verdictCell = el("td");
     const matrixBadge = el("span", summary.label, `badge ${summary.cls}`);
     verdictCell.appendChild(matrixBadge);
-    registryEntry.badges.push(matrixBadge);
     const pairsCell = el("td", `${data.paired_samples || 0}/${data.planned_pairs || 0}`);
     const assertionDelta = pairedDelta(data, "assertion_pass_rate");
     const assertionCell = el("td", fmt(assertionDelta), deltaClass("assertion_pass_rate", assertionDelta));
@@ -920,7 +890,7 @@ for (const comparison of shownComparisons) {
     for (const dimension of ["clarity_preference", "fluency_preference", "directness_preference"]) {
       const value = mean(data.primary?.metrics?.[dimension]);
       const cell = el("td", fmt(value), value === null ? "null" : "");
-      const viz = gauge(value);
+      const viz = gauge(value, dimension.replace(/_preference$/, ""));
       if (viz) cell.appendChild(viz);
       matrixRow.appendChild(cell);
     }
@@ -930,7 +900,6 @@ for (const comparison of shownComparisons) {
     const head = el("div", null, "model-head");
     const headBadge = el("span", summary.label, `badge ${summary.cls}`);
     head.append(el("h3", model), headBadge);
-    registryEntry.badges.push(headBadge);
     const routeInfo = (DATA.runs || []).find(run => run.model === model && run.route)?.route;
     if (routeInfo) {
       const routeName = routeInfo.resolved_route || routeInfo.requested_route || routeInfo.requested_provider;
@@ -982,9 +951,10 @@ for (const comparison of shownComparisons) {
     block.appendChild(wrap);
     section.appendChild(block);
   }
+  verdictPanelsRoot.appendChild(panel);
   comparisonsRoot.appendChild(section);
 }
-if (shownComparisons.length > 1) setVerdictComparison(shownComparisons[0].id);
+if (shownComparisons.length) setActiveComparison(shownComparisons[0].id);
 addNav("examples", "Review pairs");
 addNav("cases", "Run records");
 addNav("metrics-section", "Metrics");
@@ -1000,6 +970,7 @@ for (const run of runs) {
 }
 // Pair browser: every matched pair is reviewable with its blind judgment.
 const pairView = document.getElementById("pair-view");
+const pairComparisonSelect = document.getElementById("pair-comparison");
 const pairModelSelect = document.getElementById("pair-model");
 const pairCaseSelect = document.getElementById("pair-case");
 const pairPosition = document.getElementById("pair-position");
@@ -1018,7 +989,12 @@ for (const comparison of DATA.comparisons || []) {
     }
   }
 }
-pairs.sort((a, b) => a.model.localeCompare(b.model) || Number(a.treatment.eval_id) - Number(b.treatment.eval_id));
+const comparisonOrder = new Map(comparisonList.map((comparison, index) => [comparison.id, index]));
+pairs.sort((a, b) =>
+  (comparisonOrder.get(a.comparison.id) ?? 0) - (comparisonOrder.get(b.comparison.id) ?? 0)
+  || a.model.localeCompare(b.model)
+  || String(a.treatment.eval_id).localeCompare(String(b.treatment.eval_id), undefined, { numeric: true })
+  || Number(a.treatment.run_number) - Number(b.treatment.run_number));
 let pairIndex = 0;
 let pairInteracted = false;
 let diffEnabled = true;
@@ -1065,14 +1041,19 @@ const diffPre = (own, other, cls) => {
   flush(uniqueRun);
   return pre;
 };
-const pairHash = entry => `#pair=${encodeURIComponent(entry.model)}/${entry.treatment.eval_id}/${entry.treatment.run_number}`;
+const pairHash = entry => pairHashFor(
+  entry.comparison.id, entry.model, entry.treatment.eval_id, entry.treatment.run_number,
+);
 const findPairFromHash = () => {
-  const match = /^#pair=([^/]+)(?:\/([^/]+))?(?:\/([^/]+))?$/.exec(location.hash);
+  const match = /^#pair=([^/]+)\/([^/]+)(?:\/([^/]+)\/([^/]+))?$/.exec(location.hash);
   if (!match) return -1;
-  const model = decodeURIComponent(match[1]);
-  return pairs.findIndex(pair => pair.model === model
-    && (match[2] === undefined || String(pair.treatment.eval_id) === match[2])
-    && (match[3] === undefined || String(pair.treatment.run_number) === match[3]));
+  const comparisonId = decodeURIComponent(match[1]);
+  const model = decodeURIComponent(match[2]);
+  const evalId = match[3] === undefined ? undefined : decodeURIComponent(match[3]);
+  const runNumber = match[4] === undefined ? undefined : decodeURIComponent(match[4]);
+  return pairs.findIndex(pair => pair.comparison.id === comparisonId && pair.model === model
+    && (evalId === undefined || String(pair.treatment.eval_id) === evalId)
+    && (runNumber === undefined || String(pair.treatment.run_number) === runNumber));
 };
 const fillSelect = (select, values, current) => {
   select.replaceChildren();
@@ -1091,12 +1072,26 @@ const renderPair = () => {
   }
   pairIndex = Math.max(0, Math.min(pairIndex, pairs.length - 1));
   const entry = pairs[pairIndex];
-  fillSelect(pairModelSelect, [...new Set(pairs.map(p => p.model))].map(m => [m, m]), entry.model);
+  fillSelect(
+    pairComparisonSelect,
+    [...new Map(pairs.map(pair => [
+      pair.comparison.id,
+      pair.comparison.tab_label || pair.comparison.label || pair.comparison.id,
+    ])).entries()],
+    entry.comparison.id,
+  );
+  fillSelect(
+    pairModelSelect,
+    [...new Set(pairs
+      .filter(pair => pair.comparison.id === entry.comparison.id)
+      .map(pair => pair.model))].map(model => [model, model]),
+    entry.model,
+  );
   fillSelect(
     pairCaseSelect,
-    pairs.filter(p => p.model === entry.model)
-      .map(p => [String(p.treatment.eval_id), `case ${p.treatment.eval_id} ${p.treatment.eval_name || ""} · run ${p.treatment.run_number}`]),
-    String(entry.treatment.eval_id));
+    pairs.filter(pair => pair.comparison.id === entry.comparison.id && pair.model === entry.model)
+      .map(pair => [pairHash(pair), `case ${pair.treatment.eval_id} ${pair.treatment.eval_name || ""} · run ${pair.treatment.run_number}`]),
+    pairHash(entry));
   pairPosition.textContent = `${pairIndex + 1} of ${pairs.length} \u00b7 \u2190 \u2192 keys`;
   if (pairInteracted) history.replaceState(null, "", pairHash(entry));
   const pair = el("div", null, "pair");
@@ -1138,15 +1133,22 @@ const renderPair = () => {
   }
   pairView.appendChild(judgmentCard);
 };
+pairComparisonSelect.addEventListener("change", () => {
+  pairInteracted = true;
+  const found = pairs.findIndex(pair => pair.comparison.id === pairComparisonSelect.value);
+  if (found >= 0) pairIndex = found;
+  renderPair();
+});
 pairModelSelect.addEventListener("change", () => {
   pairInteracted = true;
-  pairIndex = pairs.findIndex(p => p.model === pairModelSelect.value);
+  const found = pairs.findIndex(pair =>
+    pair.comparison.id === pairComparisonSelect.value && pair.model === pairModelSelect.value);
+  if (found >= 0) pairIndex = found;
   renderPair();
 });
 pairCaseSelect.addEventListener("change", () => {
   pairInteracted = true;
-  const found = pairs.findIndex(p =>
-    p.model === pairModelSelect.value && String(p.treatment.eval_id) === pairCaseSelect.value);
+  const found = pairs.findIndex(pair => pairHash(pair) === pairCaseSelect.value);
   if (found >= 0) pairIndex = found;
   renderPair();
 });
@@ -1159,9 +1161,9 @@ diffToggle.addEventListener("click", () => {
   renderPair();
 });
 document.addEventListener("keydown", event => {
-  if (event.altKey || event.ctrlKey || event.metaKey) return;
-  const tag = event.target.tagName;
-  if (tag === "SELECT" || tag === "INPUT" || tag === "TEXTAREA") return;
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+  if (event.target instanceof Element
+      && event.target.closest('button, a, select, input, textarea, [role="tab"]')) return;
   if (event.key === "ArrowLeft") { pairInteracted = true; pairIndex -= 1; renderPair(); }
   else if (event.key === "ArrowRight") { pairInteracted = true; pairIndex += 1; renderPair(); }
   else return;
@@ -1182,50 +1184,14 @@ if (initialPair >= 0) pairIndex = initialPair;
 renderPair();
 if (initialPair >= 0) document.getElementById("examples").scrollIntoView();
 
-const tradeoffSlider = document.getElementById("tradeoff-slider");
-const winSlider = document.getElementById("win-slider");
-const tradeoffValue = document.getElementById("tradeoff-value");
-const winValue = document.getElementById("win-value");
-const thresholdState = document.getElementById("threshold-state");
-const applyThresholds = () => {
-  tradeoffValue.textContent = THRESHOLDS.trade_off.toFixed(2);
-  winValue.textContent = THRESHOLDS.win.toFixed(2);
-  const custom = THRESHOLDS.trade_off !== RECOMMENDED_THRESHOLDS.trade_off
-    || THRESHOLDS.win !== RECOMMENDED_THRESHOLDS.win;
-  thresholdState.hidden = !custom;
-  for (const entry of verdictRegistry) {
-    const summary = verdict(entry.data);
-    entry.row.dataset.verdict = summary.cls.replace(/^b-/, "");
-    entry.sentence.replaceChildren();
-    for (const point of summary.parts) entry.sentence.appendChild(el("li", point));
-    for (const badge of entry.badges) {
-      badge.textContent = summary.label;
-      badge.className = `badge ${summary.cls}`;
-    }
-  }
-  for (const item of gaugeRegistry) drawGauge(item.holder, item.value);
-};
-const setThreshold = (key, value) => {
-  THRESHOLDS[key] = Number(value);
-  if (THRESHOLDS.win < THRESHOLDS.trade_off) THRESHOLDS.win = THRESHOLDS.trade_off;
-  tradeoffSlider.value = THRESHOLDS.trade_off;
-  winSlider.value = THRESHOLDS.win;
-  applyThresholds();
-};
+document.getElementById("threshold-line").textContent =
+  JUDGE_DIMENSIONS.map(id =>
+    `${id}: trade-off below ${dimensionThreshold(id, "trade_off").toFixed(2)}, `
+    + `win above ${dimensionThreshold(id, "win").toFixed(2)}`
+  ).join(" \u00b7 ");
 document.getElementById("weight-line").textContent =
   "dimension weights: " + JUDGE_DIMENSIONS.map(id => `${id} \u00d7${dimensionWeight(id)}`).join(" \u00b7 ")
   + " (a weight below 1 softens the label, 0 removes the dimension)";
-tradeoffSlider.value = THRESHOLDS.trade_off;
-winSlider.value = THRESHOLDS.win;
-tradeoffSlider.addEventListener("input", () => setThreshold("trade_off", tradeoffSlider.value));
-winSlider.addEventListener("input", () => setThreshold("win", winSlider.value));
-document.getElementById("threshold-reset").addEventListener("click", () => {
-  Object.assign(THRESHOLDS, RECOMMENDED_THRESHOLDS);
-  tradeoffSlider.value = THRESHOLDS.trade_off;
-  winSlider.value = THRESHOLDS.win;
-  applyThresholds();
-});
-applyThresholds();
 
 const runRoot = document.getElementById("runs");
 const waffle = el("div", null, "waffle");
@@ -1366,9 +1332,9 @@ const appendJson = (root, value, key = "", depth = 0, pathUrl = null) => {
     root.append(el("span", Array.isArray(value) ? "]" : "}", "syntax-punct"));
   } else if (typeof value === "string") {
     const token = el("span", JSON.stringify(value), "syntax-string");
-    if (key === "path") {
+    if (key === "path" && pathUrl) {
       const link = el("a", null, "identity-link");
-      link.href = pathUrl || value;
+      link.href = pathUrl;
       link.target = "_blank";
       link.rel = "noopener";
       link.append(token);

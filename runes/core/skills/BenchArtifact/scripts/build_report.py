@@ -11,9 +11,20 @@ so the report is one file that renders offline with no external requests.
 import argparse
 import base64
 import copy
+import importlib.util
 import json
 import sys
 from pathlib import Path
+
+if __package__:
+    from . import aggregate_benchmark
+else:
+    aggregate_path = Path(__file__).with_name("aggregate_benchmark.py")
+    aggregate_spec = importlib.util.spec_from_file_location(
+        "bench_artifact_aggregate", aggregate_path,
+    )
+    aggregate_benchmark = importlib.util.module_from_spec(aggregate_spec)
+    aggregate_spec.loader.exec_module(aggregate_benchmark)
 
 TEMPLATE_PATH = Path(__file__).resolve().parent.parent / "assets" / "report-template.html"
 DATA_PLACEHOLDER = "__BENCHMARK_DATA_BASE64__"
@@ -43,6 +54,12 @@ def sanitize_report_data(benchmark: dict) -> dict:
     for spec in safe.get("arms", {}).values():
         if isinstance(spec, dict):
             spec.pop("artifact_url", None)
+            artifact_path = spec.get("artifact_path")
+            if isinstance(artifact_path, str):
+                spec["artifact_path"] = Path(artifact_path).name
+            artifact_source = spec.get("artifact_source")
+            if isinstance(artifact_source, str) and Path(artifact_source).is_absolute():
+                spec["artifact_source"] = Path(artifact_source).name
     for run in safe.get("runs", []):
         route = run.get("route") if isinstance(run, dict) else None
         if isinstance(route, dict) and isinstance(route.get("resolved_binary"), str):
@@ -54,6 +71,21 @@ def sanitize_report_data(benchmark: dict) -> dict:
             for judgment in preferences if isinstance(judgment, dict)
         ]
     return safe
+
+
+def backfill_legacy_verdicts(benchmark: dict) -> None:
+    """Add stored verdicts to schema-v2 aggregates that predate the field."""
+    judging = benchmark.get("judging")
+    thresholds = benchmark.get("verdict_thresholds")
+    for comparison in benchmark.get("comparisons", []):
+        models = comparison.get("models") if isinstance(comparison, dict) else None
+        if not isinstance(models, dict):
+            continue
+        for cell in models.values():
+            if isinstance(cell, dict) and not isinstance(cell.get("verdict"), dict):
+                cell["verdict"] = aggregate_benchmark.calculate_verdict(
+                    cell, judging, thresholds,
+                )
 
 
 def add_local_links(safe: dict, benchmark: dict) -> None:
@@ -103,13 +135,17 @@ def build_report(benchmark_path: Path, output_path: Path, local_links: bool = Fa
     comparisons = benchmark.get("comparisons")
     if not isinstance(comparisons, list):
         raise TypeError("benchmark comparisons must be a list")
+    aggregate_benchmark.validate_judging_config(
+        benchmark.get("judging"), benchmark.get("verdict_thresholds"),
+    )
     template = TEMPLATE_PATH.read_text(encoding="utf-8")
 
     report_data = sanitize_report_data(benchmark)
+    backfill_legacy_verdicts(report_data)
     if local_links:
         add_local_links(report_data, benchmark)
     encoded = base64.b64encode(
-        json.dumps(report_data, ensure_ascii=False).encode("utf-8")
+        json.dumps(report_data, ensure_ascii=False, allow_nan=False).encode("utf-8")
     ).decode("ascii")
     if DATA_PLACEHOLDER not in template:
         raise ValueError(f"template {TEMPLATE_PATH} is missing {DATA_PLACEHOLDER}")

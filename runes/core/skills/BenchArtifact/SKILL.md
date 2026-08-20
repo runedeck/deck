@@ -43,6 +43,8 @@ Freeze the treatment instructions as `artifact.md`. Keep source files beside it 
 
 Define one `baseline` arm and one `with_artifact` arm. Use a separate native comparison for another artifact.
 
+Freeze the confirmed definition as `manifest.json`. Use the schema in [references/schemas.md](references/schemas.md).
+
 State the run count before execution. The count is cases times arms times models times repeats.
 
 Get explicit approval when the count exceeds 20 runs.
@@ -59,11 +61,7 @@ Report each case, arm, model, completion, and failure while the matrix runs.
 
 ### Grade and compare
 
-Grade each valid run against the frozen assertions. Use [templates/agents/grader.md](templates/agents/grader.md).
-
-An artifact with a measurable claim names its checker. An artifact without a dedicated checker uses [scripts/lint.py](scripts/lint.py) with a small patterns JSON. No artifact ships its own checker script for simple pattern claims.
-
-Use [templates/agents/comparator.md](templates/agents/comparator.md) for blind clarity, fluency, and directness judgments.
+Select the checker with [references/schemas.md](references/schemas.md). Follow the grading and blind-judging procedure in the selected execution companion.
 
 Aggregate the normalized results:
 
@@ -74,7 +72,7 @@ python3 -m scripts.aggregate_benchmark <workspace>/iteration-<N> --artifact-name
 Render the report:
 
 ```sh
-python3 -m scripts.build_report <workspace>/iteration-<N>/benchmark.json
+python3 -m scripts.build_report <workspace>/iteration-<N>/benchmark.json --local-links
 ```
 
 ### Review the result
@@ -90,6 +88,8 @@ Show the generated report to the user. Record sample gaps and failure causes.
 - Each pair uses one model, prompt, file set, assertion set, and repeat number.
 - Each treatment run receives the frozen artifact. Each baseline run does not.
 - Every planned run has a result or an explicit exclusion.
+- Every valid run has deterministic assertion and checker results.
+- Every enabled preference dimension has one blind judgment for each matched pair.
 - `benchmark.json` contains no cross-model aggregate.
 - The report renders without network access.
 - The report gives no verdict when fewer than half of the planned pairs are valid.

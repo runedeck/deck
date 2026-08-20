@@ -5,6 +5,7 @@ import argparse
 import concurrent.futures
 import hashlib
 import json
+import math
 import os
 import random
 import shutil
@@ -15,11 +16,15 @@ import time
 from pathlib import Path
 from urllib.parse import quote
 
-SAFE_RUN_LIMIT = 20
+SAFE_CALL_LIMIT = 20
 PREFLIGHT_PROMPT = "Reply with exactly OK."
 WORKSPACE_ROOT_VARIABLE = "ROOT_BENCHMARK"
 DEFAULT_WORKSPACE_ROOT = Path.home() / "Data" / "Benchmarks"
 RESPONSE_KINDS = {"text", "json", "jsonl"}
+ASSERTION_KINDS = {"word_range", "required_patterns", "forbidden_patterns"}
+SUPPORTED_JUDGING_DIMENSIONS = ("clarity", "fluency", "directness")
+DEFAULT_TRADE_OFF = 0.4
+DEFAULT_WIN = 0.5
 ROUTE_CONTEXT_KEYS = (
     "scratch", "state", "prompt", "prompt_file", "artifact", "artifact_source", "model",
 )
@@ -33,11 +38,12 @@ def progress(event: str, **fields) -> None:
 
 def default_workspace(manifest: dict) -> Path:
     name = manifest.get("artifact_name")
-    if not isinstance(name, str) or not name:
-        raise ValueError("manifest needs artifact_name when --workspace is omitted")
+    safe_path_segment(name, "artifact_name")
     root = Path(os.environ.get(WORKSPACE_ROOT_VARIABLE, str(DEFAULT_WORKSPACE_ROOT)))
     deck = manifest.get("deck")
-    return root / deck / name if isinstance(deck, str) and deck else root / name
+    if deck is not None:
+        safe_path_segment(deck, "deck")
+    return root / deck / name if deck else root / name
 
 
 def load_json(path: Path) -> dict:
@@ -117,7 +123,148 @@ def parse_response(stdout: str, kind: str) -> tuple[str, dict, dict]:
     return text.strip(), usage, route
 
 
-def validate_manifest(manifest: dict) -> None:
+def finite_number(value) -> bool:
+    return (
+        isinstance(value, (int, float))
+        and not isinstance(value, bool)
+        and math.isfinite(value)
+    )
+
+
+def require_provider_call_approval(provider_calls: int, approved_calls: int | None) -> None:
+    if provider_calls > SAFE_CALL_LIMIT and approved_calls != provider_calls:
+        raise ValueError(
+            f"The plan has {provider_calls} provider calls. "
+            f"Pass --approve {provider_calls}."
+        )
+
+
+def safe_path_segment(value, label: str) -> str:
+    if (
+        not isinstance(value, str)
+        or not value
+        or value in {".", ".."}
+        or "/" in value
+        or "\\" in value
+        or "\0" in value
+        or Path(value).name != value
+    ):
+        raise ValueError(f"{label} must be one safe path segment")
+    return value
+
+
+def resolve_manifest_path(manifest_path: Path, value, label: str) -> Path:
+    if not isinstance(value, str) or not value or Path(value).is_absolute():
+        raise ValueError(f"{label} must be a non-empty relative path")
+    root = manifest_path.parent.resolve()
+    resolved = (root / value).resolve()
+    if not resolved.is_relative_to(root):
+        raise ValueError(f"{label} escapes the manifest directory")
+    return resolved
+
+
+def normalize_run_plan(manifest: dict, required: bool = False) -> dict | None:
+    plan = manifest.get("run_plan")
+    if plan is None:
+        if required:
+            raise ValueError("manifest needs a frozen run_plan")
+        return None
+    if not isinstance(plan, dict):
+        raise TypeError("manifest run_plan must be an object")
+    repeats = plan.get("repeats")
+    if not isinstance(repeats, int) or isinstance(repeats, bool) or repeats < 1:
+        raise ValueError("manifest run_plan repeats must be greater than zero")
+    routes = plan.get("routes")
+    models = plan.get("models")
+    if routes is not None and models is not None:
+        raise ValueError("manifest run_plan cannot define both routes and models")
+    if models is not None:
+        if (
+            not isinstance(models, list)
+            or not models
+            or not all(isinstance(model, str) and model for model in models)
+        ):
+            raise ValueError("manifest run_plan models must be non-empty strings")
+        entries = [{"id": f"native:{model}", "model": model} for model in models]
+    elif routes is not None:
+        if (
+            not isinstance(routes, list)
+            or not routes
+            or not all(
+                isinstance(route, dict)
+                and isinstance(route.get("id"), str)
+                and route["id"]
+                and isinstance(route.get("model"), str)
+                and route["model"]
+                for route in routes
+            )
+        ):
+            raise ValueError("manifest run_plan routes need non-empty id and model strings")
+        entries = routes
+    else:
+        raise ValueError("manifest run_plan needs routes or models")
+    model_names = [entry["model"] for entry in entries]
+    if len(model_names) != len(set(model_names)):
+        raise ValueError("manifest run_plan model names must be unique")
+    return {**plan, "routes": entries, "repeats": repeats}
+
+
+def validate_judging_config(judging, thresholds) -> None:
+    """Validate the fixed three-dimension judging contract."""
+    if thresholds is not None and not isinstance(thresholds, dict):
+        raise TypeError("verdict_thresholds must be an object")
+    thresholds = thresholds or {}
+    for key in ("trade_off", "win"):
+        value = thresholds.get(key)
+        if value is not None and (not finite_number(value) or not 0 <= value <= 1):
+            raise ValueError(f"verdict threshold {key} must be between 0 and 1")
+
+    global_trade_off = thresholds.get("trade_off", DEFAULT_TRADE_OFF)
+    global_win = thresholds.get("win", DEFAULT_WIN)
+    if global_trade_off >= global_win:
+        raise ValueError("verdict trade_off must be less than win")
+
+    if judging is None:
+        return
+    if not isinstance(judging, dict):
+        raise TypeError("judging must be an object")
+    dimensions = judging.get("dimensions")
+    if not isinstance(dimensions, list):
+        raise TypeError("judging dimensions must be an array")
+    if len(dimensions) != len(SUPPORTED_JUDGING_DIMENSIONS):
+        raise ValueError("judging must define clarity, fluency, and directness once")
+    if not all(isinstance(item, dict) for item in dimensions):
+        raise TypeError("each judging dimension must be an object")
+    ids = [item.get("id") for item in dimensions]
+    if set(ids) != set(SUPPORTED_JUDGING_DIMENSIONS) or len(set(ids)) != len(ids):
+        raise ValueError("judging must define clarity, fluency, and directness once")
+    guards = judging.get("guards", [])
+    if not isinstance(guards, list) or not all(isinstance(item, str) for item in guards):
+        raise TypeError("judging guards must be strings")
+
+    for item in dimensions:
+        dimension = item["id"]
+        for key in ("label", "criterion"):
+            if not isinstance(item.get(key), str) or not item[key].strip():
+                raise ValueError(f"judging dimension {dimension} needs {key}")
+        weight = item.get("weight")
+        if weight is not None and (not finite_number(weight) or not 0 <= weight <= 1):
+            raise ValueError(f"judging dimension {dimension} weight must be between 0 and 1")
+        for key in ("trade_off", "win"):
+            value = item.get(key)
+            if value is not None and (not finite_number(value) or not 0 <= value <= 1):
+                raise ValueError(
+                    f"judging dimension {dimension} {key} must be between 0 and 1"
+                )
+        trade_off = item.get("trade_off", global_trade_off)
+        win = item.get("win", global_win)
+        if trade_off >= win:
+            raise ValueError(
+                f"judging dimension {dimension} trade_off must be less than win"
+            )
+
+
+def validate_manifest(manifest: dict, require_run_plan: bool = False) -> None:
     required = {"schema_version", "arms", "comparisons", "evals"}
     missing = sorted(required - manifest.keys())
     if missing:
@@ -129,9 +276,10 @@ def validate_manifest(manifest: dict) -> None:
         raise ValueError("manifest arms must be a non-empty object")
     if any(not isinstance(spec, dict) for spec in arms.values()):
         raise TypeError("each manifest arm must be an object")
-    if any(not name or Path(name).name != name or "@" in name for name in arms):
-        raise ValueError("manifest arm names must be safe directory names without @")
     for name, spec in arms.items():
+        safe_path_segment(name, "manifest arm name")
+        if "@" in name:
+            raise ValueError("manifest arm names must not contain @")
         kind = spec.get("artifact_kind")
         if kind not in {None, "agent", "rule", "skill"}:
             raise ValueError(f"arm {name} has an invalid artifact_kind")
@@ -147,17 +295,16 @@ def validate_manifest(manifest: dict) -> None:
         raise TypeError("manifest evals must be an array")
     if not manifest["evals"]:
         raise ValueError("manifest evals must be a non-empty array")
-    eval_ids = [case.get("id") for case in manifest["evals"] if isinstance(case, dict)]
-    if None in eval_ids or len(eval_ids) != len(manifest["evals"]) or len(set(map(str, eval_ids))) != len(eval_ids):
-        raise ValueError("manifest eval ids must be present and unique")
-    if any(
-        not isinstance(case.get("name"), str)
-        or not case["name"]
-        or Path(case["name"]).name != case["name"]
-        for case in manifest["evals"]
+    if not all(isinstance(case, dict) for case in manifest["evals"]):
+        raise TypeError("each manifest eval must be an object")
+    eval_ids = [case.get("id") for case in manifest["evals"]]
+    if (
+        not all(isinstance(eval_id, int) and not isinstance(eval_id, bool) and eval_id > 0 for eval_id in eval_ids)
+        or len(set(eval_ids)) != len(eval_ids)
     ):
-        raise ValueError("manifest eval names must be safe directory names")
+        raise ValueError("manifest eval ids must be unique positive integers")
     for case in manifest["evals"]:
+        safe_path_segment(case.get("name"), f"manifest eval {case['id']} name")
         if not isinstance(case.get("prompt"), str) or not case["prompt"]:
             raise ValueError(f"manifest eval {case.get('id')} needs a prompt")
         files = case.get("files", [])
@@ -169,6 +316,27 @@ def validate_manifest(manifest: dict) -> None:
                 raise ValueError(f"manifest eval {case['id']} {field} must be a non-negative integer")
         if case.get("maximum_words") is not None and case.get("minimum_words", 1) > case["maximum_words"]:
             raise ValueError(f"manifest eval {case['id']} word limits are reversed")
+        assertions = case.get("assertions")
+        if not isinstance(assertions, list) or not assertions:
+            raise ValueError(f"manifest eval {case['id']} needs non-empty assertions")
+        for assertion in assertions:
+            if not isinstance(assertion, dict):
+                raise TypeError(f"manifest eval {case['id']} assertions must be objects")
+            kind = assertion.get("kind")
+            if kind not in ASSERTION_KINDS:
+                raise ValueError(f"manifest eval {case['id']} has unsupported assertion kind: {kind}")
+            if not isinstance(assertion.get("text"), str) or not assertion["text"].strip():
+                raise ValueError(f"manifest eval {case['id']} assertion needs text")
+            if kind in {"required_patterns", "forbidden_patterns"}:
+                patterns = assertion.get("patterns")
+                if (
+                    not isinstance(patterns, list)
+                    or not patterns
+                    or not all(isinstance(pattern, str) and pattern for pattern in patterns)
+                ):
+                    raise ValueError(f"manifest eval {case['id']} {kind} needs pattern strings")
+            if kind == "word_range" and case.get("minimum_words") is None and case.get("maximum_words") is None:
+                raise ValueError(f"manifest eval {case['id']} word_range needs a word limit")
     comparison_ids = []
     for comparison in manifest["comparisons"]:
         if not isinstance(comparison, dict):
@@ -179,15 +347,14 @@ def validate_manifest(manifest: dict) -> None:
         if comparison["primary"] == comparison["baseline"]:
             raise ValueError("comparison primary and baseline arms must differ")
         comparison_id = comparison.get("id")
-        if (
-            not isinstance(comparison_id, str)
-            or not comparison_id
-            or Path(comparison_id).name != comparison_id
-        ):
-            raise ValueError("each manifest comparison needs a safe id")
+        safe_path_segment(comparison_id, "manifest comparison id")
         comparison_ids.append(comparison_id)
     if len(comparison_ids) != len(set(comparison_ids)):
         raise ValueError("manifest comparison ids must be unique")
+    validate_judging_config(
+        manifest.get("judging"), manifest.get("verdict_thresholds"),
+    )
+    normalize_run_plan(manifest, required=require_run_plan)
 
 
 def selected(items, values, key):
@@ -289,6 +456,61 @@ def stage_artifact(
     return staged, target
 
 
+def execute_route(
+    route: dict,
+    context: dict[str, str],
+    prompt: str,
+    cwd: Path,
+    timeout: float,
+    artifact: Path | None = None,
+) -> subprocess.CompletedProcess:
+    argv = [
+        route["binary"],
+        *(expand(arg, context) for arg in route.get("argv", [])),
+    ]
+    if artifact:
+        argv.extend(expand(arg, context) for arg in artifact_arguments(route))
+    env = os.environ.copy()
+    env.pop("CLAUDECODE", None)
+    env.update(
+        {
+            key: expand(str(value), context)
+            for key, value in route.get("env", {}).items()
+        }
+    )
+    return subprocess.run(
+        argv,
+        cwd=cwd,
+        env=env,
+        input=prompt if route.get("stdin") else None,
+        text=True,
+        capture_output=True,
+        timeout=timeout,
+        check=False,
+    )
+
+
+def validate_resolved_model(result: dict, expected_model: str) -> dict:
+    if result.get("state") != "valid":
+        return result
+    resolved = result.get("route", {}).get("resolved_model")
+    if resolved is None:
+        return result
+    if not isinstance(resolved, str) or not resolved:
+        return {
+            **result,
+            "state": "model_mismatch",
+            "error": "The provider returned an invalid resolved model.",
+        }
+    if resolved != expected_model:
+        return {
+            **result,
+            "state": "model_mismatch",
+            "error": f"Resolved model {resolved} does not match {expected_model}.",
+        }
+    return result
+
+
 def invoke(route_name: str, route: dict, prompt: str, artifact: Path | None, files: list[Path], timeout: float) -> dict:
     started = time.monotonic()
     with tempfile.TemporaryDirectory(prefix="bench-input-") as scratch_name, tempfile.TemporaryDirectory(prefix="bench-control-") as control_name:
@@ -304,17 +526,9 @@ def invoke(route_name: str, route: dict, prompt: str, artifact: Path | None, fil
             scratch, control, prompt, artifact_context, artifact_source, route["model"],
         )
         Path(context["state"]).mkdir()
-        argv = [route["binary"], *(expand(arg, context) for arg in route.get("argv", []))]
-        if artifact_context:
-            argv.extend(expand(arg, context) for arg in artifact_arguments(route))
-        env = os.environ.copy()
-        env.pop("CLAUDECODE", None)
-        env.update({key: expand(str(value), context) for key, value in route.get("env", {}).items()})
-        stdin = prompt if route.get("stdin") else None
         try:
-            process = subprocess.run(
-                argv, cwd=scratch, env=env, input=stdin, text=True,
-                capture_output=True, timeout=timeout, check=False,
+            process = execute_route(
+                route, context, prompt, scratch, timeout, artifact_context,
             )
         except subprocess.TimeoutExpired as error:
             return {
@@ -326,7 +540,7 @@ def invoke(route_name: str, route: dict, prompt: str, artifact: Path | None, fil
             "duration_seconds": round(time.monotonic() - started, 4),
             "returncode": process.returncode,
             "stderr": process.stderr,
-            "command": argv,
+            "command": process.args,
             "provider_output": process.stdout,
             "route": {"requested_route": route_name},
         }
@@ -341,10 +555,10 @@ def invoke(route_name: str, route: dict, prompt: str, artifact: Path | None, fil
             text, usage, resolved = parse_response(process.stdout, route.get("response", "text"))
         except (TypeError, ValueError, json.JSONDecodeError) as error:
             return {**result, "state": "invalid_output", "error": str(error)}
-        return {
+        return validate_resolved_model({
             **result, "response": text, "usage": usage,
             "route": {"requested_route": route_name, **resolved},
-        }
+        }, route["model"])
 
 
 def validate_output(result: dict, case: dict) -> dict:
@@ -357,16 +571,125 @@ def validate_output(result: dict, case: dict) -> dict:
     return {**result, "word_count": words}
 
 
+def preflight_route(route_name: str, route: dict, timeout: float) -> dict:
+    result = validate_output(
+        invoke(route_name, route, PREFLIGHT_PROMPT, None, [], timeout),
+        {"minimum_words": 1},
+    )
+    if result.get("state") != "valid":
+        return result
+    if result.get("response", "").strip().rstrip(".!") != "OK":
+        return {
+            **result,
+            "state": "preflight_failure",
+            "error": "The preflight response must equal OK with optional punctuation.",
+        }
+    return result
+
+
+def context_canary_route(route_name: str, route: dict, timeout: float) -> dict:
+    result = validate_output(
+        invoke(route_name, route, route["context_canary"], None, [], timeout),
+        {"minimum_words": 1},
+    )
+    if result.get("state") != "valid":
+        return result
+    response = result.get("response", "").casefold()
+    markers = [
+        marker
+        for marker in route["forbidden_context_markers"]
+        if marker.casefold() in response
+    ]
+    result["forbidden_context_markers"] = markers
+    if markers:
+        return {
+            **result,
+            "state": "context_failure",
+            "error": f"The context contains forbidden markers: {', '.join(markers)}.",
+        }
+    return result
+
+
 def result_dir(root: Path, case: dict, arm: str, model: str, repeat: int) -> Path:
+    if not isinstance(case.get("id"), int) or isinstance(case["id"], bool) or case["id"] < 1:
+        raise ValueError("eval id must be a positive integer")
+    safe_path_segment(case.get("name"), "eval name")
+    safe_path_segment(arm, "arm name")
     safe_model = quote(display_model(model), safe="._-")
     return root / f"eval-{case['id']}-{case['name']}" / f"{arm}@{safe_model}" / f"run-{repeat}"
 
 
+def validate_execution(
+    result_path: Path,
+    execution: dict,
+    iteration: Path,
+    manifest: dict,
+    cases: dict[int, dict],
+    run_plan: dict,
+) -> tuple[dict, Path | None, str | None]:
+    """Verify agent-written identity fields and response content."""
+    iteration = iteration.resolve()
+    if not isinstance(execution, dict):
+        raise TypeError(f"{result_path} must contain a JSON object")
+    if execution.get("schema_version") != 2:
+        raise ValueError(f"{result_path} needs schema_version 2")
+    if execution.get("state") not in {
+        "valid", "provider_failure", "timeout", "invalid_output",
+        "preflight_failure", "context_failure", "model_mismatch",
+    }:
+        raise ValueError(f"{result_path} has an invalid state")
+    eval_id = execution.get("eval_id")
+    if not isinstance(eval_id, int) or isinstance(eval_id, bool) or eval_id not in cases:
+        raise ValueError(f"{result_path} has an unknown eval_id")
+    case = cases[eval_id]
+    if execution.get("eval_name") != case["name"]:
+        raise ValueError(f"{result_path} eval_name does not match the manifest")
+    arm = execution.get("arm")
+    if arm not in manifest["arms"]:
+        raise ValueError(f"{result_path} has an unknown arm")
+    model = execution.get("model")
+    models = {route["model"] for route in run_plan["routes"]}
+    if model not in models:
+        raise ValueError(f"{result_path} has an unknown model")
+    repeat = execution.get("repeat")
+    if (
+        not isinstance(repeat, int)
+        or isinstance(repeat, bool)
+        or not 1 <= repeat <= run_plan["repeats"]
+    ):
+        raise ValueError(f"{result_path} has an invalid repeat")
+    expected_dir = result_dir(iteration, case, arm, model, repeat).resolve()
+    if result_path.parent.resolve() != expected_dir:
+        raise ValueError(f"{result_path} identity does not match its directory")
+    if execution.get("state") != "valid":
+        return case, None, None
+
+    response_path = result_path.parent / "outputs" / "response.md"
+    if (
+        not response_path.is_file()
+        or response_path.is_symlink()
+        or not response_path.resolve().is_relative_to(iteration)
+    ):
+        raise ValueError(f"{result_path} has no local response file")
+    file_response = response_path.read_text(encoding="utf-8").removesuffix("\n")
+    response = execution.get("response")
+    if not isinstance(response, str) or response != file_response:
+        raise ValueError(f"{result_path} response does not match response.md")
+    words = execution.get("word_count")
+    if not isinstance(words, int) or isinstance(words, bool) or words != len(response.split()):
+        raise ValueError(f"{result_path} word_count does not match the response")
+    return case, response_path, response
+
+
 def case_files(input_root: Path, case: dict) -> list[Path]:
     input_dir = case.get("input_dir", f"eval-{case['id']}-{case['name']}")
+    if not isinstance(input_dir, str) or not input_dir or Path(input_dir).is_absolute():
+        raise ValueError(f"case {case['id']} input directory must be relative")
     case_root = (input_root / input_dir).resolve()
     if not case_root.is_relative_to(input_root):
         raise ValueError(f"case {case['id']} input directory escapes input_root")
+    if any(not value or Path(value).is_absolute() for value in case.get("files", [])):
+        raise ValueError(f"case {case['id']} input paths must be relative")
     files = [(case_root / value).resolve() for value in case.get("files", [])]
     if any(not path.is_file() or not path.is_relative_to(case_root) for path in files):
         raise ValueError(f"case {case['id']} has an invalid input path")
@@ -377,7 +700,7 @@ def artifact_path(manifest_path: Path, spec: dict) -> Path | None:
     value = spec.get("artifact_path")
     if not value:
         return None
-    artifact = (manifest_path.parent / value).resolve()
+    artifact = resolve_manifest_path(manifest_path, value, "artifact_path")
     if not artifact.exists():
         raise ValueError(f"artifact snapshot not found: {artifact}")
     if not (artifact.is_file() or artifact.is_dir()):
@@ -396,11 +719,35 @@ def artifact_path(manifest_path: Path, spec: dict) -> Path | None:
     return artifact
 
 
+def resolve_manifest_resources(
+    manifest_path: Path,
+    manifest: dict,
+    cases: list[dict] | None = None,
+    arm_names: list[str] | None = None,
+) -> tuple[Path, dict[str, list[Path]], dict[str, Path | None]]:
+    """Resolve declared resources without access outside the manifest directory."""
+    input_root = resolve_manifest_path(
+        manifest_path, manifest.get("input_root", "."), "input_root",
+    )
+    selected_cases = manifest["evals"] if cases is None else cases
+    selected_arms = list(manifest["arms"]) if arm_names is None else arm_names
+    resolved_files = {
+        str(case["id"]): case_files(input_root, case) for case in selected_cases
+    }
+    resolved_artifacts = {
+        arm: artifact_path(manifest_path, manifest["arms"][arm])
+        for arm in selected_arms
+    }
+    return input_root, resolved_files, resolved_artifacts
+
+
 def write_result(path: Path, result: dict, metadata: dict) -> None:
     path.mkdir(parents=True, exist_ok=True)
     payload = {**metadata, **result}
     provider_output = payload.pop("provider_output", None)
-    (path / "result.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    (path / "result.json").write_text(
+        json.dumps(payload, indent=2, allow_nan=False) + "\n", encoding="utf-8",
+    )
     if provider_output is not None or result.get("response"):
         outputs = path / "outputs"
         outputs.mkdir(exist_ok=True)
@@ -457,7 +804,7 @@ def main(argv=None) -> int:
             raise ValueError("no routes selected")
         if args.repeats < 1:
             raise ValueError("repeats must be greater than zero")
-        if args.timeout <= 0:
+        if not finite_number(args.timeout) or args.timeout <= 0:
             raise ValueError("timeout must be greater than zero")
         if args.plan and args.preflight_only:
             raise ValueError("plan and preflight-only cannot be used together")
@@ -471,24 +818,25 @@ def main(argv=None) -> int:
             if not shutil.which(route["binary"]):
                 raise ValueError(f"route binary not found: {name}: {route['binary']}")
         manifest_path = args.manifest.resolve()
-        input_root = (manifest_path.parent / manifest.get("input_root", ".")).resolve()
-        resolved_files = {str(case["id"]): case_files(input_root, case) for case in cases}
-        resolved_artifacts = {
-            arm: artifact_path(manifest_path, manifest["arms"][arm]) for arm in arm_names
-        }
+        input_root, resolved_files, resolved_artifacts = resolve_manifest_resources(
+            manifest_path, manifest, cases, arm_names,
+        )
         planned_runs = len(cases) * len(arm_names) * len(routes) * args.repeats
         route_checks = len(routes) * 2
+        provider_calls = route_checks if args.preflight_only else planned_runs + route_checks
         jobs = len(routes) if args.jobs is None else args.jobs
         if jobs < 1:
             raise ValueError("jobs must be greater than zero")
         if args.preflight_only:
-            print(f"Plan: {route_checks} route checks. The benchmark matrix will not run.")
+            print(
+                f"Plan: {route_checks} route checks "
+                f"({route_checks} provider calls). The benchmark matrix will not run."
+            )
         else:
             print(f"Plan: {planned_runs} benchmark runs and {route_checks} route checks ({planned_runs + route_checks} provider calls).")
         if args.plan:
             return 0
-        if not args.preflight_only and planned_runs > SAFE_RUN_LIMIT and args.approve != planned_runs:
-            raise ValueError(f"matrix has {planned_runs} runs; pass --approve {planned_runs}")
+        require_provider_call_approval(provider_calls, args.approve)
         workspace = args.workspace or default_workspace(manifest)
         root = workspace.expanduser().resolve() / f"iteration-{args.iteration}"
         root.mkdir(parents=True, exist_ok=True)
@@ -535,21 +883,12 @@ def main(argv=None) -> int:
         if not manifest_output.is_file() and any(root.iterdir()):
             raise ValueError("non-empty iteration has no frozen manifest")
         manifest_output.write_text(
-            json.dumps(run_manifest, indent=2) + "\n", encoding="utf-8"
+            json.dumps(run_manifest, indent=2, allow_nan=False) + "\n", encoding="utf-8"
         )
         preflights = {}
         for name, route in routes:
             progress("route-check-start", check="preflight", route=name, model=route["model"])
-            result = invoke(name, route, PREFLIGHT_PROMPT, None, [], args.timeout)
-            result = validate_output(result, {"minimum_words": 1})
-            response = result.get("response", "").strip()
-            if response.rstrip(".!") != "OK":
-                result["state"] = "preflight_failure"
-                result["error"] = "preflight response must equal OK with optional punctuation"
-            resolved = result.get("route", {}).get("resolved_model")
-            if resolved and resolved != route["model"]:
-                result["state"] = "model_mismatch"
-                result["error"] = f"resolved model {resolved} does not match {route['model']}"
+            result = preflight_route(name, route, args.timeout)
             preflights[name] = result
             progress(
                 "route-check-finish",
@@ -565,13 +904,7 @@ def main(argv=None) -> int:
         canaries = {}
         for name, route in routes:
             progress("route-check-start", check="context-canary", route=name, model=route["model"])
-            result = validate_output(invoke(name, route, route["context_canary"], None, [], args.timeout), {"minimum_words": 1})
-            response = result.get("response", "").casefold()
-            markers = [marker for marker in route["forbidden_context_markers"] if marker.casefold() in response]
-            result["forbidden_context_markers"] = markers
-            if result["state"] == "valid" and markers:
-                result["state"] = "context_failure"
-                result["error"] = f"context contains forbidden markers: {', '.join(markers)}"
+            result = context_canary_route(name, route, args.timeout)
             canaries[name] = result
             progress(
                 "route-check-finish",

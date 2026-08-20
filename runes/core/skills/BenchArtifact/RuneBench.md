@@ -78,7 +78,7 @@ Run an approved matrix:
 ```sh
 python3 scripts/run_benchmark.py --cross-harness \
   --workspace <workspace> --iteration <N> --manifest <evals.json> \
-  --routes <routes.json> --repeats 3 --seed <seed> --approve <run-count>
+  --routes <routes.json> --repeats 3 --seed <seed> --approve <provider-call-count>
 ```
 
 The runner prints progress for each route check and matrix run.
@@ -86,6 +86,39 @@ The runner prints progress for each route check and matrix run.
 It stores raw stdout in `outputs/provider-output.txt` before response parsing.
 
 It stores the parsed final response in `outputs/response.md`.
+
+## Grading
+
+Run the same deterministic grader that native mode uses:
+
+```sh
+python3 scripts/grade_iteration.py --iteration <workspace>/iteration-<N> \
+  --manifest <workspace>/iteration-<N>/manifest.json --checker <checker.py>
+```
+
+Add `--checker-config <rules.json>` when the checker needs a configuration.
+
+## Blind judging
+
+State the judgment call count before execution. One judge call covers one matched pair.
+
+Each judge route also uses one preflight call and one context-canary call.
+
+Assign each model to a judge route from another vendor.
+
+Plan each judge assignment without provider calls:
+
+```sh
+python3 scripts/judge_preferences.py --cross-harness --plan \
+  --iteration <workspace>/iteration-<N> \
+  --manifest <workspace>/iteration-<N>/manifest.json \
+  --routes <routes.json> --judge-route <route> --seed <seed> \
+  --model <model>
+```
+
+Repeat `--model` for each model assigned to the same judge route.
+
+Remove `--plan` to run the assignment. Add `--approve <provider-call-count>` when the total is more than 20.
 
 ## Boundaries
 

@@ -3,14 +3,16 @@
 
 import argparse
 import json
-import os
 import random
-import subprocess
-import tempfile
+import shutil
+import sys
 from pathlib import Path
 from urllib.parse import quote
 
-import run_benchmark
+if __package__:
+    from . import run_benchmark
+else:
+    import run_benchmark
 
 DEFAULT_JUDGING_PATH = Path(__file__).resolve().parent.parent / "config" / "judging.json"
 DEFAULT_JUDGING = json.loads(DEFAULT_JUDGING_PATH.read_text(encoding="utf-8"))
@@ -24,14 +26,71 @@ def pair_key(result: dict) -> tuple:
     return int(result["eval_id"]), result["model"], int(result["repeat"])
 
 
-def collect(iteration: Path) -> dict[tuple, dict[str, Path]]:
+def collect(iteration: Path, manifest: dict) -> dict[tuple, dict[str, Path]]:
     pairs: dict[tuple, dict[str, Path]] = {}
+    cases = {int(case["id"]): case for case in manifest["evals"]}
+    run_plan = run_benchmark.normalize_run_plan(manifest, required=True)
     for path in iteration.glob("eval-*/**/result.json"):
+        if path.is_symlink() or not path.resolve().is_relative_to(iteration):
+            raise ValueError(f"{path} is not a local result file")
         result = load(path)
-        if result.get("state") != "valid":
+        _, response, _ = run_benchmark.validate_execution(
+            path, result, iteration, manifest, cases, run_plan,
+        )
+        if response is None:
             continue
         pairs.setdefault(pair_key(result), {})[result["arm"]] = path
     return pairs
+
+
+def judgment_schedule(
+    manifest: dict,
+    pairs: dict[tuple, dict[str, Path]],
+    output_root: Path,
+    selected_models: set[str],
+) -> list[dict]:
+    schedule = []
+    case_ids = {case["id"] for case in manifest["evals"]}
+    iteration = output_root.parent.resolve()
+    for comparison in manifest["comparisons"]:
+        primary = comparison["primary"]
+        baseline = comparison["baseline"]
+        for key, arms in sorted(pairs.items()):
+            if primary not in arms or baseline not in arms:
+                continue
+            eval_id, model, repeat = key
+            if selected_models and model not in selected_models:
+                continue
+            if eval_id not in case_ids:
+                raise ValueError(f"The result refers to unknown eval {eval_id}.")
+            target = (
+                output_root / comparison["id"] / f"eval-{eval_id}"
+                / quote(model, safe="._-") / f"run-{repeat}.json"
+            )
+            if target.is_file() and load(target).get("state") == "valid":
+                continue
+            responses = {
+                arm: arms[arm].parent / "outputs" / "response.md"
+                for arm in (primary, baseline)
+            }
+            if any(
+                path.is_symlink()
+                or not path.is_file()
+                or not path.resolve().is_relative_to(iteration)
+                for path in responses.values()
+            ):
+                raise ValueError(
+                    f"Eval {eval_id} model {model} has an invalid response path."
+                )
+            schedule.append({
+                "comparison": comparison,
+                "eval_id": eval_id,
+                "model": model,
+                "repeat": repeat,
+                "responses": responses,
+                "target": target,
+            })
+    return schedule
 
 
 def prompt(case: dict, left: str, right: str, judging: dict) -> str:
@@ -77,6 +136,13 @@ def parse(
     response_kind: str = "json",
 ) -> dict:
     text, _, _ = run_benchmark.parse_response(stdout, response_kind)
+    return parse_verdict(text, dimension_ids)
+
+
+def parse_verdict(
+    text: str,
+    dimension_ids: tuple = ("clarity", "fluency", "directness"),
+) -> dict:
     lines = text.strip().splitlines()
     if len(lines) >= 3 and lines[0] in {"```", "```json"} and lines[-1] == "```":
         text = "\n".join(lines[1:-1])
@@ -92,74 +158,118 @@ def parse(
     return verdict
 
 
-def invoke(route: dict, judge_prompt: str, timeout: float) -> subprocess.CompletedProcess:
-    with tempfile.TemporaryDirectory(prefix="bench-judge-") as scratch:
-        prompt_file = Path(scratch) / "prompt.txt"
-        prompt_file.write_text(judge_prompt, encoding="utf-8")
-        context = {
-            "scratch": scratch,
-            "prompt_file": str(prompt_file),
-            "prompt": judge_prompt,
-            "artifact": "",
-            "artifact_source": "",
-            "model": route["model"],
-            "state": str(Path(scratch) / "state"),
-        }
-        Path(context["state"]).mkdir()
-        argv = [
-            route["binary"],
-            *(run_benchmark.expand(part, context) for part in route.get("argv", [])),
-        ]
-        env = os.environ.copy()
-        env.pop("CLAUDECODE", None)
-        env.update(
-            {
-                key: run_benchmark.expand(str(value), context)
-                for key, value in route.get("env", {}).items()
-            }
-        )
-        return subprocess.run(
-            argv,
-            cwd=scratch,
-            env=env,
-            input=judge_prompt if route.get("stdin") else None,
-            text=True,
-            capture_output=True,
-            timeout=timeout,
-            check=False,
-        )
+def invoke(route_name: str, route: dict, judge_prompt: str, timeout: float) -> dict:
+    return run_benchmark.invoke(route_name, route, judge_prompt, None, [], timeout)
 
 
-def main() -> int:
+def main(argv=None) -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--cross-harness",
+        action="store_true",
+        help="Permit external harness and provider processes",
+    )
     parser.add_argument("--iteration", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--routes", type=Path, required=True)
     parser.add_argument("--judge-route", required=True)
     parser.add_argument("--seed", type=int, required=True)
     parser.add_argument("--model", action="append")
+    parser.add_argument("--approve", type=int)
+    parser.add_argument(
+        "--plan",
+        action="store_true",
+        help="Validate inputs and print the provider-call count",
+    )
     parser.add_argument("--timeout", type=float, default=300)
-    args = parser.parse_args()
-    manifest = load(args.manifest)
-    judging = manifest.get("judging") or DEFAULT_JUDGING
-    dimension_ids = tuple(dimension["id"] for dimension in judging["dimensions"])
-    cases = {int(case["id"]): case for case in manifest["evals"]}
-    route = load(args.routes)["routes"][args.judge_route]
-    run_benchmark.validate_route(args.judge_route, route)
-    selected_models = set(args.model or [])
-    pairs = collect(args.iteration)
-    output_root = args.iteration / "preferences"
-    output_root.mkdir(exist_ok=True)
-    count = 0
-    for comparison in manifest["comparisons"]:
-        primary = comparison["primary"]
-        baseline = comparison["baseline"]
-        for key, arms in sorted(pairs.items()):
-            if primary not in arms or baseline not in arms:
-                continue
-            eval_id, model, repeat = key
-            if selected_models and model not in selected_models:
-                continue
+    args = parser.parse_args(argv)
+    try:
+        if not args.cross_harness:
+            raise ValueError("cross-harness execution requires --cross-harness")
+        manifest = load(args.manifest.resolve())
+        run_benchmark.validate_manifest(manifest, require_run_plan=True)
+        if not run_benchmark.finite_number(args.timeout) or args.timeout <= 0:
+            raise ValueError("timeout must be greater than zero")
+        judging = manifest.get("judging")
+        if judging is None:
+            judging = DEFAULT_JUDGING
+        dimension_ids = run_benchmark.SUPPORTED_JUDGING_DIMENSIONS
+        cases = {int(case["id"]): case for case in manifest["evals"]}
+        registry = load(args.routes.resolve()).get("routes")
+        if not isinstance(registry, dict):
+            raise TypeError("route registry routes must be an object")
+        route = registry[args.judge_route]
+        run_benchmark.validate_route(args.judge_route, route)
+        if not shutil.which(route["binary"]):
+            raise ValueError(
+                f"route binary not found: {args.judge_route}: {route['binary']}"
+            )
+        selected_models = set(args.model or [])
+        iteration = args.iteration.resolve()
+        output_root = iteration / "preferences"
+        schedule = judgment_schedule(
+            manifest, collect(iteration, manifest), output_root, selected_models,
+        )
+        route_checks = 2 if schedule else 0
+        provider_calls = len(schedule) + route_checks
+        print(
+            f"Plan: {len(schedule)} blinded preference judgments and "
+            f"{route_checks} route checks ({provider_calls} provider calls)."
+        )
+        if args.plan:
+            return 0
+        run_benchmark.require_provider_call_approval(provider_calls, args.approve)
+        if not schedule:
+            print("Wrote 0 blinded preference judgments.")
+            return 0
+
+        run_benchmark.progress(
+            "route-check-start",
+            check="preflight",
+            route=args.judge_route,
+            model=route["model"],
+        )
+        preflight = run_benchmark.preflight_route(
+            args.judge_route, route, args.timeout,
+        )
+        run_benchmark.progress(
+            "route-check-finish",
+            check="preflight",
+            route=args.judge_route,
+            model=route["model"],
+            state=preflight["state"],
+        )
+        if preflight["state"] != "valid":
+            raise ValueError(f"judge route preflight failed: {args.judge_route}")
+
+        run_benchmark.progress(
+            "route-check-start",
+            check="context-canary",
+            route=args.judge_route,
+            model=route["model"],
+        )
+        canary = run_benchmark.context_canary_route(
+            args.judge_route, route, args.timeout,
+        )
+        run_benchmark.progress(
+            "route-check-finish",
+            check="context-canary",
+            route=args.judge_route,
+            model=route["model"],
+            state=canary["state"],
+        )
+        if canary["state"] != "valid":
+            raise ValueError(f"judge route context canary failed: {args.judge_route}")
+
+        output_root.mkdir(exist_ok=True)
+        count = 0
+        for item in schedule:
+            comparison = item["comparison"]
+            primary = comparison["primary"]
+            baseline = comparison["baseline"]
+            eval_id = item["eval_id"]
+            model = item["model"]
+            repeat = item["repeat"]
             pair_seed = f"{args.seed}:{comparison['id']}:{eval_id}:{model}:{repeat}"
             left_arm, right_arm = (
                 (primary, baseline)
@@ -167,27 +277,23 @@ def main() -> int:
                 else (baseline, primary)
             )
             texts = {
-                arm: (arms[arm].parent / "outputs" / "response.md").read_text(encoding="utf-8")
+                arm: item["responses"][arm].read_text(encoding="utf-8")
                 for arm in (left_arm, right_arm)
             }
-            target = (
-                output_root / comparison["id"] / f"eval-{eval_id}"
-                / quote(model, safe="._-") / f"run-{repeat}.json"
-            )
-            if target.is_file() and load(target).get("state") == "valid":
-                continue
             blind = {"A": left_arm, "B": right_arm}
-            judge_prompt = prompt(cases[eval_id], texts[left_arm], texts[right_arm], judging)
-            print(
-                f"Progress: event=judgment-start comparison={comparison['id']} "
-                f"case={eval_id} model={model} judge={route['model']}",
-                flush=True,
+            judge_prompt = prompt(
+                cases[eval_id], texts[left_arm], texts[right_arm], judging,
             )
-            timed_out = False
-            try:
-                process = invoke(route, judge_prompt, args.timeout)
-            except subprocess.TimeoutExpired:
-                timed_out = True
+            run_benchmark.progress(
+                "judgment-start",
+                comparison=comparison["id"],
+                case=eval_id,
+                model=model,
+                judge=route["model"],
+            )
+            result = invoke(
+                args.judge_route, route, judge_prompt, args.timeout,
+            )
             record = {
                 "schema_version": 2,
                 "comparison": comparison["id"],
@@ -198,19 +304,15 @@ def main() -> int:
                 "judge_model": route["model"],
                 "seed": args.seed,
                 "blind_order": blind,
-                "state": "timeout" if timed_out else "valid" if process.returncode == 0 else "provider_failure",
-                "returncode": None if timed_out else process.returncode,
-                "stderr": "" if timed_out else process.stderr,
+                "state": result["state"],
+                "returncode": result.get("returncode"),
+                "stderr": result.get("stderr", ""),
             }
-            if timed_out:
-                record["error"] = f"judge call timed out after {args.timeout} seconds"
-            elif process.returncode == 0:
+            if result["state"] != "valid":
+                record["error"] = result.get("error", "The judge route failed.")
+            else:
                 try:
-                    verdict = parse(
-                        process.stdout,
-                        dimension_ids,
-                        route.get("response", "text"),
-                    )
+                    verdict = parse_verdict(result["response"], dimension_ids)
                     for dimension in dimension_ids:
                         winner = verdict[dimension]["winner"]
                         winner_arm = blind.get(winner) if winner != "tie" else "tie"
@@ -220,17 +322,32 @@ def main() -> int:
                             f"{dimension}_reason": verdict[dimension]["reason"],
                         })
                 except (json.JSONDecodeError, TypeError, ValueError) as error:
-                    record.update({"state": "invalid_output", "error": str(error), "stdout": process.stdout})
+                    record.update({
+                        "state": "invalid_output",
+                        "error": str(error),
+                        "stdout": result.get("provider_output", ""),
+                    })
+            target = item["target"]
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
-            print(
-                f"Progress: event=judgment-finish comparison={comparison['id']} "
-                f"case={eval_id} model={model} state={record['state']}",
-                flush=True,
+            target.write_text(
+                json.dumps(record, indent=2, allow_nan=False) + "\n",
+                encoding="utf-8",
+            )
+            run_benchmark.progress(
+                "judgment-finish",
+                comparison=comparison["id"],
+                case=eval_id,
+                model=model,
+                state=record["state"],
             )
             count += 1
-    print(f"Wrote {count} blinded preference judgments.")
-    return 0
+            if record["state"] == "model_mismatch":
+                raise ValueError(f"judge route model mismatch: {args.judge_route}")
+        print(f"Wrote {count} blinded preference judgments.")
+        return 0
+    except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError) as error:
+        print(f"Error: {error}", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":
