@@ -506,7 +506,7 @@ def dimension_config(judging: dict | None, dimension: str) -> dict:
     return {}
 
 
-def verdict_dimensions(judging: dict | None) -> tuple[str, ...]:
+def verdict_dimensions() -> tuple[str, ...]:
     return PREFERENCE_DIMENSIONS
 
 
@@ -551,6 +551,9 @@ def calculate_verdict(
     global_trade_off = (thresholds or {}).get("trade_off", DEFAULT_TRADE_OFF)
     if not finite_number(global_trade_off):
         global_trade_off = DEFAULT_TRADE_OFF
+    global_win = (thresholds or {}).get("win", DEFAULT_WIN)
+    if not finite_number(global_win):
+        global_win = DEFAULT_WIN
     corpus = cell.get("paired_corpus") or {}
     corpus_deltas = corpus.get("deltas") or {}
     cell_deltas = cell.get("deltas") or {}
@@ -580,7 +583,7 @@ def calculate_verdict(
             return int(value)
         return 0
 
-    dimensions = verdict_dimensions(judging)
+    dimensions = verdict_dimensions()
     enabled_dimensions = tuple(
         dimension
         for dimension in dimensions
@@ -752,6 +755,18 @@ def calculate_verdict(
             "label": "Improves with trade-offs",
             "parts": parts,
         }
+    wins = [
+        dimension for dimension in enabled_dimensions
+        if preference(dimension) >= dimension_limit(
+            judging, dimension, "win", global_win,
+        )
+    ]
+    if len(wins) != len(enabled_dimensions):
+        return {
+            "status": "ok",
+            "label": "Improves without clear preference support",
+            "parts": parts,
+        }
     return {
         "status": "ok",
         "label": "Improves the claimed behavior",
@@ -840,7 +855,7 @@ def markdown(data: dict) -> str:
                 f"win above {dimension_limit(judging, dimension, 'win', win)}, "
                 f"weight {dimension_weight(judging, dimension)}"
             )
-            for dimension in verdict_dimensions(judging)
+            for dimension in verdict_dimensions()
         )
         lines.extend([
             "Verdict rule: facts must hold, findings must fall, and blind preference must stay acceptable.",

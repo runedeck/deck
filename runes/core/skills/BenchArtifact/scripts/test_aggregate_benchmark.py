@@ -206,6 +206,24 @@ class AggregateTests(unittest.TestCase):
         self.assertEqual(verdict["status"], "warn")
         self.assertEqual(verdict["label"], "Improves with trade-offs")
 
+    def test_verdict_uses_win_threshold_for_label(self):
+        preferences = {
+            dimension: (2, 0.45)
+            for dimension in ("clarity", "fluency", "directness")
+        }
+
+        verdict = AGG.calculate_verdict(
+            self.verdict_cell(preferences=preferences),
+            None,
+            {"trade_off": 0.4, "win": 0.5},
+        )
+
+        self.assertEqual(verdict["status"], "ok")
+        self.assertEqual(
+            verdict["label"],
+            "Improves without clear preference support",
+        )
+
     def test_verdict_requires_complete_deterministic_pair_metrics(self):
         preferences = {
             dimension: (2, 0.5)

@@ -58,6 +58,8 @@ The default weight is 1. Fluency has a default weight of 0.5.
 
 Dimension thresholds replace the report defaults for that dimension.
 
+The trade-off threshold controls warnings. The win threshold controls verdict labels and report colors.
+
 The optional manifest `metrics` array replaces the report's metric definitions:
 
 ```json
