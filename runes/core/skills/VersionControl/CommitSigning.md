@@ -85,4 +85,14 @@ git log --show-signature -1
 git verify-commit HEAD
 ```
 
-Local verification of SSH signatures needs `~/.ssh/allowed_signers` and `git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers`, one `email key namespace="git"` entry per line.
+Local SSH signature verification needs an allowed signers file. Put one entry on each line:
+
+```text
+email namespaces="git" <keytype> <base64-key>
+```
+
+Configure Git to use the file:
+
+```sh
+git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
+```

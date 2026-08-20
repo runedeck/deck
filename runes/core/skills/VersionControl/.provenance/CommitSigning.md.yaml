@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/VersionControl/CommitSigning.md
     digest:
-      sha256: e953e7e3a9d924038590e7782c77ebd8e4ebbe755aab0fba299d7a6f4a52075f
+      sha256: 542adcedefde8ae8839780e7ae6b91486fc21c39d34e41dc3b1bd1f7af44dbbc
   predicate:
     buildDefinition:
       buildType: adopt/v1
