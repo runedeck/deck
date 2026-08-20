@@ -3,7 +3,7 @@
 help:
 	@echo "  make install    activate hooks (git + jj)"
 	@echo "  make validate   run commit-stage checks"
-	@echo "  make worktree   create an agent worktree: make worktree BRANCH=change/x IDENTITY=<model-id>"
+	@echo "  make worktree   create an agent worktree: make worktree BRANCH=change/x IDENTITY=<model-id> [HARNESS=<harness>]"
 
 install:
 	git config core.hooksPath .githooks
@@ -18,18 +18,32 @@ install:
 validate:
 	@bash .githooks/pre-commit --all-files
 
-# Create a worktree whose commits carry a listed model identity, with no
-# per-command env exports. The identity must exist in authors.yaml.
+# Create a worktree whose commits carry a listed model identity.
+# HARNESS selects one identity when a model ID has multiple harness entries.
 worktree:
 	@[ -n "$(BRANCH)" ] && [ -n "$(IDENTITY)" ] \
-	    || { echo "usage: make worktree BRANCH=change/x IDENTITY=<model-id>"; exit 2; }
+	    || { echo "usage: make worktree BRANCH=change/x IDENTITY=<model-id> [HARNESS=<harness>]"; exit 2; }
 	@set -e; \
-	identity=$$(grep -E '^    - .+ \($(IDENTITY)\) <.+>$$' authors.yaml | sed 's/^    - //'); \
-	[ -n "$$identity" ] || { echo "identity '$(IDENTITY)' is not in authors.yaml"; exit 1; }; \
+	identities=$$(awk -v model='$(IDENTITY)' -v harness='$(HARNESS)' '\
+	    /^[^ #]/ { in_authors = ($$0 == "authors:") } \
+	    in_authors && /^    - / { \
+	        identity = $$0; sub(/^    - /, "", identity); \
+	        suffix = "@" harness ".noreply.nexus.local>"; \
+	        if (index(identity, "(" model ") <") \
+	            && (harness == "" || substr(identity, length(identity) - length(suffix) + 1) == suffix)) \
+	            print identity; \
+	    }' authors.yaml); \
+	count=$$(printf '%s\n' "$$identities" | awk 'NF { count++ } END { print count + 0 }'); \
+	[ "$$count" -gt 0 ] \
+	    || { echo "identity '$(IDENTITY)' with harness '$(HARNESS)' is not in authors.yaml"; exit 1; }; \
+	[ "$$count" -eq 1 ] \
+	    || { echo "identity '$(IDENTITY)' is ambiguous. Set HARNESS=<harness>."; exit 1; }; \
+	identity=$$identities; \
 	name=$$(printf '%s' "$(BRANCH)" | tr '/' '-'); \
+	git config extensions.worktreeConfig true; \
 	git worktree add ".worktrees/$$name" -b "$(BRANCH)"; \
 	author=$${identity% <*}; \
 	address=$${identity##*<}; address=$${address%>}; \
-	git -C ".worktrees/$$name" config user.name "$$author"; \
-	git -C ".worktrees/$$name" config user.email "$$address"; \
+	git -C ".worktrees/$$name" config --worktree user.name "$$author"; \
+	git -C ".worktrees/$$name" config --worktree user.email "$$address"; \
 	echo "worktree .worktrees/$$name on $(BRANCH) authors as $$identity"

@@ -1,47 +1,99 @@
 #!/bin/bash
-# check-authorship: verify that every outgoing commit carries a listed identity.
-# The script applies the same rules as the ci/authorship workflow:
+# check-authorship: verify that every selected commit carries a listed identity.
+# Local checks use the trusted origin/main identities and the range from prek.
+# CI supplies its base identity file and commit range explicitly.
+# The script applies these rules:
 #   1. The commit author appears in the authors: list of authors.yaml.
 #   2. The author does not repeat as a Co-Authored-By trailer.
 #   3. Every Co-Authored-By trailer appears in the authors: list or the
 #      trailers: list. The trailers: list is valid only for trailers.
-# prek sets PRE_COMMIT_FROM_REF and PRE_COMMIT_TO_REF at the pre-push stage.
-# A manual run falls back to the merge base with origin/main.
+# A manual run uses HEAD and the merge base with origin/main.
 set -o pipefail
 
 from="${PRE_COMMIT_FROM_REF:-}"
 to="${PRE_COMMIT_TO_REF:-HEAD}"
+authors_file=""
+
+usage() {
+    echo "usage: scripts/check-authorship [--from-ref <commit>] [--to-ref <commit>] [--authors-file <path>]" >&2
+    exit 2
+}
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --from-ref)
+            [ "$#" -ge 2 ] || usage
+            from=$2
+            shift 2
+            ;;
+        --to-ref)
+            [ "$#" -ge 2 ] || usage
+            to=$2
+            shift 2
+            ;;
+        --authors-file)
+            [ "$#" -ge 2 ] || usage
+            authors_file=$2
+            shift 2
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+if [ -n "$authors_file" ]; then
+    [ -f "$authors_file" ] && [ -r "$authors_file" ] \
+        || { echo "check-authorship: cannot read identities from $authors_file"; exit 1; }
+    authors_source=$authors_file
+    authors_text=$(<"$authors_file") \
+        || { echo "check-authorship: cannot read identities from $authors_file"; exit 1; }
+else
+    authors_source="origin/main:authors.yaml"
+    authors_text=$(git show "$authors_source" 2>/dev/null) \
+        || { echo "check-authorship: cannot read trusted identities from $authors_source. Fetch origin/main."; exit 1; }
+fi
+
+to_commit=$(git rev-parse --verify "$to^{commit}" 2>/dev/null) \
+    || { echo "check-authorship: cannot resolve target commit $to"; exit 1; }
+
 # A push that creates the remote branch reports the zero object id.
 case "$from" in
     '' | 0000000000000000000000000000000000000000)
-        from=$(git merge-base origin/main "$to" 2>/dev/null) \
+        from=$(git merge-base origin/main "$to_commit" 2>/dev/null) \
             || { echo "check-authorship: cannot resolve origin/main; set PRE_COMMIT_FROM_REF"; exit 1; }
         ;;
 esac
+from_commit=$(git rev-parse --verify "$from^{commit}" 2>/dev/null) \
+    || { echo "check-authorship: cannot resolve base commit $from"; exit 1; }
 
 # Section-aware reads: an entry under trailers: is valid only as a
 # Co-Authored-By line. Reading both lists with one grep would let a
 # trailer alias validate a wrong author field.
-identities=$(awk '/^[^ #]/ { s = /^authors:/ } s && /^    - / { sub(/^    - /, ""); print }' authors.yaml)
-trailer_identities=$(awk '/^[^ #]/ { s = /^trailers:/ } s && /^    - / { sub(/^    - /, ""); print }' authors.yaml)
-[ -n "$identities" ] || { echo "authors.yaml lists no identities"; exit 1; }
+identities=$(printf '%s\n' "$authors_text" \
+    | awk '/^[^ #]/ { s = /^authors:/ } s && /^    - / { sub(/^    - /, ""); print }') \
+    || { echo "check-authorship: cannot parse identities from $authors_source"; exit 1; }
+trailer_identities=$(printf '%s\n' "$authors_text" \
+    | awk '/^[^ #]/ { s = /^trailers:/ } s && /^    - / { sub(/^    - /, ""); print }') \
+    || { echo "check-authorship: cannot parse trailer identities from $authors_source"; exit 1; }
+[ -n "$identities" ] || { echo "$authors_source lists no author identities"; exit 1; }
 
 listed() {
-    printf '%s\n' "$identities" | grep -qFx "$1"
+    grep -qFx -- "$1" <<< "$identities"
 }
 trailer_listed() {
-    [ -n "$trailer_identities" ] && printf '%s\n' "$trailer_identities" | grep -qFx "$1"
+    [ -n "$trailer_identities" ] && grep -qFx -- "$1" <<< "$trailer_identities"
 }
 
 # The range and trailer reads are captured before their loops so a failed
 # git invocation fails the check instead of feeding an empty loop.
-range=$(git log --format='%H%x09%an <%ae>' "$from..$to") \
-    || { echo "could not list commits in $from..$to"; exit 1; }
+range=$(git log --format='%H%x09%an <%ae>' "$from_commit..$to_commit") \
+    || { echo "could not list commits in $from_commit..$to_commit"; exit 1; }
 failures=0
 while IFS=$'\t' read -r commit author; do
     [ -n "$commit" ] || continue
     if ! listed "$author"; then
-        echo "$commit: author '$author' is not in authors.yaml (expected 'Display Name (model-id) <address>')"
+        echo "$commit: author '$author' is not in $authors_source (expected 'Display Name (model-id) <address>')"
         failures=1
     fi
     trailers=$(git show -s --format='%(trailers:key=Co-Authored-By,valueonly)' "$commit") \
@@ -57,5 +109,6 @@ while IFS=$'\t' read -r commit author; do
         fi
     done <<< "$trailers"
 done <<< "$range"
-[ "$failures" -eq 0 ] && echo "every commit in $from..$to carries a listed identity."
+[ "$failures" -eq 0 ] \
+    && echo "every commit in $from_commit..$to_commit carries an identity from $authors_source."
 exit "$failures"
