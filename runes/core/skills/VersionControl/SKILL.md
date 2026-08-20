@@ -12,7 +12,7 @@ Commit discipline, staging hygiene, push policy, and repo governance. In a jj co
 
 ## Constraints
 
-- Author every commit with an identity that `authors.yaml` lists. Use the repository worktree helper when available. In Deck, run `make worktree BRANCH=<branch> IDENTITY=<model-id>`. Do not export identity env variables for each command.
+- Author every commit with an identity that `authors.yaml` lists. Use the repository worktree helper when available. Do not export identity env variables for each command.
 - Stage files by name. Never use `git add -A` or `git add .`.
 - Commit with a pathspec (`git commit -- <path>...`), never a bare `git commit`. A bare commit snapshots the whole index and sweeps in the user's staged work. When unsure, run `git diff --cached --stat` first.
 - Never commit files that contain secrets. The prek hooks run gitleaks at commit and at push. Never bypass them with `--no-verify`.
@@ -84,7 +84,7 @@ For local branches whose remote is gone: `git fetch --prune`, then delete the br
 
 ### Work in parallel
 
-In git-only repos, use git worktrees. Deck repos include `make worktree`. In jj colocated repos, use jj workspaces instead. See [GitWorktrees.md](GitWorktrees.md).
+In git-only repos, use git worktrees. Use a repository helper when it exists. In jj colocated repos, use jj workspaces instead. See [GitWorktrees.md](GitWorktrees.md).
 
 ### Govern the repository
 
