@@ -103,11 +103,12 @@ while IFS=$'\t' read -r commit author; do
         echo "$commit: author '$author' is not in $authors_source (expected 'Display Name (model-id) <address>')"
         failures=1
     fi
+    canonical_author=$(canonical_identity "$author")
     trailers=$(git show -s --format='%(trailers:key=Co-Authored-By,valueonly)' "$commit") \
         || { echo "$commit: could not read Co-Authored-By trailers"; exit 1; }
     while read -r trailer; do
         [ -n "$trailer" ] || continue
-        if [ "$trailer" = "$author" ]; then
+        if [ "$(canonical_identity "$trailer")" = "$canonical_author" ]; then
             echo "$commit: author repeated as Co-Authored-By"
             failures=1
         elif ! listed "$trailer" && ! trailer_listed "$trailer"; then
