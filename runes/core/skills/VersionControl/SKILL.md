@@ -14,7 +14,7 @@ Commit discipline, staging hygiene, push policy, and repo governance. In a jj co
 
 - Author every commit with an identity that `authors.yaml` lists. Use the repository worktree helper when available. Do not export identity env variables for each command.
 - Stage files by name. Never use `git add -A` or `git add .`.
-- Commit with a pathspec (`git commit -- <path>...`), never a bare `git commit`. A bare commit snapshots the whole index and sweeps in the user's staged work. When unsure, run `git diff --cached --stat` first.
+- Commit with a pathspec (`git commit -- <path>...`). A bare commit can include the user's staged work. Use a bare commit only after the history-rewrite procedure replaces the index with `git read-tree`. When unsure, run `git diff --cached --stat` first.
 - Never commit files that contain secrets. The prek hooks run gitleaks at commit and at push. Never bypass them with `--no-verify`.
 - Do not push unless the user asks. A commit and a push are separate actions.
 - Never force-push unless the user explicitly asks. When a force-push is sanctioned, use `--force-with-lease`, not `--force`.

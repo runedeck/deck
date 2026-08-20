@@ -16,17 +16,18 @@ If `.jj/` exists at the repo root, do NOT use git worktrees. `git worktree add` 
 2. Respect a documented worktree location in the project instructions.
 3. Ask the user only when neither applies.
 
-For a project-local directory, confirm git ignores it before you create a worktree, or the worktree contents get staged:
-
-```sh
-git check-ignore -q .worktrees 2>/dev/null || git check-ignore -q worktrees 2>/dev/null
-```
+For a project-local directory, confirm that Git ignores the selected directory before you create a worktree.
 
 ## Create and prepare
 
 ```sh
-git worktree add ".worktrees/$BRANCH_NAME" -b "$BRANCH_NAME"
-cd ".worktrees/$BRANCH_NAME"
+worktree_root=.worktrees # Set this to the selected directory.
+git check-ignore -q -- "$worktree_root" || {
+    echo "Git does not ignore $worktree_root." >&2
+    exit 1
+}
+git worktree add "$worktree_root/$BRANCH_NAME" -b "$BRANCH_NAME"
+cd "$worktree_root/$BRANCH_NAME"
 ```
 
 Detect the project type and run its setup (`npm install`, `cargo build`, `pip install -r requirements.txt`, ...) so the new tree matches the parent. Run the test suite once to establish a clean baseline. If tests fail, stop and report.
