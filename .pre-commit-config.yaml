@@ -84,6 +84,12 @@ repos:
             language: system
             pass_filenames: false
 
+          - id: stable-shell-schemas
+            name: stable shell schema copies
+            entry: make validate-schemas
+            language: system
+            pass_filenames: false
+
           - id: cargo-test
             name: cargo test
             entry: cargo test --all-features
