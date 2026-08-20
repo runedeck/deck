@@ -30,12 +30,12 @@ allowed-tools: Read Write Edit Bash(git status *)
 
 Agent Skills requires `name` and `description`. It defines `license`, `compatibility`, `metadata`, and `allowed-tools` as optional top-level fields.[AGENTSKILLS]
 
-- `name`: equal to the directory and the H1. Providers deploy the authored casing verbatim; only a provider with the `kebab-case-skills` assembly rule (here, agentskills) converts to lowercase on deployment. What must hold in source is that the three agree.
+- `name`: equal to the directory and the H1. The published form is lowercase with single hyphens; a project that authors in another casing converts on deployment, and what must hold in source is that the three agree.
 - `description`: one line with concrete `USE WHEN` triggers and a `NOT FOR` boundary for adjacent skills.
 - `compatibility`: required providers, binaries, operating systems, or network access.
 - `metadata`: string-valued information such as version and upstream attribution.
 
-Canonical source carries Agent Skills fields at the top level, plus three assembly directives: `targets` routes the skill to named providers, and `disable-model-invocation` and `user-invocable` set Claude Code invocation controls. Assembly consumes `targets` and deploys the invocation controls. Other provider-specific fields arrive through per-provider overlays during assembly. Validate with the nearest `.mdschema`, the official `skills-ref` validator, and the project's own validator.
+Canonical source contains only Agent Skills fields at the top level; provider-specific fields arrive during assembly. Validate with the nearest `.mdschema`, the official `skills-ref` validator, and the project's own validator.
 
 ## Section convention
 

@@ -11,15 +11,9 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 - The ReviewMarkers rule in core, adopted through the block-review ceremony.
 - The UseSimplifiedTechnicalEnglish rule in core: all prose follows ASD-STE100, with a bad and good example pair.
 - The SimplifiedTechnicalEnglish skill in core, adopted from two upstreams and merged: the STE rule set, the 39 recurring errors, worked examples, measured samples, and the ste-lint checker.
-- The `ste` skill provides a short Claude command for `SimplifiedTechnicalEnglish`. It stays hidden from model invocation.
+- The RTK skill and the UseEfficientCLI rule in core: prefix shell commands with the rtk proxy for 60 to 90 percent output-token savings, and search selectively with fd, rg, ast-grep, and gh --json field selection.
 
 ### Changed
 
+- The authorship check reads separate author and trailer lists from `authors.yaml`. A trailer attribution can no longer validate an author field.
 - BuildSkill defers its evaluation step to BenchArtifact; the loop, agent templates, review viewer, and evaluation schemas moved there.
-- The core skill schema now accepts `targets`, `disable-model-invocation`, and `user-invocable`.
-
-### Fixed
-
-- The meta module again includes its required empty defaults file.
-- The current rune skill uses a directory-scoped schema until the Stable shell migration replaces it.
-- The skill hook validates each entrypoint against its nearest `.mdschema`.

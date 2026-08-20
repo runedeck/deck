@@ -54,7 +54,7 @@ While writing, check:
 
 - [ ] Frontmatter has `name:` matching the directory, and `description:` with `USE WHEN` triggers and a `NOT FOR` clause
 - [ ] Description is single-line, under 1024 characters
-- [ ] Optional Agent Skills fields that apply (`license`, `compatibility`, `metadata`, `allowed-tools`) sit in frontmatter, plus the assembly directives (`targets`, `disable-model-invocation`, `user-invocable`) where the skill needs routing or invocation control
+- [ ] Optional Agent Skills fields that apply (`license`, `compatibility`, `metadata`, `allowed-tools`) sit in frontmatter
 - [ ] H1, frontmatter name, and directory are identical
 - [ ] Body follows the section convention with required `Instructions` and ordered optional sections
 - [ ] Live state to inject is decided: what current machine state would orient the model on load (branch, tool status, the names of things). Default to injecting unless there is a reason not to; see [DynamicContextInjection.md](DynamicContextInjection.md)
