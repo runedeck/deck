@@ -2,6 +2,14 @@ A skill directory carries one entrypoint and everything that entrypoint routes t
 
 Companion documents sit beside `SKILL.md` and use PascalCase. The canonical skill directory and frontmatter `name` also use PascalCase.
 
+A nested provider variant is not a canonical skill directory.
+
+A lowercase skill alias must set `disable-model-invocation: true` and forward all work to one canonical skill.
+
+A lowercase command skill is permitted only when its identity equals the executable.
+
+Both lowercase skill types still use identical directory, frontmatter name, and H1 values.
+
 A companion named `CreateWorkflow.md` belongs to `BuildSkill`. A lowercase name uses a different naming system.
 
 Supporting material uses these directories and no others:

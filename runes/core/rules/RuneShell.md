@@ -1,4 +1,4 @@
-Every canonical `SKILL.md` uses one H1 whose text equals the frontmatter `name` and skill directory. The identifier uses PascalCase.
+Every canonical `SKILL.md` uses one H1. Its text equals the frontmatter `name` and skill directory.
 
 Use this H2 vocabulary in order, omitting optional sections that have no content:
 
