@@ -331,7 +331,7 @@ class RunBenchmarkTests(unittest.TestCase):
         judging = {
             "dimensions": [
                 {"id": "clarity", "label": "Clarity", "criterion": "Prefer clear text.", "weight": 1},
-                {"id": "fluency", "label": "Fluency", "criterion": "Prefer natural text.", "weight": 0.5},
+                {"id": "fluency", "label": "Fluency", "criterion": "Prefer natural text.", "weight": None},
                 {"id": "directness", "label": "Directness", "criterion": "Prefer direct text.", "weight": 1},
             ],
             "guards": ["Do not judge factual accuracy."],
