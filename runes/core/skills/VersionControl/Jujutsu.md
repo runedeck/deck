@@ -2,19 +2,20 @@
 
 When a repo is colocated with jj (`.jj/` at the root), there is no staging area, and this workflow replaces the git flow. Detect by the presence of `.jj/`. Drive mutations through jj and keep raw git read-only.
 
-## The squash workflow
+## The change workflow
 
 1. `jj describe -m "feat: thing"` names the unit of work.
 2. Edit. Every jj command auto-snapshots `@`. There is nothing to stage and nothing is lost.
-3. `jj squash` folds `@` into its described parent. `jj split` carves a too-large `@` into clean changes.
-4. `jj bookmark set <name> -r @-`. Bookmarks do NOT auto-advance like git branches. Move the bookmark explicitly before a push, or you push the wrong revision. Bookmark only a described change: an undescribed `@` lands in git history as an empty-message commit.
-5. `jj push`, not bare `jj git push`. The `make install`-wired alias runs the pre-push checks, then pushes.
+3. Use `jj split` when `@` contains more than one logical change.
+4. `jj new` creates an empty working-copy change after the described change.
+5. `jj bookmark set <name> -r @-` points the bookmark at the described change. Bookmarks do not move automatically.
+6. Run `jj push`. The `make install` alias runs the pre-push checks before `jj git push`.
 
 After a squash-merged pull request, reconcile with `jj git fetch`, then `jj rebase -d main@origin --skip-emptied`.
 
 ## Auto-snapshot pulls in out-of-band drift
 
-jj snapshots every non-gitignored file into `@`. A tool that writes into the tree out-of-band silently lands those files in whatever commit `@` is. Gitignore the tool's local files, or park `@` on a scratch commit (`jj new -m scratch`) so drift accumulates there. To pull drift out of a polluted commit, use `jj squash --from <commit> --into <scratch> <paths>` or `jj duplicate <rev> -d <dest>`.
+jj snapshots every non-gitignored file into `@`. A tool that writes into the tree out-of-band silently lands those files in whatever commit `@` is. Gitignore the tool's local files, or park `@` on a scratch commit (`jj new -m scratch`) so drift accumulates there. To pull drift out of a polluted commit, use `jj squash --from <commit> --into <scratch> <paths>`.
 
 The same trap runs the other way: an edit intended for a parked change lands wherever `@` sits. Confirm the base with `jj status` before you edit files for a specific change. Relocate a misplaced edit with `jj squash --from @ --into <rev> <paths>`.
 
@@ -27,7 +28,9 @@ In repos that sign commits, jj signs at push, not per commit: `signing.behavior=
 jj runs no git hooks, so the commit-stage checks do not fire. `make install` relocates the scan: it wires a repo-local jj `push` alias to `.githooks/jj-push`, which runs the pre-push prek stage (gitleaks, semgrep) and only then `jj git push`. Push with `jj push`. If the alias is not wired, scan the outgoing commits by hand first:
 
 ```sh
-gitleaks git --log-opts "main@origin..@-"
+from=$(jj log --no-graph -r 'trunk()' -T 'commit_id')
+to=$(jj log --no-graph -r '@-' -T 'commit_id')
+gitleaks git --log-opts "$from..$to"
 ```
 
 CI re-runs the same pre-push checks as the backstop. Never weaken this to a post-push fixup. A public push that leaks a secret needs rotation plus history surgery.

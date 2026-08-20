@@ -40,7 +40,7 @@ git worktree remove <path>
 git worktree list    # verify nothing lingers
 ```
 
-Never delete a worktree directory manually; `git worktree remove` keeps the repo's worktree list consistent. Before you finish a task that used worktrees, sweep for orphans: remove every linked worktree whose tree is clean and whose HEAD is an ancestor of the mainline.
+Never delete a worktree directory manually. `git worktree remove` keeps the repository worktree list consistent. Remove only the worktree that you created for the current task.
 
 ## Red flags
 
