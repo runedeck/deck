@@ -37,7 +37,9 @@ Agent Skills requires `name` and `description`. It defines `license`, `compatibi
 
 Canonical source supports Agent Skills fields and three assembly directives at the top level. `targets` routes the skill to named providers. `disable-model-invocation` and `user-invocable` set Claude Code invocation controls.
 
-Assembly consumes `targets` and deploys the invocation controls. Provider overlays supply all other provider-specific fields. Validate the source with the nearest `.mdschema`, the official `skills-ref` validator, and the project validator.
+Assembly consumes `targets` and deploys the invocation controls. Provider overlays supply all other provider-specific fields.
+
+Validate the source with the nearest `.mdschema` and the project validator. Validate the installed `agentskills` copy with the official `skills-ref` validator.
 
 ## Section convention
 
