@@ -21,6 +21,8 @@ validate:
 
 validate-schemas:
 	@cmp runes/core/skills/.mdschema runes/meta/skills/.mdschema
+	@cmp runes/core/skills/.mdschema runes/development/skills/.mdschema
+	@cmp runes/core/rules/.mdschema runes/meta/rules/.mdschema
 	@if [ -f ../cli/templates/init/skills/.mdschema ]; then \
 	    cmp runes/core/skills/.mdschema ../cli/templates/init/skills/.mdschema; \
 	fi
