@@ -19,9 +19,15 @@ jj snapshots every non-gitignored file into `@`. A tool that writes into the tre
 
 The same trap runs the other way: an edit intended for a parked change lands wherever `@` sits. Confirm the base with `jj status` before you edit files for a specific change. Relocate a misplaced edit with `jj squash --from @ --into <rev> <paths>`.
 
-## Signing is batched at push
+## Signing modes
 
-In repos that sign commits, jj signs at push, not per commit: `signing.behavior=drop` plus `git.sign-on-push=true`. One hardware touch per push, and pushed commits land "Verified". A locally-unsigned jj commit is the batched model at work, not a defect. Do not "fix" it with a raw `git commit -S`. The one real misconfiguration is `drop` without `git.sign-on-push=true`. Check both keys with `jj config get` before you conclude that signing is broken.
+Automated mode is the default. Use `signing.behavior=drop` with `git.sign-on-push=false`. This keeps snapshots and automated pushes unsigned.
+
+Only the owner can start attended mode. Apply a separate overlay that sets `git.sign-on-push=true`. Put the base file first and the attended overlay last in `JJ_CONFIG`. On Unix, separate the paths with a colon. End attended mode when the owner exits its subshell. Do not change the base file to enter attended mode.
+
+An agent launcher must ignore an inherited attended overlay. It must load the base file and an agent overlay. The agent overlay must set `git.sign-on-push=false`.
+
+Attended mode changes signing only. It does not authorize a push. Do not create a raw `git commit -S` in a colocated repository.
 
 ## Secret scans run at push
 

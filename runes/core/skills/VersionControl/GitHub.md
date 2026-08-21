@@ -2,6 +2,12 @@
 
 Branch protection and code ownership via `gh` CLI.
 
+### Pull request identity
+
+Use the owner's existing `gh` authentication for ordinary GitHub work. Run `gh pr create` without an App token override.
+
+An agent must not mint an App token or use Runewright for ordinary GitHub work. Reserve App identities for CI or review automation. The workflow or owner must get its App credential.
+
 ### Rulesets (Preferred)
 
 Rulesets are the modern replacement for legacy branch protection. They support bypass actors, org-level inheritance, and granular enforcement.
