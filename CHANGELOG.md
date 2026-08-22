@@ -24,6 +24,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Fixed
 
+- The RTK guidance preserves standard-input payloads through passthrough or file arguments.
 - The meta module again includes its required empty defaults file.
 - The current rune skill uses a directory-scoped schema until the Stable shell migration replaces it.
 - The skill hook validates each entrypoint against its nearest `.mdschema`.
