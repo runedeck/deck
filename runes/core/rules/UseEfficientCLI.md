@@ -6,6 +6,8 @@ Do not prefix shell builtins, shell keywords, variable assignments, redirections
 
 RTK calls external binaries directly and bypasses aliases. If RTK is absent, run the external command without the prefix.
 
+The `rtk gh` filter can consume a payload from standard input. Use `rtk proxy gh ...` or a file argument for that payload.
+
 Do not add manual prefixes when an active harness hook already rewrites eligible external commands.
 
 Search selectively. Use `fd` to find files. Use `rg` to search content. Use `ast-grep` to search code structure. A structural match returns fewer results than a regular expression over code.
