@@ -25,7 +25,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 ### Fixed
 
 - The meta module again includes its required empty defaults file.
-- The current rune skill uses a directory-scoped schema until the Stable shell migration replaces it.
+- Stable shell now validates the `rune` skill with the shared meta skill schema.
 - The skill hook validates each entrypoint against its nearest `.mdschema`.
 
 ### Removed
