@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- BenchArtifact ships bench.py again: one config-driven driver for the quick, snapshot, plan, run, grade, judge, and report steps.
 - Initial scaffold.
 - BenchArtifact skill: benchmark any skill, rule, or agent against a baseline across models, with per-model aggregation and a self-contained comparison report (DECK-0001).
 - The ReviewMarkers rule in core, adopted through the block-review ceremony.
