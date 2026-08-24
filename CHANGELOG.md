@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- The check-provenance hook: a rune edit fails the commit stage when its provenance subject digest is stale, and `--fix` rewrites the digest.
 - Initial scaffold.
 - BenchArtifact skill: benchmark any skill, rule, or agent against a baseline across models, with per-model aggregation and a self-contained comparison report (DECK-0001).
 - The ReviewMarkers rule in core, adopted through the block-review ceremony.
