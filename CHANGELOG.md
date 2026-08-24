@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- Three routine prompts under docs/routines: the nightly PR babysitter, the deck merge follow-up, and the weekly ceremony audit. Provider setup stays manual.
 - Initial scaffold.
 - BenchArtifact skill: benchmark any skill, rule, or agent against a baseline across models, with per-model aggregation and a self-contained comparison report (DECK-0001).
 - The ReviewMarkers rule in core, adopted through the block-review ceremony.
