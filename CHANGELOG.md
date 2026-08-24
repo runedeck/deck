@@ -8,6 +8,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 - The VersionControl skill: the primary checkout stays on the default branch, and each work branch gets a worktree.
 - The VersionControl skill: a landing checklist and a supersession check for dirty worktrees.
+- The VersionControl skill: a jj colocated repository uses jj workspaces and the repository jj push alias.
 - The VersionControl skill: no generation footer, tool badge, or session link in commit messages and pull request bodies.
 
 ### Added

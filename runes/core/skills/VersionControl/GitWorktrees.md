@@ -14,6 +14,8 @@ If `.jj/` exists at the repo root, do NOT use git worktrees. `git worktree add` 
 
 Keep the primary checkout on the default branch. Create a worktree for each work branch. Do not create a worktree for the default branch. Do not leave the primary checkout on a work branch after the work merges. Tools that read merged state then read the primary checkout.
 
+In a jj colocated repository, the same rule applies to the default workspace. Use jj workspaces for work branches. Push through the repository jj push alias.
+
 ## Directory selection
 
 1. Use an existing `.worktrees/` or `worktrees/` directory at the repo root. Prefer `.worktrees/` when both exist. Use a documented repository helper when it exists.
