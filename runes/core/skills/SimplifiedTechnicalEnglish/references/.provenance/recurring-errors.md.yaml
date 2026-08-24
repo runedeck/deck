@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/SimplifiedTechnicalEnglish/references/recurring-errors.md
     digest:
-      sha256: d721d9f415e4f4d94624d3c3727e6e82a5311eaaf31db28ba6ade7e5c8dae880
+      sha256: 7929a8c2b37370813d39731a544b849c10bca2267edcdbf3571814f5a171d437
   predicate:
     buildDefinition:
       buildType: adopt/v1
