@@ -27,19 +27,17 @@ Agent sessions run behind layered guards: safety hooks that match destructive co
 
 ### Prefer the safe form first
 
-The best interaction with a guard is none. Reach for the non-destructive form before the guard has anything to catch:
+The best interaction with a guard is none. Use the non-destructive form before the guard has anything to catch:
 
-| Instead of | Use |
-|---|---|
-| `git reset --hard <ref>` | `git stash`, then a soft or mixed reset. When the tree is identical: `git checkout -B <branch> <ref>` |
-| `git checkout <ref> -- <path>` | `git show <ref>:<path> >| <path>` |
-| `git restore <path>` | `git restore --staged <path>` (keeps the worktree), or `git stash` |
-| `git push --force` | `git push --force-with-lease=<branch>`, and only on your own branch |
-| `git branch -D <branch>` | Verify the merge state on the platform first. Hand force-deletes to the user |
-| `rm -rf <path>` | `trash <path>`, or `rm` named files inside the working directory |
-| `> ~/<file>` truncation | Append with `>>`, write to a scratch path, or back up first |
-| `shutil.rmtree` or `rm -rf` inside an inline script | The harness file tools, or `trash <path>` |
-| Force-deleting a stuck `.git/worktrees/<name>` stub | Write a raw commit sha to the stub `HEAD` file to free the branch. The user prunes the registry |
+- `git reset --hard <ref>`: Use `git stash`, then use a soft or mixed reset. If the tree is identical, use `git checkout -B <branch> <ref>`.
+- `git checkout <ref> -- <path>`: Use `tmp=$(mktemp "<path>.tmp.XXXXXX") && git show <ref>:<path> > "$tmp" && mv "$tmp" <path>`.
+- `git restore <path>`: Use `git restore --staged <path>` to keep the worktree, or use `git stash`.
+- `git push --force`: Use `git push --force-with-lease=<branch>` only on your branch.
+- `git branch -D <branch>`: Verify the merge state on the platform. Give force-deletes to the user.
+- `rm -rf <path>`: Use `trash <path>`, or use `rm` for named files in the working directory.
+- `> ~/<file>` truncation: Append with `>>`, write to a scratch path, or create a backup first.
+- `shutil.rmtree` or `rm -rf` in an inline script: Use the harness file tools or `trash <path>`.
+- A forced deletion of a stuck `.git/worktrees/<name>` stub: Write a raw commit SHA to the stub `HEAD` file. The user prunes the registry.
 
 ### Design the sequence for intervention
 
@@ -53,7 +51,7 @@ Assume any step can be denied. Order work so a mid-sequence block leaves a consi
 ### When a guard blocks
 
 1. Read the whole block message. Guards state the rule, the rationale, and the safer alternative. The answer is usually in the message.
-2. Take the suggested alternative. Worked examples: a blocked `checkout <ref> -- <path>` becomes `git show <ref>:<path>` into the file, and a blocked `reset --hard` becomes a stash plus a branch re-point.
+2. Take the suggested alternative. Write `git show <ref>:<path>` to a temporary file. Then move that file over `<path>`.
 3. When the guard offers an explain command (for example `dcg explain "<command>"`), use it to understand the rule before choosing a path.
 4. When the intent is genuinely needed and no safe form exists, stop and hand the exact command to the user with one sentence on why the operation is required. The user runs it in their own terminal, or grants a narrow permission.
 5. When the block looks like a false positive (a name collision, for example `jj restore` matched by a git rule), explain the mismatch to the user. Configuration changes belong to the user, never to the agent.
@@ -64,16 +62,14 @@ Authentication can fail in a sandboxed or terminal-less shell: the keychain is u
 
 ### Know the installed guards
 
-Treat every layer with the same discipline. Known instances on this stack:
+Treat every layer with the same discipline. This stack includes these guards:
 
-| Guard | Kind | On block |
-|---|---|---|
-| dcg (Destructive Command Guard) | Command-matching hook across harnesses | Follow its message and use `dcg explain` for the rule. Allowlist changes are the user's call |
-| Permission classifier | AI-judged policy layer | Do not probe for phrasings that slip past. Route the action to the user |
-| Sandbox | Filesystem and network boundary | Work inside the allowed paths. A denied write never justifies an invented location |
-| Permission prompts | The user's live decision | A denial is an instruction. Adjust the approach |
+- dcg: This command-matching hook works across harnesses. Follow its message. Use `dcg explain` for the rule. The user controls allowlist changes.
+- Permission classifier: This policy layer uses an AI judgment. Do not test alternative phrases. Give the action to the user.
+- Sandbox: This layer controls file and network access. Work in the permitted paths. A denied write does not justify an invented location.
+- Permission prompts: These prompts show the user's decision. A denial is an instruction. Adjust the approach.
 
-New guards join this table on adoption. The discipline above does not change.
+Add new guards to this list during adoption. The discipline above does not change.
 
 ## Verification
 
