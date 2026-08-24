@@ -38,6 +38,8 @@ The best interaction with a guard is none. Reach for the non-destructive form be
 | `git branch -D <branch>` | Verify the merge state on the platform first. Hand force-deletes to the user |
 | `rm -rf <path>` | `trash <path>`, or `rm` named files inside the working directory |
 | `> ~/<file>` truncation | Append with `>>`, write to a scratch path, or back up first |
+| `shutil.rmtree` or `rm -rf` inside an inline script | The harness file tools, or `trash <path>` |
+| Force-deleting a stuck `.git/worktrees/<name>` stub | Write a raw commit sha to the stub `HEAD` file to free the branch. The user prunes the registry |
 
 ### Design the sequence for intervention
 
@@ -56,6 +58,10 @@ Assume any step can be denied. Order work so a mid-sequence block leaves a consi
 4. When the intent is genuinely needed and no safe form exists, stop and hand the exact command to the user with one sentence on why the operation is required. The user runs it in their own terminal, or grants a narrow permission.
 5. When the block looks like a false positive (a name collision, for example `jj restore` matched by a git rule), explain the mismatch to the user. Configuration changes belong to the user, never to the agent.
 
+### Hand off a credential denial
+
+Authentication can fail in a sandboxed or terminal-less shell: the keychain is unreachable, an askpass helper is absent, or a token store returns nothing. Treat this like a guard block. Make one corrected retry. Then commit locally and hand the user one shell block with the exact push or API commands. Do not iterate credential variants: askpass overrides, helper overrides, or tokens embedded in URLs.
+
 ### Know the installed guards
 
 Treat every layer with the same discipline. Known instances on this stack:
@@ -73,6 +79,7 @@ New guards join this table on adoption. The discipline above does not change.
 
 - No blocked command was rerun verbatim, reworded, or routed through another tool or session.
 - No guard configuration changed.
+- A failed authentication got at most one corrected retry before the hand-off.
 - Every handed-off command appears in the final report with its one-sentence reason.
 - The task's destructive steps each had a recovery point created before them.
 
