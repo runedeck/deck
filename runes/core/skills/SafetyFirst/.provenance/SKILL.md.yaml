@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: skills/SafetyFirst/SKILL.md
+    digest:
+      sha256: 60c7b487ee3ab61df59f84c048d38af0170aabe98acea9fd4e7023d88735659b
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: https://github.com/Dicklesworthstone/destructive_command_guard/blob/main/SKILL.md + https://github.com/N4M3Z/forge-core/tree/132e0589/skills/GuardRails
+        upstream_commit: ''
+        transforms_applied:
+        - align
+      resolvedDependencies:
+      - name: upstream
+        uri: https://github.com/Dicklesworthstone/destructive_command_guard/blob/main/SKILL.md + https://github.com/N4M3Z/forge-core/tree/132e0589/skills/GuardRails
+        digest:
+          sha256: 540dc8aaabdf068fb0dbc9319b08212ea25d6ed32943a63364736c099da7ddf8
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-08-24T12:41:06.991305+00:00
+        review: reviewed
