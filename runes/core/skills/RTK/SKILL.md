@@ -3,7 +3,7 @@ name: RTK
 description: "Use RTK to reduce external-command output. USE WHEN rtk, token savings, compact builds, tests, Git, GitHub, logs, or command output. NOT FOR shell builtins, shell syntax, or RTK installation."
 compatibility: "Verified with RTK 0.45.0. Plain external commands remain valid without RTK."
 metadata:
-    version: 0.1.0
+    version: 0.1.1
     upstream: https://github.com/rtk-ai/rtk
 ---
 
@@ -17,6 +17,7 @@ RTK is a CLI proxy that compresses command output before it reaches the model. I
 - Do not prefix shell builtins, shell keywords, assignments, redirections, control operators, or other shell syntax.
 - Prefix each external command in a chain. Leave the shell syntax unchanged.
 - RTK starts external binaries directly and bypasses shell aliases.
+- Do not use the filtered `rtk gh` path when `gh` reads a payload from standard input.
 
 - RTK returns the external command exit status.
 - A wrapped command keeps its file, network, GUI, and external-state effects.
@@ -47,6 +48,24 @@ Use the same rule for `export`, `source`, `set`, `if`, `for`, assignments, redir
 Use normal external-command syntax after the `rtk` prefix. RTK passes an unknown external command through unchanged.
 
 Read [CommandReference.md](CommandReference.md) when you need a filter, raw output, meta command, or harness integration.
+
+### Preserve standard-input payloads
+
+The `rtk gh` filter can consume standard input before `gh` reads it.
+
+For example, `rtk gh pr edit --body-file -` can send an empty body.
+
+Use a file argument when possible:
+
+```bash
+rtk gh pr edit <number> --body-file <path>
+```
+
+Use RTK passthrough when the command must read standard input:
+
+```bash
+printf '%s' "$body" | rtk proxy gh pr edit <number> --body-file -
+```
 
 ### Configure a harness
 
