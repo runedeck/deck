@@ -4,6 +4,10 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ## [Unreleased]
 
+### Changed
+
+- The VersionControl skill: the primary checkout stays on the default branch, and each work branch gets a worktree.
+
 ### Added
 
 - Initial scaffold.

@@ -10,6 +10,10 @@ If `.jj/` exists at the repo root, do NOT use git worktrees. `git worktree add` 
 [ -d "$(git rev-parse --show-toplevel)/.jj" ] && echo "jj colocated: use jj workspaces"
 ```
 
+## Primary checkout
+
+Keep the primary checkout on the default branch. Create a worktree for each work branch. Do not create a worktree for the default branch. Do not leave the primary checkout on a work branch after the work merges. Tools that read merged state then read the primary checkout.
+
 ## Directory selection
 
 1. Use an existing `.worktrees/` or `worktrees/` directory at the repo root. Prefer `.worktrees/` when both exist. Use a documented repository helper when it exists.
@@ -49,6 +53,8 @@ Never delete a worktree directory manually. `git worktree remove` keeps the repo
 - A skipped baseline test run. You cannot separate new bugs from pre-existing breakage.
 - `rm -rf` on a worktree directory. It leaves dangling references in `.git/worktrees/`.
 - A merged worktree that outlives its merge.
+- A primary checkout that stays on a merged work branch.
+- A separate worktree for the default branch.
 
 ---
 

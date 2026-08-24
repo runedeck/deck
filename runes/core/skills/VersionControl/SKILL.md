@@ -97,7 +97,7 @@ For local branches whose remote is gone: `git fetch --prune`, then delete the br
 
 ### Work in parallel
 
-In git-only repos, use git worktrees. Use a repository helper when it exists. In jj colocated repos, use jj workspaces instead. See [GitWorktrees.md](GitWorktrees.md).
+In git-only repos, use git worktrees. Keep the primary checkout on the default branch. Use a repository helper when it exists. In jj colocated repos, use jj workspaces instead. See [GitWorktrees.md](GitWorktrees.md).
 
 ### Govern the repository
 

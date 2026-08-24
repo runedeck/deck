@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/VersionControl/SKILL.md
     digest:
-      sha256: 6a6f124795afecadfe3de04a31381af57a9e7b3e4c189a76599606c86cdcc50c
+      sha256: 5c50d1e070638c04fca2495be21ac79bcbf9d2fb181ed2d5918ec679cb049c3f
   predicate:
     buildDefinition:
       buildType: adopt/v1
@@ -18,7 +18,7 @@ provenance:
       - name: upstream
         uri: https://github.com/N4M3Z/forge-core/tree/132e0589
         digest:
-          sha256: 140aa55651968fa7d60116c4ba2f0f63f372352d40f73c951c6097a171b323a3
+          sha256: 5c50d1e070638c04fca2495be21ac79bcbf9d2fb181ed2d5918ec679cb049c3f
     runDetails:
       builder:
         id: rune-cli
