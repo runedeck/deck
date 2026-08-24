@@ -356,9 +356,17 @@ def corpus_metrics(runs: list[dict]) -> dict:
             )
         )
     )
+    token_values = [
+        value for run in runs
+        if finite_number(value := run["result"].get("output_tokens"))
+    ]
+    output_tokens_total = sum(token_values)
     return {
         "assertions_passed": assertions_passed,
         "assertions_total": assertions_total,
+        "output_tokens_total": output_tokens_total if token_values else None,
+        "output_tokens_mean": round(output_tokens_total / len(token_values), 1)
+        if token_values else None,
         "assertion_pass_rate": round(assertions_passed / assertions_total, 4) if assertions_total else None,
         "lint_violations": lint_violations,
         "checker_word_count": checker_word_count,
@@ -463,7 +471,7 @@ def compare(
                 name: round(primary_corpus[name] - baseline_corpus[name], 4)
                 if finite_number(primary_corpus[name])
                 and finite_number(baseline_corpus[name]) else None
-                for name in ("assertion_pass_rate", "lint_per100w")
+                for name in ("assertion_pass_rate", "lint_per100w", "output_tokens_mean")
             }
             deltas.update(corpus_deltas)
             cell = {
@@ -858,14 +866,14 @@ def markdown(data: dict) -> str:
             f"## {comparison.get('label', comparison['id'])}", "",
             *([" \u00b7 ".join(identity_bits), ""] if identity_bits else []),
             explainer, "",
-            "| Model | Verdict | Pairs | Assertions | Lint /100w | Clarity | Fluency | Directness |",
-            "|---|---|---:|---|---|---:|---:|---:|",
+            "| Model | Verdict | Pairs | Assertions | Lint /100w | Tokens | Clarity | Fluency | Directness |",
+            "|---|---|---:|---|---|---|---:|---:|---:|",
         ])
         for model, values in cells.items():
             pairs = values.get("paired_samples") or 0
             label = (values.get("verdict") or {}).get("label", "Verdict unavailable")
             if pairs == 0:
-                lines.append(f"| {model} | {label} | 0 | — | — | — | — | — |")
+                lines.append(f"| {model} | {label} | 0 | — | — | — | — | — | — |")
                 continue
             corpus = values.get("paired_corpus") or {}
             base, treat = corpus.get("baseline", {}), corpus.get("primary", {})
@@ -878,8 +886,12 @@ def markdown(data: dict) -> str:
                 f"{format_cell(base.get('lint_per100w'))} → "
                 f"{format_cell(treat.get('lint_per100w'))}"
             )
+            tokens = (
+                f"{format_cell(base.get('output_tokens_mean'))} → "
+                f"{format_cell(treat.get('output_tokens_mean'))}"
+            )
             lines.append(
-                f"| {model} | {label} | {pairs} | {assertion} | {lint} "
+                f"| {model} | {label} | {pairs} | {assertion} | {lint} | {tokens} "
                 f"| {preference_cell(deltas.get('clarity_preference'))} "
                 f"| {preference_cell(deltas.get('fluency_preference'))} "
                 f"| {preference_cell(deltas.get('directness_preference'))} |"
