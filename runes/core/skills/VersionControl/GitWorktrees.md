@@ -45,7 +45,28 @@ git worktree remove <path>
 git worktree list    # verify nothing lingers
 ```
 
+A merge session ends clean. Check these two end conditions:
+
+```sh
+git worktree list                 # only live work remains
+git branch --merged origin/main   # empty, except the default branch
+```
+
+Create at most one staging worktree for each pull request. Remove it in the session that merges the pull request.
+
 Never delete a worktree directory manually. `git worktree remove` keeps the repository worktree list consistent. Remove only the worktree that you created for the current task.
+
+## Supersession check
+
+Check a dirty worktree before you delete it. Compare each touched file with the merged default branch:
+
+```sh
+git -C <worktree> status --porcelain | sed 's/^...//' | while read -r f; do
+    git -C <worktree> diff origin/main --quiet -- "$f" || echo "differs: $f"
+done
+```
+
+Delete the worktree only when no file differs. A file that differs holds unmerged work.
 
 ## Red flags
 
