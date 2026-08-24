@@ -2,7 +2,8 @@
 
 - Trigger: schedule, weeknights 21:00 CET.
 - Repositories: runedeck/deck, runedeck/cli, runedeck/skeleton, runedeck/seer.
-- Model: pin one explicit model. Disable model fallback.
+- Status: on hold. The run is token intensive and the queue watch belongs to sol. Enable after the hand-back.
+- Model: select one specific model in the routine picker. Do not use the default or automatic fallback.
 - Connectors: GitHub access through the attached repositories only.
 - Network: repository and GitHub API access only.
 

@@ -1,8 +1,8 @@
 # Routine: weekly ceremony audit
 
-- Trigger: schedule, weekly, Sunday 20:00 CET.
+- Trigger: schedule, weekly, Monday 05:00 CET.
 - Repositories: runedeck/deck, runedeck/skeleton, runedeck/cli, runedeck/seer.
-- Model: pin one explicit model. Disable model fallback.
+- Model: select one specific model in the routine picker. Do not use the default or automatic fallback.
 - Connectors: GitHub access through the attached repositories only.
 - Network: repository and GitHub API access only.
 
@@ -22,6 +22,11 @@ Do not use account memory, personalization, saved preferences, prior chats, or p
 ### Scope
 
 Read the four repositories. Write only to the one standing issue this prompt names.
+
+### Startup reads
+
+Before the audit, read and record: the current default-branch head of each repository, and the run time in UTC.
+Base every conclusion on these reads, not on remembered state.
 
 ### Permitted operations
 
