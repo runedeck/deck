@@ -26,7 +26,7 @@ Do not activate a browser scanner before this controlled fixture is available.
 
 - Confirm a full and nonpartial bare mirror.
 - Confirm GIT_NO_LAZY_FETCH=1.
-- Confirm CLAUDE_CODE_SAFE_MODE=1.
+- Confirm SCANNER_SAFE_MODE_CANARY=1.
 - Confirm GIT_NO_REPLACE_OBJECTS=1.
 - Confirm that no fsmonitor, hook, config include, object alternate, or filter exists.
 - Confirm a fresh public-ref manifest.

@@ -19,6 +19,10 @@ Map the task definition to one Claude Code Routine.
 A canary environment value does not enforce a permission.
 The provider sandbox supplies the stronger control.
 
+The provider may not expose a setting for steps 7 to 9.
+Then keep each of these limits in the task prompt.
+Record each prompt-only limit in the setup package.
+
 Verify whether the selected environment supports trusted preparation before every run.
 The task prompt controls activity after the run starts.
 

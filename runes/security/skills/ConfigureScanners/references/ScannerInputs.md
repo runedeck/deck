@@ -27,7 +27,7 @@ Require the repository owner to match this login.
 
 Set these static values:
 
-- CLAUDE_CODE_SAFE_MODE=1
+- SCANNER_SAFE_MODE_CANARY=1
 - GIT_NO_LAZY_FETCH=1
 - GIT_OPTIONAL_LOCKS=0
 - GIT_NO_REPLACE_OBJECTS=1

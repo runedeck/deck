@@ -26,7 +26,7 @@ Do not use information that the prompt does not supply.
 ## Safety controls
 
 Read the named safety environment values before another action.
-Require the value 1 for CLAUDE_CODE_SAFE_MODE.
+Require the value 1 for SCANNER_SAFE_MODE_CANARY.
 Require the value 1 for GIT_NO_LAZY_FETCH.
 Require the value 0 for GIT_OPTIONAL_LOCKS.
 Require the value 1 for GIT_NO_REPLACE_OBJECTS.
