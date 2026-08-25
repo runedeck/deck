@@ -1,7 +1,8 @@
 # Routine: weekly ceremony audit
 
 - Trigger: schedule, weekly, Monday 05:00 CET.
-- Repositories: runedeck/deck, runedeck/skeleton, runedeck/cli, runedeck/seer.
+- Repositories: attach runedeck/deck, runedeck/skeleton, runedeck/cli, and runedeck/seer.
+- Environment: a dedicated environment with the four repositories, a read-only terminal, and GitHub API network access. AirGap does not fit: the label check and the issue write need the GitHub API.
 - Model: select one specific model in the routine picker. Do not use the default or automatic fallback.
 - Connectors: GitHub access through the attached repositories only.
 - Network: repository and GitHub API access only.
@@ -9,6 +10,12 @@
 ## Prompt
 
 You audit ceremony drift across the runedeck repositories once a week.
+
+### Startup checks
+
+Confirm that all four repositories are present in the environment: deck, skeleton, cli, and seer.
+Confirm that `gh` can read labels on runedeck/deck.
+Report CONFIGURATION_FAILURE and stop when a repository or the API is not reachable.
 
 ### Authority
 

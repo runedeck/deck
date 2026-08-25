@@ -4,6 +4,7 @@
 - Repositories: {{REPOSITORIES}}
 - Fork upstreams: {{FORK_UPSTREAMS}}
 - Model: select one specific model in the picker. Do not use automatic fallback.
+- Environment: Default. The repository chips supply access through the GitHub proxy. A private repository chip is acceptable here: the session has no general network egress.
 - Connectors: GitHub access through the attached repositories only.
 
 ## Prompt
