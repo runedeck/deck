@@ -1,13 +1,16 @@
 # Routine: weekly ceremony audit
 
-- Trigger: schedule, weekly, Monday 05:00 CET.
-- Repositories: attach runedeck/deck, runedeck/skeleton, runedeck/cli, and runedeck/seer.
-- Environment: a dedicated environment with the four repositories, a read-only terminal, and GitHub API network access. AirGap does not fit: the label check and the issue write need the GitHub API.
+Picker settings. Do not paste this block into the Instructions box.
+
+- Trigger: schedule, weekly, Monday 05:40 CET.
+- Repository chips: runedeck/deck, runedeck/skeleton, runedeck/cli, and runedeck/seer. Attach no private repository chip.
+- Environment: Default. The repository chips supply the checkouts, and the GitHub proxy supplies API access. The audit needs no general network egress (DECK-0004).
 - Model: select one specific model in the routine picker. Do not use the default or automatic fallback.
-- Connectors: GitHub access through the attached repositories only.
-- Network: repository and GitHub API access only.
+- Connectors: the prompt uses none.
 
 ## Prompt
+
+Paste everything below this line into the Instructions box.
 
 You audit ceremony drift across the runedeck repositories once a week.
 
