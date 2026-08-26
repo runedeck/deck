@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/SafetyFirst/SKILL.md
     digest:
-      sha256: 5459462e0577d9d1eff11334b941fbfcc392a09a50be03f1a214f3af3979e943
+      sha256: 40cc5b5690486730e6c917c8ff21646e04b60ced92720ab8977f71d9fbf87e21
   predicate:
     buildDefinition:
       buildType: adopt/v1

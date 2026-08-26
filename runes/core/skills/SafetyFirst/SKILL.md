@@ -30,7 +30,7 @@ Agent sessions run behind layered guards: safety hooks that match destructive co
 The best interaction with a guard is none. Use the non-destructive form before the guard has anything to catch:
 
 - `git reset --hard <ref>`: Use `git stash`, then use a soft or mixed reset. If the tree is identical, use `git checkout -B <branch> <ref>`.
-- `git checkout <ref> -- <path>`: Use `tmp=$(mktemp "<path>.tmp.XXXXXX") && git show <ref>:<path> > "$tmp" && mv "$tmp" <path>`.
+- `git checkout <ref> -- <path>`: Extract `git archive <ref> -- <path>` into a scratch directory beside `<path>`. Verify the extracted path. Replace `<path>` with the extracted path.
 - `git restore <path>`: Use `git restore --staged <path>` to keep the worktree, or use `git stash`.
 - `git push --force`: Use `git push --force-with-lease=<branch>` only on your branch.
 - `git branch -D <branch>`: Verify the merge state on the platform. Give force-deletes to the user.
@@ -51,7 +51,7 @@ Assume any step can be denied. Order work so a mid-sequence block leaves a consi
 ### When a guard blocks
 
 1. Read the whole block message. Guards state the rule, the rationale, and the safer alternative. The answer is usually in the message.
-2. Take the suggested alternative. Write `git show <ref>:<path>` to a temporary file. Then move that file over `<path>`.
+2. Take the suggested alternative. Extract `git archive <ref> -- <path>` beside the target. Verify the extracted path. Replace the target with the extracted path.
 3. When the guard offers an explain command (for example `dcg explain "<command>"`), use it to understand the rule before choosing a path.
 4. When the intent is genuinely needed and no safe form exists, stop and hand the exact command to the user with one sentence on why the operation is required. The user runs it in their own terminal, or grants a narrow permission.
 5. When the block looks like a false positive (a name collision, for example `jj restore` matched by a git rule), explain the mismatch to the user. Configuration changes belong to the user, never to the agent.
