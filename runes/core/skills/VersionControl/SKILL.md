@@ -3,7 +3,6 @@ name: VersionControl
 description: "Git and Jujutsu discipline for commits, staging, pushes, history rewrites, worktrees, and repo governance. USE WHEN committing, pushing, creating pull requests, squashing history, cleaning merged branches, setting branch protection or CODEOWNERS, or working in a jj colocated repo."
 metadata:
     version: 0.2.0
-    upstream: https://github.com/N4M3Z/forge-core
 ---
 
 # VersionControl
