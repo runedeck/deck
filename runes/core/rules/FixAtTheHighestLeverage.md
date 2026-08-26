@@ -1,0 +1,1 @@
+When a problem repeats, fix it at the highest leverage available, in order of value: eliminate it through architecture or data-structure choice, turn it into a lint rule or test, turn it into a skill or rule, or have humans review for it.

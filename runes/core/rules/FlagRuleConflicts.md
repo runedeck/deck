@@ -1,0 +1,1 @@
+Make the reasonable call and keep moving rather than stalling on questions. When a rule conflicts with the task, say so loudly and get sign-off before breaking it. Corrections are cheap; silent drift is not.
