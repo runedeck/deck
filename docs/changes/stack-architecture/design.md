@@ -81,7 +81,7 @@ The live case is the first first-party module teardown, which also sets a princi
 
 Reality diverges from this abstraction in the following places. This change records them and fixes none of them.
 
-1. **Ceremony shipping lag.** The deck's Copier pin trails the skeleton by 24 `templates/base` commits. The label grammar splits the fleet: `spec:none` in deck, cli, and seer, against `ignore:spec` in skeleton. Seam: the governance plane's Ship stage is manual.
+1. **Ceremony shipping lag.** The deck's Copier pin trails the skeleton by 24 `templates/base` commits. The label grammar split the fleet: `spec:none` in the consumers against `ignore:spec` in the skeleton, until the deck adopted `ignore:spec` by hand while this change was in review. That hand-carry proves the seam rather than closing it: the governance plane's Ship stage is manual, and each consumer converges only when someone notices.
 2. **No canonical evidence slot for bench verdicts.** Verdicts live in workspace benchmark directories. The Measure token does not travel with the artifact. Seam: sidecars or artifact metadata have no verdict pointer.
 3. **Review evidence is platform-bound.** Exact-head verdicts and sealed rounds live in GitHub. Nothing exports them beside the artifact.
 4. **Unenforced hops.** Nothing blocks a rule from shipping without a bench verdict, or an adopted artifact from merging without a sealed record. The tokens exist, and the gates do not.
