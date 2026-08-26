@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- The agent-pipeline change: the idea-to-merge flywheel design, DECK-0008 and DECK-0009, the idea-intake, artifact-extraction, and declared-constraints capabilities, and the IntakeIdea skill.
 - The AnchorWorkingDirectory rule in core: each shell command chain starts from an absolute path.
 - Benchmark tables carry an output-token column: corpus mean per arm and the delta, so efficiency artifacts can show their token effect.
 - Initial scaffold.
