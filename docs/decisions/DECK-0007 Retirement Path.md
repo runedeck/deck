@@ -27,14 +27,14 @@ upstream: []
 
 ## Context and Problem Statement
 
-The stack defines how artifacts arrive and nothing about how they leave. The first first-party module teardown is live, and it exposed three loose ends: deck removal, consumer manifest cleanup, and provider teardown are separate manual acts; nobody has stated what happens to the retired artifact's evidence; and first-party provenance sidecars raised the question of what provenance is for at all.
+The stack defines how artifacts arrive and nothing about how they leave. The first first-party module teardown is live, and it exposed three loose ends. Deck removal, consumer manifest cleanup, and provider teardown are separate manual acts. Nobody has stated what happens to the retired artifact's evidence. And first-party provenance sidecars raised the question of what provenance is for at all.
 
 ## Decision Drivers
 
 - An artifact that leaves must leave everywhere, or stale copies keep loading context.
 - Evidence has historical value after the artifact is gone: verdicts and reviews explain past behavior.
 - Provenance sidecars cost maintenance (the check-provenance hook now enforces digest freshness), so they must earn that cost.
-- Deletion must be as reviewable as addition; a quiet removal is a governance hole.
+- Deletion must be as reviewable as addition, because a quiet removal is a governance hole.
 
 ## Considered Options
 
@@ -44,7 +44,7 @@ The stack defines how artifacts arrive and nothing about how they leave. The fir
 
 ## Decision Outcome
 
-Option 3. Retirement runs the flow in reverse, per store: the provider account drops its rendered configuration; the consumer drops the manifest entry, and pruning removes the deployed files the deploy manifest tracks; the deck removes the artifact and its sidecar in a reviewed change that records the reason; the workshop ledger captures the retirement decision. Evidence records — bench verdicts, review history, decision records — stay. The teardown also sets the provenance principle: sidecars exist to import trust across an ownership boundary. First-party artifacts carry their trust in the authorship ceremony, so removing first-party sidecars is a correction, not a loss.
+Option 3. Retirement runs the flow in reverse, per store. The provider account drops its rendered configuration. The consumer drops the manifest entry, and pruning removes the deployed files the deploy manifest tracks. The deck removes the artifact and its sidecar in a reviewed change that records the reason. The workshop ledger captures the retirement decision. Evidence records (bench verdicts, review history, decision records) stay. The teardown also sets the provenance principle: sidecars exist to import trust across an ownership boundary. First-party artifacts carry their trust in the authorship ceremony, so removing first-party sidecars is a correction, not a loss.
 
 ## Consequences
 
