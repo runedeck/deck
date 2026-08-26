@@ -1,8 +1,9 @@
-.PHONY: help install validate worktree
+.PHONY: help install validate validate-schemas worktree
 
 help:
 	@echo "  make install    activate hooks (git + jj)"
 	@echo "  make validate   run commit-stage checks"
+	@echo "  make validate-schemas   compare Stable shell schemas"
 	@echo "  make worktree   create an agent worktree: make worktree BRANCH=change/x IDENTITY=<model-id> [HARNESS=<harness>]"
 
 install:
@@ -17,6 +18,14 @@ install:
 
 validate:
 	@bash .githooks/pre-commit --all-files
+
+validate-schemas:
+	@cmp runes/core/skills/.mdschema runes/meta/skills/.mdschema
+	@cmp runes/core/skills/.mdschema runes/development/skills/.mdschema
+	@cmp runes/core/rules/.mdschema runes/meta/rules/.mdschema
+	@if [ -f ../cli/templates/init/skills/.mdschema ]; then \
+	    cmp runes/core/skills/.mdschema ../cli/templates/init/skills/.mdschema; \
+	fi
 
 # Create a worktree whose commits carry a listed model identity.
 # HARNESS selects one identity when a model ID has multiple harness entries.
