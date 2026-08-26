@@ -36,6 +36,7 @@ If BuildTask is unavailable, stop and give the scanners cast installation comman
 - Use only values that the user approves as public search terms.
 - Explain that each search term reaches the selected provider.
 - Explain that the provider stores each rendered public value.
+- Never claim that a prompt or task definition enforces a provider permission.
 - Keep deterministic scanners outside this task package.
 
 ## Instructions
@@ -85,12 +86,12 @@ BuildTask owns provider guidance, rendering, placeholder checks, output structur
 - Confirm that BuildTask received one complete task definition.
 - Confirm that no placeholder remains.
 - Confirm that the result contains no unapproved private value.
-- Confirm that the scanner has no write permission.
+- Confirm that the task definition denies writes.
 
-- Confirm that the scanner uses no external scanner.
-- Confirm that the scanner requires complete redaction.
-- Confirm that the scanner reports coverage limits.
-- Confirm that the scanner sends one final notification.
+- Confirm that the task definition denies external scanners.
+- Confirm that the rendered prompt requires complete redaction.
+- Confirm that the rendered prompt reports coverage limits.
+- Confirm that the task definition permits one final notification.
 
 ## References
 

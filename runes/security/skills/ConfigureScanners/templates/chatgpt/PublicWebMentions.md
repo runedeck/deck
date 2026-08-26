@@ -149,11 +149,11 @@ Inspect visible document metadata without downloading the document.
 
 For each query, select the first ten unique source results in the shown order.
 Use search pagination until you select ten results or no next page exists.
-Count the selected unique source URLs as expected sources.
-Inspect each selected source.
+Count a selected source as expected only after its initial URL passes the pre-navigation destination controls.
+Inspect each expected source.
 
 Count a completed source only after its destination checks and content inspection finish.
-Count a completed query only after all its selected sources complete.
+Count a completed query only after all its expected sources complete.
 Record expected and completed query counts.
 Record expected and completed source counts.
 Record duplicate, blocked, rejected, and inaccessible source counts.
