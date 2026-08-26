@@ -47,12 +47,21 @@ git worktree remove <path>
 git worktree list    # verify nothing lingers
 ```
 
-A merge session ends clean. Check these two end conditions:
+A merge session ends clean. Check these end conditions:
 
 ```sh
-git worktree list                 # only live work remains
-git branch --merged origin/main   # empty, except the default branch
+git worktree list                                      # only live work remains
+git branch --format='%(refname:short)'                 # inspect each non-default branch
+branch_sha=$(git rev-parse --verify refs/heads/<branch>)
+merged=$(gh pr list --head <branch> --state merged --limit 100 --json headRefOid --jq "any(.[]; .headRefOid == \"$branch_sha\")")
+[ "$merged" = true ]                                  # the merged PR matches this head
 ```
+
+Repeat this check for each non-default local branch. Remove a branch only when the matching pull request is merged.
+
+If the work was abandoned, get explicit user approval before you remove the branch.
+
+Do not infer the merge state from Git commit ancestry. A squash merge creates a new commit and can hide a merged branch from ancestry checks.
 
 Create at most one staging worktree for each pull request. Remove it in the session that merges the pull request.
 
