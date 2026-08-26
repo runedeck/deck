@@ -2,7 +2,7 @@
 name: VersionControl
 description: "Git and Jujutsu discipline for commits, staging, pushes, history rewrites, worktrees, and repo governance. USE WHEN committing, pushing, creating pull requests, squashing history, cleaning merged branches, setting branch protection or CODEOWNERS, or working in a jj colocated repo."
 metadata:
-    version: 0.1.0
+    version: 0.2.0
     upstream: https://github.com/N4M3Z/forge-core
 ---
 
@@ -18,6 +18,10 @@ Commit discipline, staging hygiene, push policy, and repo governance. In a jj co
 - Never commit files that contain secrets. The prek hooks run gitleaks at commit and at push. Never bypass them with `--no-verify`.
 - Do not push unless the user asks. A commit and a push are separate actions.
 - Never force-push unless the user explicitly asks. When a force-push is sanctioned, use `--force-with-lease`, not `--force`.
+- Automated Jujutsu mode is the default. Keep automated pushes unsigned.
+- Only the owner can start attended Jujutsu signing. An agent must not start or inherit attended mode.
+- Open pull requests with the owner's existing `gh` authentication. Do not override it with an App token.
+- Do not use Runewright for ordinary GitHub work. Reserve App identities for explicit CI or review automation.
 - Use `git switch <branch>`, not `git checkout <branch>`.
 
 ## Instructions
@@ -101,7 +105,9 @@ Detect the platform from the remote origin URL and use its companion: [GitHub.md
 
 ### Sign commits
 
-Model commits in runedeck repositories are unsigned by specification, and no branch rule requires signatures. For personal repositories with hardware-key signing (YubiKey GPG or FIDO2 SSH), see [CommitSigning.md](CommitSigning.md).
+Model commits in runedeck repositories are unsigned by specification. Automated Jujutsu pushes also stay unsigned. Only an owner-established attended session enables Jujutsu push signing. The attended launcher must show a prompt marker and limit the mode to its subshell. Attended mode changes signing only. It does not authorize a commit or push.
+
+See [Jujutsu.md](Jujutsu.md) for push signing. See [CommitSigning.md](CommitSigning.md) for repositories that require Git signing.
 
 ## Verification
 

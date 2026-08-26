@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/VersionControl/Jujutsu.md
     digest:
-      sha256: 5e94e9d33b7e9ae971ae2acd2641b4657259829e96a8dab82550817d7341bc49
+      sha256: fa88edec76e76b75ee102d059b09e55d1e5d7f8d4517ab0eebf0336d6f55711d
   predicate:
     buildDefinition:
       buildType: adopt/v1
