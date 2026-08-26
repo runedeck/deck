@@ -7,7 +7,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 ### Added
 
 - Five micro-rules in core, extracted from the tuicr workshop brief: CaptureOnTouch, FixAtTheHighestLeverage, ReportFailures, FlagRuleConflicts, and OwnersVoice.
-- The VerifyClaims and Deslop rules in core, adopted from forge-core through the block-review ceremony: evidence before assertion, and slop stripped at write time.
+- The VerifyClaims and Deslop rules in core: evidence before assertion, and slop stripped at write time.
 - Benchmark tables carry an output-token column: corpus mean per arm and the delta, so efficiency artifacts can show their token effect.
 - Initial scaffold.
 - BenchArtifact skill: benchmark any skill, rule, or agent against a baseline across models, with per-model aggregation and a self-contained comparison report (DECK-0001).
