@@ -7,6 +7,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 ### Added
 
 - The AnchorWorkingDirectory rule in core: each shell command chain starts from an absolute path.
+- Benchmark tables carry an output-token column: corpus mean per arm and the delta, so efficiency artifacts can show their token effect.
 - Initial scaffold.
 - BenchArtifact skill: benchmark any skill, rule, or agent against a baseline across models, with per-model aggregation and a self-contained comparison report (DECK-0001).
 - The ReviewMarkers rule in core, adopted through the block-review ceremony.
@@ -18,6 +19,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- The spec waiver label is `ignore:spec`, matching the `ignore:` family every runedeck repository uses. `spec:none` retires.
 - AdoptArtifact keeps block verdicts in temporary CLI sessions and commits only source-level provenance sidecars (DECK-0002).
 - The authorship check reads separate author and trailer lists from `authors.yaml`. A trailer attribution can no longer validate an author field.
 - BuildSkill defers its evaluation step to BenchArtifact; the loop, agent templates, review viewer, and evaluation schemas moved there.

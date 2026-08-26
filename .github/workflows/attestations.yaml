@@ -3,7 +3,7 @@ name: Attestations
 # Deterministic attestation checks: every commit answers who wrote it,
 # and machinery changes carry their specification or the owner's
 # explicit waiver. Label events re-evaluate the spec gate, so applying
-# spec:none recomputes the check without a push. pull_request_target
+# ignore:spec recomputes the check without a push. pull_request_target
 # keeps both checks base-defined; the head enters only as fetched
 # history and file listings, never as executed code.
 on:
@@ -78,16 +78,16 @@ jobs:
                   labels=$(gh api --paginate "repos/${{ github.repository }}/issues/$PR_NUMBER/labels?per_page=100" \
                       --jq '[.[].name]' | jq -s -r 'add // [] | .[]') \
                       || { echo "could not read the live labels; rerun the check"; exit 1; }
-                  if printf '%s\n' "$labels" | grep -qx 'spec:none'; then
+                  if printf '%s\n' "$labels" | grep -qx 'ignore:spec'; then
                       body=$(gh api "repos/${{ github.repository }}/pulls/$PR_NUMBER" --jq '.body // ""') \
                           || { echo "could not read the pull request body; rerun the check"; exit 1; }
-                      if printf '%s\n' "$body" | grep -qE '^spec:none: .+'; then
-                          echo "spec:none waiver present with its reason."
+                      if printf '%s\n' "$body" | grep -qE '^ignore:spec: .+'; then
+                          echo "ignore:spec waiver present with its reason."
                           exit 0
                       fi
-                      echo "spec:none is applied but the body carries no 'spec:none: <reason>' line."
+                      echo "ignore:spec is applied but the body carries no 'ignore:spec: <reason>' line."
                       exit 1
                   fi
-                  echo "these protected paths change without a specification or a spec:none waiver:"
+                  echo "these protected paths change without a specification or an ignore:spec waiver:"
                   printf '%s\n' "$touched"
                   exit 1
