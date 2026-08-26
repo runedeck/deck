@@ -65,7 +65,7 @@ jobs:
                           ["ignore:cursor", "d93f0b", "Owner override: the cursor lane reports but does not hold the merge"],
                           ["ignore:macroscope", "d93f0b", "Owner override: the macroscope lane reports but does not hold the merge"],
                           ["ignore:runeseer", "d93f0b", "Owner override: the runeseer lane reports but does not hold the merge"],
-                          ["spec:none", "ededed", "Owner waiver: no specification change needed, reason in body"],
+                          ["ignore:spec", "d93f0b", "Owner waiver: no specification change needed, reason in body"],
                       ];
                       for (const [name, color, description] of wanted) {
                           try {
@@ -77,9 +77,8 @@ jobs:
                               await github.rest.issues.createLabel({ ...context.repo, name, color, description });
                           }
                       }
-                      // Names the per-lane families replaced. Leaving it behind
-                      // would offer an override that no workflow reads.
-                      const retired = ["review:skip"];
+                      // Remove ceremony labels that no workflow reads.
+                      const retired = ["review:skip", "spec:none"];
                       for (const name of retired) {
                           try {
                               await github.rest.issues.deleteLabel({ ...context.repo, name });
