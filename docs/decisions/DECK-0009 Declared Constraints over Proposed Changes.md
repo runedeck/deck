@@ -26,15 +26,15 @@ upstream: []
 
 ## Context and Problem Statement
 
-Agents hallucinate entities and then everyone verifies by hand. Comments go out of date, documentation duplicates code, and unmeasured Markdown sits in every context window. The stack already has the primitive answer — mdschema constrains structure, JSON schemas constrain fields, the ceremony constrains process — but the constraints stop at single files. Nothing declares the permitted relations between artifacts, stages, and evidence, so lifecycle rules like "a rule ships only with a bench verdict" live as folklore that only review rounds enforce.
+Agents hallucinate entities and then everyone verifies by hand. Comments go out of date, documentation duplicates code, and unmeasured Markdown sits in every context window. The stack already has the primitive answer: mdschema constrains structure, JSON schemas constrain fields, the ceremony constrains process. But the constraints stop at single files. Nothing declares the permitted relations between artifacts, stages, and evidence. Lifecycle rules like "a rule ships only with a bench verdict" therefore live as folklore that only review rounds enforce.
 
 ## Decision Drivers
 
 - The neurosymbolic split is the right division of labor: probabilistic agents propose, symbolic declarations permit, deterministic checkers decide.
-- Code is truth; prose drifts. A constraint written as prose decays, and the same constraint written as a checkable declaration does not.
-- Public vocabularies (schema.org, Dublin Core, SKOS, FOAF) already name most metadata concepts; inventing parallel terms creates translation debt.
+- Code is truth and prose drifts. A constraint written as prose decays, and the same constraint written as a checkable declaration does not.
+- Public vocabularies (schema.org, Dublin Core, SKOS, FOAF) already name most metadata concepts. Parallel invented terms create translation debt.
 - Inference and constraint are different tools: one suggests missing facts, the other rejects invalid states. The stack needs the rejecting kind first.
-- Every checker added below review (the leverage ladder's lint rung) removes a class of review rounds.
+- Every checker added below review (the ladder's lint rung) removes a class of review rounds.
 
 ## Considered Options
 
@@ -44,11 +44,11 @@ Agents hallucinate entities and then everyone verifies by hand. Comments go out 
 
 ## Decision Outcome
 
-Option 3. The deck declares its world: artifact kinds, lifecycle stages, evidence tokens, and the permitted relations between them, reusing public vocabulary terms where they exist. Lifecycle rules become axioms in the description-logic style — functional properties for one-time facts, domain and range for who may hold what — and each axiom gets a deterministic checker. Proposals that name entities are verified against the declared world, so a hallucinated reference fails a check instead of surviving until review. The existing schemas remain the ontology's first layer; the graph layer grows from them without a platform rewrite.
+Option 3. The deck declares its world: artifact kinds, lifecycle stages, evidence tokens, and the permitted relations between them, with public vocabulary terms reused where they exist. Lifecycle rules become axioms in the description-logic style (functional properties for one-time facts, domain and range for who may hold what), and each axiom gets a deterministic checker. A deterministic check verifies every named entity in a proposal against the declared world, so a hallucinated reference fails a check instead of surviving until review. The existing schemas remain the ontology's first layer, and the graph layer grows from them without a platform rewrite.
 
 ## Consequences
 
 - The evidence-token gates from DECK-0005 acquire an enforcement mechanism that is neither prose nor review labor.
-- Intake pushback gains a deterministic ground: an idea referencing nonexistent capabilities is rejected by check, not by argument.
-- The vocabulary mapping keeps deck metadata legible to external tooling at near-zero cost.
-- The heavier machinery (RDF serialization, OWL reasoners) stays optional until a constraint demonstrably needs inference, which keeps complexity matched to the task.
+- Intake pushback gains a deterministic ground: a check, not an argument, rejects an idea that references nonexistent capabilities.
+- The vocabulary mapping keeps deck metadata legible to external tooling at low cost.
+- The heavier machinery (RDF serialization, OWL reasoners) stays optional until a constraint needs inference, which keeps complexity matched to the task.

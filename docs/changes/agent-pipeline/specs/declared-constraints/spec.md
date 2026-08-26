@@ -2,7 +2,7 @@
 
 ### Requirement: Agents propose, the ontology permits
 
-The stack MUST separate proposal from permission. An agent proposes what is likely; a declared ontology states what is permitted; a deterministic checker decides. A proposal that names an entity MUST be verifiable against the declared world: hallucinated artifacts, stages, or relations fail the check instead of entering the record.
+The stack MUST separate proposal from permission. An agent proposes what is likely, a declared ontology states what is permitted, and a deterministic checker decides. A proposal that names an entity MUST be verifiable against the declared world. Hallucinated artifacts, stages, or relations fail the check instead of entering the record.
 
 #### Scenario: A proposal references an artifact that does not exist
 
@@ -20,7 +20,7 @@ The declared ontology MUST reuse established vocabularies before inventing terms
 
 ### Requirement: Lifecycle constraints become machine-checkable rules
 
-Evidence-token rules MUST be expressible as declared constraints over the artifact graph, in the style of description-logic axioms: a rule ships only with a bench verdict, an adopted artifact carries exactly one sealed review, a retirement keeps its evidence. Inference suggests; constraints reject. Checkers built on the declarations replace folklore gates.
+Evidence-token rules MUST be expressible as declared constraints over the artifact graph, in the style of description-logic axioms: a rule ships only with a bench verdict, an adopted artifact carries exactly one sealed review, a retirement keeps its evidence. Inference suggests, and constraints reject. Checkers built on the declarations replace folklore gates.
 
 #### Scenario: A rule ships without a verdict
 
