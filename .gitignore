@@ -3,12 +3,14 @@ dist/
 .DS_Store
 __pycache__/
 
-# rune-deployed provider trees and review comments
+# rune-deployed provider trees and temporary review state
 .claude/
 .codex/
 .gemini/
 .opencode/
 .rune-comments.yaml
+**/.provenance/review.yaml
+**/.provenance/*.review.yaml
 
 # Parallel work, one isolated tree per agent: jj workspaces where the repo is
 # colocated, git worktrees where it is git-only. Both are ignored before any

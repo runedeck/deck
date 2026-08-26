@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: skills/VersionControl/SKILL.md
+    digest:
+      sha256: 6a6f124795afecadfe3de04a31381af57a9e7b3e4c189a76599606c86cdcc50c
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: https://github.com/N4M3Z/forge-core/tree/132e0589
+        upstream_commit: 132e0589eb87849973ab8ee984926f318af4d642
+        transforms_applied:
+        - align
+      resolvedDependencies:
+      - name: upstream
+        uri: https://github.com/N4M3Z/forge-core/tree/132e0589
+        digest:
+          sha256: 140aa55651968fa7d60116c4ba2f0f63f372352d40f73c951c6097a171b323a3
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-08-19T19:15:17.671805+00:00
+        review: reviewed

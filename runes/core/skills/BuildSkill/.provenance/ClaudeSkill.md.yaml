@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BuildSkill/ClaudeSkill.md
     digest:
-      sha256: 8a2bc0fb93f26c2f16543b5203e16a70fcbf8a38657cab0f7252e513b12807d8
+      sha256: 51283e8f62412aecf42699d576a31f5efc614e00e3653631f4c011f30e8d36b5
   predicate:
     buildDefinition:
       buildType: adopt/v1

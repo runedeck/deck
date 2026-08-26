@@ -71,5 +71,5 @@ engineering prose and are worth internalizing even in flavored mode:
   so the action verb stays unambiguous. In software prose, keeping "check" as a
   verb is fine — but pick one word for the action and never rotate synonyms.
 
-The `--strict` flag of `ste-lint.py` enforces the strict subset (however,
+The `--strict` flag of `lint.py` enforces the strict subset (however,
 since, may, should, shall, using, follow). Flavored mode leaves them alone.

@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: skills/VersionControl/Jujutsu.md
+    digest:
+      sha256: fa88edec76e76b75ee102d059b09e55d1e5d7f8d4517ab0eebf0336d6f55711d
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: https://github.com/N4M3Z/forge-core/tree/132e0589
+        upstream_commit: 132e0589eb87849973ab8ee984926f318af4d642
+        transforms_applied:
+        - align
+      resolvedDependencies:
+      - name: upstream
+        uri: https://github.com/N4M3Z/forge-core/tree/132e0589
+        digest:
+          sha256: a7d6a8f01ee6ac14eb70ec2db57a4f94df4f3da6563904260e97f0bf23713c8d
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-08-19T19:15:17.671805+00:00
+        review: reviewed

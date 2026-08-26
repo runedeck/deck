@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BuildSkill/ValidateWorkflow.md
     digest:
-      sha256: ed0b346e9fda1e957862f3653acf03e81ff25c815019cb53753e854f1c3af3e7
+      sha256: 8577528c79bb64601c5a175d0117aa1ec2111395b9c7f4ab6c26e654ad58ef01
   predicate:
     buildDefinition:
       buildType: adopt/v1

@@ -71,14 +71,16 @@ jobs:
             - name: Install tools
               run: |
                   sudo apt-get install -y shellcheck
-                  pipx install ruff semgrep
+                  pipx install prek ruff semgrep
                   curl -fsSLO "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
                   echo "${GITLEAKS_SHA256}  gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" | sha256sum --check
                   tar -xzf "gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" gitleaks
                   sudo install gitleaks /usr/local/bin/gitleaks
 
+            # The prek CLI is called directly: the wrapper action logs at
+            # TRACE level and buries the failing hook's output.
             - name: Commit-stage checks
-              uses: j178/prek-action@5337cb91e0fa35a7ff31b9ca345126d8bbbcdf16 # v2
+              run: prek run --all-files
 
             # Scan exactly the commits this event introduces. Without a usable
             # base, gitleaks scans the target history and other hooks inspect all files.
@@ -86,13 +88,16 @@ jobs:
               run: |
                   if [ -n "${{ github.event.pull_request.base.sha }}" ]; then
                       from="${{ github.event.pull_request.base.sha }}"
+                      to="${{ github.event.pull_request.head.sha }}"
                   elif [ -n "${{ github.event.before }}" ] && ! printf '%s' "${{ github.event.before }}" | grep -q '^0*$'; then
                       from="${{ github.event.before }}"
+                      to="${{ github.sha }}"
                   else
                       from=""
+                      to="${{ github.sha }}"
                   fi
                   if [ -n "$from" ] && git cat-file -e "$from" 2>/dev/null; then
-                      prek run --stage pre-push --from-ref "$from" --to-ref "${{ github.sha }}"
+                      prek run --stage pre-push --from-ref "$from" --to-ref "$to"
                   else
-                      GITLEAKS_PUSH_TO_REF="${{ github.sha }}" prek run --stage pre-push --all-files
+                      GITLEAKS_PUSH_TO_REF="$to" prek run --stage pre-push --all-files
                   fi

@@ -1,0 +1,13 @@
+{
+  "label": "no-em-dash",
+  "rules": [
+    {
+      "id": "em_dash",
+      "patterns": ["—", "–", " -- "]
+    },
+    {
+      "id": "jargon_noun",
+      "patterns": ["gate", "knob"]
+    }
+  ]
+}

@@ -53,8 +53,7 @@ The question bank for BuildAvatar. Target 20 to 30 questions across five to eigh
 ### 7. Collaboration
 
 - What may agents do without asking? Name the hard limits with each grant.
-- How should agents pace long autonomous work? (run to completion, milestone checkpoints, confirm at forks)
-- When should agents push a notification?
+- What coordination policy should agents use for long autonomous work? Include checkpoint and notification triggers.
 - How many parallel agent sessions is a normal state?
 - Which hours are your working window, if any?
 
