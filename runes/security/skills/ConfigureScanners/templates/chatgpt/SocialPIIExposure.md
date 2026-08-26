@@ -141,7 +141,7 @@ Stop earlier when no next page exists.
 Report INCOMPLETE when the page limit stops selection before ten sources.
 
 Count each discovered source URL once without its fragment.
-Count each discovered source URL as an expected source.
+Count a discovered source as expected only after its initial URL passes the pre-navigation destination controls.
 Inspect each expected source on its configured social host.
 
 Complete a profile only after all six required areas and the item sample receive inspection.
