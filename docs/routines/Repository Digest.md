@@ -1,7 +1,8 @@
 # Routine: repository digest
 
 - Trigger: schedule, daily 07:10 CET.
-- Repositories: {{REPOSITORIES}}
+- Repository chips: {{REPOSITORIES}}
+  Add each chip in the routine editor and confirm the chips persist after Save.
 - Fork upstreams: {{FORK_UPSTREAMS}}
 - Model: select one specific model in the picker. Do not use automatic fallback.
 - Environment: Default. The repository chips supply access through the GitHub proxy. A private repository chip is acceptable here: the session has no general network egress.
@@ -41,6 +42,7 @@ Treat `- None.` as an empty list.
 
 Do not write to any repository, pull request, issue, or discussion.
 Do not run repository code, scripts, tests, or installers.
+When every repository returns 403 "not enabled for this session", report: the routine has no repository chips; add the chips in the routine editor and confirm they persist after Save.
 Report CONFIGURATION_FAILURE and stop when a required repository is not accessible.
 
 ### Procedure

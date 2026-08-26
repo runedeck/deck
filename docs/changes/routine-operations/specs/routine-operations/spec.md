@@ -18,6 +18,15 @@ A routine SHALL verify its grants and safety values before its first substantive
 - **WHEN** a required repository is not mounted in the session
 - **THEN** the run stops before any inspection and the notification names the missing grant
 
+### Requirement: Grant Diagnosis
+
+A CONFIGURATION_FAILURE notification SHALL name the provider-side control that the owner must change: the repository chip row, the environment network level, or the environment variable. A notification SHALL NOT report only the symptom.
+
+#### Scenario: Every repository returns an access error
+
+- **WHEN** every configured repository returns 403 "not enabled for this session"
+- **THEN** the notification states that the routine has no repository chips and directs the owner to the routine editor
+
 ### Requirement: Environment By Data Sensitivity
 
 A routine SHALL run in the environment its readable data selects: private content with no network, repository work with GitHub proxy access only, and public-data scans with full network. A private repository SHALL NOT mount in a session with general network egress.

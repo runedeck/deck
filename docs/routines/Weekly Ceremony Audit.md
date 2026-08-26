@@ -18,6 +18,7 @@ You audit ceremony drift across the runedeck repositories once a week.
 
 Confirm that all four repositories are present in the environment: deck, skeleton, cli, and seer.
 Confirm that `gh` can read labels on runedeck/deck.
+When every repository returns 403 "not enabled for this session", report: the routine has no repository chips; add the chips in the routine editor and confirm they persist after Save.
 Report CONFIGURATION_FAILURE and stop when a repository or the API is not reachable.
 
 ### Authority
