@@ -105,12 +105,15 @@ def judge(config: dict) -> None:
     for judge_pass in config["judges"]:
         argv = [
             sys.executable, path(config, "judge_script"),
+            "--cross-harness",
             "--iteration", iteration_dir(config),
             "--manifest", path(config, "manifest"),
             "--routes", path(config, "routes"),
             "--judge-route", judge_pass["route"],
             "--seed", config["seed"],
         ]
+        if "approve" in judge_pass:
+            argv += ["--approve", judge_pass["approve"]]
         for model in judge_pass["models"]:
             argv += ["--model", model]
         run(argv)
@@ -137,6 +140,49 @@ def report(config: dict) -> None:
     print("[bench] report:", iteration_dir(config) / "report.html")
 
 
+def selected_count(items, values: list) -> int:
+    available = {str(item) for item in items}
+    if not values:
+        return len(available)
+    wanted = set(values)
+    missing = wanted - available
+    if missing:
+        raise ValueError(f"filter values not found: {', '.join(sorted(missing))}")
+    return len(wanted)
+
+
+def quick_approval(config: dict, routes: list, cases: list) -> int:
+    manifest = json.loads(path(config, "manifest").read_text())
+    registry = json.loads(path(config, "routes").read_text()).get("routes", {})
+    comparison = next(
+        (
+            item for item in manifest["comparisons"]
+            if item["id"] == config["comparison"]
+        ),
+        None,
+    )
+    if comparison is None:
+        raise ValueError(f"comparison not found: {config['comparison']}")
+    arms = {comparison["primary"], comparison["baseline"]}
+    route_count = selected_count(registry, routes)
+    case_count = selected_count(
+        (case["id"] for case in manifest["evals"]), cases
+    )
+    matrix_calls = (
+        case_count
+        * len(arms)
+        * route_count
+        * config.get("repeats", 1)
+    )
+    return matrix_calls + route_count * 2
+
+
+def repeat_summary(config: dict) -> str:
+    repeats = config.get("repeats", 1)
+    label = "repeat" if repeats == 1 else "repeats"
+    return f"{repeats} {label}"
+
+
 def quick(config: dict) -> None:
     """Scratch run: two routes, two cases, no judging. Roughly five minutes."""
     settings = config.get("quick", {})
@@ -153,7 +199,7 @@ def quick(config: dict) -> None:
         argv += ["--route", route]
     for case in cases:
         argv += ["--case", case]
-    run(argv + ["--approve", len(routes) * len(cases) * 2])
+    run(argv + ["--approve", quick_approval(config, routes, cases)])
     grade(quick_config)
     bench_dir = scripts_dir(config).parent
     run(
@@ -166,7 +212,10 @@ def quick(config: dict) -> None:
     )
     print()
     print((scratch / "benchmark.md").read_text())
-    print("[bench] scratch run: no blind judging, no repeats, low confidence")
+    print(
+        "[bench] scratch run: no blind judging, "
+        f"{repeat_summary(config)}, low confidence"
+    )
 
 
 
