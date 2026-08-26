@@ -63,12 +63,12 @@ Never delete a worktree directory manually. `git worktree remove` keeps the repo
 Check a dirty worktree before you delete it. Compare each touched file with the merged default branch:
 
 ```sh
-git -C <worktree> status --porcelain | sed 's/^...//' | while read -r f; do
-    git -C <worktree> diff origin/main --quiet -- "$f" || echo "differs: $f"
-done
+git -C <worktree> diff origin/main --quiet || echo "differs: tracked files"
+untracked=$(git -C <worktree> ls-files --others)
+[ -z "$untracked" ] || echo "differs: untracked files"
 ```
 
-Delete the worktree only when no file differs. A file that differs holds unmerged work.
+The tracked-file check supports all path names and status types. Review every untracked file, including ignored files. Delete the worktree only when the tracked check is quiet. Preserve each untracked file or approve its deletion.
 
 ## Red flags
 
