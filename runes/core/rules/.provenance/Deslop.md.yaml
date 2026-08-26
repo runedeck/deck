@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: rules/Deslop.md
+    digest:
+      sha256: 6f48d26f2351fa6534a48393c10deba29cc7e26309d7e0f2735806184bc98b77
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: file:///Users/N4M3Z/Developer/N4M3Z/forge-core/rules/Deslop.md
+        upstream_commit: ''
+        transforms_applied:
+        - copy
+      resolvedDependencies:
+      - name: upstream
+        uri: file:///Users/N4M3Z/Developer/N4M3Z/forge-core/rules/Deslop.md
+        digest:
+          sha256: 533372afcc5b2795d9907170f80c9d1e2cf1bb72e68bb3852ec68cd02876ef16
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-08-26T09:50:32.592237+00:00
+        review: reviewed

@@ -1,0 +1,29 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: rules/VerifyClaims.md
+    digest:
+      sha256: 4fac69e623ed3fde124333120e81e28fc8564142e0ede655aae05f78e7b3274b
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        source: ''
+        upstream_url: file:///Users/N4M3Z/Developer/N4M3Z/forge-core/rules/VerifyClaims.md
+        upstream_commit: ''
+        transforms_applied:
+        - copy
+      resolvedDependencies:
+      - name: upstream
+        uri: file:///Users/N4M3Z/Developer/N4M3Z/forge-core/rules/VerifyClaims.md
+        digest:
+          sha256: 61f237453df381da82175ff10a3cec34d2ed7675270c76cae5c9c6267fb99c9d
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.5.0
+      metadata:
+        startedOn: 2026-08-26T09:36:47.144741+00:00
+        review: reviewed
