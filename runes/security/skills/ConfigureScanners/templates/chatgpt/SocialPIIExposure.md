@@ -96,10 +96,12 @@ Reject a port, user information, local name, or IP literal.
 Reject a private, loopback, link-local, multicast, reserved, or unspecified address.
 Require all resolved destination addresses to be globally routable.
 
+Record a discovered source that fails its initial destination controls as a policy exclusion in Limits.
+Do not count that source as expected.
 Validate each redirect destination with the same controls.
 Record each checked destination in the navigation ledger.
 Do not open or inspect an invalid destination.
-Report each blocked destination as INCOMPLETE.
+If a redirect destination fails a control for an expected source, stop that source and report INCOMPLETE.
 Report INCOMPLETE when redirect or address validation is unavailable.
 
 ## Search terms
@@ -227,7 +229,8 @@ Use OK only when every required count matches.
 Use OK only when no timeout, truncation, context limit, parse error, skipped source, or browser error exists.
 Use OK only when the permitted scope has no finding.
 
-A stated policy exclusion does not cause INCOMPLETE.
+A source policy exclusion before expected-source accounting does not cause INCOMPLETE.
+A redirect failure for an expected source causes INCOMPLETE.
 An unexpected access failure causes INCOMPLETE.
 
 ## Final checks

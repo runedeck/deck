@@ -92,13 +92,15 @@ Reject an IP literal, including an alternate IPv4 or IPv6 form.
 Reject a private, loopback, link-local, multicast, reserved, or unspecified destination address.
 Require all resolved destination addresses to be globally routable.
 
-Do not navigate when a destination check fails.
-Record the rejected source as a limit.
+Do not navigate when an initial destination check fails.
+Record a selected source that fails its initial destination controls as a policy exclusion in Limits.
+Do not count that source as expected.
 Validate each redirect destination with the same controls.
 After each navigation, validate the final URL before you inspect page content.
 
 Close the page when the final URL fails a control.
 Do not inspect content from an invalid destination.
+If a redirect destination fails a control for an expected source, stop that source and report INCOMPLETE.
 If the browser hides a redirect destination, stop that source and report INCOMPLETE.
 If address validation is unavailable, stop that source and report INCOMPLETE.
 
@@ -252,7 +254,8 @@ Use OK only when each required count matches.
 Use OK only when no error, timeout, context limit, omitted result, or truncation exists.
 Use OK only when the permitted scope has no finding or access failure.
 
-A stated policy exclusion does not cause INCOMPLETE.
+A source policy exclusion before expected-source accounting does not cause INCOMPLETE.
+A redirect failure for an expected source causes INCOMPLETE.
 An unexpected access failure causes INCOMPLETE.
 
 ## Final checks
