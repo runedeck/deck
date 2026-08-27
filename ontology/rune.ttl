@@ -1,0 +1,224 @@
+@prefix rune:    <https://runedeck.dev/ns#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix schema:  <https://schema.org/> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+# The declared world of the deck (DECK-0010).
+# This file names the kinds that exist. It reuses established vocabularies
+# and mints a term only where no established term fits. Agents propose
+# instance data. The shapes in shapes.ttl decide what is permitted.
+#
+# This file describes. It does not validate. OWL and RDFS operate under
+# the open-world assumption, so they infer and never reject.
+#
+# Naming note: this taxonomy says "kind" for artifact types. The word
+# "ontology" names only this declared world.
+
+<https://runedeck.dev/ns> a owl:Ontology ;
+    dcterms:title "The rune declared world" ;
+    dcterms:creator <https://martinzeman.net/id/martin> .
+
+#################################################################
+# The umbrella
+#################################################################
+
+# Any governed artifact. The umbrella class lets a tool quantify over
+# every kind at once instead of naming each kind separately.
+rune:Rune a rdfs:Class ;
+    rdfs:subClassOf prov:Entity, schema:CreativeWork ;
+    rdfs:label "rune" ;
+    rdfs:comment "A governed artifact: one canon, optional sidecar, companions, and variants." .
+
+#################################################################
+# Kinds
+#################################################################
+
+rune:Skill a rdfs:Class ;
+    rdfs:subClassOf rune:Rune, schema:HowTo ;
+    rdfs:label "skill" ;
+    rdfs:comment "A procedure artifact with a SKILL.md canon." .
+
+# A rule: an instruction artifact that sits in agent context on every
+# turn. Rules pay rent through bench verdicts (DECK-0001, DECK-0003).
+rune:Rule a rdfs:Class ;
+    rdfs:subClassOf rune:Rune ;
+    rdfs:label "rule" ;
+    rdfs:comment "An always-on instruction artifact under a rules/ tree." .
+
+rune:Agent a rdfs:Class ;
+    rdfs:subClassOf rune:Rune ;
+    rdfs:label "agent" ;
+    rdfs:comment "The definition document for an agent. The running process is a prov:SoftwareAgent. This class names its artifact." .
+
+rune:Hook a rdfs:Class ;
+    rdfs:subClassOf rune:Rune ;
+    rdfs:label "hook" ;
+    rdfs:comment "A script artifact bound to harness events." .
+
+rune:Routine a rdfs:Class ;
+    rdfs:subClassOf rune:Rune ;
+    rdfs:label "routine" ;
+    rdfs:comment "An operate-stage artifact installed on a provider account." .
+
+#################################################################
+# Parts of a rune
+#################################################################
+
+# The provider-neutral entrypoint document of an artifact.
+rune:Canon a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "canon" .
+
+# Provider metadata split from the canon. Invariant for a later shape:
+# a sidecar never duplicates a canon field.
+rune:Sidecar a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "sidecar" .
+
+# A reference document that a canon cites with an @ reference.
+rune:Companion a rdfs:Class ;
+    rdfs:subClassOf prov:Entity, schema:CreativeWork ;
+    rdfs:label "companion" .
+
+# A file scaffold that an artifact or the cli renders.
+rune:Template a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "template" .
+
+# The per-directory structural contract, serialized as .mdschema.
+rune:StructureSchema a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "structure schema" .
+
+rune:hasCanon a rdf:Property ;
+    rdfs:domain rune:Rune ;
+    rdfs:range rune:Canon .
+
+rune:hasSidecar a rdf:Property ;
+    rdfs:domain rune:Rune ;
+    rdfs:range rune:Sidecar .
+
+rune:hasCompanion a rdf:Property ;
+    rdfs:domain rune:Rune ;
+    rdfs:range rune:Companion .
+
+rune:hasStructureSchema a rdf:Property ;
+    rdfs:domain rune:Rune ;
+    rdfs:range rune:StructureSchema .
+
+#################################################################
+# Variants
+#################################################################
+
+# A first-class variant, not a path convention. Precedence at assembly:
+# user, then provider and model, then provider, then the base artifact.
+rune:Variant a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "variant" .
+
+rune:variantOf a rdf:Property ;
+    rdfs:domain rune:Variant ;
+    rdfs:range rune:Rune .
+
+rune:qualifier a rdf:Property ;
+    rdfs:domain rune:Variant ;
+    rdfs:range xsd:string ;
+    rdfs:comment "user, a provider name, or a provider and model pair." .
+
+rune:mergeMode a rdf:Property ;
+    rdfs:domain rune:Variant ;
+    rdfs:range xsd:string ;
+    rdfs:comment "One of replace, append, prepend. A shape constrains the set." .
+
+#################################################################
+# Providers and targets
+#################################################################
+
+# A provider consumes deployed artifacts. A target is the deploy
+# destination that the targets: directive selects. The two stay separate.
+rune:Provider a rdfs:Class ;
+    rdfs:subClassOf prov:Agent ;
+    rdfs:label "provider" .
+
+rune:Target a rdfs:Class ;
+    rdfs:label "target" .
+
+rune:targets a rdf:Property ;
+    rdfs:domain rune:Rune ;
+    rdfs:range rune:Target .
+
+#################################################################
+# Evidence, provenance, integrity
+#################################################################
+
+# A bench verdict: evidence that an artifact earns its context cost.
+rune:Verdict a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "verdict" ;
+    rdfs:comment "A three-metric bench verdict for one artifact." .
+
+# The pointer from a rule to its verdict evidence.
+rune:verdict a rdf:Property ;
+    rdfs:domain rune:Rule ;
+    rdfs:range rune:Verdict ;
+    rdfs:comment "Links a rule to the bench verdict that justifies it." .
+
+# Derivation reuses PROV-O directly: prov:wasDerivedFrom,
+# prov:wasGeneratedBy, prov:wasAttributedTo. No minted class exists.
+# Integrity is two digests. Drift states (new, unchanged, stale,
+# modified) are queries over the digests, never stored facts.
+rune:sourceDigest a rdf:Property ;
+    rdfs:domain prov:Entity ;
+    rdfs:range xsd:string .
+
+# The repository path a node was extracted from. The extractor emits
+# one sourcePath for every input file, so two files that claim one
+# identifier merge into one node with two sourcePath values, and the
+# duplicate becomes a visible cardinality violation.
+rune:sourcePath a rdf:Property ;
+    rdfs:domain prov:Entity ;
+    rdfs:range xsd:string .
+
+rune:deployedDigest a rdf:Property ;
+    rdfs:domain prov:Entity ;
+    rdfs:range xsd:string .
+
+#################################################################
+# Records
+#################################################################
+
+# A decision record. No established vocabulary covers architecture
+# decision records, so the deck mints this term and anchors it to
+# established superclasses.
+rune:DecisionRecord a rdfs:Class ;
+    rdfs:subClassOf prov:Entity, schema:CreativeWork ;
+    rdfs:label "decision record" ;
+    rdfs:comment "An architecture decision record under docs/decisions/." .
+
+#################################################################
+# Lifecycle stages
+#################################################################
+
+rune:stages a skos:ConceptScheme ;
+    dcterms:title "The artifact lifecycle" .
+
+rune:Stage a rdfs:Class ;
+    rdfs:subClassOf skos:Concept ;
+    rdfs:label "stage" .
+
+rune:precedes a rdf:Property ;
+    rdfs:domain rune:Stage ;
+    rdfs:range rune:Stage .
+
+rune:capture a rune:Stage ; skos:inScheme rune:stages ; skos:prefLabel "capture" ; rune:precedes rune:author .
+rune:author  a rune:Stage ; skos:inScheme rune:stages ; skos:prefLabel "author"  ; rune:precedes rune:prove .
+rune:prove   a rune:Stage ; skos:inScheme rune:stages ; skos:prefLabel "prove"   ; rune:precedes rune:measure .
+rune:measure a rune:Stage ; skos:inScheme rune:stages ; skos:prefLabel "measure" ; rune:precedes rune:review .
+rune:review  a rune:Stage ; skos:inScheme rune:stages ; skos:prefLabel "review"  ; rune:precedes rune:ship .
+rune:ship    a rune:Stage ; skos:inScheme rune:stages ; skos:prefLabel "ship"    ; rune:precedes rune:operate .
+rune:operate a rune:Stage ; skos:inScheme rune:stages ; skos:prefLabel "operate" .

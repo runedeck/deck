@@ -1,0 +1,25 @@
+# Balance asserted rather than earned: the sentence names no position, no
+# disagreer, and no reason.
+#
+# The both-things tells require the bare abstract noun `things`, or the
+# `at once` tail. That narrowing is what keeps the rule off genuine boolean
+# prose -- "both conditions are true", "two of the three tests are true
+# positives" -- which a bare `both are true` would swallow. `can` is mandatory
+# in `both can be true at once` for the same reason it is spelled out rather
+# than made optional: an optional `can` puts an ungrammatical "both be true at
+# once" probe into the branch audit, which no fixture line can honestly satisfy.
+extends: existence
+message: "False balance ('%s'). Take a position or cut the sentence."
+level: warning
+ignorecase: true
+tokens:
+  - 'both\s+have\s+merit'
+  - 'remain(?:s|ed)?\s+to\s+be\s+seen'
+  - 'both\s+perspectives\s+merit\s+consideration'
+  - 'only\s+time\s+will\s+tell'
+  - 'the\s+jury\s+is\s+still\s+out'
+  - 'valid\s+points\s+on\s+both\s+sides'
+  - 'reasonable\s+people\s+(?:can|could|might|will|do|would)?\s*(?:disagree|differ)'
+  - 'both\s+things\s+are\s+true'
+  - 'two\s+things\s+(?:can\s+be|are)\s+true'
+  - 'both\s+can\s+be\s+true\s+at\s+once'

@@ -1,0 +1,23 @@
+# Known limitation: this fires even when a citation follows ("research shows X
+# (Chen 2024)"). That is intentional — the construction is weak regardless; the
+# repair is "Chen (2024) found X". Consumers who disagree can set
+# `Deslop.VagueAttribution = NO`.
+#
+# Verb forms are spelled out flat rather than built from suffix groups. Nested
+# groups let the regex accept combinations that are not English (`critics
+# claims`), and every branch has to earn a fixture line — which means an
+# ungrammatical branch can only be covered by an ungrammatical fixture.
+extends: existence
+message: "Vague attribution ('%s'). Name the source and affiliation."
+level: warning
+ignorecase: true
+tokens:
+  - 'experts?\s+(?:say|says|said|saying|argue|argues|argued|arguing|suggest|suggests|suggested|suggesting|believe|believes|believed|believing|claim|claims|claimed|claiming)'
+  - 'critics\s+(?:say|said|saying|argue|argued|arguing|claim|claimed|claiming)'
+  - 'sources\s+(?:say|said|saying)'
+  - '(?:research|studies|data)\s+(?:show|shows|showed|showing|suggest|suggests|suggested|suggesting|indicate|indicates|indicated|indicating)'
+  - '(?:research|studies|data)\s+ha(?:s|ve)\s+(?:shown|suggested|indicated)'
+  - 'many\s+(?:believe|believed|believing|argue|argued|arguing|say|said|saying)'
+  - 'some\s+(?:believe|believed|believing|argue|argued|arguing|say|said|saying|would\s+say)'
+  - 'it\s+is\s+widely\s+believed'
+  - 'it\s+is\s+often\s+said'

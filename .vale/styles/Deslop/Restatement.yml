@@ -1,0 +1,39 @@
+# Restatement staged as reasoning: the claim is made, then said again in other
+# words, and the second pass is presented as a step forward. A real gloss
+# translates jargon down a level of abstraction; these markers restate at the
+# same level, so deleting one of the two sentences loses nothing.
+#
+# This rule uses `raw`, not `tokens`, for two reasons. Half the tells only tell
+# in sentence-initial position, and Vale's automatic \b wrapping silently kills
+# an anchored token: the `[.!?]\s+` branch cannot match when the character
+# before the period is `)`, a backtick, or a quote, because \b fails between two
+# non-word characters. And `put differently,` / `put simply,` need the trailing
+# comma, which a `tokens` entry can never match — the closing \b cannot be
+# satisfied after punctuation.
+#
+# One `raw` entry with top-level alternation. Multiple `raw` entries are
+# CONCATENATED into one impossible regex, not alternated, and the rule would
+# then flag nothing forever. The \b markers are written out by hand.
+#
+# Two narrowings, both to protect real prose:
+#   1. `which/that is to say`, `which is why|exactly|precisely` are anchored to
+#      the start of a sentence. Mid-sentence they are ordinary non-restrictive
+#      relative clauses that gloss the noun before them -- "we assume phi is
+#      injective, which is to say it never folds over itself", "the cache is
+#      cold, which is why the first call is slow". Promoting that clause to its
+#      own sentence is the tell; the clause itself is not.
+#   2. `put differently` and `put simply` additionally require the comma, so the
+#      imperative verb survives: "Put differently sized bolts in the second bin."
+#
+# `in other words`, `put another way`, `to put it another way` and
+# `said/stated differently` are unanchored: they have no ordinary non-marker
+# reading to protect.
+#
+# Not folded into FillerTransition.yml, which is a `tokens` rule and cannot
+# carry an anchored, comma-terminated pattern.
+extends: existence
+message: "Restatement staged as development. Keep the sharper sentence, cut the other."
+level: warning
+ignorecase: true
+raw:
+  - '(?:(?:^|[.!?][''’"”)]*\s+)(?:which\s+is\s+(?:to\s+say|why|exactly|precisely)|that\s+is\s+to\s+say)\b|(?:^|[.!?][''’"”)]*\s+)put\s+(?:differently|simply)\s*,|\bin\s+other\s+words\b|\bput\s+another\s+way\b|\bto\s+put\s+it\s+another\s+way\b|\b(?:said|stated)\s+differently\b)'

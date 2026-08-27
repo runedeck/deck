@@ -1,0 +1,34 @@
+# Announced steelmanning: the writer names the charitable-reconstruction move
+# instead of performing it. "Let me steelman the objection", "the strongest
+# version of their argument is" -- and what follows is usually the strawman in a
+# better coat. Naming the technique in methodology prose is the one honest use,
+# which is why this ships at `warning` and not higher.
+#
+# `steel[-\s]?man` covers the three spellings in the wild (`steelman`,
+# `steel-man`, `steel man`). The \b that Vale wraps every token in is what keeps
+# it off structural steel: `steel manufacturing`, `steel-manufacturing` and
+# `steelmaker` all fail the boundary after `man` and stay clean. Verified, not
+# assumed -- they sit in should-pass.md.
+#
+# The `strongest` collocations are pinned to argument nouns on purpose. "The
+# strongest signal in the data" and "the strongest version of the library" are
+# ordinary prose; only the argument-staging sense is a tell.
+#
+# Distinct from FalseBalance.yml, which owns symmetry claims ("both have merit")
+# rather than the staging of an opposing case.
+extends: existence
+message: "Announced steelmanning ('%s'). Make the opposing case instead of narrating it."
+level: warning
+ignorecase: true
+tokens:
+  - 'steel[-\s]?man(?:s|ned|ning)?'
+  - 'the\s+strongest\s+(?:version|form)\s+of\s+(?:the|this|that|his|her|their)\s+(?:argument|case|claim|objection|view|position)'
+  # Bare `the strongest objection` / `the strongest counterargument` is NOT a
+  # token. It is ordinary English for a real thing, and this repo's own craft
+  # guide uses it to give advice -- "Name the strongest counterargument before
+  # you answer it", "Is the strongest objection named and answered?". Flagging
+  # the vocabulary deslop teaches with is incoherent, and AGENTS.md's precision
+  # rule says to prefer a narrowed token whenever the bare phrase has an
+  # ordinary meaning. The tell is ANNOUNCING the steelman, which the `steelman`
+  # and `strongest version of` tokens already catch.
+  - '(?:the\s+)?most\s+charitable\s+(?:reading|interpretation|version)'

@@ -1,0 +1,14 @@
+extends: existence
+message: "Hollow closer ('%s'). Cut it; end on substance."
+level: warning
+ignorecase: true
+tokens:
+  - 'in\s+conclusion'
+  - 'in\s+summary'
+  - 'in\s+closing'
+  - 'to\s+sum\s+up'
+  - 'to\s+wrap\s+up'
+  - 'all\s+in\s+all'
+  - 'at\s+the\s+end\s+of\s+the\s+day'
+  - 'when\s+all\s+is\s+said\s+and\s+done'
+  - 'the\s+bottom\s+line\s+is'

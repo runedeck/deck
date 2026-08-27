@@ -58,6 +58,29 @@ Use the same structure for `antigravity@claude`.
 
 The cross-harness flag is mandatory. It prevents accidental provider launches from the native workflow.
 
+Use `scripts/bench.py` when one configuration must drive all cross-harness steps.
+All configured paths resolve from the configuration file directory.
+
+The common matrix keys are `manifest`, `routes`, `comparison`, `iteration`, `seed`, and `artifact_name`.
+The optional `repeats` and `timeout` keys default to one and 600 seconds.
+Set `approve` only after the user approves the exact provider-call count.
+
+The snapshot step also needs `artifact_source`, `snapshot`, and `treatment_arm`.
+Use `manifest_template` when the step must preserve an unchanged manifest template.
+The snapshot directory must be below the generated manifest directory.
+The driver stores `artifact_path` relative to the generated manifest.
+
+The grade step needs `grader` and `checker`.
+The optional `checker_config` key supplies checker configuration.
+
+The judge step needs `judge_script` and a `judges` list.
+Each judge entry names one `route`, a `models` list, and an optional approved call count.
+
+The quick step needs nonempty `quick.routes` and `quick.cases` lists.
+It accepts an optional `quick.iteration` value and defaults to 999.
+Set `quick.approve` only after the user approves the exact call count.
+The quick step never calculates its own approval.
+
 Validate the call count without a provider call:
 
 ```sh

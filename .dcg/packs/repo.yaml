@@ -1,0 +1,53 @@
+# Repository guardrails (DECK-0010). dcg loads .dcg/packs/*.yaml from the
+# repository root, so these rules bind only inside jj-colocated runedeck
+# repositories. The skeleton ships this file to every consumer.
+# Validate: dcg pack validate .dcg/packs/repo.yaml
+schema_version: 1
+id: rune.repo
+name: Rune Repository Guardrails
+version: 1.0.0
+
+description: |
+  Rules that hold only inside runedeck repositories. Bare git push
+  bypasses the gated jj push. Shell writes into .provenance/ destroy
+  digest-bound adoption evidence.
+
+keywords:
+  - git
+  - provenance
+
+destructive_patterns:
+  - name: git-push-bypasses-gate
+    pattern: '^(?:/\S+/)?git\s+(?:(?:-C|-c|--git-dir(?:=\S+)?|--work-tree(?:=\S+)?|--namespace(?:=\S+)?)(?:\s+\S+)?\s+)*push\b'
+    severity: high
+    description: This repository is jj-colocated. Use the gated `jj push`.
+    explanation: |
+      The gated jj push alias runs prek and signs the push. A bare git
+      push skips the authorship check, the lint gates, and signing.
+      Run `jj push -b <bookmark>` instead.
+    executables:
+      - git
+
+  - name: provenance-shell-write
+    pattern: '\b(rm|cp|mv|install|truncate|sed\s+-i[^ ]*|tee)\b[^|;&]*\.provenance/'
+    severity: high
+    description: .provenance/ holds digest-bound evidence. Do not rewrite it from the shell.
+    explanation: |
+      Provenance sidecars bind source and file digests. A shell write
+      invalidates the digests, exactly like the rumdl fmt incident.
+      Adoption tooling owns these files. Refresh them through
+      AdoptArtifact, never by direct edits.
+
+  - name: provenance-redirect-write
+    pattern: '>[^|;&]*\.provenance/'
+    severity: high
+    description: .provenance/ holds digest-bound evidence. Do not redirect output into it.
+    explanation: |
+      A redirect into .provenance/ overwrites a digest-bound sidecar.
+      Adoption tooling owns these files. Refresh them through
+      AdoptArtifact, never by direct writes.
+
+safe_patterns:
+  - name: git-push-dry-run
+    pattern: '^git\s+push\s+.*--dry-run\b'
+    description: A dry run changes nothing on the remote.

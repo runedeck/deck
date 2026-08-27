@@ -1,0 +1,24 @@
+# `it is (also) worth noting` is NOT here: SlopVocab.yml owns the whole
+# "worth noting" family so it cannot report twice.
+extends: existence
+message: "Filler transition ('%s'). State the point directly."
+level: warning
+ignorecase: true
+tokens:
+  - 'Having\s+(?:examined|explored|discussed|reviewed|considered|analyzed)'
+  # `crucial` is deliberately absent from this alternation: Substitutions.yml
+  # owns that word, and "another crucial consideration" reported twice.
+  - 'another\s+(?:important|key|major)\s+(?:consideration|factor|point)'
+  - 'with\s+that\s+(?:said|in\s+mind)'
+  - 'that\s+being\s+said'
+  - 'first\s+and\s+foremost'
+  - 'last\s+but\s+not\s+least'
+  - 'it\s+goes\s+without\s+saying'
+  - 'as\s+(?:we\s+)?(?:previously\s+)?(?:mentioned|discussed|noted)\s+(?:above|earlier)'
+  # The escalation clause. The conjunction is required: bare `more importantly`
+  # is ordinary ranking, while `and, more importantly,` is the reflexive
+  # escalation this catches. `,?` is load-bearing -- the comma'd form is the
+  # common one, and without it the rule misses most real hits. This is the one
+  # token here that also appears in careful human prose, so it is the reason to
+  # promote or demote this file rather than to narrow the token further.
+  - '(?:but|and),?\s+(?:more|even\s+more|most)\s+important(?:ly)?'
