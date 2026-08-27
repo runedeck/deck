@@ -28,7 +28,7 @@ Each stage names its contract and its instance today. The stack architecture cha
 | Isolate | each implementing agent works in a disposable workspace. Colocated repositories use jj workspaces. Copy-on-write snapshots (anomalyco/rift) are an acceptable isolation instance because they copy the whole tree and never touch git refs | jj workspaces | exists, rift optional |
 | Swarm | agents parallelize by role (research, implement, review), never as several agents on one change's files | delegation runbook, harness council | exists |
 | Local gates | prek, mdschema, rune validate, kind-specific linters | .githooks, .pre-commit-config.yaml | exists |
-| Human skim | a fast owner pass before CI spends review rounds | StagedReview skill | exists |
+| Human skim | a fast owner pass before CI spends review rounds | manual owner pass | **gap: no skill encodes the skim yet** |
 | CI + review lanes | ceremony checks plus bot lanes in turns | seer lanes, attestations, quality | exists |
 | Babysit | automated round recovery, label toggles, fault triage until merge-ready | babysitting routines, PR #44 | exists |
 | Approve | the owner merges, and nothing merges itself | branch rulesets | exists |
