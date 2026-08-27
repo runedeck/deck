@@ -1,0 +1,63 @@
+# Borrowed rigor: vocabulary lifted from economics, optimisation, reliability
+# engineering, and the risk desk, used as decoration. The sentence sounds
+# measured and measures nothing -- no rate, no comparison, no distribution.
+#
+# Every token here is narrowed, because each of these phrases has a live
+# technical sense that must survive. What was cut and why:
+#
+#   `doing ... work`  -- only the abstract adjectives (real/actual/silent/
+#     structural/quiet). `doing a lot of the work`, `doing most of the work`
+#     and `doing serious work` describe literal labour often enough that they
+#     cannot be flagged. The narrow form is always figurative: only an argument
+#     or a word does *quiet* work.
+#   `first-order ...`  -- the noun list deliberately omits constraint, variable
+#     and input. Those are formal terms ("a second-order constraint" in an
+#     optimiser, "second-order variables") and flagging them would fire on real
+#     mathematics.
+#   `an order of magnitude ...`  -- `better` and `more complex` are dropped:
+#     a measured 10x improvement is a real claim, and the adjectives kept here
+#     (harder, easier, simpler, more important) are the ones that never come
+#     with a number.
+#   `compounding ...`  -- only advantage/edge/moat. `compounding returns`,
+#     `compounding value` and `compounds over time` are literal finance.
+#   `surface area`  -- only the abstract-adjective form. Reducing the surface
+#     area of an API is ordinary engineering usage, and `ever-expanding surface
+#     area` belongs to SlopVocab.yml's `ever-` family, not here.
+#   `the <discipline> of`  -- grammar, syntax, topology, calculus and arithmetic
+#     are dropped: the grammar of a language, the topology of a network and the
+#     calculus of variations are all literal. Anatomy, choreography and
+#     epistemology have no such reading in prose about software.
+#   `the failure mode here is`  -- anchored on `here`. Bare `the failure mode
+#     is a torn write` is genuine reliability prose; the tell is the rhetorical
+#     frame that announces one.
+#   `tail risk`  -- only `here` and `of being`. A trading desk's `tail risk` is
+#     a real measurement.
+#
+# `the operative word` arrives from the same tell as `doing the real work` --
+# both credit one word with carrying an argument -- so it lives here rather than
+# in a rule of its own.
+#
+# Plurals are written `s?` rather than spelled out (`concern|concerns`): Vale
+# wraps each token in \b...\b, so the singular is what the branch audit probes
+# and the plural rides along without costing a fixture line.
+extends: existence
+message: "Borrowed rigor ('%s'). Give the measurement, or say the plain thing."
+level: warning
+ignorecase: true
+tokens:
+  - 'doing\s+(?:the\s+real|the\s+actual|silent|structural|quiet)\s+work'
+  - 'the\s+operative\s+word'
+  - '(?:first|second|third)[-\s]order\s+(?:concerns?|questions?|problems?|risks?)'
+  - '(?:an\s+order\s+of\s+magnitude|exponentially)\s+(?:harder|easier|simpler|more\s+important)'
+  - 'the\s+delta\s+between'
+  - 'necessary\s*,?\s+but\s+not\s+sufficient'
+  - 'asymmetric\s+(?:bets?|upside)'
+  - 'the\s+asymmetry\s+here'
+  - 'compounding\s+(?:advantages?|edge|moat)'
+  - '(?:political|regulatory|conceptual)\s+surface\s+area'
+  - 'the\s+binding\s+constraint'
+  - 'forcing\s+functions?'
+  - 'strictly\s+(?:better|worse|dominates?)'
+  - 'tail\s+risk\s+(?:here|of\s+being)'
+  - 'the\s+(?:anatomy|choreography|epistemology)\s+of'
+  - 'the\s+failure\s+mode\s+here\s+is'

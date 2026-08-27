@@ -57,10 +57,13 @@ jobs:
                   # permission fault must not read as a missing section.
                   body=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" --jq '.body // ""') \
                       || { echo "could not read the pull request body (API or permission failure)"; exit 1; }
-                  printf '%s\n' "$body" \
-                      | awk '/^## Release Notes[[:space:]]*$/{in_section=1; next} /^## /{in_section=0} in_section && /^([-*+]|[0-9]+[.)]) /{found=1} END{exit !found}' \
-                      && echo "Release Notes section present." \
-                      || { echo "The pull request body needs a '## Release Notes' section with at least one entry ('- N/A' for non-user-facing work)."; exit 1; }
+                  if printf '%s\n' "$body" \
+                      | awk '/^## Release Notes[[:space:]]*$/{in_section=1; next} /^## /{in_section=0} in_section && /^([-*+]|[0-9]+[.)]) /{found=1} END{exit !found}'; then
+                      echo "Release Notes section present."
+                  else
+                      echo "The pull request body needs a '## Release Notes' section with at least one entry ('- N/A' for non-user-facing work)."
+                      exit 1
+                  fi
 
             # The distro package is too old for `gitleaks git`; install the
             # pinned upstream release and verify it against the release's
@@ -77,9 +80,51 @@ jobs:
                   tar -xzf "gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" gitleaks
                   sudo install gitleaks /usr/local/bin/gitleaks
 
+            # The declared-world gate row (DECK-0010): pinned single binaries,
+            # each verified against its release digest before install, plus
+            # the openspec CLI from npm. REQUIRE_GATES turns each guarded
+            # hook's skip-when-absent into a hard failure, so CI can never
+            # pass through tool absence.
+            - name: Install gate tools
+              run: |
+                  set -eu
+                  fetch() { # url sha256 binary
+                      # Downloads and extraction stay in a scratch directory,
+                      # so an archive can never write into the checkout.
+                      f="${1##*/}"
+                      scratch=$(mktemp -d)
+                      curl -fsSL -o "$scratch/$f" "$1"
+                      ( cd "$scratch" && echo "$2  $f" | sha256sum --check )
+                      case "$f" in
+                          *.tar.gz)
+                              tar -xzf "$scratch/$f" -C "$scratch"
+                              bin=$(find "$scratch" -maxdepth 3 -name "$3" -type f | head -1)
+                              ;;
+                          *) bin="$scratch/$f" ;;
+                      esac
+                      sudo install "$bin" "/usr/local/bin/$3"
+                      rm -rf "$scratch"
+                  }
+                  fetch https://github.com/rvben/rumdl/releases/download/v0.2.60/rumdl-v0.2.60-x86_64-unknown-linux-gnu.tar.gz 84fc96856d21203b6482b7284aff5b539b7329a5cc078d7a94c55ae40d88752f rumdl
+                  fetch https://github.com/crate-ci/typos/releases/download/v1.49.0/typos-v1.49.0-x86_64-unknown-linux-musl.tar.gz 48bd2d58e02ce713b8c0f1aa239e68ee4f7d8c551013135806e6aed3938d9e10 typos
+                  fetch https://github.com/errata-ai/vale/releases/download/v3.18.0/vale_3.18.0_Linux_64-bit.tar.gz a6f71a75a12fe689345b754f2412b90367fe33648abb7d200fa19eaadc2dbf6d vale
+                  fetch https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-gnu.tar.gz 1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a lychee
+                  fetch https://github.com/zizmorcore/zizmor/releases/download/v1.29.0/zizmor-x86_64-unknown-linux-gnu.tar.gz dd96df044a6e8538d5f423790f453bdd03d49e5b2bcc38214acc41a2f1297839 zizmor
+                  fetch https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8 actionlint
+                  fetch https://github.com/rudof-project/rudof/releases/download/0.3.12/rudof_0.3.12_x86_64_linux_gnu a9d6d8dc101b6896a43150d18e2b2c070f34ffbf747f376977e1eb6c892f9a92 rudof
+                  sudo npm install -g @fission-ai/openspec@1.10.0
+                  # The openspec CLI expects an openspec/ root. The shadow
+                  # symlink maps it to docs/ without a repository entry.
+                  ln -sfn "$GITHUB_WORKSPACE/docs" /tmp/openspec-root
+                  mkdir -p "$HOME/.openspec-ci" && ln -sfn "$GITHUB_WORKSPACE/docs" "$HOME/.openspec-ci/openspec"
+                  printf '#!/bin/sh\ncd "%s" && exec /usr/local/lib/node_modules/@fission-ai/openspec/bin/openspec.js "$@"\n' "$HOME/.openspec-ci" | sudo tee /usr/local/bin/openspec >/dev/null
+                  sudo chmod +x /usr/local/bin/openspec
+
             # The prek CLI is called directly: the wrapper action logs at
             # TRACE level and buries the failing hook's output.
             - name: Commit-stage checks
+              env:
+                  REQUIRE_GATES: "1"
               run: prek run --all-files
 
             # Scan exactly the commits this event introduces. Without a usable

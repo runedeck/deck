@@ -1,0 +1,27 @@
+# The reality adverb: `actually`, `basically`, `literally`, `in fact`. Each one
+# asserts that what follows is the real state of affairs, which is a claim the
+# sentence was already making. One is ordinary English. A pile of them is a
+# writer reaching for emphasis instead of evidence, which is why this is a
+# density rule and not a word list -- a single `actually` must never alert.
+#
+# `max: 1` is measured, not guessed. Vale's `occurrence` counts per BLOCK, not
+# per document, so document-level frequency badly overestimates what will fire:
+# across 388,561 corpus blocks, `max: 3` fired on 28 (0.007%) and `max: 2` fired
+# on 0 in a live run. Only `max: 1` -- two reality adverbs in one paragraph --
+# reaches the pile-up this is meant to catch. A sibling proposal that kept
+# `max: 3` was dropped for firing on nothing at all.
+#
+# The token is disjoint from HollowIntensifier.yml and ConjunctiveAdverbOpener.yml
+# by construction. Any word added here must be checked against both, or the same
+# text reports twice.
+#
+# Known gap: the `in\s+fact` branch cannot be pinned in expected-branches.tsv,
+# because check.py's `re.fullmatch(r"[\w\s'-]+", branch)` guard rejects a label
+# containing a backslash. It ships unprotected; delete it and nothing notices.
+extends: occurrence
+message: "Reality-adverb density. These assert the point instead of showing it; cut them."
+level: suggestion
+scope: text
+token: '\b(?:actually|essentially|effectively|fundamentally|basically|literally|functionally|in\s+fact)\b'
+max: 1
+ignorecase: true

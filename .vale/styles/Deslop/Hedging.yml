@@ -1,0 +1,17 @@
+extends: existence
+message: "Hedging. State the claim or cut it."
+level: warning
+ignorecase: true
+# `honestly` is deliberately absent: PerformedCandor.yml owns the whole candor
+# family, and a copy here would double-flag every hit.
+tokens:
+  - 'I\s+think'
+  - 'I\s+believe'
+  - 'I\s+would\s+argue'
+  - 'in\s+my\s+opinion'
+  - 'arguably'
+  - 'it\s+could\s+be\s+argued'
+  - 'it\s+seems\s+(?:that|like)'
+  - 'perhaps'
+  - 'somewhat'
+  - 'to\s+some\s+extent'

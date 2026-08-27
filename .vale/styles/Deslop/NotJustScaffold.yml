@@ -1,0 +1,18 @@
+# The X-not-Y contrast scaffold: a sentence that spends its first half on what
+# the thing is not. `not because X, but because Y` is the causal member of the
+# same family, so it lives here rather than in a rule of its own.
+#
+# The comma in the causal branch is load-bearing. Without it the pattern reaches
+# ordinary "not because" clauses ("it failed not because of the retry" ...);
+# with it, only the balanced rhetorical frame matches.
+#
+# One `raw` entry with top-level alternation, and the \b markers written by
+# hand. `raw` is not wrapped in \b, and multiple `raw` list items are
+# CONCATENATED into one impossible regex rather than alternated, so a second
+# list item would kill the rule silently.
+extends: existence
+message: "'not just/only X but Y' is a contrast scaffold. State what it is directly."
+level: warning
+ignorecase: true
+raw:
+  - '(?:not\s+(?:just|only|merely)\s+.{1,60}?\s+but\s+(?:also\s+)?|\bnot\s+because\s+.{1,60}?,\s+but\s+because\b)'

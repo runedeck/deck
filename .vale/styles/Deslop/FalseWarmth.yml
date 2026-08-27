@@ -1,0 +1,12 @@
+extends: existence
+message: "False warmth ('%s'). Drop the enthusiasm; report the fact."
+level: warning
+ignorecase: true
+tokens:
+  - 'fascinating\s+(?:space|area|field|topic|problem|challenge)'
+  - 'exciting\s+time\s+to\s+be'
+  - 'poised\s+(?:to|for)'
+  - 'groundbreaking'
+  - 'rapidly[-\s]evolv\w*'
+  - 'bright\s+future'
+  - 'bod(?:e|es|ed|ing)\s+well'

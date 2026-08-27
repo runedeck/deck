@@ -1,0 +1,49 @@
+# Calibration as decoration. The writer attaches a confidence band, a percentage,
+# or an announced concession to a claim and then never conditions anything on it:
+# the next sentence proceeds at full volume. Distinct from Hedging.yml, which
+# catches the old unquantified form (`I think`, `perhaps`) and weakens the claim
+# itself; this leaves the claim intact and parks a disclaimer beside it.
+#
+# Every token is collocation-narrowed, because each family has a real sense that
+# uses the same words and must not fire:
+#
+#   * Intelligence tradecraft. `assesses with moderate confidence` is a defined
+#     ICD-203 term. That is why there is no `(?:with|at)\s+(?:high|moderate|low)
+#     \s+confidence` token; the confidence token requires the first-person
+#     `my/the confidence here|in this|in that is <band>` frame instead. The same
+#     frame keeps structured frontmatter (`confidence: high`) out.
+#   * The frequentist gloss on a confidence interval ("we can be 95% confident
+#     the mean lies in that range") and ML calibration prose ("the model is 80%
+#     confident"). Both are third-person, so the percent token is first-person
+#     singular only.
+#   * "The estimate could be wrong" is a claim about the estimate, not an authorial
+#     concession, so `be wrong` requires a following `here|about|on`.
+#   * Style guides and methodology sections name overclaiming as a defect ("the
+#     section must avoid overclaiming"). Referential use like that has no
+#     first-person volitional frame, which is what the last three tokens require.
+#
+# `highly` is deliberately absent from the adverb group. HollowIntensifier.yml
+# owns that word, and a copy here would double-flag every hit.
+#
+# Apostrophes are spelled as classes because Vale does not normalise them and
+# editors rewrite quotes routinely; the class contains a single quote, which is
+# doubled below because these are single-quoted YAML scalars.
+#
+# One tell that cannot be reached: `call it 90%`. A `tokens` entry ending in `%`
+# never matches, because the trailing \b Vale adds cannot be satisfied after it.
+extends: existence
+message: "Calibration theatre ('%s'). Let the uncertainty change the claim, or cut the disclaimer."
+level: warning
+ignorecase: true
+tokens:
+  - 'epistemic\s+status'
+  - '(?:my|the)\s+confidence\s+(?:here|in\s+this|in\s+that)\s+is\s+(?:low|medium|moderate|high)'
+  - 'I\s*[''’]?m\s+(?:fairly|reasonably|moderately)\s+(?:confident|uncertain)'
+  - 'I\s+am\s+(?:fairly|reasonably|moderately)\s+(?:confident|uncertain)'
+  - 'I\s*[''’]?m\s+(?:about\s+|roughly\s+|around\s+)?\d{1,3}\s*%\s+(?:confident|sure)'
+  - 'I\s+(?:could|might|may)\s+(?:well\s+)?be\s+wrong\s+(?:here|about|on)'
+  - 'I\s+(?:hold|am\s+holding)\s+(?:this|that)\s+loosely'
+  - 'I\s+(?:don\s*[''’]?t|do\s+not)\s+have\s+(?:a\s+)?strong\s+(?:view|opinion|prior)'
+  - '(?:don\s*[''’]?t|do\s+not|not)\s+want(?:ing)?\s+to\s+(?:overstate|overclaim|oversell)'
+  - 'without\s+(?:overstating|overclaiming|overselling)'
+  - 'I\s+(?:won\s*[''’]?t|will\s+not)\s+(?:overstate|overclaim|oversell)'

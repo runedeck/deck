@@ -1,0 +1,14 @@
+# The sign-off a chatbot appends after the answer is already finished. Distinct
+# from HollowCloser.yml, which catches essay-style summary closers ("in
+# conclusion"); these are service-desk pleasantries.
+extends: existence
+message: "Assistant sign-off ('%s'). The answer already ended; cut this."
+level: warning
+ignorecase: true
+tokens:
+  - 'hope\s+(?:this|that)\s+(?:helps|clarifies)'
+  - 'let\s+me\s+know\s+if\s+you\s+(?:have|need|would|want)'
+  - 'feel\s+free\s+to\s+(?:reach\s+out|ask|let\s+me\s+know)'
+  - "don\\s*['\u2019]?t\\s+hesitate\\s+to\\s+(?:ask|reach\\s+out)"
+  - 'if\s+you\s+have\s+any\s+(?:other\s+|further\s+|more\s+)?questions'
+  - 'is\s+there\s+anything\s+else\s+(?:I|we)\s+(?:can|could)\s+(?:help|do|assist|clarify)'
