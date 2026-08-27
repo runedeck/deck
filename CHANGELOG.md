@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- BenchArtifact ships bench.py again: one config-driven driver for the quick, snapshot, plan, run, grade, judge, and report steps.
 - The AnchorWorkingDirectory rule in core: each shell command chain starts from an absolute path.
 - Benchmark tables carry an output-token column: corpus mean per arm and the delta, so efficiency artifacts can show their token effect.
 - Initial scaffold.
