@@ -2,6 +2,7 @@
 adr: "docs/decisions/DECK-0005 Artifact Lifecycle and Evidence Tokens.md"
 status: proposed
 ---
+
 # Release Note Publishing
 
 ## Why
