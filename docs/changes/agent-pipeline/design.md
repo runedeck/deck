@@ -32,7 +32,7 @@ Each stage names its contract and its instance today. The stack architecture cha
 | CI + review lanes | ceremony checks plus bot lanes in turns | seer lanes, attestations, quality | exists |
 | Babysit | automated round recovery, label toggles, fault triage until merge-ready | babysitting routines, PR #44 | exists |
 | Approve | the owner merges, and nothing merges itself | branch rulesets | exists |
-| Extract | after merge, the pass is mined: repeated corrections become rules, repeated procedures become skills, repeated roles become agents. The leverage ladder picks the form | LearnFrom, CaptureOnTouch | partial: habit, not gate |
+| Extract | after merge, the pass is mined: repeated corrections become rules, repeated procedures become skills, repeated roles become agents. The priority ladder picks the form | LearnFrom, CaptureOnTouch | partial: habit, not gate |
 | Recycle | extracted artifacts ship through the lifecycle and appear in the context of the next prompt | rune install | exists once extraction happens |
 
 ## Placement decisions

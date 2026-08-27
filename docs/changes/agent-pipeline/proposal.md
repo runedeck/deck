@@ -2,6 +2,7 @@
 adr: "docs/decisions/DECK-0008 Idea-to-Merge Flywheel.md"
 status: proposed
 ---
+
 # Agent Pipeline
 
 ## Why

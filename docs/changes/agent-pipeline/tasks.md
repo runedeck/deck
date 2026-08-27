@@ -9,11 +9,11 @@
 
 - [ ] 2.1 Give Pushback a bench: run BenchArtifact on IntakeIdea against a no-skill baseline
 - [ ] 2.2 Add the extraction question to the pull request template or a closing check
-- [ ] 2.3 Trial anomalyco/rift as the isolation instance for one swarm pass; keep jj workspaces as the default
+- [ ] 2.3 Trial anomalyco/rift as the isolation instance for one swarm pass. Keep jj workspaces as the default
 - [ ] 2.4 Define the pi provider edge: provider configuration plus a thin extension wrapping the rune binary
-- [ ] 2.5 Wire advisory memory into Pushback: the existing local memory stack first; evaluate cognee only against a named replacement target
+- [ ] 2.5 Wire advisory memory into Pushback: the existing local memory stack first. Evaluate cognee only against a named replacement target
 - [ ] 2.6 Build the voice and sketch capture surface that lands transcripts into intake
-- [ ] 2.7 Declare the artifact graph and its first three axioms; build one deterministic checker per axiom
+- [ ] 2.7 Declare the artifact graph and its first three axioms. Build one deterministic checker per axiom
 - [ ] 2.8 Map deck metadata fields to public vocabulary terms before minting new ones
 - [ ] 2.9 Extract the ceremony-fit items into babysitter rules through the flywheel itself
 

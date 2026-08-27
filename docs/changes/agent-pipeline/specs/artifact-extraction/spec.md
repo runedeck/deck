@@ -7,7 +7,7 @@ A pipeline pass MUST answer "what did this pass teach" before it closes. The ans
 #### Scenario: A pass surfaces a repeated correction
 
 - **WHEN** the same correction appears twice in one pass
-- **THEN** the pass extracts it through the leverage ladder: architecture change, then lint, then rule or skill, then review guidance
+- **THEN** the pass extracts it through the priority ladder: architecture change, then lint, then rule or skill, then review guidance
 
 #### Scenario: A pass teaches nothing
 

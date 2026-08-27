@@ -17,7 +17,7 @@ Take the raw idea exactly as given: a voice transcript, a sketch description, or
     - **Duplicate**: an existing capability already requires this. Point at it. Stop.
     - **Extension**: an active change already covers this ground. Propose merging the intent into it. Stop.
     - **Survivor**: the idea stands. State the sharpened intent in one sentence and continue.
-4. Disagree openly. A weak idea rejected at intake costs one message; the same idea rejected in review costs rounds.
+4. Disagree openly. A weak idea rejected at intake costs one message. The same idea rejected in review costs rounds.
 
 ### Step 2: Size the blast radius
 
