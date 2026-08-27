@@ -23,10 +23,10 @@
 
 [logging]
 # Write logs to .specstory/debug/debug.log (default: false)
-# log = true # equivalent to --log        
+# log = true # equivalent to --log
 
 # Debug-level output, requires console or log (default: false)
-# debug = true # equivalent to --debug 
+# debug = true # equivalent to --debug
 
 # Custom output directory for debug data.
 # Default: ./.specstory/debug (relative to the project directory)
