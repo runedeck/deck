@@ -1,0 +1,7 @@
+2026-07-19 Review and adopt forge-core rules/InstallInstructions.md into runes/core/rules/ +adoption
+2026-08-27 Extend the N4M3Z dcg fork with path-rule packs so file-tool policy works in claude, opencode, pi, and codex +guardrails
+2026-08-27 Teach the dcg fork jj-aware repo_root resolution, because jj workspaces carry .jj and no .git, so repo-local packs vanish in their subdirectories +guardrails
+2026-08-27 Document jj absorb in the VersionControl skill on its next adoption refresh, because it routes working-copy edits into the commits that touched those lines +adoption
+2026-08-27 Make hooks first-class rune artifacts: a rune:Hook kind with per-provider assembly, so rune install renders dcg and lint hook wiring for claude, codex, opencode, and pi +guardrails
+2026-08-27 Check taplo in a real terminal (taplo check ~/.config/dcg/config.toml): it panics in the sandbox on every file, so decide taplo or a replacement before wiring the TOML prek hook +gates
+

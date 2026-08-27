@@ -10,6 +10,12 @@ If `.jj/` exists at the repo root, do NOT use git worktrees. `git worktree add` 
 [ -d "$(git rev-parse --show-toplevel)/.jj" ] && echo "jj colocated: use jj workspaces"
 ```
 
+## Primary checkout
+
+Keep the primary checkout on the default branch. Create a worktree for each work branch. Do not create a worktree for the default branch. Do not leave the primary checkout on a work branch after the work merges. Tools that read merged state then read the primary checkout.
+
+In a jj colocated repository, the same rule applies to the default workspace. Use jj workspaces for work branches. Push through the repository jj push alias.
+
 ## Directory selection
 
 1. Use an existing `.worktrees/` or `worktrees/` directory at the repo root. Prefer `.worktrees/` when both exist. Use a documented repository helper when it exists.
@@ -41,7 +47,37 @@ git worktree remove <path>
 git worktree list    # verify nothing lingers
 ```
 
+A merge session ends clean. Check these end conditions:
+
+```sh
+git worktree list                                      # only live work remains
+git branch --format='%(refname:short)'                 # inspect each non-default branch
+branch_sha=$(git rev-parse --verify refs/heads/<branch>)
+merged=$(gh pr list --head <branch> --state merged --limit 100 --json headRefOid --jq "any(.[]; .headRefOid == \"$branch_sha\")")
+[ "$merged" = true ]                                  # the merged PR matches this head
+```
+
+Repeat this check for each non-default local branch. Remove a branch only when the matching pull request is merged.
+
+If the work was abandoned, get explicit user approval before you remove the branch.
+
+Do not infer the merge state from Git commit ancestry. A squash merge creates a new commit and can hide a merged branch from ancestry checks.
+
+Create at most one staging worktree for each pull request. Remove it in the session that merges the pull request.
+
 Never delete a worktree directory manually. `git worktree remove` keeps the repository worktree list consistent. Remove only the worktree that you created for the current task.
+
+## Supersession check
+
+Check a dirty worktree before you delete it. Compare each touched file with the merged default branch:
+
+```sh
+git -C <worktree> diff origin/main --quiet || echo "differs: tracked files"
+untracked=$(git -C <worktree> ls-files --others)
+[ -z "$untracked" ] || echo "differs: untracked files"
+```
+
+The tracked-file check supports all path names and status types. Review every untracked file, including ignored files. Delete the worktree only when the tracked check is quiet. Preserve each untracked file or approve its deletion.
 
 ## Red flags
 
@@ -49,6 +85,8 @@ Never delete a worktree directory manually. `git worktree remove` keeps the repo
 - A skipped baseline test run. You cannot separate new bugs from pre-existing breakage.
 - `rm -rf` on a worktree directory. It leaves dangling references in `.git/worktrees/`.
 - A merged worktree that outlives its merge.
+- A primary checkout that stays on a merged work branch.
+- A separate worktree for the default branch.
 
 ---
 

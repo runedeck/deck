@@ -1,0 +1,5 @@
+name: scanners
+description: Build and configure prompt-only public exposure scanners.
+runes:
+    - development/skills/BuildTask
+    - security/skills/ConfigureScanners

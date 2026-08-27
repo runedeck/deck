@@ -1,0 +1,43 @@
+# The false-depth reframe: "The real problem is X", "the question isn't whether
+# Y". The writer announces that the obvious reading is superficial and then
+# supplies a substitute of equal thinness. It reads as analysis while doing
+# nothing but relocating the topic one level up.
+#
+# AntitheticalPair.yml cannot reach these. Its raw pattern requires the sentence
+# to open on It/This/That/We/They, and every instance here opens on `The`.
+#
+# Four tokens, split so that no one phrase matches two of them:
+#   1. `the <adj> question is` — the affirmative reframe. The adjective is what
+#      earns the flag; bare `the question is` is ordinary English.
+#   2. `the (real) question isn't <wh->` — the negated reframe. The trailing
+#      enumeration is load-bearing: without it, `the question is not` also
+#      swallows plain negated predication ("the question is not on the exam").
+#   3. `the (real) question isn't just|only` — the CONTRACTED form only.
+#      `the question is not just X but Y` belongs to NotJustScaffold.yml, and
+#      the spaced form here would double-flag it. `isn't just` contains no
+#      literal `not`, so the two rules stay disjoint.
+#   4. `the real|actual <head noun> is` — the same move on a fixed noun list.
+#      `question` is deliberately absent from that list: tokens 1-3 own it, and
+#      a copy here would report twice on one phrase.
+#
+# `cost` was dropped from token 4's noun list. `the real cost is` is a term of
+# art in economics (real vs nominal), so "The real cost is $4.1M after inflation
+# adjustment" is a genuine contrast rather than a reframe.
+#
+# The copula has to sit next to the head noun. That adjacency is what keeps the
+# pattern on the reframe and off ordinary prose such as "the real reason the
+# build fails is a stale lockfile".
+#
+# `[''’]` is a two-member character class, not a typo: Vale does not normalise
+# typographic apostrophes, and the quote is doubled because this is a
+# single-quoted YAML scalar. Written with a plain `'`, the pattern would stop
+# matching the moment prose went through an editor that rewrites quotes.
+extends: existence
+message: "False-depth reframe ('%s'). Make the claim instead of relocating the question."
+level: warning
+ignorecase: true
+tokens:
+  - 'the\s+(?:real|actual|harder|deeper|better|bigger|more\s+interesting|more\s+important)\s+question\s+(?:here\s+)?is'
+  - 'the\s+(?:real\s+)?question\s+is(?:\s*n[''’]?t|\s+not)\s+(?:whether|really|so\s+much|how|what|which|why|if)'
+  - 'the\s+(?:real\s+)?question\s+is\s*n[''’]?t\s+(?:just|only)'
+  - 'the\s+(?:real|actual)\s+(?:problem|issue|story|answer|risk|bottleneck|constraint|reason|point|failure|driver|culprit)\s+(?:is|is\s*n[''’]?t|was|was\s*n[''’]?t)'
