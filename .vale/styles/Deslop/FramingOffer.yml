@@ -1,0 +1,24 @@
+# The framing offer: a frame handed to the reader in place of an argument. "The
+# right way to think about this is X" declares an interpretation correct instead
+# of showing it, and "think of it as Y" swaps an analogy in for the claim. The
+# reader cannot dispute a frame that was never defended.
+#
+# Narrowed on purpose. `way to think about` is only the tell when the object is
+# the discourse itself (`this|it|that`) or the frame is announced as the correct
+# one (`the right|best|better|wrong|only way to think about`). "A way to think
+# about backpressure" names a topic and is doing real work, so it stays clean.
+# `think of it as` is held to the same deictic objects: "think of the Realms as
+# chapters" introduces an analogy the writer then uses, which is pedagogy.
+#
+# `to make this concrete` is the same move one register down -- announcing the
+# example instead of giving it. It lives here, not with the `worth being
+# precise` family, because what is promised is a frame rather than a caveat.
+extends: existence
+message: "Framing offer ('%s'). Give the argument, not the frame."
+level: warning
+ignorecase: true
+tokens:
+  - '(?:one|another)\s+way\s+to\s+think\s+about\s+(?:this|it|that)'
+  - 'the\s+(?:right|best|better|wrong|only)\s+way\s+to\s+think\s+about'
+  - 'think\s+of\s+(?:it|this|that)\s+as'
+  - 'to\s+make\s+(?:this|that|it)\s+concrete'

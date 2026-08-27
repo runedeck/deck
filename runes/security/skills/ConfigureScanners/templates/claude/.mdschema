@@ -1,0 +1,29 @@
+heading_rules:
+    no_skip_levels: true
+    unique_per_level: true
+    max_depth: 2
+
+structure:
+    - heading:
+          pattern: "^# .+ Scanner$"
+          regex: true
+      count:
+          max: 1
+      children:
+          - heading: "## Authority"
+
+          - heading: "## Safety controls"
+
+          - heading: "## Initial checks"
+
+          - heading: "## Coverage"
+
+          - heading: "## Findings"
+
+          - heading: "## Evidence"
+
+          - heading: "## Status"
+
+          - heading: "## Final checks"
+
+          - heading: "## Notification"

@@ -1,0 +1,30 @@
+# The locative closer: pointing at where a thing lives instead of saying what it
+# is. "That rest period is where the real work happens." The sentence is
+# claim-shaped with the claim removed -- it transplants unchanged into an essay
+# on any subject, which is exactly why it reads as filler.
+#
+# The head noun is enumerated as an abstraction (work, magic, value, argument,
+# story ...) rather than left open, because the literal locative is everywhere in
+# engineering prose and means something genuinely different: "the handler lives
+# in src/lib/auth.ts", "that is where the tokens live", "this is where the config
+# lives". None of those match.
+#
+# The copula is deliberately absent from the first token's verb list. Two reasons,
+# and either alone would be enough:
+#   * `where the value is` and `where the action is` are ordinary technical prose
+#     the moment a verb follows -- "where the value is stored", "where the action
+#     is dispatched". `happens|lives|begins|starts` cannot be continued that way.
+#   * `where the real story is` and `where the real risk is` are also matched by
+#     FalseDepthReframe.yml, which owns `the real <noun> is`. Two rules flagging
+#     the same span is a suite failure; dropping the copula here keeps both head
+#     nouns without the collision.
+# The vetted candidate also listed `live` alongside `lives`. Every head noun here
+# is singular, so that branch could only ever be exercised by an ungrammatical
+# fixture line ("where the work live"), and it is dropped.
+extends: existence
+message: "Locative closer ('%s'). Say what the thing does, not where it lives."
+level: warning
+ignorecase: true
+tokens:
+  - 'where\s+the\s+(?:real\s+)?(?:work|magic|value|money|argument|story|comedy|joke|difficulty|action|risk)\s+(?:happens|happened|lives|begins|starts)'
+  - 'where\s+the\s+(?:hard|interesting|real|tricky)\s+part\s+(?:is|lives|happens|begins)'

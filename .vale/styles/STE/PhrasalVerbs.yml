@@ -1,0 +1,12 @@
+extends: substitution
+message: "Do not use the phrasal verb '%s'. Use '%s'."
+level: warning
+ignorecase: true
+swap:
+  spin up: start
+  reach out: contact
+  wire up: connect
+  bake in: include
+  figure out: determine
+  carry out: do
+  end up: become

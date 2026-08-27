@@ -1,0 +1,71 @@
+@prefix rune:    <https://runedeck.dev/ns#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+# The permitted world (DECK-0010). SHACL validates under the closed-world
+# assumption, so a shape violation is a deterministic failure. This is
+# the gate. The ontology in rune.ttl only describes.
+#
+# The instance graph comes from the extractor, which mints one IRI per
+# record identifier under https://runedeck.dev/id/. Two files that claim
+# one identifier therefore merge into one node, and the duplicate shows
+# up as a cardinality violation on that node.
+
+# Axiom record-id-unique: one identifier names one record.
+rune:DecisionRecordShape a sh:NodeShape ;
+    sh:targetClass rune:DecisionRecord ;
+    sh:property [
+        sh:path dcterms:identifier ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:pattern "^(DECK|RUNE)-[0-9]{4}$" ;
+        sh:message "A decision record carries exactly one DECK-NNNN or RUNE-NNNN identifier." ;
+    ] ;
+    sh:property [
+        sh:path dcterms:title ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        # Two files with one identifier merge into one node with two
+        # titles, so this constraint detects the duplicate.
+        # Severity is Warning until the coordinated history rewrite
+        # removes the DECK-0002 duplicate. Then it becomes Violation.
+        sh:severity sh:Warning ;
+        sh:message "Two records share one identifier." ;
+    ] ;
+    sh:property [
+        sh:path rune:sourcePath ;
+        sh:maxCount 1 ;
+        # Identical duplicate files produce identical triples that RDF
+        # deduplicates, so the title constraint alone cannot fire. The
+        # per-file sourcePath makes every duplicate structurally
+        # visible. Warning until the history rewrite, like the title.
+        sh:severity sh:Warning ;
+        sh:message "Two source files claim one record identifier." ;
+    ] ;
+    # Axiom references-resolve: every related entry names a record that
+    # exists in the extracted graph with the declared type.
+    # Severity is Warning per the ratchet, because existing records may
+    # carry unresolved entries when the extractor first runs. The flip
+    # to Violation is a recorded follow-up after the corpus conforms.
+    sh:property [
+        sh:path dcterms:relation ;
+        sh:class rune:DecisionRecord ;
+        sh:severity sh:Warning ;
+        sh:message "A related entry names a decision record that does not exist." ;
+    ] .
+
+# Axiom rule-carries-verdict: a rule links to bench evidence, because a
+# rule costs context on every turn (DECK-0001, DECK-0003).
+# Severity is Warning while existing rules gain verdicts. The flip to
+# Violation is a one-line change recorded in tasks.md.
+rune:RuleShape a sh:NodeShape ;
+    sh:targetClass rune:Rule ;
+    sh:property [
+        sh:path rune:verdict ;
+        sh:minCount 1 ;
+        sh:class rune:Verdict ;
+        sh:severity sh:Warning ;
+        sh:message "A rule carries no bench verdict pointer. Run BenchArtifact and record the verdict." ;
+    ] .

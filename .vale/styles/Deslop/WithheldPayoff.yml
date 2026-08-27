@@ -1,0 +1,44 @@
+# Suspense scaffolding: the sentence spends itself promising that the next
+# sentence is the good part. Four shapes of the same move — announcing a reveal
+# (`where it gets interesting`), claiming suppressed knowledge (`nobody talks
+# about`), borrowing the gaffe idiom (`the quiet part`), and pre-grading a claim
+# as costly to say (`the uncomfortable truth`). In every attested hit the payoff
+# that follows is a plain fact that would have carried itself.
+#
+# Boundary with AssistantOpener.yml: that rule owns the `here's the
+# thing|catch|tension|trade-off` family — the noun-headed reveal. This rule owns
+# the clause-headed one and deliberately starts matching at `where`, so
+# "Here's where it gets interesting" produces exactly one alert, from here. The
+# two never share a span; adding `here[’]?s\s+where` to either file would create
+# the overlap the suite fails on.
+#
+# Narrowing, and the false positives it buys:
+#   * `where <it|this|that|things> get(s) <adj>`, not bare `where it gets`: the
+#     closed subject list keeps out the literal locative ("where the trail gets
+#     steep"), which needs a physical subject. The residual literal use --
+#     "below 100 um pitch is where it gets complicated", naming a real
+#     threshold -- is rare next to the transition use and is accepted.
+#   * `nobody`/`no one` is paired with a closed verb list rather than left
+#     bare, so ordinary negation ("nobody reviewed it") stays silent.
+#   * `the <adj> <noun>` enumerates both halves. `awkward` is in the adjective
+#     list only because the head-noun list is closed: should-pass.md's "nested
+#     lists being the awkward one" survives because `one` is not a head noun.
+#   * `honest` is deliberately absent from the adjective list.
+#     PerformedCandor.yml owns `the honest (answer|truth) is`, and a copy here
+#     would double-flag every hit.
+#   * `the quiet part` is one token, not two. `say the quiet part` and
+#     `the quiet part out loud` would both match the same span and trip the
+#     suite's ambiguous-fixture check.
+#
+# Vale wraps each token in \b...\b, so the paradigms are spelled out flat:
+# `gets|get` rather than `get(?:s)?`, and `is talking about` written out rather
+# than folded into the `talks about` branch.
+extends: existence
+message: "Withheld payoff ('%s'). Cut the promise and state the point."
+level: warning
+ignorecase: true
+tokens:
+  - 'where\s+(?:it|this|that|things)\s+(?:gets|get)\s+(?:interesting|weird|tricky|spicy|complicated|messy|ugly|uncomfortable|hairy|strange|fun)'
+  - '(?:nobody|no\s+one)\s+(?:talks\s+about|is\s+talking\s+about|tells\s+you|mentions|will\s+say|wants\s+to\s+admit|wants\s+to\s+hear|wants\s+to\s+say)'
+  - 'the\s+quiet\s+part'
+  - 'the\s+(?:uncomfortable|inconvenient|unglamorous|unsexy|boring|unpopular|awkward|underappreciated)\s+(?:truth|answer|part|reality|fact|version)'

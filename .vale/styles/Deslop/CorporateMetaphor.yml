@@ -1,0 +1,19 @@
+# Verb-headed idioms must spell out their inflections. Vale wraps each token in
+# \b...\b, so `move the goalposts` does not match "moved the goalposts" and the
+# rule looks alive while missing the most common form of the phrase.
+extends: existence
+message: "Corporate metaphor. Say the literal thing."
+level: warning
+ignorecase: true
+tokens:
+  - 'north\s+star'
+  - 'boil(?:s|ed|ing)?\s+the\s+ocean'
+  - 'low[-\s]hanging\s+fruit'
+  - 'circl(?:e|es|ed|ing)\s+back'
+  - 'touch(?:es|ed|ing)?\s+base'
+  - 'double[-\s]click(?:s|ing|ed)?\s+(?:on|into)'
+  - 'mov(?:e|es|ed|ing)\s+the\s+goalposts'
+  - 'r(?:un|uns|an|unning)\s+(?:it|this)\s+up\s+the\s+flagpole'
+  - 't(?:ake|akes|ook|aken|aking)\s+(?:it|this)\s+offline'
+  - 'peel(?:s|ed|ing)?\s+(?:back\s+)?the\s+onion'
+  - '(?:drink(?:s|ing)?|drank|drunk)\s+from\s+the\s+fire\s?hose'
