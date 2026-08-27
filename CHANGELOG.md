@@ -4,15 +4,9 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ## [Unreleased]
 
-### Changed
-
-- The VersionControl skill: the primary checkout stays on the default branch, and each work branch gets a worktree.
-- The VersionControl skill: a landing checklist and a supersession check for dirty worktrees.
-- The VersionControl skill: a jj colocated repository uses jj workspaces and the repository jj push alias.
-- The VersionControl skill: no generation footer, tool badge, or session link in commit messages and pull request bodies.
-
 ### Added
 
+- The check-provenance hook: a rune or sidecar edit fails when its provenance subject digest is stale, and `--fix` repairs it.
 - BenchArtifact ships bench.py again: one config-driven driver for the quick, snapshot, plan, run, grade, judge, and report steps.
 - The AnchorWorkingDirectory rule in core: each shell command chain starts from an absolute path.
 - The declared world: `ontology/rune.ttl` names the deck's kinds with established vocabularies, and `ontology/shapes.ttl` states the first three axioms as SHACL shapes (DECK-0010).
@@ -32,6 +26,10 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- The VersionControl skill: the primary checkout stays on the default branch, and each work branch gets a worktree.
+- The VersionControl skill: a landing checklist and a supersession check for dirty worktrees.
+- The VersionControl skill: a jj colocated repository uses jj workspaces and the repository jj push alias.
+- The VersionControl skill: no generation footer, tool badge, or session link in commit messages and pull request bodies.
 - The spec waiver label is `ignore:spec`, matching the `ignore:` family every runedeck repository uses. `spec:none` retires.
 - AdoptArtifact keeps block verdicts in temporary CLI sessions and commits only source-level provenance sidecars (DECK-0002).
 - The authorship check reads separate author and trailer lists from `authors.yaml`. A trailer attribution can no longer validate an author field.
