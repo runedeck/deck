@@ -4,9 +4,17 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ## [Unreleased]
 
+### Changed
+
+- The VersionControl skill: the primary checkout stays on the default branch, and each work branch gets a worktree.
+- The VersionControl skill: a landing checklist and a supersession check for dirty worktrees.
+- The VersionControl skill: a jj colocated repository uses jj workspaces and the repository jj push alias.
+- The VersionControl skill: no generation footer, tool badge, or session link in commit messages and pull request bodies.
+
 ### Added
 
 - The check-provenance hook: a rune or sidecar edit fails when its provenance subject digest is stale, and `--fix` repairs it.
+- BenchArtifact ships bench.py again: one config-driven driver for the quick, snapshot, plan, run, grade, judge, and report steps.
 - The AnchorWorkingDirectory rule in core: each shell command chain starts from an absolute path.
 - Benchmark tables carry an output-token column: corpus mean per arm and the delta, so efficiency artifacts can show their token effect.
 - Initial scaffold.
