@@ -2,6 +2,8 @@
 
 ### Requirement: Release Interval
 
+The compiler MUST read the post-merge `merge_commit_sha` from the [GitHub pull request API](https://docs.github.com/en/rest/pulls/pulls#get-a-pull-request). This SHA is the target-branch incorporation commit.
+
 The compiler MUST select each merged pull request by its target-branch incorporation commit. The previous release commit MUST be the exclusive interval boundary.
 
 The target commit MUST be the inclusive interval boundary. Each selected incorporation commit MUST be reachable from the target commit.

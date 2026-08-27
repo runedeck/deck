@@ -11,7 +11,9 @@ A core rule MUST state one imperative instruction within 50 words. A rule MAY ca
 
 ### Requirement: One Home Per Fact
 
-An instruction in the canonical Rune tree MUST live in exactly one rune. The duplication sweep MUST inspect Markdown files under `runes/`.
+The [Rune umbrella](../../../../../ontology/rune.ttl) defines the artifact set. An instruction under `runes/` MUST live in exactly one rune.
+
+The duplication sweep MUST inspect every Markdown file under `runes/`.
 
 A duplicated sentence outside the declared baseline is a violation.
 

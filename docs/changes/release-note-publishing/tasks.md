@@ -28,6 +28,6 @@
 
 - [ ] 4.1 `rune spec validate release-note-publishing` passes
 - [ ] 4.2 `rune validate` reports no new errors
-- [ ] 4.3 Compiler tests cover squash selection, invalid notes, migration order, extraction, and repeat runs
+- [ ] 4.3 Compiler fixtures test squash selection, incomplete pagination, invalid notes, first-release import and cutover, extraction, and repeat runs
 - [ ] 4.4 A fixture release creates one complete draft and publishes nothing
 - [ ] 4.5 The changelog ownership gate fires on a seeded feature change

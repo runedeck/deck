@@ -4,7 +4,11 @@
 
 A drafted change MUST use Simplified Technical English and the repository's markdown schemas. The draft MUST define each term of art on first use or link the definition.
 
-The [IntakeIdea skill](../../../../../runes/core/skills/IntakeIdea/SKILL.md#step-2-size-the-blast-radius) defines the blast-radius classes. A decision-bearing change uses its Decision class. The [PR lint workflow](../../../../../.github/workflows/pr-lint.yaml) assigns the `size:xlarge` label at 1,000 changed lines.
+The [IntakeIdea skill](../../../../../runes/core/skills/IntakeIdea/SKILL.md#step-2-size-the-blast-radius) defines the blast-radius classes. A decision-bearing draft uses its Decision class.
+
+The xlarge threshold is 1,000 added and deleted lines. Before push, the agent MUST calculate that total from the working-copy diff.
+
+After pull request creation, the [PR lint workflow](../../../../../.github/workflows/pr-lint.yaml) assigns `size:xlarge` at the same threshold.
 
 #### Scenario: A draft leaves the register
 
@@ -12,6 +16,8 @@ The [IntakeIdea skill](../../../../../runes/core/skills/IntakeIdea/SKILL.md#step
 - **THEN** the earliest available local lint reports the violation before owner review
 
 #### Scenario: A harness has no post-edit hook
+
+The [Deck provider list](../../../../../deck.yaml) defines the supported harness set. Codex has no post-edit hook and MUST use this fallback.
 
 - **WHEN** a supported harness has no post-edit hook
 - **THEN** the agent runs the Markdown and schema checks from the [Declared World gate ladder](../../../declared-world/design.md#the-gate-ladder) before owner review
@@ -35,7 +41,7 @@ The pull request MUST carry the verdict only when its planning artifacts match t
 
 #### Scenario: A decision-bearing change is drafted
 
-- **WHEN** a change carries a decision record or an xlarge label
+- **WHEN** IntakeIdea classifies a change as Decision or the working-copy diff reaches the xlarge threshold
 - **THEN** the owner reviews the draft before any push, and the pull request carries the verdict for the same digest
 
 #### Scenario: A reviewed draft changes before push
