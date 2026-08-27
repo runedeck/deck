@@ -8,6 +8,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 - The routine-operations specification and DECK-0004: the scanner register, the loud canary, the environment matrix by data sensitivity, and the manual provider setup.
 - Three routine prompts under docs/routines: the nightly PR babysitter, the deck merge follow-up, and the weekly ceremony audit. Provider setup stays manual.
+- The agent-pipeline change: the idea-to-merge flywheel design, DECK-0008 and DECK-0009, the idea-intake, artifact-extraction, and declared-constraints capabilities, and the IntakeIdea skill.
 - The VersionControl BabysitPR companion runs review pipelines, repairs bot findings, and repeats until the current head is merge-ready.
 - The check-provenance hook: a rune or sidecar edit fails when its provenance subject digest is stale, and `--fix` repairs it.
 - BenchArtifact ships bench.py again: one config-driven driver for the quick, snapshot, plan, run, grade, judge, and report steps.
