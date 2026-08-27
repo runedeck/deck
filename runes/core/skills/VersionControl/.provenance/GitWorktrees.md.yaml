@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/VersionControl/GitWorktrees.md
     digest:
-      sha256: bc49eb52db976bc3671d3864e0a4af48eb57e8f4976d42eced9e6f2d0bc51146
+      sha256: 6a8ab30e7fe4ee0f2c611f77f011d6bf57d473db42f464091ed097592561f0a7
   predicate:
     buildDefinition:
       buildType: adopt/v1
