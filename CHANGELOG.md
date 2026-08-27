@@ -6,6 +6,8 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- The routine-operations specification and DECK-0004: the scanner register, the loud canary, the environment matrix by data sensitivity, and the manual provider setup.
+- Three routine prompts under docs/routines: the nightly PR babysitter, the deck merge follow-up, and the weekly ceremony audit. Provider setup stays manual.
 - Five micro-rules in core, extracted from the tuicr workshop brief: CaptureOnTouch, FixAtTheHighestLeverage, ReportFailures, FlagRuleConflicts, and OwnersVoice.
 - The VerifyClaims and Deslop rules in core: evidence before assertion, and slop stripped at write time.
 - The agent-pipeline change: the idea-to-merge flywheel design, DECK-0008 and DECK-0009, the idea-intake, artifact-extraction, and declared-constraints capabilities, and the IntakeIdea skill.
