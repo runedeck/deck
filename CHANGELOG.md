@@ -28,6 +28,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 - The VersionControl skill in core, adopted from forge-core and trimmed: commit and staging discipline, push policy, history rewrites, branch cleanup, worktrees, jj colocated flow, hardware-key signing, and platform governance companions.
 - The `ste` skill provides a short Claude command for `SimplifiedTechnicalEnglish`. It stays hidden from model invocation.
 - The RTK skill and the UseEfficientCLI rule in core: prefix shell commands with the rtk proxy for 60 to 90 percent output-token savings, and search selectively with fd, rg, ast-grep, and gh --json field selection.
+- BuildTask prepares provider tasks. ConfigureScanners adds four prompt-only public exposure scanners for Claude and ChatGPT.
 
 ### Changed
 
