@@ -1,0 +1,12 @@
+# Rules are concise instruction bodies; frontmatter is optional. A rule
+# carries at most one heading (its title) and no subheadings.
+heading_rules:
+    max_depth: 1
+
+structure:
+    - heading:
+          pattern: "^# .+"
+          regex: true
+      optional: true
+      count:
+          max: 1

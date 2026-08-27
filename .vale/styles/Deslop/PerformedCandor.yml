@@ -1,0 +1,53 @@
+# Announcing sincerity instead of being sincere. The writer signals candour
+# ("to be honest", "I'll be blunt") in place of the plain claim that would have
+# demonstrated it. The same move covers announced clarity ("To be clear,"),
+# announced fairness ("To be fair,"), announced care ("I want to be careful
+# here") and announced precision ("Let me be precise about the ceiling"): a
+# virtue asserted in the sentence before the virtue would have to appear.
+#
+# This rule uses `raw`, not `tokens`, because most of these tells must be
+# anchored to the start of a sentence, and Vale's automatic \b wrapping breaks
+# an anchored token: the `[.!?]\s+` branch cannot match when the character
+# before the period is `)`, a backtick, or a quote, because \b fails there.
+# `raw` is not wrapped, so the anchor behaves.
+#
+# The anchoring is not optional. Every bare adverb here has an ordinary manner
+# sense that is NOT this tell, and each was verified firing on real prose:
+#   `honestly`  -- "State your tolerances honestly."
+#   `frankly`   -- "did this person speak frankly?"
+#   `candidly`  -- "practitioners who will speak candidly"
+#   `to be honest` -- "the piece has to be honest about what it validated"
+# Anchored, all four go silent on those and still catch the discourse marker.
+# The cost is the mid-sentence form ("this is, to be honest, a mess"), which no
+# token can reach: a `tokens` entry may not end in punctuation.
+#
+# `to be clear` and `to be fair` need the anchor AND a following `,` or `:`.
+# The anchor keeps the rule off "the runway must be clear before takeoff"; the
+# terminator keeps it off the honest concession "to be fair to Chen, the data
+# was unavailable", which continues with `to` rather than punctuation. An
+# em-dash terminator ("To be clear — ...") is deliberately absent from that
+# class: EmDashOveruse.yml already flags the dash, and the two alerts overlap,
+# which the suite reports as a double-flag.
+#
+# `I want to be careful ...` is restricted to first-person singular. The plural
+# instructional form ("we also want to be careful about covariate shift") warns
+# the reader about a real hazard; it is not a writer narrating a posture.
+#
+# `let me|I'll be precise|explicit|specific|concrete` sits here rather than with
+# the other announced-rigour tells because this file already owns the
+# "let me be X" / "I'll be X" family, and a copy elsewhere would report twice.
+# The bare adjectives are not flagged: `precise` has a measurement sense and
+# `concrete` is a building material, so the announcement frame is required.
+#
+# `honestly` moved here from Hedging.yml. It is performed candor, not hedging,
+# and a copy in both files double-flags every hit.
+#
+# One `raw` entry with top-level alternation. Multiple `raw` entries are
+# CONCATENATED into a single impossible regex, not alternated, and the rule
+# would then flag nothing forever.
+extends: existence
+message: "Performed candor. Cut the announcement and make the claim."
+level: warning
+ignorecase: true
+raw:
+  - '(?:(?:^|[.!?]\s+)(?:honestly|frankly|candidly)\b|(?:^|[.!?]\s+)to\s+be\s+(?:perfectly\s+|brutally\s+)?honest\b|\bin\s+all\s+honesty\b|\bthe\s+honest\s+(?:answer|truth)\s+is\b|\blet(?:\s+me|[''’]?s)\s+be\s+(?:honest|direct|blunt)\b|\bI[''’]?ll\s+be\s+(?:honest|direct|blunt)\b|\bif\s+I[''’]?m\s+being\s+honest\b|\btruth\s+be\s+told\b|\breal\s+talk\b|\bsugar[-\s]?coat(?:s|ed|ing)?\s+it\b|(?:^|[.!?][)\]"''’”]*\s+)(?:and\s+|but\s+|now,?\s+)?(?:just\s+)?to\s+be\s+clear\s*[,:]|(?:^|[.!?][)\]"''’”]*\s+)(?:and\s+|but\s+)?to\s+be\s+fair\s*[,:]|\bI\s+(?:want|need)\s+to\s+be\s+careful\s+(?:here|about|not)\b|\blet\s+me\s+be\s+careful\s+(?:here|about|not)\b|\b(?:let\s+me|I[''’]?ll)\s+be\s+(?:precise|explicit|specific|concrete)\s+(?:about|here)\b)'

@@ -188,10 +188,13 @@ jobs:
                                   dismissal_fault "acceptance approval $review_id stands after the override's withdrawal, but the app token was unavailable to dismiss it"
                                   continue
                               fi
-                              GH_TOKEN="$RUNESEER_TOKEN" gh api -X PUT "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews/$review_id/dismissals" \
+                              if GH_TOKEN="$RUNESEER_TOKEN" gh api -X PUT "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews/$review_id/dismissals" \
                                   -f message="The owner withdrew ignore:runeseer; the acceptance no longer holds this head." \
-                                  >/dev/null && echo "dismissed acceptance approval $review_id after the override's withdrawal." \
-                                  || dismissal_fault "could not dismiss acceptance approval $review_id"
+                                  >/dev/null; then
+                                  echo "dismissed acceptance approval $review_id after the override's withdrawal."
+                              else
+                                  dismissal_fault "could not dismiss acceptance approval $review_id"
+                              fi
                           done
                       else
                           dismissal_fault "could not read the pull request reviews"

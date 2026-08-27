@@ -1,0 +1,6 @@
+extends: occurrence
+message: "Em-dash overuse. Use periods or natural sentence breaks instead."
+level: warning
+scope: paragraph
+token: '—'
+max: 1

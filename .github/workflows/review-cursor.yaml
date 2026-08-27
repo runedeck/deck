@@ -6,9 +6,8 @@ name: Review Cursor
 # in the body.
 # ready_for_review releases a summon that was applied while the pull
 # request was a draft: the lane body skips drafts and re-reads the live
-# labels, so the label waits until readiness. Removing review:cursor
-# cancels a summon that has not fired; a posted summon is Cursor's own
-# round, which nothing here cancels.
+# labels, so the label waits until readiness. A posted summon is Cursor's
+# own round, which nothing here cancels.
 on:
     pull_request_target:
         types: [labeled, ready_for_review]

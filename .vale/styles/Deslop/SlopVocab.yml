@@ -1,0 +1,67 @@
+# Stock words and phrases with no single-word replacement. Words that DO have a
+# clean one-word swap live in Substitutions.yml instead — never in both, or every
+# hit reports twice.
+#
+# Vale wraps each token in \b...\b, so inflections must be spelled out: `delve`
+# alone does not match `delved`. Several tokens carry deliberate context
+# (`realm of`, not bare `realm`) so the rule does not fire on Realm the database,
+# landscape orientation, a test harness, and similar ordinary technical usage.
+extends: existence
+message: "'%s' is an AI-slop tell. Cut it or say the thing plainly."
+level: warning
+ignorecase: true
+tokens:
+  - 'delv(?:e|es|ed|ing)'
+  - '(?:rich\s+)?tapestry'
+  - '(?:stands\s+as\s+)?a\s+testament\s+to'
+  - 'navigat(?:e|es|ed|ing)\s+the\s+(?:complexities|complexity|challenges|nuances|landscape|waters|maze)'
+  - 'treasure\s+trove'
+  - 'plethora'
+  - '(?:a\s+)?myriad\s+of'
+  - 'boast(?:s|ed|ing)?\s+(?:a|an|the|about|over)'
+  - 'nestled'
+  - 'ever[-\s](?:evolving|changing|expanding)'
+  - 'fast[-\s]paced\s+world'
+  - 'at\s+the\s+forefront'
+  # `it is (also) worth noting` is NOT here: AnnouncedNoteworthiness.yml owns the
+  # whole `worth <gerund>` family so it cannot report twice. `important to note`
+  # is a different frame (announcing importance, not noteworthiness) and stays.
+  - "it\\s*['\u2019]s\\s+important\\s+to\\s+note"
+  - 'it\s+is\s+important\s+to\s+note'
+  - 'when\s+it\s+comes\s+to'
+  - 'needless\s+to\s+say'
+  - 'unlock(?:s|ed|ing)?\s+(?:the\s+|its\s+|your\s+|their\s+|our\s+)?(?:power|potential|value|insights|growth)'
+  - 'harness(?:es|ed|ing)?\s+(?:the|its|your|their|our)\s+(?:power|potential)'
+  - 'game[-\s]changer'
+  - 'indelible\s+mark'
+  - 'vibrant'
+  - 'bustling'
+  - 'meticulous(?:ly)?'
+  - 'underscor(?:e|es|ed|ing)\s+(?:the|a|an|how|why|that|just)'
+  - 'realm\s+of'
+  - 'landscape\s+of'
+  - '(?:competitive|evolving|shifting|changing|current|digital|business|technological|regulatory|media)\s+landscape'
+  - "today\\s*['\u2019]s\\s+landscape"
+  - 'foster(?:s|ed|ing)?\s+(?:a\s+|an\s+|the\s+)?(?:culture|collaboration|innovation|growth|community|environment|sense|understanding|engagement|creativity|trust|dialogue|inclusion|connection)'
+  - 'swift(?:ly)?\s+(?:response|action|resolution|progress|adoption|rise|decline)'
+  - 'beacon\s+of'
+  - 'pivotal'
+  - 'nuanced'
+  - '(?:intricate|intricacies)'
+  - 'seamless(?:ly)?'
+  - 'paradigm\s+shift'
+  - 'deep\s+div(?:e|es|ed|ing)'
+  - 'embark(?:s|ed|ing)?\s+on'
+  - 'cornerstone'
+  - 'stark\s+reminder'
+  # Scoped to the verb sense that takes an object. Bare `leverage` fires on
+  # `financial leverage`, which is a term of art, not slop.
+  - 'leverag(?:e|es|ed|ing)\s+(?:a|an|the|our|your|its|their)\b'
+  # `move` as the essayist's noun for a correct strategy. The trailing `to` is
+  # required, which rules out the game sense (`the right move is Nf3`). The
+  # residual false positive is relocation -- `the right move is to Denver in
+  # March` -- which cannot be excluded, because the infinitive and the
+  # preposition are the same string and Vale ignores lookarounds. Rare enough to
+  # accept, and named here so nobody rediscovers it as a bug.
+  - "the\\s+(?:right|real|actual|correct|smart|obvious)\\s+move\\s+(?:here\\s+)?(?:is|was|isn\\s*['’]?t|wasn\\s*['’]?t)\\s+to"
+  - 'the\s+move\s+here\s+(?:is|was)'

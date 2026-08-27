@@ -38,7 +38,7 @@ Use a conventional prefix. Explain why, not what. Keep the first line under 72 c
 - `chore:`: Maintenance, such as dependencies, configuration, or CI.
 - `test:`: Add or repair tests.
 
-Name other model contributors with `Co-Authored-By` trailers in the `authors.yaml` format. Do not repeat the author as a trailer. If the repository includes `scripts/check-authorship`, run it. The prek pre-push hook runs the repository check automatically.
+Name other model contributors with `Co-Authored-By` trailers in the `authors.yaml` format. Do not repeat the author as a trailer. Attribution lives only in the author line and these trailers. Do not add a generation footer, a tool badge, or a session-link trailer. If the repository includes `scripts/check-authorship`, run it. The prek pre-push hook runs the repository check automatically.
 
 ### Open the pull request
 
@@ -46,6 +46,7 @@ Name other model contributors with `Co-Authored-By` trailers in the `authors.yam
 - Write the body as `## Summary` bullets plus the sections the repository's checks require (deck requires `## Release Notes`).
 - Create the pull request from a feature branch, never from main.
 - When the user requests active babysitting, read [BabysitPR.md](BabysitPR.md) and use its review-and-fix loop.
+- Do not append a generation footer, a tool badge, or a session link to the body.
 
 ### Rewrite history
 
@@ -99,7 +100,7 @@ For local branches whose remote is gone: `git fetch --prune`, then delete the br
 
 ### Work in parallel
 
-In git-only repos, use git worktrees. Use a repository helper when it exists. In jj colocated repos, use jj workspaces instead. See [GitWorktrees.md](GitWorktrees.md).
+In git-only repos, use git worktrees. Keep the primary checkout on the default branch. Use a repository helper when it exists. In jj colocated repos, use jj workspaces instead. See [GitWorktrees.md](GitWorktrees.md).
 
 ### Govern the repository
 

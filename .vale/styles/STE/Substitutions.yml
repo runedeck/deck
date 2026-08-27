@@ -1,0 +1,13 @@
+extends: substitution
+message: "Use '%s' instead of '%s'."
+level: warning
+ignorecase: true
+action:
+  name: replace
+swap:
+  utilize: use
+  leverage: use
+  prior to: before
+  in order to: to
+  subsequently: then
+  a number of: some
