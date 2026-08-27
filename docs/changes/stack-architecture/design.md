@@ -51,7 +51,7 @@ The governance plane MUST obey its own flow: a ceremony change is authored in th
 | Store | Path pattern | May hold | MUST NOT hold |
 |---|---|---|---|
 | Workshop | `~/Agents/<owner>/<project>` | anything: ledgers, briefs, captures, reference copies | anything a consumer installs from |
-| Deck | `runedeck/deck` and sibling repos | reviewed, proven, schema-valid artifacts and their sidecars | rendered personal values, and review transcripts (DECK-0002 Temporary Adoption State) |
+| Deck | `runedeck/deck` and sibling repos | reviewed, proven, schema-valid artifacts and their sidecars | rendered personal values, and review transcripts (DECK-0004 Temporary Adoption State) |
 | Consumer | `~/Agents/runedeck` (`.rune`, `private/`) | the manifest, rendered private prompts, deploy manifests | canonical artifact content |
 | Provider account | Claude, Codex, ChatGPT, Gemini surfaces | routine configuration installed from templates | unique state — an account MUST be reproducible from the deck and the consumer |
 

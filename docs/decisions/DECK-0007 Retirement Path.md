@@ -13,7 +13,7 @@ updated: 2026-08-19
 author: "@N4M3Z"
 project: deck
 related:
-    - "DECK-0002 Temporary Adoption State"
+    - "DECK-0004 Temporary Adoption State"
     - "DECK-0005 Artifact Lifecycle and Evidence Tokens"
     - "DECK-0006 State Stores and Provider Edges"
 responsible: ["@N4M3Z"]
