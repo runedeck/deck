@@ -23,6 +23,7 @@ env:
 jobs:
     quality:
         runs-on: ubuntu-latest
+        timeout-minutes: 20
         steps:
             - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
               with:
@@ -117,32 +118,62 @@ jobs:
                   # symlink maps it to docs/ without a repository entry.
                   ln -sfn "$GITHUB_WORKSPACE/docs" /tmp/openspec-root
                   mkdir -p "$HOME/.openspec-ci" && ln -sfn "$GITHUB_WORKSPACE/docs" "$HOME/.openspec-ci/openspec"
+                  sudo unlink /usr/local/bin/openspec
                   printf '#!/bin/sh\ncd "%s" && exec /usr/local/lib/node_modules/@fission-ai/openspec/bin/openspec.js "$@"\n' "$HOME/.openspec-ci" | sudo tee /usr/local/bin/openspec >/dev/null
                   sudo chmod +x /usr/local/bin/openspec
+
+            # Select the event range once so both prek stages inspect the same
+            # change. Inspect all files only when no base commit exists.
+            - name: Select check range
+              id: check-range
+              env:
+                  PR_BASE: ${{ github.event.pull_request.base.sha }}
+                  PR_HEAD: ${{ github.event.pull_request.head.sha }}
+                  PUSH_BASE: ${{ github.event.before }}
+                  PUSH_HEAD: ${{ github.sha }}
+              run: |
+                  from=""
+                  to="$PUSH_HEAD"
+                  if [ -n "$PR_BASE" ]; then
+                      from="$PR_BASE"
+                      to="$PR_HEAD"
+                  elif [ -n "$PUSH_BASE" ] && ! printf '%s' "$PUSH_BASE" | grep -q '^0*$'; then
+                      from="$PUSH_BASE"
+                  fi
+
+                  if [ -n "$from" ] && git cat-file -e "$from^{commit}" 2>/dev/null; then
+                      echo "usable=true" >> "$GITHUB_OUTPUT"
+                      echo "from=$from" >> "$GITHUB_OUTPUT"
+                  else
+                      echo "usable=false" >> "$GITHUB_OUTPUT"
+                  fi
+                  echo "to=$to" >> "$GITHUB_OUTPUT"
 
             # The prek CLI is called directly: the wrapper action logs at
             # TRACE level and buries the failing hook's output.
             - name: Commit-stage checks
               env:
                   REQUIRE_GATES: "1"
-              run: prek run --all-files
-
-            # Scan exactly the commits this event introduces. Without a usable
-            # base, gitleaks scans the target history and other hooks inspect all files.
-            - name: Pre-push-stage checks
+                  RANGE_USABLE: ${{ steps.check-range.outputs.usable }}
+                  FROM_REF: ${{ steps.check-range.outputs.from }}
+                  TO_REF: ${{ steps.check-range.outputs.to }}
               run: |
-                  if [ -n "${{ github.event.pull_request.base.sha }}" ]; then
-                      from="${{ github.event.pull_request.base.sha }}"
-                      to="${{ github.event.pull_request.head.sha }}"
-                  elif [ -n "${{ github.event.before }}" ] && ! printf '%s' "${{ github.event.before }}" | grep -q '^0*$'; then
-                      from="${{ github.event.before }}"
-                      to="${{ github.sha }}"
+                  if [ "$RANGE_USABLE" = "true" ]; then
+                      prek run --from-ref "$FROM_REF" --to-ref "$TO_REF"
                   else
-                      from=""
-                      to="${{ github.sha }}"
+                      prek run --all-files
                   fi
-                  if [ -n "$from" ] && git cat-file -e "$from" 2>/dev/null; then
-                      prek run --stage pre-push --from-ref "$from" --to-ref "$to"
+
+            # Scan the same range at the pre-push stage. Without a usable base,
+            # gitleaks scans the target history and other hooks inspect all files.
+            - name: Pre-push-stage checks
+              env:
+                  RANGE_USABLE: ${{ steps.check-range.outputs.usable }}
+                  FROM_REF: ${{ steps.check-range.outputs.from }}
+                  TO_REF: ${{ steps.check-range.outputs.to }}
+              run: |
+                  if [ "$RANGE_USABLE" = "true" ]; then
+                      prek run --stage pre-push --from-ref "$FROM_REF" --to-ref "$TO_REF"
                   else
-                      GITLEAKS_PUSH_TO_REF="$to" prek run --stage pre-push --all-files
+                      GITLEAKS_PUSH_TO_REF="$TO_REF" prek run --stage pre-push --all-files
                   fi

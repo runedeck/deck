@@ -49,3 +49,12 @@ Every lint hook MUST skip when its binary is absent, so a fresh clone commits su
 
 - **WHEN** a CI run misses one gate binary with `REQUIRE_GATES` set
 - **THEN** the corresponding hook fails instead of skipping
+
+### Requirement: CI Checks the Change Range
+
+CI MUST select one commit range for both commit-stage and pre-push checks. Hooks that accept filenames MUST inspect only files in that range. Repository validators MUST run as their hook configuration specifies. CI MUST inspect all files only if no usable base exists.
+
+#### Scenario: A pull request has a usable base
+
+- **WHEN** CI checks a pull request with an available base commit
+- **THEN** both stages use the same range and repository validators keep their configured behavior
