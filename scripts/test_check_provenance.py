@@ -49,6 +49,26 @@ class CheckProvenanceTests(unittest.TestCase):
         self.assertIn(f"sha256: {digest}", text)
         self.assertIn(f"dependency_sha256: {'1' * 64}", text)
 
+    def test_missing_subject_digest_does_not_rewrite_dependency(self):
+        self.sidecar.write_text(
+            "provenance:\n"
+            "  subject:\n"
+            "  - name: skills/Example.md\n"
+            "  predicate:\n"
+            "    resolvedDependencies:\n"
+            "    - uri: git+https://example.invalid/upstream\n"
+            "      digest:\n"
+            f"        sha256: {'1' * 64}\n",
+            encoding="utf-8",
+        )
+        original = self.sidecar.read_text(encoding="utf-8")
+
+        self.assertEqual(
+            CHECK_PROVENANCE.check([str(self.sidecar)], fix=True),
+            1,
+        )
+        self.assertEqual(self.sidecar.read_text(encoding="utf-8"), original)
+
 
 if __name__ == "__main__":
     unittest.main()

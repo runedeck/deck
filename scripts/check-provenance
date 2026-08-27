@@ -28,15 +28,24 @@ def check(names, fix=False):
             continue
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         text = sidecar.read_text()
-        match = re.search(r"subject:\n(?:.*\n)*?\s*sha256: ([0-9a-f]{64})", text)
+        match = re.search(
+            r"(?m)^(?P<indent>[ \t]*)subject:[ \t]*\n"
+            r"(?:(?!(?P=indent)[A-Za-z_][A-Za-z0-9_.-]*:)[^\n]*\n)*?"
+            r"^[ \t]+sha256: (?P<digest>[0-9a-f]{64})[ \t]*$",
+            text,
+        )
         if match is None:
             print(f"no subject digest: {sidecar}")
             stale += 1
             continue
-        if match.group(1) == digest:
+        if match.group("digest") == digest:
             continue
         if fix:
-            sidecar.write_text(text[: match.start(1)] + digest + text[match.end(1) :])
+            sidecar.write_text(
+                text[: match.start("digest")]
+                + digest
+                + text[match.end("digest") :]
+            )
             print(f"updated {sidecar}")
         else:
             print(f"stale subject digest: {sidecar}")
