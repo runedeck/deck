@@ -147,7 +147,7 @@ repos:
           # so deleting or breaking a shape fails the hook.
           - id: ontology-syntax
             name: ontology syntax and shapes smoke test
-            entry: sh -c 'if command -v rudof >/dev/null 2>&1; then rudof data ontology/rune.ttl >/dev/null || exit 1; r=$(rudof shacl-validate -s ontology/shapes.ttl -r turtle ontology/smoke/instances.ttl 2>/dev/null); v=$(printf "%s" "$r" | grep -c "sh:Violation"); w=$(printf "%s" "$r" | grep -c "sh:Warning"); [ "$v" -eq 2 ] && [ "$w" -eq 4 ] || { echo "shapes smoke test expected 2 Violations and 4 Warnings, got $v and $w"; exit 1; }; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and rudof is absent"; exit 1; fi'
+            entry: sh -c 'if command -v rudof >/dev/null 2>&1; then rudof data ontology/rune.ttl >/dev/null || exit 1; r=$(rudof shacl-validate -s ontology/shapes.ttl -r turtle ontology/smoke/instances.ttl 2>/dev/null); v=$(printf "%s" "$r" | grep -c "sh:Violation"); w=$(printf "%s" "$r" | grep -c "sh:Warning"); [ "$v" -eq 4 ] && [ "$w" -eq 2 ] || { echo "shapes smoke test expected 4 Violations and 2 Warnings, got $v and $w"; exit 1; }; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and rudof is absent"; exit 1; fi'
             language: system
             pass_filenames: false
             files: ^ontology/.*\.ttl$

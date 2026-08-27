@@ -16,11 +16,11 @@
 - [x] 2.3 Survey forge-cli, forge-core, and forge-dev. Expand `rune.ttl` with the kinds the survey confirms.
 - [ ] 2.3a Add the sidecar-never-duplicates-canon shape and the mergeMode value shape once the extractor emits part-level fields.
 - [ ] 2.4 Add `rune graph export` to the cli repository: walk frontmatter, mint `/id/` IRIs, emit Turtle. The `ontology` name was taken: the cli already uses it for the unified config model (CLI-0013).
-- [ ] 2.5 Add the rudof hook at the pre-push stage: `rune graph export | rudof shacl-validate -s ontology/shapes.ttl -`. rudof 0.3.12 exits zero on violations, so the hook greps `sh:Violation` in the `-r turtle` report for its exit status. The fixture at `ontology/smoke/instances.ttl` proves the shapes: two Violations and four Warnings.
+- [ ] 2.5 Add the rudof hook at the pre-push stage: `rune graph export | rudof shacl-validate -s ontology/shapes.ttl -`. rudof 0.3.12 exits zero on violations, so the hook greps `sh:Violation` in the `-r turtle` report for its exit status. The fixture at `ontology/smoke/instances.ttl` proves the shapes: four Violations and two Warnings.
 - [ ] 2.6 Grow the STE style toward the full rule set in the SimplifiedTechnicalEnglish skill.
 - [ ] 2.6a Run `vale sync` once per checkout to fetch the Deslop package. Remove STE rows that Deslop already covers.
 - [ ] 2.7 Decide the `related:` migration from strings to relative links, so lychee checks them.
-- [ ] 2.8 Move the duplicate-identifier shape to Violation after the coordinated history rewrite.
+- [x] 2.8 Move the duplicate-identifier shape to Violation after the DECK-0002 collision is resolved.
 - [ ] 2.9 Move the rule-verdict shape to Violation after existing rules carry verdicts.
 - [ ] 2.9a Move the references-resolve shape to Violation after the extractor lands and the corpus resolves every related entry.
 - [ ] 2.10 Add the harness PostToolUse hook that lints Markdown at write time.

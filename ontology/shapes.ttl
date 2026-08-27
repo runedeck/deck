@@ -29,9 +29,8 @@ rune:DecisionRecordShape a sh:NodeShape ;
         sh:maxCount 1 ;
         # Two files with one identifier merge into one node with two
         # titles, so this constraint detects the duplicate.
-        # Severity is Warning until the coordinated history rewrite
-        # removes the DECK-0002 duplicate. Then it becomes Violation.
-        sh:severity sh:Warning ;
+        # The DECK-0002 collision is resolved, so duplicates now block.
+        sh:severity sh:Violation ;
         sh:message "Two records share one identifier." ;
     ] ;
     sh:property [
@@ -40,8 +39,8 @@ rune:DecisionRecordShape a sh:NodeShape ;
         # Identical duplicate files produce identical triples that RDF
         # deduplicates, so the title constraint alone cannot fire. The
         # per-file sourcePath makes every duplicate structurally
-        # visible. Warning until the history rewrite, like the title.
-        sh:severity sh:Warning ;
+        # visible. The resolved collision makes this constraint blocking.
+        sh:severity sh:Violation ;
         sh:message "Two source files claim one record identifier." ;
     ] ;
     # Axiom references-resolve: every related entry names a record that

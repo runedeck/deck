@@ -5,3 +5,4 @@
 2026-08-27 Make hooks first-class rune artifacts: a rune:Hook kind with per-provider assembly, so rune install renders dcg and lint hook wiring for claude, codex, opencode, and pi +guardrails
 2026-08-27 Check taplo in a real terminal (taplo check ~/.config/dcg/config.toml): it panics in the sandbox on every file, so decide taplo or a replacement before wiring the TOML prek hook +gates
 
+rune spec archive: requirement identity compares case-sensitively, so a Title Case delta duplicates a sentence-case canonical requirement instead of merging (seen 2026-08-27 on adoption-session-state)

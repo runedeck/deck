@@ -1,5 +1,5 @@
 ---
-adr: "docs/decisions/DECK-0002 Temporary Adoption State.md"
+adr: "docs/decisions/DECK-0004 Temporary Adoption State.md"
 status: proposed
 ---
 
