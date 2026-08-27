@@ -1,0 +1,26 @@
+# The single home for slop words that have a clean one-word replacement. Anything
+# here must NOT also appear in SlopVocab.yml, or every hit reports twice.
+#
+# Swap values may reference capture groups from the key ($1), which keeps the
+# inflected forms on one line where the replacement is regular. Irregular forms
+# (comprehended -> understood, pinpointed -> identified) are spelled out.
+extends: substitution
+message: "Use '%s' instead of '%s'."
+level: warning
+ignorecase: true
+swap:
+  'robust': strong
+  'robustness': strength
+  'crucial': important
+  'multifaceted': complicated
+  'comprehend': understand
+  'comprehends': understands
+  'comprehending': understanding
+  'comprehended': understood
+  'bolster(s|ed|ing)?': 'strengthen$1'
+  'pinpoint': identify
+  'pinpoints': identifies
+  'pinpointing': identifying
+  'pinpointed': identified
+  'utiliz(e|es|ed|ing)': 'us$1'
+  'utilization': use

@@ -1,0 +1,7 @@
+extends: occurrence
+message: "Intensifier density. Cut them; they weaken rather than strengthen."
+level: suggestion
+scope: text
+token: '\b(?:incredibly|extremely|truly|really|very|highly|remarkably|utterly|profoundly|genuinely|strikingly)\b'
+max: 4
+ignorecase: true

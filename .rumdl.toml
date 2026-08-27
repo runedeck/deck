@@ -1,0 +1,20 @@
+# rumdl configuration (DECK-0010). MD013 is off because prose lines wrap
+# at the editor, not at a column count. MD025 is off because it reads the
+# frontmatter title as the document title and demotes every body heading,
+# which breaks the mdschema structure contracts.
+[global]
+# MD041 is off because change proposals open with frontmatter and no
+# title field.
+disable = ["MD013", "MD025", "MD041"]
+# Adopted artifacts carry digest-bound provenance sidecars, so their
+# bytes stay exactly as adopted. Formatting fixes arrive with the next
+# adoption refresh, never from a local fmt pass.
+exclude = [
+    ".provenance",
+    ".claude",
+    "templates",
+    "runes/core/rules/UseSimplifiedTechnicalEnglish.md",
+    "runes/core/skills/RTK",
+    "runes/core/skills/SimplifiedTechnicalEnglish",
+    "runes/core/skills/VersionControl",
+]

@@ -1,0 +1,34 @@
+# The colon drumroll: a sentence whose entire content is the announcement that
+# an answer is coming. "The reason is simple:" / "comes down to two things:".
+# The colon buys a beat of suspense the sentence has not earned, and the count
+# is false precision -- it is almost always two or three, because those are the
+# numbers that sound considered.
+#
+# `raw`, and not by choice. Every tell here ends in a colon, and Vale wraps each
+# `tokens` entry in \b...\b, a boundary that can never be satisfied after `:`.
+# So the whole rule is ONE raw entry with top-level alternation -- multiple raw
+# entries are CONCATENATED into a single impossible regex, not alternated -- and
+# the leading \b is written out by hand, because `raw` is not wrapped.
+#
+# Both halves are narrowed so the rule needs the announcement, not the colon.
+# The head noun must be followed by `simple|straightforward|this|obvious`, which
+# is why "The reason is documented in RFC 7519:" does not match, and `boils down
+# to` must be followed by a count, which is why `boil the ocean`
+# (CorporateMetaphor.yml) stays where it is. `the bottom line is` is deliberately
+# absent: HollowCloser.yml owns that phrase.
+#
+# The second half is a verb-headed idiom, so its paradigm is spelled out flat and
+# in full -- base form and gerund included. `(?:comes|came|boils|boiled)` reads
+# complete and silently drops "Both paths come down to one thing:" and "the
+# thread keeps boiling down to three words:", which is the same shape of miss as
+# `circle back` failing on "circled back".
+#
+# check.py's branch audit skips `raw` entirely, so one fixture line would satisfy
+# the whole rule. Every tell is pinned by hand in tests/expected.tsv instead;
+# that is the only coverage these branches get.
+extends: existence
+message: "Colon drumroll. Cut the announcement and give the answer."
+level: warning
+ignorecase: true
+raw:
+  - '\b(?:the\s+(?:answer|reason|problem|difference|catch|upshot|issue|question|point|trick|fix)\s+is\s+(?:simple|straightforward|this|obvious)|(?:come|comes|came|coming|boil|boils|boiled|boiling)\s+down\s+to\s+(?:one|a\s+single|this|two|three)(?:\s+\w+)?)\s*:'

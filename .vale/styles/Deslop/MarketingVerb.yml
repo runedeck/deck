@@ -1,0 +1,21 @@
+# Product-launch verbs that assert value instead of showing it. Kept separate
+# from CorporateCliche.yml (nouns and set phrases) because these inflect.
+#
+# `seamless`/`seamlessly` and `meticulously` are deliberately absent: SlopVocab.yml
+# owns them. A tell gets exactly one home.
+extends: existence
+message: "'%s' asserts value instead of showing it. Say what it does."
+level: warning
+ignorecase: true
+tokens:
+  - 'revolutioniz(?:e|es|ed|ing)'
+  - 'supercharg(?:e|es|ed|ing)'
+  - 'turbocharg(?:e|es|ed|ing)'
+  - 'streamlin(?:e|es|ed|ing)\s+(?:your|our)\b'
+  - 'showcas(?:e|es|ed|ing)\s+(?:your|our|the|its|their)\b'
+  - 'unparalleled'
+  - 'unrivall?ed'
+  - 'elevat(?:e|es|ed|ing)\s+(?:your|the|our)\s+(?:brand|game|experience|content|business|workflow|team)'
+  - '(?:tak(?:e|es|en|ing)|took)\s+(?:it|things|your\s+\w+)\s+to\s+the\s+next\s+level'
+  - 'effortlessly'
+  - 'at\s+your\s+fingertips'

@@ -1,0 +1,7 @@
+extends: occurrence
+message: "Conjunctive-adverb openers signal list-padding. Vary sentence openings."
+level: warning
+scope: text
+token: '(?:^|[.!?]\s+)(?:Moreover|Furthermore|Additionally|Notably|Importantly|Consequently|Indeed|Crucially)\b'
+max: 2
+ignorecase: false

@@ -1,0 +1,31 @@
+@prefix rune:    <https://runedeck.dev/ns#> .
+@prefix id:      <https://runedeck.dev/id/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+# Smoke-test instance graph for the shapes gate. Every node below
+# carries a seeded defect except the first, so a validation run must
+# report exactly two Violations and four Warnings:
+#   rudof shacl-validate -s ontology/shapes.ttl ontology/smoke/instances.ttl
+
+# A conforming record.
+id:DECK-0010 a rune:DecisionRecord ;
+    dcterms:identifier "DECK-0010" ;
+    dcterms:title "Declared World in RDF" .
+
+# The duplicate: one IRI, two titles, two source files, and a
+# malformed identifier.
+id:DECK-0002 a rune:DecisionRecord ;
+    dcterms:identifier "DECK-0002", "DECK-2" ;
+    dcterms:title "Temporary Adoption State", "Benchmark Execution Ladder" ;
+    rune:sourcePath "docs/decisions/DECK-0002 Temporary Adoption State.md",
+        "docs/decisions/DECK-0002 Benchmark Execution Ladder.md" .
+
+# A reference that does not resolve to a declared record.
+id:DECK-0099 a rune:DecisionRecord ;
+    dcterms:identifier "DECK-0099" ;
+    dcterms:title "Ghost" ;
+    dcterms:relation id:DECK-4242 .
+
+# A rule without a verdict pointer.
+id:UseEfficientCLI a rune:Rule ;
+    dcterms:title "UseEfficientCLI" .

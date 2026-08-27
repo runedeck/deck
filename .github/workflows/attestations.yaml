@@ -68,6 +68,9 @@ jobs:
                       --jq '[.[] | .filename, (.previous_filename // empty)]' | jq -s -r 'add // [] | .[]') \
                       || { echo "could not read the changed files; rerun the check"; exit 1; }
                   protected='^(\.github/workflows/|\.githooks/|templates/|schemas/|\.macroscope/)|^(\.pre-commit-config\.yaml|\.gitleaks\.toml|scripts/check-authorship)$'
+                  # Change-local delta specifications count: while a change is
+                  # open its requirements live in docs/changes/<id>/specs/,
+                  # and the canonical tree receives them at archive time.
                   spec_tree='^docs/((specs|openspec)/|changes/[^/]+/specs/)'
                   touched=$(printf '%s\n' "$files" | grep -E "$protected" || true)
                   if [ -z "$touched" ]; then
