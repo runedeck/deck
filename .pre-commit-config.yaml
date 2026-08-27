@@ -121,7 +121,6 @@ repos:
             entry: python3 scripts/check-provenance
             language: system
             files: ^runes/
-            exclude: /\.provenance/
           - id: check-authorship
             name: authorship (push range)
             entry: bash scripts/check-authorship
