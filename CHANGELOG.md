@@ -8,6 +8,8 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 - The routine-operations specification and DECK-0004: the scanner register, the loud canary, the environment matrix by data sensitivity, and the manual provider setup.
 - Three routine prompts under docs/routines: the nightly PR babysitter, the deck merge follow-up, and the weekly ceremony audit. Provider setup stays manual.
+- Five micro-rules in core, extracted from the tuicr workshop brief: CaptureOnTouch, FixAtTheHighestLeverage, ReportFailures, FlagRuleConflicts, and OwnersVoice.
+- The VerifyClaims and Deslop rules in core: evidence before assertion, and slop stripped at write time.
 - The agent-pipeline change: the idea-to-merge flywheel design, DECK-0008 and DECK-0009, the idea-intake, artifact-extraction, and declared-constraints capabilities, and the IntakeIdea skill.
 - The VersionControl BabysitPR companion runs review pipelines, repairs bot findings, and repeats until the current head is merge-ready.
 - The check-provenance hook: a rune or sidecar edit fails when its provenance subject digest is stale, and `--fix` repairs it.
@@ -23,7 +25,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 - The ReviewMarkers rule in core, adopted through the block-review ceremony.
 - The UseSimplifiedTechnicalEnglish rule in core: all prose follows ASD-STE100, with a bad and good example pair.
 - The SimplifiedTechnicalEnglish skill in core, adopted from two upstreams and merged: the STE rule set, the 39 recurring errors, worked examples, measured samples, and the ste-lint checker.
-- The VersionControl skill in core, adopted from forge-core and trimmed: commit and staging discipline, push policy, history rewrites, branch cleanup, worktrees, jj colocated flow, hardware-key signing, and platform governance companions.
+- The VersionControl skill in core: commit and staging discipline, push policy, history rewrites, branch cleanup, worktrees, jj colocated flow, hardware-key signing, and platform governance companions.
 - The `ste` skill provides a short Claude command for `SimplifiedTechnicalEnglish`. It stays hidden from model invocation.
 - The RTK skill and the UseEfficientCLI rule in core: prefix shell commands with the rtk proxy for 60 to 90 percent output-token savings, and search selectively with fd, rg, ast-grep, and gh --json field selection.
 - BuildTask prepares provider tasks. ConfigureScanners adds four prompt-only public exposure scanners for Claude and ChatGPT.
