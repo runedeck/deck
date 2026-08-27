@@ -27,16 +27,22 @@ Take the raw idea exactly as given: a voice transcript, a sketch description, or
 
 ### Step 3: Scaffold and fill
 
-1. Run the sized scaffold from the repository root of a fresh jj workspace.
-2. Fill the proposal: why, what changes, capabilities, impact. Keep the sharpened intent as the first line of Why.
-3. Write delta requirements with MUST and MUST NOT, one scenario per requirement minimum.
-4. Record open questions as tasks, not as vague prose.
+1. Create an isolated workspace from the repository root.
+2. Use a Jujutsu workspace in a Jujutsu-colocated repository.
+3. Use a Git worktree in a Git-only repository.
+4. Run the sized scaffold from the isolated workspace.
+5. Fill the proposal: why, what changes, capabilities, impact. Keep the sharpened intent as the first line of Why.
+6. Write delta requirements with MUST and MUST NOT, one scenario per requirement minimum.
+7. Record open questions as tasks, not as vague prose.
 
 ### Step 4: Hand off to the pipeline
 
 1. Run the local gates: `mdschema check` on new documents and `rune validate`.
-2. Commit with the proper model identity, push with the gated `jj push`, and open the pull request with the ceremony labels.
-3. Report the outcome in one line: the outcome class, the change id or the pointer to existing work, and the pull request link when one exists.
+2. Commit with the proper model identity through the VersionControl flow.
+3. Use the gated `jj push` in a Jujutsu-colocated repository.
+4. Use the normal Git commit and push flow in a Git-only repository.
+5. Open the pull request with the ceremony labels.
+6. Report the outcome in one line: the outcome class, the change id or the pointer to existing work, and the pull request link when one exists.
 
 ## Verification
 
