@@ -1,11 +1,11 @@
 ## 1. Decisions
 
-- [ ] 1.1 Write DECK-0011 Context Economy with the evidence and the layer map
-- [ ] 1.2 Write DECK-0012 No Performance Personas with the study citation and the voice carve-out
-- [ ] 1.3 Write DECK-0013 Positive Instruction with the prohibition carve-out
-- [ ] 1.4 Write the forge-core compatibility table into DECK-0011 (CORE-0001..0012, ARCH-0001, 0004, 0011, 0014)
-- [ ] 1.5 Write the turn-pipeline record: what loads at session start, per turn, and after compaction
-- [ ] 1.6 Write DECK-0014 Adversarial Review over Councils: refutation replaces consensus
+- [x] 1.1 Write CORE-0013 Context Economy with the evidence and the layer map
+- [x] 1.2 Write CORE-0014 No Performance Personas with the study citation and the voice carve-out
+- [x] 1.3 Write CORE-0015 Positive Instruction with the prohibition carve-out
+- [x] 1.4 Write the forge-core compatibility table into CORE-0013 (CORE-0001..0012, ARCH-0001, 0004, 0011, 0014)
+- [x] 1.5 Write CORE-0017 The Inference Turn: what loads at session start, per turn, and after compaction
+- [x] 1.6 Write CORE-0016 Adversarial Review over Councils: refutation replaces consensus
 
 ## 2. Gates
 

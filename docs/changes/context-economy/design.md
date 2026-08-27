@@ -14,7 +14,7 @@ Constitution first, rewrite second, gates third. The decision records state the 
 
 ## Structure
 
-- Decision records own the norms: DECK-0011 (every instruction earns its tokens, one home per fact), DECK-0012 (no performance personas, and voice for outward text carries no capability framing), DECK-0013 (state the wanted behavior, with negation reserved for true prohibitions).
+- Decision records own the norms: CORE-0013 (every instruction earns its tokens, one home per fact), CORE-0014 (no performance personas, and voice for outward text carries no capability framing), CORE-0015 (state the wanted behavior, with negation reserved for true prohibitions).
 - The layer map assigns each fact one home: enforcement in hooks and CI, knowledge in skills, constraints in rules, identity in the repository brief, transient state in memory. A fact in two layers is a defect.
 - The compatibility table judges forge-core CORE-0001 to CORE-0012 and ARCH-0001, ARCH-0004, ARCH-0011, ARCH-0014 against the norms. The deck records divergence in its own decisions and never edits forge-core.
 - Gates: a rule-budget check (prek plus CI), a persona and negation Vale style, and a duplicated-sentence sweep. Each ships at warning severity with a declared-debt baseline and a recorded flip condition.

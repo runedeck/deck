@@ -1,5 +1,5 @@
 ---
-adr: "docs/decisions/DECK-0011 Context Economy.md"
+adr: "docs/decisions/CORE-0013 Context Economy.md"
 status: proposed
 ---
 
@@ -11,11 +11,11 @@ Claude 5 generation models need less instruction, not more. Anthropic removed ov
 
 ## What Changes
 
-- Three decision records: DECK-0011 Context Economy, DECK-0012 No Performance Personas, DECK-0013 Positive Instruction.
-- One compatibility table: every forge-core CORE and context-relevant ARCH decision, judged affirmed, amended, or diverged.
+- Five decision records: CORE-0013 Context Economy, CORE-0014 No Performance Personas, CORE-0015 Positive Instruction, CORE-0016 Adversarial Review over Councils, CORE-0017 The Inference Turn.
+- One compatibility table in CORE-0013: every forge-core CORE and context-relevant ARCH decision, judged affirmed, amended, or diverged.
 - The sixteen core rules rewrite to the shape: one imperative instruction, within 50 words, positively framed.
 - Four warning-first gates: rule budget, persona lint, negation density, duplicated-sentence check.
-- Adversarial review replaces consensus councils: DECK-0014, an AdversarialReviewer agent, and the HarnessCouncil retirement.
+- Adversarial review replaces consensus councils: CORE-0016, an AdversarialReviewer agent, and the HarnessCouncil retirement.
 - Existing violations enter a declared-debt baseline that shrinks. New violations fail.
 
 ## Capabilities
