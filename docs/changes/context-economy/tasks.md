@@ -13,6 +13,7 @@
 - [ ] 2.2 Add the persona and negation Vale style, warning severity
 - [ ] 2.3 Add the duplicated-sentence sweep with the declared-debt baseline
 - [ ] 2.4 Record each gate's flip condition in the debt registry
+- [ ] 2.5 Record the first-class compaction-event dependency and implement PostCompact for each provider that exposes it
 
 ## 3. Rewrite
 
@@ -20,11 +21,12 @@
 - [ ] 3.2 On a favorable or neutral bench, rewrite the remaining fifteen rules
 - [ ] 3.3 Move displaced content into the owning skill before deleting it
 - [ ] 3.4 Retire the duplicated sentences the baseline does not declare
-- [ ] 3.5 Author the AdversarialReviewer agent rune and retire the HarnessCouncil skill on the DECK-0007 path
+- [ ] 3.5 Author the AdversarialReviewer agent rune
 
 ## 4. Verification
 
 - [ ] 4.1 `rune spec validate context-economy` passes
 - [ ] 4.2 `make validate` and the quality workflow pass with the new gates at warning
 - [ ] 4.3 The rule corpus lands under 900 words total, from 2232
-- [ ] 4.4 Every gate fires on a seeded violation in a scratch file
+- [ ] 4.4 Every gate fires on a seeded violation, including zero-instruction, two-instruction, over-budget, cross-rune duplication, and reviewer-fault cases
+- [ ] 4.5 A session fixture proves PostCompact runs after compaction and before the next inference turn

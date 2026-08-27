@@ -15,8 +15,8 @@ Claude 5 generation models need less instruction, not more. Anthropic removed ov
 - One compatibility table in CORE-0013: every forge-core CORE and context-relevant ARCH decision, judged affirmed, amended, or diverged.
 - The sixteen core rules rewrite to the shape: one imperative instruction, within 50 words, positively framed.
 - Four warning-first gates: rule budget, persona lint, negation density, duplicated-sentence check.
-- Adversarial review replaces consensus councils: CORE-0016, an AdversarialReviewer agent, and the HarnessCouncil retirement.
-- Existing violations enter a declared-debt baseline that shrinks. New violations fail.
+- Adversarial review replaces consensus gating. CORE-0016 defines the contract, and an AdversarialReviewer agent will implement refutation.
+- Existing violations enter a shrinking declared-debt baseline. New violations warn first and fail after the recorded flip condition.
 
 ## Capabilities
 

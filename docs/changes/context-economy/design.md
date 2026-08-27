@@ -18,7 +18,7 @@ Constitution first, rewrite second, gates third. The decision records state the 
 - The layer map assigns each fact one home: enforcement in hooks and CI, knowledge in skills, constraints in rules, identity in the repository brief, transient state in memory. A fact in two layers is a defect.
 - The compatibility table judges forge-core CORE-0001 to CORE-0012 and ARCH-0001, ARCH-0004, ARCH-0011, ARCH-0014 against the norms. The deck records divergence in its own decisions and never edits forge-core.
 - Gates: a rule-budget check (prek plus CI), a persona and negation Vale style, and a duplicated-sentence sweep. Each ships at warning severity with a declared-debt baseline and a recorded flip condition.
-- Adversarial review replaces the council pattern. A consensus panel averages independent guesses and rewards fluent agreement. An adversarial reviewer attacks one claim against the source, so a plausible but wrong finding dies on evidence. The AdversarialReviewer agent owns refutation. The HarnessCouncil skill retires on the DECK-0007 path, and cross-provider fan-out stays available for research questions that want breadth, never as a gate.
+- CORE-0016 replaces council gating with adversarial review. The AdversarialReviewer agent implements that decision. Cross-provider fan-out remains a research tool and never gates a decision.
 
 ## Risks
 

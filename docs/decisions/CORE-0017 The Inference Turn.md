@@ -37,11 +37,15 @@ Chosen option: record the pipeline.
 
 Session start loads the resident set once: the harness system prompt, the settings cascade as behavior, the memory chain (user memory, user rules, the repository brief, deployed rules), the auto-memory index, and the skill listing as names with descriptions. Deferred tools cost nothing until a search loads them.
 
-Each turn adds the event layer: prompt-submit hooks, pre-tool gates (dispatcher parts, the destructive-command guard, the rewrite proxy), sandboxed execution, post-tool feedback, and stop hooks.
+Each turn can invoke the event layer: prompt-submit hooks, pre-tool gates, sandbox enforcement, post-tool feedback, and stop hooks.
+
+Prompt-submit hooks and post-tool feedback can add model-visible payloads. The other entries perform runtime work and add tokens only when they emit a model-visible diagnostic.
 
 Compaction rebuilds the context from a summary. Critical constraints need re-injection at that boundary, and a PostCompact hook is the mechanism.
 
-The layer map from CORE-0013 assigns each fact its home. The resident set is the expensive layer, the event layer is deterministic and near free, and the on-demand layer is paid only when used.
+The layer map from CORE-0013 assigns each fact its home. The resident set adds tokens to every inference turn.
+
+The event layer always pays its runtime cost. It adds input tokens only for model-visible payloads. The on-demand layer adds cost only when loaded.
 
 ### Consequences
 

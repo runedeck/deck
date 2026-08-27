@@ -14,7 +14,6 @@ author: "@N4M3Z"
 project: deck
 related:
     - "CORE-0014 No Performance Personas"
-    - "DECK-0007 Retirement Path"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
 consulted: []
@@ -36,10 +35,12 @@ The council pattern fans one question to several providers and synthesizes by ag
 
 Chosen option: adversarial review.
 
-- An adversarial reviewer attacks one claim against the source. The claim survives only when the refutation fails.
+- An adversarial reviewer attacks one claim against the source.
+- The reviewer accepts the claim only after a completed review finds no counterexample.
+- A timeout, crash, cancellation, or missing result is a reviewer fault. A reviewer fault never accepts the claim.
 - A consensus council never gates a decision.
 - Cross-provider fan-out stays available for research questions that want breadth.
-- The AdversarialReviewer agent owns refutation. The HarnessCouncil skill retires on the DECK-0007 path.
+- The AdversarialReviewer agent owns refutation.
 
 ### Consequences
 

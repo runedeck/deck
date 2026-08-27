@@ -6,16 +6,18 @@ A core rule MUST state one imperative instruction within 50 words. A rule MAY ca
 
 #### Scenario: A rule exceeds the budget
 
-- **WHEN** a changed rule exceeds 50 words or states a second instruction
+- **WHEN** a changed rule does not contain exactly one imperative instruction or exceeds 50 words
 - **THEN** the rule-budget gate reports the violation
 
 ### Requirement: One Home Per Fact
 
-An instruction MUST live in exactly one artifact. A duplicated sentence outside the declared baseline is a violation.
+An instruction in the canonical Rune tree MUST live in exactly one rune. The duplication sweep MUST inspect Markdown files under `runes/`.
 
-#### Scenario: A sentence appears in two runes
+A duplicated sentence outside the declared baseline is a violation.
 
-- **WHEN** a changed rune repeats a sentence another rune already carries, and the baseline does not declare the pair
+#### Scenario: A rule repeats a skill instruction
+
+- **WHEN** a changed rule repeats a sentence from a skill, and the baseline does not declare the pair
 - **THEN** the duplication sweep reports both locations
 
 ### Requirement: No Performance Personas
@@ -38,12 +40,19 @@ An instruction MUST state the wanted behavior. Negation is permitted only for a 
 
 ### Requirement: Adversarial Review
 
-Multi-agent verification MUST use an adversarial reviewer that attempts to refute each finding against the source. A consensus council MUST NOT gate a decision. A finding survives only when the refutation fails.
+Multi-agent verification MUST use an adversarial reviewer that attempts to refute each finding against the source. A consensus council MUST NOT gate a decision.
+
+The reviewer MUST accept a finding only after a completed review finds no counterexample. A reviewer fault MUST return a non-accepting result.
 
 #### Scenario: A claim needs verification
 
 - **WHEN** a review claim needs a second opinion
-- **THEN** an adversarial reviewer attempts to refute it against the source, and the claim survives only when the refutation fails
+- **THEN** an adversarial reviewer attempts to refute it against the source and accepts it only after a completed review finds no counterexample
+
+#### Scenario: The reviewer does not complete
+
+- **WHEN** the reviewer times out, crashes, receives cancellation, or returns no result
+- **THEN** verification reports a reviewer fault and does not accept the finding
 
 ### Requirement: Gate Ratchet
 

@@ -32,7 +32,7 @@ Three rules bind the table:
 2. Evidence is append-only. Retirement removes an artifact, never its evidence.
 3. Operate feeds Capture. A drift report, a bench regression, or an audit finding is a captured note, and the loop closes.
 
-### The leverage ladder selects the stage
+### The priority ladder selects the stage
 
 When a problem repeats, the workshop ladder (eliminate through architecture, then lint, then skill or rule, then human review) is a stage selector. Architecture fixes land in Author. Lints land in Review as ceremony checks. Rules land in Author and pay rent through Measure. Human review is the Review stage's floor, not its ceiling. The ladder gives one answer to "which layer owns this fix."
 
@@ -87,5 +87,5 @@ Reality diverges from this abstraction in the following places. This change reco
 4. **Unenforced hops.** Nothing blocks a rule from shipping without a bench verdict, or an adopted artifact from merging without a sealed record. The tokens exist, and the gates do not.
 5. **No retirement command.** Deck removal, consumer manifest cleanup, and provider teardown are three manual acts with no shared transaction.
 6. **Provider routine install is manual by nature.** Provider UIs accept pasted prompts. The CLI can render and verify, but it cannot install. This is an accepted edge, not a fixable seam.
-7. **Decision-record numbering collides.** Two DECK-0002 records exist on the deck's default branch. The numbering has no reservation mechanism across parallel changes.
+7. **Decision-record numbering has no reservation mechanism.** This chain resolves the DECK-0002 collision by renaming Temporary Adoption State to DECK-0004. Parallel changes still allocate numbers manually.
 8. **Workshop capture is convention-only.** CaptureOnTouch is a rule, and nothing measures whether capture happens. The Operate-to-Capture feedback loop has no coverage signal.

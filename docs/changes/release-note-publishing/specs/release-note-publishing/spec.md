@@ -2,13 +2,20 @@
 
 ### Requirement: Release Interval
 
-The compiler MUST select pull requests merged after the previous release commit. Each selected pull request MUST be reachable from the target commit.
+The compiler MUST select each merged pull request by its target-branch incorporation commit. The previous release commit MUST be the exclusive interval boundary.
+
+The target commit MUST be the inclusive interval boundary. Each selected incorporation commit MUST be reachable from the target commit.
 
 #### Scenario: A later release selects its interval
 
-- **WHEN** the target commit contains pull requests merged after the previous release commit
+- **WHEN** a pull request incorporation commit is in the interval after the previous release commit through the target commit
 - **THEN** the compiler selects each eligible pull request once
 - **AND** the compiler excludes pull requests outside that commit interval
+
+#### Scenario: A squash merge changes the commit identity
+
+- **WHEN** a squash merge adds an incorporation commit that differs from the pull request head
+- **THEN** the compiler uses the incorporation commit for interval selection
 
 ### Requirement: Curated Note Extraction
 
@@ -52,16 +59,28 @@ The workflow MUST validate the selected interval before it changes a draft. The 
 - **WHEN** the workflow cannot verify that it received every page in the selected interval
 - **THEN** the workflow reports the incomplete input and leaves the draft unchanged
 
+#### Scenario: A selected pull request has invalid release notes
+
+- **WHEN** a selected pull request lacks the `## Release Notes` heading or contains no list item under it
+- **THEN** the workflow reports that pull request, fails validation, and leaves the draft unchanged
+
 ### Requirement: Historical Transition
 
-The first release draft MUST preserve every entry from the current `CHANGELOG.md`. It MUST record the commit that ends the imported history.
+The owner MUST select the initial history cutover commit. The first draft MUST compile notes after that commit through the target commit.
+
+The compiled notes MUST come first. The exact `CHANGELOG.md` body at the cutover commit MUST follow without reordered headings or entries.
+
+The draft metadata MUST record the cutover commit. The workflow MUST apply the owner-selected `CHANGELOG.md` state after it creates the draft.
+
+The selected state MUST delete the file or replace its full contents with one heading and one link to the repository Releases page.
 
 Release automation MUST be the only process that generates repository changelog output. Feature pull requests MUST NOT modify `CHANGELOG.md`.
 
 #### Scenario: The first release migrates existing history
 
-- **WHEN** the repository has no earlier release boundary
-- **THEN** the first draft contains the current changelog history and its cutover commit
+- **WHEN** the repository has no earlier release boundary and the owner selects the cutover commit and file state
+- **THEN** the first draft contains compiled interval notes followed by the exact changelog body and cutover metadata
+- **AND** the workflow applies the selected file state
 
 #### Scenario: A release needs repository changelog output
 
@@ -72,7 +91,11 @@ Release automation MUST be the only process that generates repository changelog 
 
 The changelog ownership gate MUST report each feature pull request that changes `CHANGELOG.md`. The gate MUST ship at warning severity.
 
-Its declared-debt baseline MUST list each open pull request head that contains an existing change. The baseline MUST shrink as those heads close.
+The gate MUST seed its declared-debt baseline once. Each entry MUST contain an open pull request number and its current head SHA.
+
+On each evaluation, the gate MUST refresh the SHA only for a seeded pull request that stays open and changes `CHANGELOG.md`.
+
+The gate MUST remove an entry when its pull request closes or stops changing `CHANGELOG.md`. It MUST NOT add or restore debt after seeding.
 
 The gate MUST move to blocking after the baseline is empty. The Skeleton payload MUST omit the file before this move.
 
@@ -82,6 +105,11 @@ Deck MUST also receive the related Copier update before this move.
 
 - **WHEN** a baseline head changes `CHANGELOG.md` during the warning phase
 - **THEN** the gate reports the declared debt at warning severity
+
+#### Scenario: A baseline pull request changes its head
+
+- **WHEN** a seeded pull request receives a new head that still changes `CHANGELOG.md`
+- **THEN** the gate refreshes that entry to the new head SHA and reports the declared debt
 
 #### Scenario: The flip condition becomes true
 

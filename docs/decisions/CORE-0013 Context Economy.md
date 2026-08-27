@@ -67,7 +67,7 @@ Compatibility of the forge-core decisions with this norm:
 | CORE-0008 Variables in Markdown | affirmed | unchanged |
 | CORE-0009 YAML Configuration | affirmed | unchanged |
 | CORE-0010 Unified Module Validation | amended | gains the chosen linter set on migration: one linter per surface, single binary, offline on the commit path, changes by record |
-| CORE-0011 Verified Remote Execution | affirmed | deck CI pins digests |
+| CORE-0011 Verified Remote Execution | affirmed | deck CI pins actions by commit and verifies release binaries by SHA-256. Package installs remain a compliance gap |
 | CORE-0012 Fixture-Based Canary Testing | affirmed | the ontology smoke fixture follows it |
 | ARCH-0001 Skills Agents and Rules | amended | agents are containers, never personas, per CORE-0014 |
 | ARCH-0002 Skills Companion Files | affirmed | progressive disclosure in practice |

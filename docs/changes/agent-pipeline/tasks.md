@@ -4,7 +4,7 @@
 - [x] 1.2 Record DECK-0008 Idea-to-Merge Flywheel
 - [x] 1.3 State the idea-intake and artifact-extraction contracts as delta specifications
 - [x] 1.4 Add the IntakeIdea skill as the first intake instance
-- [ ] 1.5 State the draft-gating contract as a delta specification: register, deterministic pass before review, review points by blast radius
+- [x] 1.5 State the draft-gating contract as a delta specification: register, deterministic pass before review, review points by blast radius
 
 ## 2. Follow-up passes through the pipeline itself
 

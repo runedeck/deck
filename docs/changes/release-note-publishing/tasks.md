@@ -22,12 +22,12 @@
 
 - [ ] 3.1 Add the warning gate and its declared-debt baseline
 - [ ] 3.2 Record the specification's flip condition in the debt registry
-- [ ] 3.3 Add fixtures for baseline, warning, and blocking states
+- [ ] 3.3 Add fixtures for baseline seeding, head refresh, removal, warning, and blocking states
 
 ## 4. Verification
 
 - [ ] 4.1 `rune spec validate release-note-publishing` passes
 - [ ] 4.2 `rune validate` reports no new errors
-- [ ] 4.3 Compiler tests cover selection, extraction, ordering, and repeat runs
+- [ ] 4.3 Compiler tests cover squash selection, invalid notes, migration order, extraction, and repeat runs
 - [ ] 4.4 A fixture release creates one complete draft and publishes nothing
 - [ ] 4.5 The changelog ownership gate fires on a seeded feature change

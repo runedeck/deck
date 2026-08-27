@@ -25,10 +25,10 @@ The record identifier is the identity. The extractor mints the entity IRI from t
 
 ## Severity ratchet
 
-New shapes start at `sh:Warning`. A recorded follow-up moves a shape to `sh:Violation` when the existing corpus conforms. Two shapes currently wait:
+New shapes start at `sh:Warning`. A recorded follow-up moves a shape to `sh:Violation` when the existing corpus conforms. Two shapes still wait:
 
-- The duplicate-identifier shape waits for the coordinated history rewrite that removes the DECK-0002 duplicate.
 - The rule-verdict shape waits until existing rules carry verdicts.
+- The references-resolve shape waits until the extractor lands and every related entry resolves.
 
 ## The gate ladder
 
