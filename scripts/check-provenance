@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+"""Check each named rune file or its provenance sidecar.
+
+The subject digest must match the file content. Dependency digests
+stay untouched: an adopted rune keeps its upstream source digest.
+Use --fix to rewrite a stale subject digest in place.
+"""
+import hashlib
+import pathlib
+import re
+import sys
+
+
+def source_path(name):
+    path = pathlib.Path(name)
+    if path.parent.name == ".provenance" and path.name.endswith(".yaml"):
+        return path.parent.parent / path.name[:-5]
+    return path
+
+
+def check(names, fix=False):
+    stale = 0
+    for path in sorted({source_path(name) for name in names}):
+        if not path.is_file():
+            continue
+        sidecar = path.parent / ".provenance" / (path.name + ".yaml")
+        if not sidecar.is_file():
+            continue
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        text = sidecar.read_text()
+        match = re.search(
+            r"(?m)^(?P<indent>[ \t]*)subject:[ \t]*\n"
+            r"(?:(?!(?P=indent)[A-Za-z_][A-Za-z0-9_.-]*:)[^\n]*\n)*?"
+            r"^[ \t]+sha256: (?P<digest>[0-9a-f]{64})[ \t]*$",
+            text,
+        )
+        if match is None:
+            print(f"no subject digest: {sidecar}")
+            stale += 1
+            continue
+        if match.group("digest") == digest:
+            continue
+        if fix:
+            sidecar.write_text(
+                text[: match.start("digest")]
+                + digest
+                + text[match.end("digest") :]
+            )
+            print(f"updated {sidecar}")
+        else:
+            print(f"stale subject digest: {sidecar}")
+            stale += 1
+    if stale and not fix:
+        print("run: python3 scripts/check-provenance --fix <file>...")
+    return 1 if stale else 0
+
+
+def main():
+    fix = "--fix" in sys.argv
+    names = [argument for argument in sys.argv[1:] if argument != "--fix"]
+    return check(names, fix)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

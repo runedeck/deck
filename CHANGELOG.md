@@ -8,6 +8,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 - Five micro-rules in core, extracted from the tuicr workshop brief: CaptureOnTouch, FixAtTheHighestLeverage, ReportFailures, FlagRuleConflicts, and OwnersVoice.
 - The VerifyClaims and Deslop rules in core: evidence before assertion, and slop stripped at write time.
+- The check-provenance hook: a rune or sidecar edit fails when its provenance subject digest is stale, and `--fix` repairs it.
 - BenchArtifact ships bench.py again: one config-driven driver for the quick, snapshot, plan, run, grade, judge, and report steps.
 - The AnchorWorkingDirectory rule in core: each shell command chain starts from an absolute path.
 - The declared world: `ontology/rune.ttl` names the deck's kinds with established vocabularies, and `ontology/shapes.ttl` states the first three axioms as SHACL shapes (DECK-0010).

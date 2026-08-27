@@ -45,6 +45,16 @@ Name other model contributors with `Co-Authored-By` trailers in the `authors.yam
 - Create the pull request from a feature branch, never from main.
 - Do not append a generation footer, a tool badge, or a session link to the body.
 
+### Manage rebase and summon economics
+
+A review verdict binds to the head sha. Every rebase discards the standing verdict and costs one review round.
+
+- Check the platform merge state before a rebase. Never rebase a MERGEABLE pull request. A stale but clean base merges free.
+- Rebase a CONFLICTING pull request once, immediately before the merge, not after each movement of the default branch.
+- Summon a review round only on a final head: no pushes planned, and the base checked against the default branch.
+- Process a merge queue serially. Hand the owner every merge-ready pull request first. After the merges, rebase the survivors once, then summon once.
+- Before a push, compare the remote head with the head this session last pushed. When another session moved it, stop and reconcile.
+
 ### Rewrite history
 
 `git read-tree -u --reset <sha>` snaps the index and working tree to a commit's tree without a merge or a rebase. To squash or regroup a linear history:
