@@ -35,12 +35,14 @@ rune install                         # assemble and deploy to all providers
 ### Drive a spec change
 
 ```sh
-rune spec propose <change-id> --capability <name>
+rune spec propose <change-id> --capability <name>   # --design adds design.md
 rune spec list                       # active changes; --specs for capabilities
 rune spec show <id>                  # one change or capability spec
 rune spec context <id>               # agent-ready work order
 rune spec doctor                     # relationship health
+rune spec validate [<id>]            # the specification tree or one change
 rune spec archive <id>               # refuses on unchecked tasks; --abandon drops
+rune spec export | import            # bridge to an openspec/ tree
 ```
 
 ## Verification
