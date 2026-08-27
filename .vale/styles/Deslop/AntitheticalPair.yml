@@ -1,0 +1,18 @@
+# "It's not X. It's Y." -- the negation half carries no information the
+# affirmative half does not. `a feature, not a bug` (and its inversion) is the
+# same move written on one line instead of two, so it belongs here rather than
+# in a rule of its own.
+#
+# The comma frame is what keeps the one-line branches off genuine defect prose:
+# "the bug is in the retry path" and "this feature ships Tuesday" cannot match.
+#
+# One `raw` entry with top-level alternation, and \b written by hand. Multiple
+# `raw` list items are CONCATENATED into one impossible regex rather than
+# alternated, so splitting these into separate entries would silently kill the
+# rule. `raw` is not wrapped in \b either, hence the explicit boundaries.
+extends: existence
+message: "Antithetical pair ('It's not X. It's Y.'). Fold into one affirmative sentence."
+level: warning
+ignorecase: true
+raw:
+  - "(?:(?:It|This|That|We|They)\\s*['\\u2019]?s?\\s+not\\s+[^.!?]{3,50}[.!]\\s+(?:It|This|That|We|They)(?:['\\u2019]s|\\s+is|\\s+are)\\b|\\b(?:a\\s+)?feature,\\s+not\\s+a\\s+bug\\b|\\b(?:a\\s+)?bug,\\s+not\\s+a\\s+feature\\b)"

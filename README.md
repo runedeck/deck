@@ -2,7 +2,9 @@
 
 The deck: a collection of runes — markdown skills, agents, rules, and hooks — that [rune](https://github.com/runedeck/rune) deploys into AI coding harnesses (`.claude`, `.codex`, `.gemini`, `.opencode`).
 
-The deck is growing domain by domain as artifacts pass adoption review. Today it carries the deck skeleton (`meta`, `development`, `council`, `research`) and the `rune` skill, which teaches AI agents to drive the CLI.
+The deck grows as artifacts pass adoption review. It includes the `meta`, `development`, `council`, `research`, and `security` domains.
+
+The `BuildTask` skill prepares provider tasks. The `ConfigureScanners` skill prepares public exposure scanners.
 
 ## Use it
 
@@ -13,7 +15,8 @@ rune skill add rune
 rune install
 ```
 
-`rune skill` lists what the deck offers; `rune add --cast all` stages every published rune. The `development`, `council`, and `research` domains are scaffolding today — they fill as artifacts pass adoption review.
+`rune skill` lists what the deck offers. `rune add --cast all` stages the current all cast.
+`rune add --cast scanners --source <path-to-this-clone>` stages the two scanner skills.
 
 ## Layout
 

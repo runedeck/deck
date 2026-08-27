@@ -1,0 +1,42 @@
+# Words that are filler often enough to be worth surfacing, but that have a real
+# sense in some domain. Broad match so the tell is never missed, `suggestion`
+# level so it never blocks a build.
+#
+# This mirrors the calibration deslop's own consumers use: a universal tool that
+# cries wolf on real domain prose gets ignored. The word is flagged everywhere,
+# and the reader decides.
+#
+# `load-bearing` is here rather than in a narrowed rule because Vale cannot
+# express the distinction. Its figurative sense attaches to an open class of
+# abstract nouns (claim, assumption, context, proof point, decision, logic,
+# thesis, step ...), so enumerating them caught 80 of 619 real uses. The literal
+# sense is nearly closed -- almost always `wall` -- but excluding it needs a
+# negative lookahead, and Vale accepts lookarounds and then ignores them. It
+# also ignores an `exceptions:` list on `existence`, and a multi-word
+# `accept.txt` entry cannot filter it either, because the vocabulary is matched
+# against the alert text (`load-bearing`) and not the phrase around it. Broad
+# match at `suggestion` is the only mechanism left: every use is surfaced, the
+# build never breaks, and a writer talking about an actual wall moves on.
+#
+# `priors` is the same shape. The possessive and adjectival frames are required,
+# which keeps the rule off "the prior commit" and off the criminal-record sense,
+# but they cannot separate the essayist's "my priors" from a Bayesian's genuine
+# prior distribution -- "your priors are calibrated from experience" is real
+# teaching prose that hits the same string. Surfaced, not blocked.
+#
+# `the shape of` was tried here and REMOVED. Measured across 14,168 markdown
+# files it matched 374 times, and the matches are dominated by the literal
+# sense in machine-learning prose: "the shape of the kernel tensor", "the shape
+# of (2, 2, 2)", "the shape of the multilayer hidden states". Its figurative use
+# is a real tell, but no collocation separates the two -- the literal objects
+# (array, tensor, data, type) are an open class just as the figurative ones are.
+# A token that fires 374 times to catch a handful of real tells is the
+# cry-wolf failure this file's calibration exists to avoid. Do not re-add it.
+extends: existence
+message: "'%s' is often filler. Say the concrete thing, or keep it if the domain sense is meant."
+level: suggestion
+ignorecase: true
+tokens:
+  - 'empower(?:s|ed|ing|ment)?'
+  - 'load[-\s]bearing'
+  - '(?:(?:my|our|your|their|his|her)\s+priors|(?:strong|weak|different)\s+priors|updat(?:e|es|ed|ing)\s+(?:my|our|your|their)\s+priors?)'

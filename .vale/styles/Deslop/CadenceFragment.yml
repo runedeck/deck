@@ -1,0 +1,53 @@
+# The emphasis fragment: a short declarative dropped after a finished sentence
+# that restates it as if the restatement were evidence. "That's the whole
+# point." "And that's fine." "Full stop." Nothing is added; the cadence supplies
+# the feeling of a landed argument.
+#
+# `raw`, not `tokens`, and exactly one entry. Three Vale gotchas force that, and
+# none of them produce a diagnostic:
+#   1. The `Full stop.` branch ends in a period, and a `tokens` entry ending in
+#      punctuation can never satisfy Vale's trailing \b. It would load and match
+#      nothing, forever.
+#   2. Three branches are anchored to a sentence boundary, and \b wrapping kills
+#      a `[.!?]\s+` anchor whenever the character before the period is `)`, a
+#      backtick, or a quote -- \b cannot match between two non-word characters.
+#   3. Multiple `raw` entries are CONCATENATED into one impossible regex rather
+#      than alternated, so this is a single entry with top-level alternation and
+#      hand-written \b markers.
+# The cost is that check.py's branch audit skips `raw` entirely, so one fixture
+# line would satisfy the whole rule. Every tell below is pinned by hand in
+# tests/expected.tsv to buy that coverage back.
+#
+# `[''’]` is doubled because this is a single-quoted YAML scalar. The class
+# itself is load-bearing: Vale does not normalise typographic apostrophes, and
+# `that’s` is what an editor leaves behind.
+#
+# The narrowing, and what it buys:
+#   * Bare `that's the point` is NOT flagged. `point` has an ordinary locative
+#     sense -- "that's the point at which the retry budget runs out" -- which the
+#     whole/entire/exactly-the slot excludes, because nobody writes "that's the
+#     whole point at which".
+#   * `precisely the` was dropped from that slot so `precisely` stays with the
+#     precision-adverb family. One tell, one home.
+#   * `Full stop.` and its siblings require a preceding sentence in the same
+#     block. That anchor is the whole rule: it keeps `period`, `always` and
+#     `never` off their ordinary in-sentence senses ("the reporting period ends
+#     on Friday", "handlers must never import the client"), because the word has
+#     to stand alone between a sentence-ending mark and its own period. Every
+#     corpus hit has that shape. The residual is a one-word answer in a genuine
+#     Q&A ("Do you review these? Always."), which no pattern can separate.
+#   * In the `and that's fine` branch the mid-sentence `\s+(?:and|but)\s+`
+#     alternative is the load-bearing one: the tic attaches to the writer's own
+#     concession. A standalone "That's fine." in a review thread is a real reply
+#     and still flags, which is the accepted cost of the sentence-initial branch.
+#
+# Seam with AntitheticalPair: "It's not the fastest way. That's the whole point."
+# makes AntitheticalPair's span end on `That's`, abutting this rule's span, and
+# the suite reports the pair as a double-flag. "It's not a bug. That's fine."
+# does the same. No fixture line here follows a `not X.` clause for that reason.
+extends: existence
+message: "Emphasis fragment. It restates the sentence before it; cut it or give the reason."
+level: warning
+ignorecase: true
+raw:
+  - '(?:\bthat[''’]s\s+(?:the\s+whole|the\s+entire|exactly\s+the)\s+(?:point|idea|thing|tool|trick|story|job|argument|list|fix|system|premise)\b|\bthat[''’]s\s+it\.\s+that[''’]s\s+the\b|(?:^|[.!?]\s+)and\s+that[''’]s\s+the\s+point\b|(?:(?:^|[.!?,]\s+)(?:and\s+|but\s+)?|\s+(?:and|but)\s+)that[''’]s\s+(?:fine|okay|OK|a\s+good\s+thing|not\s+a\s+bad\s+thing|by\s+design|deliberate)\b|[.!?]\s+(?:full\s+stop|period|every\s+time|always|never)\.)'

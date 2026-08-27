@@ -1,0 +1,16 @@
+# The single home for the "In today's / In an era of" family. These phrases used
+# to live here AND in SlopVocab.yml, so every hit reported twice.
+#
+# Deliberately not anchored to the start of a sentence: the phrase is the cliche
+# wherever it lands ("Companies in today's world must adapt" is the same tell).
+extends: existence
+message: "Opener cliche. Open on the claim."
+level: warning
+ignorecase: true
+tokens:
+  # `landscape` is deliberately absent: SlopVocab.yml owns that family, and
+  # "in today's landscape of tools" reported from both rules at once.
+  - "in\\s+today\\s*(?:['\u2019]s|s)\\s+(?:world|market|environment|economy|climate|era|age)"
+  - 'in\s+an\s+era\s+of'
+  - 'in\s+the\s+age\s+of'
+  - 'in\s+a\s+world\s+(?:of|where)'

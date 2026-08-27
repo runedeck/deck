@@ -1,0 +1,16 @@
+# Stacked qualifiers that cancel each other out. `somewhat` on its own belongs to
+# Hedging.yml, so no entry here may start with it.
+extends: substitution
+message: "Hedge cascade: '%s'. Use one qualifier, not two: %s."
+level: warning
+ignorecase: true
+swap:
+  'could potentially': could
+  'may potentially': may
+  'might potentially': might
+  'can potentially': can
+  'could possibly': could
+  'might possibly': might
+  'may be able to': might
+  'could be able to': could
+  'a bit of a': a

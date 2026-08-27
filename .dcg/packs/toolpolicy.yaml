@@ -1,0 +1,98 @@
+# Tool policy pack (DECK-0010). dcg evaluates every agent shell command
+# before execution, across Claude Code, Codex, Gemini, Copilot, and
+# Cursor. The machine config loads .dcg/packs/*.yaml from the repository
+# root, so this pack applies to every agent that works in this deck.
+# Validate: dcg pack validate .dcg/packs/toolpolicy.yaml
+schema_version: 1
+id: rune.toolpolicy
+name: Rune Tool Policy
+version: 1.0.0
+
+description: |
+  Redirects slow or unapproved search tools to the approved set.
+  rg replaces grep. fd replaces find. The denial text tells the agent
+  the replacement, so the correction costs one turn.
+
+keywords:
+  - grep
+  - find
+  - awk
+  - sed
+  - .env
+  - id_rsa
+  - id_ed25519
+  - .pem
+  - .key
+  - Keychains
+
+destructive_patterns:
+  - name: grep-use-rg
+    pattern: '^grep\b'
+    severity: high
+    description: Use rg (ripgrep) instead of grep.
+    explanation: |
+      rg is faster, respects .gitignore, and prints file and line by
+      default. Replace `grep -r pattern .` with `rg pattern`.
+      `git grep` stays allowed.
+    executables:
+      - grep
+
+  - name: find-use-fd
+    pattern: '^find\s+\S'
+    severity: high
+    description: Use fd instead of find.
+    explanation: |
+      fd is faster and respects .gitignore. Replace
+      `find . -name "*.md"` with `fd -e md`. Destructive find flags
+      are already covered by the core.filesystem pack.
+    executables:
+      - find
+
+  - name: grep-alt-forms
+    pattern: '(^/(usr/)?bin/|\bxargs\s+(-\S+\s+)*|\bbusybox\s+)grep\b'
+    severity: high
+    description: Use rg (ripgrep) instead of grep, in any invocation form.
+
+  - name: find-alt-forms
+    pattern: '(^/(usr/)?bin/|\bbusybox\s+)find\s+\S'
+    severity: high
+    description: Use fd instead of find, in any invocation form.
+
+  - name: yaml-json-needs-real-parser
+    pattern: '\b(awk|sed)\b[^|;&]*\.(ya?ml|json)\b'
+    severity: high
+    description: Parse YAML and JSON with yq or jq, never awk or sed.
+    explanation: |
+      Line tools break on indentation, quoting, and multi-line values,
+      and the breakage is silent. yq and jq parse the structure.
+
+  - name: casual-secret-read
+    pattern: '^(cat|less|more|head|tail|bat)\s+[^|;&]*(\.env\b|id_rsa\b|id_ed25519\b|\.pem\b|\.key\b|/Library/Keychains)'
+    severity: high
+    description: Read secret material deliberately, never casually.
+    explanation: |
+      Key files and environment files hold credentials. An agent that
+      needs one value must name the reason and the exact variable, and
+      the user reads or pastes it. Bulk reads leak whole credential
+      sets into context and logs.
+    executables:
+      - cat
+      - less
+      - more
+      - head
+      - tail
+      - bat
+
+safe_patterns:
+  - name: grep-version-probe
+    pattern: '^grep\s+--(version|help)\b'
+    description: Version and help probes stay allowed.
+  - name: find-version-probe
+    pattern: '^find\s+--(version|help)\b'
+    description: Version and help probes stay allowed.
+  - name: env-example-read
+    pattern: '^(cat|less|more|head|tail|bat)\s+[^|;&]*\.env\.(example|sample|template)\b'
+    description: Example environment files carry no secrets.
+  - name: sed-range-view
+    pattern: '\bsed\s+-n\s+.?[0-9]+,[0-9]+p.?\s'
+    description: A pure line-range view extracts nothing structural.

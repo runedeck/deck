@@ -1,0 +1,55 @@
+# Announcing that something deserves attention, in place of the thing itself.
+# `it is worth noting`, `worth stating plainly`, `I should flag that`,
+# `why this matters` — every one of these is a sentence whose only job is to
+# certify the next sentence. Delete the frame and the claim survives one clause
+# shorter.
+#
+# This file owns the whole `worth <gerund>` family. The two `worth noting`
+# tokens moved here from SlopVocab.yml (which kept `important to note`, a
+# different frame); a copy in both files would report twice on every hit.
+#
+# Narrowing, and the false positive each piece of it buys off:
+#   * `worth flagging THAT` — the bare verb is the literal editorial one, and it
+#     is the only sense in ordinary review prose: "worth flagging to the release
+#     manager", "worth flagging in the draft as reported". Those take a
+#     to/in/for/as complement, never a `that`-clause, so the `that` is what
+#     separates the rhetorical gesture from the assignment. `flagging` is
+#     deliberately absent from the bare `worth (stating|naming|…)` alternation
+#     below, or "worth flagging that" would report twice.
+#   * `worth being precise|explicit|specific|concrete ABOUT|HERE` — the
+#     announcement frame is required. Bare `precise` is a measurement word
+#     ("precise to three decimals") and bare `concrete` is a building material.
+#     `let me be precise` / `I'll be explicit` are NOT here: PerformedCandor.yml
+#     owns the first-person candor frame, and `worth being honest about`
+#     belongs to it too.
+#   * `worth sitting with` ships bare and eats one false positive: the literal
+#     "worth sitting with the on-call engineer for an hour". The tic form
+#     usually has no object at all ("This is worth sitting with."), and Vale
+#     ignores lookaheads, so "no object follows" is not expressible. The
+#     alternative was not shipping the tell at all.
+#
+# Vale wraps each token in \b...\b, so nothing here may end in punctuation.
+# The apostrophe class in the first token is why that token is a double-quoted
+# scalar with a ’ escape (the form SlopVocab.yml used before the move):
+# typographic apostrophes are not normalised, and an editor that rewrites
+# quotes would otherwise silence the token.
+extends: existence
+message: "Announced noteworthiness ('%s'). Cut the announcement and make the point."
+level: warning
+ignorecase: true
+tokens:
+  # --- the `worth noting` family, relocated from SlopVocab.yml ---
+  - "it\\s*['’]s\\s+(?:also\\s+)?worth\\s+noting"
+  - 'it\s+is\s+(?:also\s+)?worth\s+noting'
+  # --- its successors: same machinery, fresher verbs ---
+  - 'worth\s+(?:stating|naming|noticing|saying|spelling\s+out|pausing\s+on|dwelling\s+on|separating|distinguishing|underlining)'
+  - 'worth\s+flagging\s+that'
+  - '(?:I|we)\s+should\s+flag\s+that'
+  - 'worth\s+sitting\s+with'
+  # --- announced rigour: the promise of precision, one sentence early ---
+  # `to make this concrete` is NOT here: FramingOffer.yml owns it. It announces
+  # that an example is coming, which is a framing move rather than a claim about
+  # what deserves notice, and a copy in both files double-flags every hit.
+  - 'worth\s+being\s+(?:precise|explicit|specific|concrete)\s+(?:about|here)'
+  # --- announced significance ---
+  - 'why\s+(?:this|that|it)\s+matters'

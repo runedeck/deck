@@ -90,6 +90,75 @@ repos:
             language: system
             pass_filenames: false
 
+          - id: stable-shell-schemas
+            name: stable shell schema copies
+            entry: make validate-schemas
+            language: system
+            pass_filenames: false
+
+          # Prose and hygiene gates (DECK-0010). Each hook skips when its
+          # binary is absent, so a scaffolded repository stays installable
+          # before the tools arrive.
+          - id: rumdl
+            name: rumdl markdown lint
+            entry: sh -c 'if command -v rumdl >/dev/null 2>&1; then rumdl check "$@"; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and rumdl is absent"; exit 1; fi' --
+            language: system
+            types: [markdown]
+            exclude: '(^|/)\.provenance/|^templates/'
+
+          - id: typos
+            name: typos spelling
+            entry: sh -c 'if command -v typos >/dev/null 2>&1; then typos --force-exclude "$@"; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and typos is absent"; exit 1; fi' --
+            language: system
+            types: [text]
+            exclude: '(^|/)\.provenance/'
+
+          - id: vale
+            name: vale prose style
+            entry: sh -c 'if command -v vale >/dev/null 2>&1; then vale --no-wrap "$@"; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and vale is absent"; exit 1; fi' --
+            language: system
+            types: [markdown]
+            exclude: '(^|/)\.provenance/|^templates/'
+
+          - id: lychee
+            name: lychee link check (offline)
+            entry: sh -c 'if command -v lychee >/dev/null 2>&1; then lychee --offline --include-fragments --no-progress "$@"; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and lychee is absent"; exit 1; fi' --
+            language: system
+            types: [markdown]
+            exclude: '(^|/)\.provenance/|^templates/'
+
+          # actionlint and zizmor audit only the changed workflow files, so
+          # one workflow's edit is not blocked by another's recorded debt.
+          # Task 2.14 owns the full-baseline triage.
+          - id: actionlint
+            name: actionlint
+            entry: sh -c 'if command -v actionlint >/dev/null 2>&1; then actionlint "$@"; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and actionlint is absent"; exit 1; fi' --
+            language: system
+            files: ^\.github/workflows/.*\.ya?ml$
+
+          - id: zizmor
+            name: zizmor workflow audit
+            entry: sh -c 'if command -v zizmor >/dev/null 2>&1; then if [ -f .github/zizmor.yml ]; then zizmor --config .github/zizmor.yml "$@"; else zizmor "$@"; fi; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and zizmor is absent"; exit 1; fi' --
+            language: system
+            files: ^\.github/workflows/.*\.ya?ml$
+
+          # The declared world is hand-edited Turtle. This hook proves the
+          # ontology parses and asserts the smoke fixture's exact findings,
+          # so deleting or breaking a shape fails the hook.
+          - id: ontology-syntax
+            name: ontology syntax and shapes smoke test
+            entry: sh -c 'if command -v rudof >/dev/null 2>&1; then rudof data ontology/rune.ttl >/dev/null || exit 1; r=$(rudof shacl-validate -s ontology/shapes.ttl -r turtle ontology/smoke/instances.ttl 2>/dev/null); v=$(printf "%s" "$r" | grep -c "sh:Violation"); w=$(printf "%s" "$r" | grep -c "sh:Warning"); [ "$v" -eq 2 ] && [ "$w" -eq 4 ] || { echo "shapes smoke test expected 2 Violations and 4 Warnings, got $v and $w"; exit 1; }; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and rudof is absent"; exit 1; fi'
+            language: system
+            pass_filenames: false
+            files: ^ontology/.*\.ttl$
+
+          - id: openspec-validate
+            name: openspec validate (strict)
+            entry: sh -c 'if command -v openspec >/dev/null 2>&1 && [ -d docs/changes ]; then openspec validate --all --strict --no-interactive; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and openspec is absent"; exit 1; fi'
+            language: system
+            pass_filenames: false
+            files: ^docs/(changes|specs)/
+
           - id: cargo-test
             name: cargo test
             entry: cargo test --all-features
@@ -100,7 +169,7 @@ repos:
 
           - id: semgrep
             name: semgrep OWASP
-            entry: semgrep scan --config=p/owasp-top-ten --metrics=off --quiet .
+            entry: semgrep scan --config=p/owasp-top-ten --metrics=off --quiet --disable-version-check --error .
             language: system
             pass_filenames: false
             stages: [pre-push]
