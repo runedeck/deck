@@ -1,8 +1,9 @@
 ---
 name: VersionControl
-description: "Git and Jujutsu discipline for commits, staging, pushes, history rewrites, worktrees, and repo governance. USE WHEN committing, pushing, creating pull requests, squashing history, cleaning merged branches, setting branch protection or CODEOWNERS, or working in a jj colocated repo."
+description: "Git and Jujutsu discipline for commits, pushes, pull-request review loops, history rewrites, worktrees, and repository governance. USE WHEN committing, pushing, creating or babysitting pull requests, responding to review bots, or changing Git history. Also use when cleaning branches, setting branch protection or CODEOWNERS, or working in a jj colocated repository. NOT FOR one-shot read-only pull-request audits, queue reports, or code review outside an active review-and-fix loop."
+compatibility: "Requires Git. Jujutsu repositories require jj. GitHub and GitLab tasks require gh or glab and network access."
 metadata:
-    version: 0.2.0
+    version: 0.3.0
     upstream: https://github.com/N4M3Z/forge-core
 ---
 
@@ -17,7 +18,7 @@ Commit discipline, staging hygiene, push policy, and repo governance. In a jj co
 - Commit with a pathspec (`git commit -- <path>...`). A bare commit can include the user's staged work. Use a bare commit only after the history-rewrite procedure replaces the index with `git read-tree`. When unsure, run `git diff --cached --stat` first.
 - Never commit files that contain secrets. The prek hooks run gitleaks at commit and at push. Never bypass them with `--no-verify`.
 - Do not push unless the user asks. A commit and a push are separate actions.
-- Never force-push unless the user explicitly asks. When a force-push is sanctioned, use `--force-with-lease`, not `--force`.
+- Never force-push unless the user explicitly asks. If the user approves a force-push, use `--force-with-lease`, not `--force`.
 - Automated Jujutsu mode is the default. Keep automated pushes unsigned.
 - Only the owner can start attended Jujutsu signing. An agent must not start or inherit attended mode.
 - Open pull requests with the owner's existing `gh` authentication. Do not override it with an App token.
@@ -44,7 +45,18 @@ Name other model contributors with `Co-Authored-By` trailers in the `authors.yam
 - Keep the title under 70 characters.
 - Write the body as `## Summary` bullets plus the sections the repository's checks require (deck requires `## Release Notes`).
 - Create the pull request from a feature branch, never from main.
+- When the user requests active babysitting, read [BabysitPR.md](BabysitPR.md) and use its review-and-fix loop.
 - Do not append a generation footer, a tool badge, or a session link to the body.
+
+### Manage rebase and summon economics
+
+A review verdict binds to the head sha. Every rebase discards the standing verdict and costs one review round.
+
+- Check the platform merge state before a rebase. Never rebase a MERGEABLE pull request. A stale but clean base merges free.
+- Rebase a CONFLICTING pull request once, immediately before the merge, not after each movement of the default branch.
+- Summon a review round only on a final head: no pushes planned, and the base checked against the default branch.
+- Process a merge queue serially. Hand the owner every merge-ready pull request first. After the merges, rebase the survivors once, then summon once.
+- Before a push, compare the remote head with the head this session last pushed. When another session moved it, stop and reconcile.
 
 ### Rewrite history
 
@@ -106,7 +118,7 @@ Detect the platform from the remote origin URL and use its companion: [GitHub.md
 
 ### Sign commits
 
-Model commits in runedeck repositories are unsigned by specification. Automated Jujutsu pushes also stay unsigned. Only an owner-established attended session enables Jujutsu push signing. The attended launcher must show a prompt marker and limit the mode to its subshell. Attended mode changes signing only. It does not authorize a commit or push.
+The runedeck specification requires unsigned model commits. Automated Jujutsu pushes also stay unsigned. Only an owner-established attended session enables Jujutsu push signing. The attended launcher must show a prompt marker and limit the mode to its subshell. Attended mode changes signing only. It does not authorize a commit or push.
 
 See [Jujutsu.md](Jujutsu.md) for push signing. See [CommitSigning.md](CommitSigning.md) for repositories that require Git signing.
 
@@ -121,4 +133,5 @@ See [Jujutsu.md](Jujutsu.md) for push signing. See [CommitSigning.md](CommitSign
 - [Jujutsu.md](Jujutsu.md): the jj commit and push discipline for colocated repos.
 - [CommitSigning.md](CommitSigning.md): hardware-key signing setup and batch re-signing.
 - [GitWorktrees.md](GitWorktrees.md): worktree creation, safety checks, and cleanup.
+- [BabysitPR.md](BabysitPR.md): the active review-and-fix loop for a pull request.
 - [GitHub.md](GitHub.md), [GitLab.md](GitLab.md): platform governance commands.
