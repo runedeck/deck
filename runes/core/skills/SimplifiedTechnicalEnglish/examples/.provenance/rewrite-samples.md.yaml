@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/SimplifiedTechnicalEnglish/examples/rewrite-samples.md
     digest:
-      sha256: dee68212b007551966a25cef7d35bf6c212e98d1ceefec2e2f5a4cdada6008a6
+      sha256: 42d4fe70c1a708217913f67a5f1113b23f57782061dd4a572200aa8f79f362bd
   predicate:
     buildDefinition:
       buildType: adopt/v1
