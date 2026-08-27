@@ -40,6 +40,29 @@ def scripts_dir(config: dict) -> Path:
 def snapshot(config: dict) -> None:
     source = path(config, "artifact_source")
     target = path(config, "snapshot")
+    manifest_path = path(config, "manifest")
+    source_path = source.resolve()
+    manifest_directory = manifest_path.parent.resolve()
+    target_path = target.resolve()
+    if not source_path.is_dir():
+        raise ValueError("artifact_source must be an existing directory")
+    if (
+        source_path == target_path
+        or source_path in target_path.parents
+        or target_path in source_path.parents
+    ):
+        raise ValueError("artifact_source and snapshot must be separate directories")
+    try:
+        manifest_artifact = target_path.relative_to(manifest_directory)
+    except ValueError as error:
+        raise ValueError(
+            "snapshot must be below the manifest directory"
+        ) from error
+    if target_path == manifest_directory:
+        raise ValueError("snapshot must be below the manifest directory")
+    template = config.get("manifest_template", config["manifest"])
+    manifest = json.loads((config["_root"] / template).read_text())
+    arm = manifest["arms"][config["treatment_arm"]]
     if target.exists():
         shutil.rmtree(target)
     shutil.copytree(source, target)
@@ -52,12 +75,9 @@ def snapshot(config: dict) -> None:
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     digest = module.artifact_digest(target)
-    template = config.get("manifest_template", config["manifest"])
-    manifest = json.loads((config["_root"] / template).read_text())
-    arm = manifest["arms"][config["treatment_arm"]]
-    arm["artifact_path"] = target.name
+    arm["artifact_path"] = manifest_artifact.as_posix()
     arm["artifact_sha256"] = digest
-    path(config, "manifest").write_text(json.dumps(manifest, indent=2) + "\n")
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
     print("[bench] snapshot digest:", digest)
 
 
@@ -82,7 +102,10 @@ def plan(config: dict) -> None:
 
 
 def matrix(config: dict) -> None:
-    run(matrix_argv(config) + ["--approve", config["approve"]])
+    argv = matrix_argv(config)
+    if "approve" in config:
+        argv += ["--approve", config["approve"]]
+    run(argv)
 
 
 def iteration_dir(config: dict) -> Path:
@@ -140,41 +163,20 @@ def report(config: dict) -> None:
     print("[bench] report:", iteration_dir(config) / "report.html")
 
 
-def selected_count(items, values: list) -> int:
-    available = {str(item) for item in items}
-    if not values:
-        return len(available)
-    wanted = set(values)
-    missing = wanted - available
-    if missing:
-        raise ValueError(f"filter values not found: {', '.join(sorted(missing))}")
-    return len(wanted)
-
-
-def quick_approval(config: dict, routes: list, cases: list) -> int:
-    manifest = json.loads(path(config, "manifest").read_text())
-    registry = json.loads(path(config, "routes").read_text()).get("routes", {})
-    comparison = next(
-        (
-            item for item in manifest["comparisons"]
-            if item["id"] == config["comparison"]
-        ),
-        None,
-    )
-    if comparison is None:
-        raise ValueError(f"comparison not found: {config['comparison']}")
-    arms = {comparison["primary"], comparison["baseline"]}
-    route_count = selected_count(registry, routes)
-    case_count = selected_count(
-        (case["id"] for case in manifest["evals"]), cases
-    )
-    matrix_calls = (
-        case_count
-        * len(arms)
-        * route_count
-        * config.get("repeats", 1)
-    )
-    return matrix_calls + route_count * 2
+def quick_matrix_argv(
+    config: dict,
+    routes: list,
+    cases: list,
+    approve=None,
+) -> list:
+    argv = matrix_argv(config)
+    for route in routes:
+        argv += ["--route", route]
+    for case in cases:
+        argv += ["--case", case]
+    if approve is not None:
+        argv += ["--approve", approve]
+    return argv
 
 
 def repeat_summary(config: dict) -> str:
@@ -185,21 +187,27 @@ def repeat_summary(config: dict) -> str:
 
 def quick(config: dict) -> None:
     """Scratch run: two routes, two cases, no judging. Roughly five minutes."""
-    settings = config.get("quick", {})
-    routes = settings.get("routes", [])
-    cases = [str(case) for case in settings.get("cases", [])]
+    settings = config.get("quick") or {}
+    routes = settings.get("routes") or []
+    cases = [str(case) for case in (settings.get("cases") or [])]
+    if not routes or not cases:
+        raise ValueError(
+            "quick.routes and quick.cases must each select at least one value"
+        )
     iteration = settings.get("iteration", 999)
+    if not isinstance(iteration, int) or isinstance(iteration, bool):
+        raise TypeError("quick iteration must be an integer")
     scratch = config["_root"] / f"iteration-{iteration}"
     if scratch.exists():
         shutil.rmtree(scratch)
     quick_config = dict(config)
     quick_config["iteration"] = iteration
-    argv = matrix_argv(quick_config)
-    for route in routes:
-        argv += ["--route", route]
-    for case in cases:
-        argv += ["--case", case]
-    run(argv + ["--approve", quick_approval(config, routes, cases)])
+    run(quick_matrix_argv(
+        quick_config,
+        routes,
+        cases,
+        settings.get("approve"),
+    ))
     grade(quick_config)
     bench_dir = scripts_dir(config).parent
     run(
