@@ -90,6 +90,12 @@ repos:
             language: system
             pass_filenames: false
 
+          - id: stable-shell-schemas
+            name: stable shell schema copies
+            entry: make validate-schemas
+            language: system
+            pass_filenames: false
+
           - id: cargo-test
             name: cargo test
             entry: cargo test --all-features
@@ -100,7 +106,7 @@ repos:
 
           - id: semgrep
             name: semgrep OWASP
-            entry: semgrep scan --config=p/owasp-top-ten --metrics=off --quiet .
+            entry: semgrep scan --config=p/owasp-top-ten --metrics=off --quiet --disable-version-check --error .
             language: system
             pass_filenames: false
             stages: [pre-push]
