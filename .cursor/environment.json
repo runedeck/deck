@@ -1,0 +1,5 @@
+{
+    "name": "Rune Deck",
+    "install": "bash .cursor/install.sh",
+    "start": "make install"
+}
