@@ -1,16 +1,6 @@
-# Identities for the ci/authorship check. Two lists, two policies.
-#
-# authors: valid as the commit author, and as a Co-Authored-By trailer.
-# The author field must match one entry after context suffix normalization.
-# Model identities carry
-# the model id in parentheses and a non-routable per-model address.
-#
-# trailers: valid ONLY as a Co-Authored-By trailer, never as the author.
-# These are the attribution lines coding harnesses append to the commit
-# message. They form a second provenance channel: the author names who
-# made the commit, the trailer names who helped or which tool assisted.
-# Keeping them separate means a wrong author field can never validate
-# through a trailer alias.
+# Commit attribution policy. Human identities and vendor aliases stay explicit.
+# Model identities use matching IDs and an approved harness domain.
+# See docs/specs/commit-attribution/spec.md for the contract.
 authors:
     - Martin Zeman <N4M3Z@users.noreply.github.com>
     - Claude (claude) <claude@claude.noreply.nexus.local>
@@ -26,3 +16,8 @@ trailers:
     - Claude Opus 5 <noreply@anthropic.com>
     - Claude Opus 4.8 <noreply@anthropic.com>
     - Claude Sonnet 5 <noreply@anthropic.com>
+
+model_domains:
+    - claude.noreply.nexus.local
+    - codex.noreply.nexus.local
+    - grok.noreply.nexus.local

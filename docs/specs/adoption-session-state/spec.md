@@ -35,7 +35,7 @@ Repository validation SHALL fail when a tracked `.provenance/review.yaml` or `.p
 
 ### Requirement: Canonical model identities
 
-Authorship validation SHALL ignore a trailing `1m` context suffix after a model version digit in display model IDs and email local parts. The accepted author list SHALL contain only canonical identities without the suffix.
+Authorship validation SHALL apply the context normalization and trusted-policy contract in [Commit Attribution](../commit-attribution/spec.md).
 
 #### Scenario: One-million-context identity
 
