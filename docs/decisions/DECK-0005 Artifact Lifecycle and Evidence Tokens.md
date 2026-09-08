@@ -14,7 +14,7 @@ author: "@N4M3Z"
 project: deck
 related:
     - "DECK-0001 Artifact Benchmarking Skill"
-    - "DECK-0002 Temporary Adoption State"
+    - "DECK-0004 Temporary Adoption State"
     - "DECK-0003 Three-Metric Verdict and Cross-Vendor Judging"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
