@@ -179,6 +179,41 @@ class IdentityTests(unittest.TestCase):
     def test_resolve_unique_known_model_without_harness(self):
         self.assertEqual(identity.resolve_identity(self.policy, "claude-fable-5"), OLD)
 
+    def test_resolve_exact_raw_ids_before_legacy_aliases(self):
+        for family in ("fable", "opus"):
+            canonical = model_identity(
+                f"claude-{family}-5", domain="claude.noreply.nexus.local"
+            )
+            legacy = model_identity(
+                f"claude-{family}-51m", domain="claude.noreply.nexus.local"
+            )
+            policy = identity.parse_policy(
+                POLICY.replace(OLD, canonical + "\n    - " + legacy)
+            )
+            for model, expected in (
+                (f"claude-{family}-5", canonical),
+                (f"claude-{family}-51m", legacy),
+                (f"claude-{family}-5[1m]", canonical),
+                (f"claude-{family}-51m[1m]", legacy),
+            ):
+                for harness in ("", "claude"):
+                    with self.subTest(model=model, harness=harness):
+                        self.assertEqual(
+                            identity.resolve_identity(policy, model, harness), expected
+                        )
+
+    def test_resolve_legacy_ids_can_use_a_unique_canonical_entry(self):
+        for family in ("fable", "opus"):
+            canonical = model_identity(
+                f"claude-{family}-5", domain="claude.noreply.nexus.local"
+            )
+            policy = identity.parse_policy(POLICY.replace(OLD, canonical))
+            with self.subTest(family=family):
+                self.assertEqual(
+                    identity.resolve_identity(policy, f"claude-{family}-51m", "claude"),
+                    canonical,
+                )
+
     def test_resolve_ambiguous_known_model_without_harness(self):
         other = model_identity("claude-fable-5", domain="codex.noreply.nexus.local")
         policy = identity.parse_policy(
@@ -186,6 +221,12 @@ class IdentityTests(unittest.TestCase):
         )
         with self.assertRaises(identity.IdentityError):
             identity.resolve_identity(policy, "claude-fable-5")
+        self.assertEqual(
+            identity.resolve_identity(policy, "claude-fable-5", "codex"), other
+        )
+        self.assertEqual(
+            identity.resolve_identity(policy, "claude-fable-5", "claude"), OLD
+        )
 
     def test_resolve_future_model_requires_harness(self):
         with self.assertRaises(identity.IdentityError):
@@ -211,12 +252,13 @@ class IdentityTests(unittest.TestCase):
                 identity.resolve_identity(self.policy, model, harness)
 
     def test_resolve_rejects_ambiguous_listed_matches(self):
-        other = model_identity("claude-fable-5", domain="claude.noreply.nexus.local")
+        other = model_identity("claude-fable-51m", domain="claude.noreply.nexus.local")
         policy = identity.parse_policy(
             POLICY.replace("trailers:", f"    - {other}\ntrailers:")
         )
-        with self.assertRaises(identity.IdentityError):
-            identity.resolve_identity(policy, "claude-fable-5", "claude")
+        for model in ("claude-fable-5", "claude-fable-51m"):
+            with self.subTest(model=model), self.assertRaises(identity.IdentityError):
+                identity.resolve_identity(policy, model, "claude")
 
     def test_legacy_policy_infers_only_author_harness_domains(self):
         policy = identity.parse_policy(f"authors:\n    - {OLD}\n")
@@ -366,6 +408,57 @@ class IdentityTests(unittest.TestCase):
             self.assertEqual(invoke("validate", "--identity", OWNER)[0], 2)
             path.unlink()
             self.assertEqual(invoke("check-policy")[0], 2)
+
+
+class RepositoryPolicyTests(unittest.TestCase):
+    def setUp(self):
+        self.policy = identity.load_policy(SCRIPT.parents[1] / "authors.yaml")
+
+    def test_cursor_resolves_confirmed_fable_model(self):
+        expected = model_identity(
+            "claude-fable-5-1", domain="cursor.noreply.nexus.local", name="Cursor"
+        )
+        self.assertEqual(
+            identity.resolve_identity(self.policy, "claude-fable-5-1", "cursor"),
+            expected,
+        )
+        identity.validate_identity(self.policy, expected)
+
+    def test_cursor_accepts_future_versions_without_catalog_entries(self):
+        for model in ("claude-fable-5-2", "future-model-2040.12"):
+            with self.subTest(model=model):
+                author = identity.resolve_identity(self.policy, model, "cursor")
+                self.assertEqual(
+                    author,
+                    model_identity(
+                        model, domain="cursor.noreply.nexus.local", name="Cursor"
+                    ),
+                )
+                identity.validate_identity(self.policy, author)
+
+    def test_cursor_rejects_model_address_mismatch(self):
+        author = model_identity(
+            "claude-fable-5-1",
+            local="claude-fable-5-2",
+            domain="cursor.noreply.nexus.local",
+            name="Cursor",
+        )
+        with self.assertRaisesRegex(identity.IdentityError, "model ID must match"):
+            identity.validate_identity(self.policy, author)
+
+    def test_cursor_registration_keeps_unapproved_domains_blocked(self):
+        for domain in (
+            "unapproved.noreply.nexus.local",
+            "cursor.noreply.nexus.local.evil.test",
+        ):
+            with self.subTest(domain=domain):
+                author = model_identity(
+                    "claude-fable-5-1", domain=domain, name="Cursor"
+                )
+                with self.assertRaisesRegex(identity.IdentityError, "not trusted"):
+                    identity.validate_identity(self.policy, author)
+        with self.assertRaisesRegex(identity.IdentityError, "not trusted"):
+            identity.resolve_identity(self.policy, "claude-fable-5-1", "unapproved")
 
 
 if __name__ == "__main__":

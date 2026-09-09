@@ -20,4 +20,5 @@ trailers:
 model_domains:
     - claude.noreply.nexus.local
     - codex.noreply.nexus.local
+    - cursor.noreply.nexus.local
     - grok.noreply.nexus.local

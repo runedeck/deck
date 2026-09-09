@@ -35,6 +35,21 @@ jobs:
             - name: Test model attribution
               run: python3 -m unittest discover -s tests -p 'test_auth*.py' -v
 
+            - name: Install JJ for push gate tests
+              env:
+                  JJ_VERSION: "0.45.1"
+                  JJ_SHA256: "f35438350b5d61963aac5dd74ede510b31d6b9690769d1a6268cf058cc825f72"
+              run: |
+                  scratch=$(mktemp -d)
+                  curl -fsSL -o "$scratch/jj.tar.gz" "https://github.com/jj-vcs/jj/releases/download/v${JJ_VERSION}/jj-v${JJ_VERSION}-x86_64-unknown-linux-musl.tar.gz"
+                  printf '%s  %s\n' "$JJ_SHA256" "$scratch/jj.tar.gz" | sha256sum --check
+                  tar -xzf "$scratch/jj.tar.gz" -C "$scratch" ./jj
+                  sudo install "$scratch/jj" /usr/local/bin/jj
+                  jj --version
+
+            - name: Test JJ push gate
+              run: python3 -m unittest discover -s tests -p 'test_jj_push.py' -v
+
             # Third-party actions must be pinned to a full commit SHA;
             # first-party paths (./) and runedeck/* refs are exempt.
             - name: Action pinning
