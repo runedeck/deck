@@ -4,8 +4,8 @@
 # Mirrors .github/workflows/quality.yaml so a local commit sees the same
 # gates as CI: pinned single binaries verified against their release
 # digests, the Python-based hooks, the openspec CLI behind a docs/ shadow
-# root, and rune itself. Idempotent: every install guards on presence, so
-# re-runs converge cheaply without rewriting existing state. Targets an
+# root, and rune itself. Each run installs the verified release binaries.
+# Other tools retain their existing installations. The script targets an
 # x86_64 Debian/Ubuntu base image with passwordless sudo.
 set -euo pipefail
 
@@ -20,7 +20,7 @@ OPENSPEC_VERSION=1.10.0
 
 log() { printf '==> %s\n' "$*"; }
 
-export PATH="$HOME/.local/bin:/usr/local/cargo/bin:$BIN:$PATH"
+export PATH="$BIN:$HOME/.local/bin:/usr/local/cargo/bin:$PATH"
 
 if [ "$(uname -m)" != "x86_64" ]; then
     log "warning: this script pins x86_64 release assets; detected $(uname -m)"
@@ -31,7 +31,6 @@ fi
 # checkout. Mirrors the fetch() helper in quality.yaml.
 fetch() { # url  sha256  binary_name
     local url=$1 sha=$2 name=$3 file scratch bin
-    command -v "$name" >/dev/null 2>&1 && return 0
     log "installing $name"
     file=${url##*/}
     scratch=$(mktemp -d)
@@ -96,6 +95,8 @@ fetch https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1
     8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8 actionlint
 fetch https://github.com/rudof-project/rudof/releases/download/0.3.12/rudof_0.3.12_x86_64_linux_gnu \
     a9d6d8dc101b6896a43150d18e2b2c070f34ffbf747f376977e1eb6c892f9a92 rudof
+fetch https://github.com/jackchuka/mdschema/releases/download/v0.15.3/mdschema_0.15.3_linux_amd64.tar.gz \
+    ab6ada2b546cd177c9c067a2199b528a8e119c5492a87692acf6e8b4e1ca15a7 mdschema
 
 # ---------------------------------------------------------------------------
 # openspec validates docs/changes and docs/specs. The CLI expects an
