@@ -32,6 +32,9 @@ jobs:
                   # must never find a usable token in the git config.
                   persist-credentials: false
 
+            - name: Cloud environment installer tests
+              run: python3 scripts/test_cursor_install.py
+
             - name: Test model attribution
               run: python3 -m unittest discover -s tests -p 'test_auth*.py' -v
 
