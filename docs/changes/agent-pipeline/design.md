@@ -26,7 +26,7 @@ Each stage names its contract and its instance today. The stack architecture cha
 | Pushback | the agent challenges the idea against existing specs, decision records, and memory before any scaffold. The output is a sharpened intent or a rejection with reasons | openspec-explore skill, informally | partial |
 | Specify | `rune spec propose` scaffolds the change. Blast radius decides depth: micro-changes skip the specification, machinery changes carry one, decisions carry a decision record | rune spec, docs/decisions, spec/presence check | exists |
 | Isolate | each implementing agent works in a disposable workspace. Colocated repositories use jj workspaces. Copy-on-write snapshots (anomalyco/rift) are an acceptable isolation instance because they copy the whole tree and never touch git refs | jj workspaces | exists, rift optional |
-| Swarm | agents parallelize by role (research, implement, review), never as several agents on one change's files | delegation runbook, harness council | exists |
+| Swarm | agents parallelize by role (research, implement, review), never as several agents on one change's files | multi-agent delegation | exists |
 | Local gates | prek, mdschema, rune validate, kind-specific linters | .githooks, .pre-commit-config.yaml | exists |
 | Human skim | a fast owner pass before CI spends review rounds | manual owner pass | **gap: no skill encodes the skim yet** |
 | CI + review lanes | ceremony checks plus bot lanes in turns | seer lanes, attestations, quality | exists |

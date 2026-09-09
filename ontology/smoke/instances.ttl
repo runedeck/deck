@@ -4,7 +4,7 @@
 
 # Smoke-test instance graph for the shapes gate. Every node below
 # carries a seeded defect except the first, so a validation run must
-# report exactly two Violations and four Warnings:
+# report exactly four Violations and two Warnings:
 #   rudof shacl-validate -s ontology/shapes.ttl ontology/smoke/instances.ttl
 
 # A conforming record.
