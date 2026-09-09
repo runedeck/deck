@@ -50,11 +50,11 @@ Three environments, selected by what the session reads:
 | Default | GitHub proxy only | repository chips, private chips permitted | ceremony audit, repository digest |
 | WebScan | full | none | GitHub exposure, online mentions |
 
-Two rules complete the matrix. A private repository never mounts in a session with general egress: that combination recreates both exfiltration legs. The prompt register (authority section, permitted and prohibited operations, counts, loud canary) stays the control layer inside every environment; the matrix bounds the damage when that layer fails.
+Two rules complete the matrix. A private repository never mounts in a session with general egress: that combination recreates both exfiltration legs. The prompt register (authority section, permitted and prohibited operations, counts, loud canary) stays the control layer inside every environment. The matrix bounds the damage when that layer fails.
 
 ## Consequences
 
 - The public-data scanners run with full web access at near-zero stakes: everything they read is already public.
 - Repository work runs with no egress at all, so a compromised audit can at most write GitHub comments under its own identity.
-- The full-trust repository scanner stays blocked on providers without per-run trusted preparation; its canary reports CONFIGURATION_FAILURE instead of degrading silently, and a separately documented degraded variant trusts the platform clone.
+- The full-trust repository scanner stays blocked on providers without per-run trusted preparation. Its canary reports CONFIGURATION_FAILURE instead of degrading silently, and a separately documented degraded variant trusts the platform clone.
 - Convenience grants (extra chips, connectors) are owner decisions recorded in the routine, not defaults.

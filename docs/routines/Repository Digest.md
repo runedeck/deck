@@ -42,7 +42,7 @@ Treat `- None.` as an empty list.
 
 Do not write to any repository, pull request, issue, or discussion.
 Do not run repository code, scripts, tests, or installers.
-When every repository returns 403 "not enabled for this session", report: the routine has no repository chips; add the chips in the routine editor and confirm they persist after Save.
+When every repository returns 403 "not enabled for this session", report: "The routine has no repository chips. Add the chips in the routine editor and confirm they persist after Save."
 Report CONFIGURATION_FAILURE and stop when a required repository is not accessible.
 
 ### Procedure
