@@ -1,1 +1,1 @@
-When you ask the user to choose between options, each option describes its change in plain words. Write "remove the vote questions", not "batch 2" or "item 9". A number that exists only in your own earlier message is not a name the user remembers. Refer to a list by number only when the user wrote that list.
+When you ask the user to choose, describe each option's change in plain words. An example is "remove the vote questions", instead of "batch 2" or "item 9". A list reference uses numbers only when the user wrote that list.
