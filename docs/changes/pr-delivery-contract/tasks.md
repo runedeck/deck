@@ -1,14 +1,14 @@
 ## 1. Complete the evidence and owner review
 
 - [ ] 1.1 Complete the requested Grok review through a supported, authorized route and record its result or explicit owner disposition.
-- [ ] 1.2 Reconcile each council claim against complete source files and record accepted and rejected findings in the design.
-- [ ] 1.3 Obtain owner review of the specification, DECK-0008 amendment, and proposed default retry budget before skill implementation.
+- [x] 1.2 Reconcile each council claim against complete source files and record accepted and rejected findings in the design.
+- [x] 1.3 Obtain owner review of the specification, DECK-0008 amendment, and proposed default retry budget before skill implementation.
 
 ## 2. Repair the existing skill
 
-- [ ] 2.1 Integrate the authorization companion from Deck #56 and verify that the skill retains one source for publication authority.
+- [x] 2.1 Integrate the authorization companion from Deck #56 and verify that the skill retains one source for publication authority.
 - [ ] 2.2 Remove unconditional post-merge rebase advice and verify conflict-free preservation plus policy-required and owner-required base updates.
-- [ ] 2.3 Replace the exact-model-list instruction and verify future valid and invalid identity fixtures against the trusted checker.
+- [x] 2.3 Replace the exact-model-list instruction and verify future valid and invalid identity fixtures against the trusted checker.
 - [ ] 2.4 Add complete selection and ownership recovery to BabysitPR and verify a resumed fleet with a reserved PR and a new PR.
 - [ ] 2.5 Add required-evidence comparison and verify absent checks, optional skips, unreadable policy, and head-drift scenarios.
 - [ ] 2.6 Replace unlimited reviewer retries and verify owner budgets, the default budget, permanent failures, expected resets, and unknown provider causes.
@@ -26,3 +26,6 @@
 
 - [ ] 4.1 Publish the validated skill repair on its authorized PR branch and verify its remote head and complete readiness evidence.
 - [ ] 4.2 After owner merge and deployment approval, deploy through Rune and verify the installed skill and companion fingerprints.
+
+Implementation and verification evidence appears in [verification.md](verification.md).
+Unchecked repair tasks have source changes but still require their behavioral replay checks.

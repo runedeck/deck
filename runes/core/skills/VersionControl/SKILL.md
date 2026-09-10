@@ -3,7 +3,7 @@ name: VersionControl
 description: "Git and Jujutsu discipline for commits, pushes, pull-request review loops, history rewrites, worktrees, and repository governance. USE WHEN committing, pushing, creating or babysitting pull requests, responding to review bots, or changing Git history. Also use when cleaning branches, setting branch protection or CODEOWNERS, or working in a jj colocated repository. NOT FOR one-shot read-only pull-request audits, queue reports, or code review outside an active review-and-fix loop."
 compatibility: "Requires Git. Jujutsu repositories require jj. GitHub and GitLab tasks require gh or glab and network access."
 metadata:
-    version: 0.4.0
+    version: 0.5.0
     upstream: https://github.com/N4M3Z/forge-core
 ---
 
@@ -13,7 +13,8 @@ Commit discipline, staging hygiene, push policy, and repo governance. In a jj co
 
 ## Constraints
 
-- Author every commit with an identity that `authors.yaml` lists. Use the repository worktree helper when available. Do not export identity env variables for each command.
+- Declare the actual model identity. Apply the repository's trusted attribution policy and checker to the outgoing range.
+- Use the repository workspace helper when available. Keep identity configuration scoped to that workspace.
 - Stage files by name. Never use `git add -A` or `git add .`.
 - Commit with a pathspec (`git commit -- <path>...`). A bare commit can include the user's staged work. Use a bare commit only after the history-rewrite procedure replaces the index with `git read-tree`. When unsure, run `git diff --cached --stat` first.
 - Never commit files that contain secrets. The prek hooks run gitleaks at commit and at push. Never bypass them with `--no-verify`.
@@ -38,7 +39,11 @@ Use a conventional prefix. Explain why, not what. Keep the first line under 72 c
 - `chore:`: Maintenance, such as dependencies, configuration, or CI.
 - `test:`: Add or repair tests.
 
-Name other model contributors with `Co-Authored-By` trailers in the `authors.yaml` format. Do not repeat the author as a trailer. Attribution lives only in the author line and these trailers. Do not add a generation footer, a tool badge, or a session-link trailer. If the repository includes `scripts/check-authorship`, run it. The prek pre-push hook runs the repository check automatically.
+Name other model contributors with `Co-Authored-By` trailers in the trusted attribution format. Do not repeat the author as a trailer. Attribution lives only in the author line and these trailers. Do not add a generation footer, a tool badge, or a session-link trailer. If the repository includes `scripts/check-authorship`, run it. The prek pre-push hook runs the repository check automatically.
+
+A valid future model identifier needs no catalog entry unless trusted policy requires one.
+A checker validates the declaration's format, not proof of model execution.
+Repair an invalid declaration or report the policy conflict. Preserve the trusted checker.
 
 ### Open the pull request
 
@@ -51,13 +56,14 @@ Name other model contributors with `Co-Authored-By` trailers in the `authors.yam
 
 ### Manage rebase and summon economics
 
-A review verdict binds to the head sha. Every rebase discards the standing verdict and costs one review round.
+A review verdict applies to the head and review scope that the live workflow defines.
+A head change requires fresh evidence under that workflow.
 
-- Check the platform merge state before a rebase. Never rebase a MERGEABLE pull request. A stale but clean base merges free.
-- Rebase a CONFLICTING pull request once, immediately before the merge, not after each movement of the default branch.
-- Summon a review round only on a final head: no pushes planned, and the base checked against the default branch.
-- Process a merge queue serially. Hand the owner every merge-ready pull request first. After the merges, rebase the survivors once, then summon once.
-- Before a push, compare the remote head with the last verified head. When another session moved it, stop and reconcile.
+- After a merge or base change, read the platform merge state and effective branch policy before choosing a repair.
+- Preserve a MERGEABLE head unless policy or an explicit owner instruction requires a base update.
+- Repair a confirmed conflict or required base update under [Authorization.md](Authorization.md), once the intended change is complete.
+- Give the owner every merge-ready PR first. Reassess the remaining PRs after each merge.
+- Summon only on a final head with no planned push and no current review run. Follow [BabysitPR.md](BabysitPR.md).
 
 ### Rewrite history
 

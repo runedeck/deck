@@ -13,7 +13,8 @@ Apply [Authorization.md](Authorization.md) before this workflow. Jujutsu snapsho
 5. `jj bookmark set <name> -r @-` points the bookmark at the described change. Bookmarks do not move automatically.
 6. Run `jj push --bookmark <literal-name> --remote <name>` for the authorized branch. The alias runs the pre-push checks first.
 
-After a squash-merged pull request, reconcile with `jj git fetch`, then `jj rebase -d main@origin --skip-emptied`.
+After a squash merge, refresh remote references with `jj git fetch`.
+Apply the rebase decision in [SKILL.md](SKILL.md#manage-rebase-and-summon-economics) to each remaining PR before changing its head.
 
 ## Auto-snapshot pulls in out-of-band drift
 
