@@ -49,6 +49,9 @@ jobs:
                   fi
                   echo "All third-party actions pinned."
 
+            - name: Test JJ push environment isolation
+              run: python3 scripts/test_jj_push_environment.py
+
             - name: Release notes attestation
               if: github.event_name == 'pull_request'
               env:
