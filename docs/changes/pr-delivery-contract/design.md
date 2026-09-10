@@ -88,13 +88,21 @@ Any later enforcement follows the [Gate Ratchet](../context-economy/specs/contex
 
 ## Research status
 
-Lumo and Claude Opus completed independent research reviews.
-Grok could not start because its wrapper supplied an unsupported sandbox option.
-The requested three-provider council remains incomplete.
-Both completed harness runs also reported session-capture failures.
-Their returned findings support investigation, not a benchmark or an archived-capture claim.
+Lumo, Claude Opus, and Grok completed independent research reviews.
+The native Grok route rejected a wrapper option.
+The completed Grok call used the existing `sol-run@claude` profile with explicit `--model grok-4.6`.
+Claude's documented model-flag precedence and its SDK diagnostic identify that requested model.
+The research runs reported session-capture failures.
+Their durable returned findings support investigation, not a benchmark or an archived-session claim.
 
 Source review rejected duplicate publication instructions, a new reservation-label convention, and another CHANGELOG redesign.
-It retained the rebase contradiction despite both reviewers initially dismissing a rebase change.
+It retained the rebase contradiction despite Lumo and Opus initially dismissing a rebase change.
 The exact-model-list instruction also contradicts the current attribution contract.
 The council did not determine acceptance by agreement.
+
+Grok confirmed the missing-evidence and unbounded-retry gaps.
+Source review rejected its proposal to block PRs merely because they share a file.
+Shared files do not establish a merge conflict.
+Source review also rejected diagnosis from short duration or zero cost.
+Grok's dismissal of attribution and resumption changes conflicts with the obsolete catalog sentence and missing ownership-recovery procedure.
+Persisting underlying provider errors remains a separate tooling repair.
