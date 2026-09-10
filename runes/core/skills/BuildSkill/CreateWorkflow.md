@@ -44,9 +44,11 @@ Arrive at the interview already informed. Look for skills covering adjacent grou
 
 Check what research tools are available, including any connected MCP servers, and search in parallel via subagents when the harness has them. Spend the person's attention only on what you genuinely cannot determine yourself.
 
-If the request is still ambiguous after that, ask using AskUserQuestion.
+If the request is still ambiguous, use the active harness's available structured question tool. If that tool is unavailable, ask in plain conversation.
 
 ## Step 3: Write the SKILL.md
+
+Before editing, follow [ImplementationLoop.md](ImplementationLoop.md) to freeze the requirements, worker boundaries, and acceptance checks. Preserve its review and evidence sequence through implementation.
 
 Follow the structure from [SkillStructure.md](SkillStructure.md) and the writing guidance in [WritingSkills.md](WritingSkills.md).
 
@@ -58,7 +60,7 @@ While writing, check:
 - [ ] Add assembly directives only when the skill needs routing or invocation control: `targets`, `disable-model-invocation`, and `user-invocable`
 - [ ] H1, frontmatter name, and directory are identical
 - [ ] Body follows the section convention with required `Instructions` and ordered optional sections
-- [ ] Live state to inject is decided: what current machine state would orient the model on load (branch, tool status, the names of things). Default to injecting unless there is a reason not to. See [DynamicContextInjection.md](DynamicContextInjection.md)
+- [ ] Required current state has a bounded read through an available tool. Automatic injection, when needed, stays in its supporting provider's entrypoint variant. See [DynamicContextInjection.md](DynamicContextInjection.md)
 - [ ] Clear step-by-step instructions or action-oriented routing beneath `Instructions`
 - [ ] If wrapping a CLI tool: usage examples, intent-to-flag mapping, output format (see [CliToolIntegration.md](CliToolIntegration.md))
 - [ ] Boundaries live under `Constraints`
@@ -70,20 +72,20 @@ While writing, check:
 mkdir -p <skills-directory>/<skill-name>
 ```
 
-Write the `SKILL.md` using the Write tool. The directory name must equal `name:`. For where that directory sits in a Rune deck, see [RuneDeck.md](RuneDeck.md).
+Write the `SKILL.md` with an available file-editing tool. The directory name must equal `name:`. For where that directory sits in a Rune deck, see [RuneDeck.md](RuneDeck.md).
 
 ## Step 5: Verify
 
-1. Run the project's validator and fix anything it reports.
+1. Run the project's validator. In Rune, also require `rune validate --skill-layers --source <skill-path>`. Fix errors from both checks.
 2. Test invocation: does the description trigger correctly? Try a should-trigger prompt AND a should-not-trigger prompt from an adjacent skill's territory.
 3. Review: does the procedure work end-to-end?
-4. If the harness has a skill-reviewer agent, dispatch it on the new `SKILL.md` and companions. Otherwise apply the [Validate workflow](ValidateWorkflow.md) yourself. Apply confirmed fixes before declaring done.
+4. Apply the [Validate workflow](ValidateWorkflow.md), including separate rendered checks for any deployment readiness claim. If available, use a skill-reviewer agent for an independent review. Apply confirmed fixes before declaring done.
 
 ## Step 6: Pressure test
 
 Apply TDD to the skill itself: write a scenario where the skill should apply but might be rationalized away, then verify it holds.
 
-1. **Write a pressure scenario**: a situation where someone would think "this skill doesn't apply here" but it actually does. Example for a debugging skill: "The fix seems obvious, I'll just change it."
+1. **Write a pressure scenario**: a situation where someone would think "this skill does not apply here" but it actually does. Example for a debugging skill: "The fix seems obvious, I'll just change it."
 2. **Write a near-miss scenario**: a request that sounds close but belongs to an adjacent skill. Verify that the `NOT FOR` clause routes it away.
 3. **Test the trigger**: does the description match the pressure scenario? Would the AI load this skill?
 4. **Test the procedure**: does following the skill's steps produce the right outcome?
