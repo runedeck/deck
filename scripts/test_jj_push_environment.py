@@ -142,6 +142,66 @@ class GitEnvironmentTests(unittest.TestCase):
         ):
             GATE.main(["--bookmark", "codex/fixture"])
 
+    def test_initialization_ignores_inherited_templates_and_worktree(self):
+        outside = self.directory / "outside"
+        outside.mkdir()
+        sentinel = outside / "preserve.txt"
+        sentinel.write_text("Preserve the outside fixture.\n")
+        template = self.directory / "template"
+        template.mkdir()
+        (template / "config").write_text(f"[core]\n    worktree = {outside}\n")
+        configuration = self.directory / "gitconfig"
+        original_run = GATE.run
+        initialized = []
+
+        def stop_before_fetch(*arguments, **keywords):
+            if arguments == DISCOVERY or arguments[:2] == ("git", "check-ref-format"):
+                return original_run(*arguments, **keywords)
+            if arguments[:3] in (("jj", "workspace", "root"), ("jj", "git", "root")):
+                return str(self.directory)
+            if arguments[:3] == ("jj", "op", "log"):
+                return "fixture-operation"
+            if arguments[:2] in (("git", "init"), ("git", "config")):
+                return original_run(*arguments, **keywords)
+            if arguments[:2] == ("git", "fetch"):
+                snapshot = Path(keywords["cwd"])
+                actual = original_run("git", "rev-parse", "--show-toplevel", cwd=snapshot)
+                self.assertEqual(Path(actual).resolve(), snapshot.resolve())
+                self.assertEqual(sentinel.read_text(), "Preserve the outside fixture.\n")
+                self.assertEqual(list(outside.iterdir()), [sentinel])
+                initialized.append(snapshot)
+                raise StopIteration
+            if arguments[2:4] == ("remote", "get-url"):
+                return str(self.directory / "remote.git")
+            if arguments[2] == "rev-parse":
+                return "b" * 40
+            self.fail(f"Unexpected command: {arguments}")
+
+        for mode in ("environment-template", "global-template", "global-worktree"):
+            with self.subTest(mode=mode):
+                environment = {
+                    **self.environment,
+                    "GIT_CONFIG_GLOBAL": str(configuration),
+                    "GIT_CONFIG_SYSTEM": os.devnull,
+                    "GIT_CONFIG_NOSYSTEM": "1",
+                }
+                if mode == "environment-template":
+                    configuration.write_text("")
+                    environment["GIT_TEMPLATE_DIR"] = str(template)
+                elif mode == "global-template":
+                    configuration.write_text(f"[init]\n    templateDir = {template}\n")
+                else:
+                    configuration.write_text(f"[core]\n    worktree = {outside}\n")
+                with (
+                    mock.patch.dict(os.environ, environment, clear=True),
+                    mock.patch.object(GATE, "run", side_effect=stop_before_fetch),
+                    mock.patch.object(GATE, "target", side_effect=["a" * 40, "b" * 40]),
+                    mock.patch.object(GATE, "live_target", return_value="b" * 40),
+                    self.assertRaises(StopIteration),
+                ):
+                    GATE.main(["--bookmark", "codex/fixture"])
+        self.assertEqual(len(initialized), 3)
+
     def test_discovery_failure_stops_before_stateful_commands(self):
         error = subprocess.CalledProcessError(1, DISCOVERY)
         with (

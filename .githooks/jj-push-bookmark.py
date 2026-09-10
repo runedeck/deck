@@ -114,7 +114,7 @@ def main(arguments):
     # Do not export Git repository variables into validators or nested tests.
     with tempfile.TemporaryDirectory(prefix="jj-push-validation-") as directory:
         snapshot = Path(directory) / "repo"
-        run("git", "init", "--quiet", str(snapshot))
+        run("git", "init", "--quiet", "--template=", str(snapshot))
         refs = [head, "+refs/remotes/origin/main:refs/remotes/origin/main"]
         if old:
             refs.append(old)
