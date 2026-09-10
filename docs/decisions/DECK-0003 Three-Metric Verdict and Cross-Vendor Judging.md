@@ -53,7 +53,7 @@ An artifact earns its place when its claimed behavior improves, assertions hold,
 
 - [+] Iteration-4 could state a split verdict: the STE skill earns its place on Claude Opus and Sonnet, does nothing for GPT-5.6 Sol, and degrades grok-4.6 and Lumo Max
 - [+] Pair review is a first-class report feature, because numbers alone cannot show a model answering with a plan instead of a deliverable
-- [-] Judging costs one provider call per pair; the quick rung skips it and must say so
+- [-] Judging costs one provider call per pair. The quick rung skips it and must say so
 - [-] Custom judge dimensions per artifact are a planned manifest extension, not yet built
 
 ## More Information

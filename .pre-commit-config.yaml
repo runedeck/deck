@@ -1,13 +1,13 @@
 # One universal config for every scaffolded repository: each hook gates on
 # the file types present in the change, so hooks for absent languages never
 # fire and language templates carry no lint config of their own.
-# Durable provenance sidecars stay byte-stable under every hook.
+# Sealed adoption evidence stays byte-stable under every hook.
 repos:
     - repo: builtin
       hooks:
-          # Source-level sidecars under .provenance/ are digest-bound evidence:
-          # an auto-fixing hook that rewrites one destroys what it touches.
-          # Temporary block-review ledgers must never be committed here.
+          # Everything under .provenance/ is sealed, digest-bound evidence:
+          # an auto-fixing hook that rewrites it destroys what it touches.
+          # All records remain covered by validators and secret scanning.
           - id: trailing-whitespace
             exclude: '(^|/)\.provenance/'
           - id: check-yaml
@@ -96,15 +96,15 @@ repos:
             language: system
             pass_filenames: false
 
-          # Prose and hygiene gates (DECK-0010). Each hook skips when its
-          # binary is absent, so a scaffolded repository stays installable
-          # before the tools arrive.
+          # Prose and workflow linters. Each hook skips when its binary is
+          # absent so a fresh clone stays usable before make install runs;
+          # REQUIRE_GATES=1 (set in CI) turns absence into a failure.
           - id: rumdl
             name: rumdl markdown lint
             entry: sh -c 'if command -v rumdl >/dev/null 2>&1; then rumdl check "$@"; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and rumdl is absent"; exit 1; fi' --
             language: system
             types: [markdown]
-            exclude: '(^|/)\.provenance/|^templates/'
+            exclude: '(^|/)\.provenance/'
 
           - id: typos
             name: typos spelling
@@ -113,23 +113,28 @@ repos:
             types: [text]
             exclude: '(^|/)\.provenance/'
 
+          # Archived change proposals are frozen history, not prose to keep.
           - id: vale
             name: vale prose style
             entry: sh -c 'if command -v vale >/dev/null 2>&1; then vale --no-wrap "$@"; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and vale is absent"; exit 1; fi' --
             language: system
             types: [markdown]
-            exclude: '(^|/)\.provenance/|^templates/|^runes/core/rules/Deslop\.md$'
+            exclude: '(^|/)\.provenance/|^docs/changes/archive/|^runes/core/rules/Deslop\.md$'
+
+          - id: vale-style-fresh
+            name: vale STE style matches its rule source
+            entry: python3 scripts/generate-vale-style.py --check
+            language: system
+            pass_filenames: false
+            files: '^(\.vale/|scripts/generate-vale-style\.py$)'
 
           - id: lychee
             name: lychee link check (offline)
             entry: sh -c 'if command -v lychee >/dev/null 2>&1; then lychee --offline --include-fragments --no-progress "$@"; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and lychee is absent"; exit 1; fi' --
             language: system
             types: [markdown]
-            exclude: '(^|/)\.provenance/|^templates/'
+            exclude: '(^|/)\.provenance/'
 
-          # actionlint and zizmor audit only the changed workflow files, so
-          # one workflow's edit is not blocked by another's recorded debt.
-          # Task 2.14 owns the full-baseline triage.
           - id: actionlint
             name: actionlint
             entry: sh -c 'if command -v actionlint >/dev/null 2>&1; then actionlint "$@"; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and actionlint is absent"; exit 1; fi' --
@@ -159,6 +164,16 @@ repos:
             pass_filenames: false
             files: ^docs/(changes|specs)/
 
+          # rune has no pinned release yet, so this hook skips when the binary
+          # is absent even under REQUIRE_GATES. It joins the required set once
+          # tool-versions can pin it.
+          - id: rune-spec-doctor
+            name: rune spec doctor
+            entry: sh -c 'if command -v rune >/dev/null 2>&1 && [ -d docs/changes ]; then rune spec doctor; fi'
+            language: system
+            pass_filenames: false
+            files: ^docs/(changes|specs)/
+
           - id: cargo-test
             name: cargo test
             entry: cargo test --all-features
@@ -181,8 +196,6 @@ repos:
             pass_filenames: false
             stages: [pre-push]
 
-          # The same rules as the ci/authorship workflow, applied before the
-          # push so a bad identity fails as a local amend, not a CI rewrite.
           # A rune edit must carry its refreshed provenance subject digest,
           # so a stale sidecar fails before the weekly audit finds it.
           - id: check-provenance
@@ -190,9 +203,13 @@ repos:
             entry: python3 scripts/check-provenance
             language: system
             files: ^runes/
+
+          # The same rules as the ci/authorship workflow, applied before the
+          # push so a bad identity fails as a local amend, not a CI rewrite.
           - id: check-authorship
             name: authorship (push range)
             entry: bash scripts/check-authorship
             language: system
             pass_filenames: false
+            always_run: true
             stages: [pre-push]

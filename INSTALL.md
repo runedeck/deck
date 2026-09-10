@@ -29,6 +29,6 @@ done
 make validate
 ```
 
-Without Homebrew, install each missing tool with the platform's package manager; `gitleaks` needs the upstream release (the Debian and Ubuntu package is too old for `gitleaks git`). Copier is needed only for template installation and updates; repository checks and review workflows continue without it.
+Without Homebrew, install each missing tool with the platform's package manager. `gitleaks` needs the upstream release (the Debian and Ubuntu package is too old for `gitleaks git`). Copier is needed only for template installation and updates. Repository checks and review workflows continue without it.
 
 EXECUTE NOW: Complete the above TODO list to achieve: hooks wired and `make validate` green.

@@ -14,16 +14,9 @@ permissions:
     contents: read
     pull-requests: read
 
-env:
-    GITLEAKS_VERSION: "8.30.1"
-    # Digest of gitleaks_8.30.1_linux_x64.tar.gz, pinned in reviewed
-    # source so verification attests provenance, not just transport.
-    GITLEAKS_SHA256: "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb"
-
 jobs:
     quality:
         runs-on: ubuntu-latest
-        timeout-minutes: 20
         steps:
             - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
               with:
@@ -37,6 +30,9 @@ jobs:
 
             - name: Test model attribution
               run: python3 -m unittest discover -s tests -p 'test_auth*.py' -v
+
+            - name: Test provenance digests
+              run: python3 -m unittest discover -s scripts -p 'test_check_provenance.py' -v
 
             - name: Install JJ for push gate tests
               env:
@@ -87,61 +83,10 @@ jobs:
                       exit 1
                   fi
 
-            # The distro package is too old for `gitleaks git`; install the
-            # pinned upstream release and verify it against the release's
-            # digest pinned above before executing.
-            # ruff and semgrep serve the universal prek config's type-gated
-            # hooks; rust and ts toolchains are the scaffolded repository's
-            # own concern, and their hooks never fire without their files.
+            # Local hooks, generated CI, and template updates all consume the
+            # same reviewed tool versions and archive digests.
             - name: Install tools
-              run: |
-                  sudo apt-get install -y shellcheck
-                  pipx install prek ruff semgrep
-                  curl -fsSLO "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
-                  echo "${GITLEAKS_SHA256}  gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" | sha256sum --check
-                  tar -xzf "gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" gitleaks
-                  sudo install gitleaks /usr/local/bin/gitleaks
-
-            # The declared-world gate row (DECK-0010): pinned single binaries,
-            # each verified against its release digest before install, plus
-            # the openspec CLI from npm. REQUIRE_GATES turns each guarded
-            # hook's skip-when-absent into a hard failure, so CI can never
-            # pass through tool absence.
-            - name: Install gate tools
-              run: |
-                  set -eu
-                  fetch() { # url sha256 binary
-                      # Downloads and extraction stay in a scratch directory,
-                      # so an archive can never write into the checkout.
-                      f="${1##*/}"
-                      scratch=$(mktemp -d)
-                      curl -fsSL -o "$scratch/$f" "$1"
-                      ( cd "$scratch" && echo "$2  $f" | sha256sum --check )
-                      case "$f" in
-                          *.tar.gz)
-                              tar -xzf "$scratch/$f" -C "$scratch"
-                              bin=$(find "$scratch" -maxdepth 3 -name "$3" -type f | head -1)
-                              ;;
-                          *) bin="$scratch/$f" ;;
-                      esac
-                      sudo install "$bin" "/usr/local/bin/$3"
-                      rm -rf "$scratch"
-                  }
-                  fetch https://github.com/rvben/rumdl/releases/download/v0.2.60/rumdl-v0.2.60-x86_64-unknown-linux-gnu.tar.gz 84fc96856d21203b6482b7284aff5b539b7329a5cc078d7a94c55ae40d88752f rumdl
-                  fetch https://github.com/crate-ci/typos/releases/download/v1.49.0/typos-v1.49.0-x86_64-unknown-linux-musl.tar.gz 48bd2d58e02ce713b8c0f1aa239e68ee4f7d8c551013135806e6aed3938d9e10 typos
-                  fetch https://github.com/errata-ai/vale/releases/download/v3.18.0/vale_3.18.0_Linux_64-bit.tar.gz a6f71a75a12fe689345b754f2412b90367fe33648abb7d200fa19eaadc2dbf6d vale
-                  fetch https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/lychee-x86_64-unknown-linux-gnu.tar.gz 1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a lychee
-                  fetch https://github.com/zizmorcore/zizmor/releases/download/v1.29.0/zizmor-x86_64-unknown-linux-gnu.tar.gz dd96df044a6e8538d5f423790f453bdd03d49e5b2bcc38214acc41a2f1297839 zizmor
-                  fetch https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8 actionlint
-                  fetch https://github.com/rudof-project/rudof/releases/download/0.3.12/rudof_0.3.12_x86_64_linux_gnu a9d6d8dc101b6896a43150d18e2b2c070f34ffbf747f376977e1eb6c892f9a92 rudof
-                  sudo npm install -g @fission-ai/openspec@1.10.0
-                  # The openspec CLI expects an openspec/ root. The shadow
-                  # symlink maps it to docs/ without a repository entry.
-                  ln -sfn "$GITHUB_WORKSPACE/docs" /tmp/openspec-root
-                  mkdir -p "$HOME/.openspec-ci" && ln -sfn "$GITHUB_WORKSPACE/docs" "$HOME/.openspec-ci/openspec"
-                  sudo unlink /usr/local/bin/openspec
-                  printf '#!/bin/sh\ncd "%s" && exec /usr/local/lib/node_modules/@fission-ai/openspec/bin/openspec.js "$@"\n' "$HOME/.openspec-ci" | sudo tee /usr/local/bin/openspec >/dev/null
-                  sudo chmod +x /usr/local/bin/openspec
+              run: bash scripts/install-tools
 
             # Select the event range once so both prek stages inspect the same
             # change. Inspect all files only when no base commit exists.
@@ -171,7 +116,8 @@ jobs:
                   echo "to=$to" >> "$GITHUB_OUTPUT"
 
             # The prek CLI is called directly: the wrapper action logs at
-            # TRACE level and buries the failing hook's output.
+            # TRACE level and buries the failing hook's output. REQUIRE_GATES
+            # turns a missing linter into a failure instead of a skip.
             - name: Commit-stage checks
               env:
                   REQUIRE_GATES: "1"

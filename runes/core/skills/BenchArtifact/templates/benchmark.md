@@ -8,6 +8,7 @@ checker: scripts/lint.py
 checker_config: config/rules.sample.json
 model_policy: current-harness
 models:
+
 - current
 repeats: 1
 

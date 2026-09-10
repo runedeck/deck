@@ -33,13 +33,13 @@ Artifact state lives in four places: workshop directories under `~/Agents/<owner
 - A fresh machine must be able to rebuild every store below the workshop from repositories alone.
 - Personal values and rendered prompts must never enter a repository.
 - Canonical artifacts must stay provider-independent, or every provider change multiplies across the deck.
-- The environment matrix (DECK-0004) already bounds provider sessions by data sensitivity; the store contract must compose with it.
+- The environment matrix (DECK-0004) already bounds provider sessions by data sensitivity. The store contract must compose with it.
 
 ## Considered Options
 
 1. **One store** — everything in the deck, providers read it directly.
 2. **Free placement** — any state anywhere, conventions only.
-3. **Four stores with content contracts and two provider edges** — each store has a MUST and a MUST NOT list; providers plug in at Ship and Operate only.
+3. **Four stores with content contracts and two provider edges** — each store has a MUST and a MUST NOT list. Providers plug in at Ship and Operate only.
 
 ## Decision Outcome
 
@@ -47,7 +47,7 @@ Option 3. The workshop holds anything, and nothing installs from it. The deck ho
 
 ## Consequences
 
-- Removing a provider changes zero canonical artifacts; adding one needs a provider configuration, optional overlays, and routine variants.
+- Removing a provider changes zero canonical artifacts. Adding one needs a provider configuration, optional overlays, and routine variants.
 - Reproducibility becomes testable: rebuild a provider account from templates and compare.
 - The store contracts give the audit routines concrete assertions: canonical content outside the deck, or personal values inside it, are violations, not judgment calls.
 - The workshop stays the one free surface, which keeps capture cheap.

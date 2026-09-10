@@ -12,10 +12,10 @@ The runner gains a model parameter passed to the harness invocation, and every r
 - `BenchArtifact/scripts/`: runner, grader helpers, aggregator with the model dimension, report builder.
 - `BenchArtifact/templates/agents/`: grader, comparator, analyzer, unchanged in role.
 - `BenchArtifact/assets/`: the comparison report template.
-- `runes/core/skills/BuildSkill/EvalLoop.md`: replaced by a pointer to BenchArtifact; `scripts/`, `templates/agents/`, `eval-viewer/` removed from BuildSkill.
+- `runes/core/skills/BuildSkill/EvalLoop.md`: replaced by a pointer to BenchArtifact. `scripts/`, `templates/agents/`, `eval-viewer/` removed from BuildSkill.
 
 ## Risks
 
-- The moved scripts carry BuildSkill-shaped assumptions (workspace naming, `skill_name` fields); the tasks rename these to artifact-neutral terms and keep the directory contract explicit so the aggregator still discovers runs.
-- Per-model matrices multiply runs; the skill instructs small test sets and states the run count before spawning.
-- BuildSkill references could dangle after extraction; a task greps BuildSkill for paths into the removed directories.
+- The moved scripts carry BuildSkill-shaped assumptions (workspace naming, `skill_name` fields). The tasks rename these to artifact-neutral terms and keep the directory contract explicit so the aggregator still discovers runs.
+- Per-model matrices multiply runs. The skill instructs small test sets and states the run count before spawning.
+- BuildSkill references could dangle after extraction. A task greps BuildSkill for paths into the removed directories.

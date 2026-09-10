@@ -11,7 +11,7 @@ A skill packages a procedure, convention, or tool interface that an AI model sho
 - `assets/`: static resources such as document templates and data files.
 - `templates/`: fill-in prompt templates the skill hands to subagents.
 
-Reference companions with relative Markdown links, state when to read each one ("Read [ValidateWorkflow.md](ValidateWorkflow.md) when checking an existing skill", never a bare "there is also a validate workflow"), and keep reference chains shallow. Do not use `@file` references because they inject the complete companion when the skill loads. Dynamic context commands execute only from the `SKILL.md` body; see [DynamicContextInjection.md](DynamicContextInjection.md).
+Reference companions with relative Markdown links, state when to read each one ("Read [ValidateWorkflow.md](ValidateWorkflow.md) when checking an existing skill", never a bare "there is also a validate workflow"), and keep reference chains shallow. Do not use `@file` references because they inject the complete companion when the skill loads. Dynamic context commands execute only from the `SKILL.md` body. See [DynamicContextInjection.md](DynamicContextInjection.md).
 
 ## Canonical frontmatter
 
@@ -63,7 +63,7 @@ Agent Skills does not prescribe body headings.[AGENTSKILLS] Here, these are the 
 ## References
 ```
 
-`Instructions` is required; the other sections are optional but keep this order.
+`Instructions` is required. The other sections are optional but keep this order.
 
 - `Prerequisites`: required tools, access, inputs, or prior state.
 - `Constraints`: boundaries and prohibited actions.
@@ -72,11 +72,11 @@ Agent Skills does not prescribe body headings.[AGENTSKILLS] Here, these are the 
 - `Troubleshooting`: recovery from known failures.
 - `References`: cited sources and supporting material.
 
-Never go deeper than H3, and keep `Prerequisites` and `References` flat. For multiple workflows, route with action-oriented H3 headings under `Instructions` ("### Create a skill", then "Read and follow [CreateWorkflow.md](CreateWorkflow.md)."); within a workflow use plain numbered steps, not headings. Enforce the convention with the nearest `.mdschema`.
+Never go deeper than H3, and keep `Prerequisites` and `References` flat. For multiple workflows, route with action-oriented H3 headings under `Instructions` ("### Create a skill", then "Read and follow [CreateWorkflow.md](CreateWorkflow.md)."). Within a workflow use plain numbered steps, not headings. Enforce the convention with the nearest `.mdschema`.
 
 ## Writing conventions
 
-Avoid tables; they waste tokens on formatting. Use `key: value` lines instead. Padded tables belong only in human-only artifacts.
+Avoid tables. They waste tokens on formatting. Use `key: value` lines instead. Padded tables belong only in human-only artifacts.
 
 Show correct and wrong forms as separate fenced blocks, introduce each with its reason, and never end a section on a wrong example.
 
@@ -84,7 +84,7 @@ Dynamic context commands are fast, read-only, non-interactive, free of secrets, 
 
 ## Length
 
-Target 100 lines for a `SKILL.md` body, ceiling 150. Markdown companions stay under 150 lines; code companions may run longer, but modular code is the default.
+Target 100 lines for a `SKILL.md` body, ceiling 150. Markdown companions stay under 150 lines. Code companions may run longer, but modular code is the default.
 
 Anthropic's spec allows 500 lines.[AGENTSKILLS] The tighter target is deliberate: the body is paid for on every invocation. Move schemas, configuration examples, and provider detail into companions early.
 

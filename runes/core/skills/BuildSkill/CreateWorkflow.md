@@ -83,7 +83,7 @@ Write the `SKILL.md` using the Write tool. The directory name must equal `name:`
 
 Apply TDD to the skill itself: write a scenario where the skill should apply but might be rationalized away, then verify it holds.
 
-1. **Write a pressure scenario**: a situation where someone would think "this skill doesn't apply here" but it actually does. Example for a debugging skill: "The fix seems obvious, I'll just change it."
+1. **Write a pressure scenario**: a situation where someone would think "this skill does not apply here" but it actually does. Example for a debugging skill: "The fix seems obvious, I'll just change it."
 2. **Write a near-miss scenario**: a request that sounds close but belongs to an adjacent skill. Verify that the `NOT FOR` clause routes it away.
 3. **Test the trigger**: does the description match the pressure scenario? Would the AI load this skill?
 4. **Test the procedure**: does following the skill's steps produce the right outcome?
