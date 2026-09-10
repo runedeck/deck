@@ -1,0 +1,1 @@
+When you ask the user to choose, describe each option's change in plain words. An example is "remove the vote questions", instead of "batch 2" or "item 9". A list reference uses numbers only when the user wrote that list.
