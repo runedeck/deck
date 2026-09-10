@@ -4,12 +4,14 @@ When a repo is colocated with jj (`.jj/` at the root), there is no staging area,
 
 ## The change workflow
 
+Apply [Authorization.md](Authorization.md) before this workflow. Jujutsu snapshots grant no publication authority.
+
 1. `jj describe -m "feat: thing"` names the unit of work.
 2. Edit. Every jj command auto-snapshots `@`. There is nothing to stage and nothing is lost.
 3. Use `jj split` when `@` contains more than one logical change.
 4. `jj new` creates an empty working-copy change after the described change.
 5. `jj bookmark set <name> -r @-` points the bookmark at the described change. Bookmarks do not move automatically.
-6. Run `jj push`. The `make install` alias runs the pre-push checks before `jj git push`.
+6. Run `jj push --bookmark <literal-name> --remote <name>` for the authorized branch. The alias runs the pre-push checks first.
 
 After a squash-merged pull request, reconcile with `jj git fetch`, then `jj rebase -d main@origin --skip-emptied`.
 
@@ -43,7 +45,7 @@ CI re-runs the same pre-push checks as the backstop. Never weaken this to a post
 
 ## Parallel work uses workspaces, not git worktrees
 
-In a colocated repo, `git worktree add` mutates refs behind jj's back. Use `jj workspace add ../repo-<name>`, one workspace per agent, based on a stable commit (`trunk()` or a described change), never another session's live `@`. "Working copy is stale" is routine: `jj workspace update-stale` re-syncs. Finish with `jj workspace forget <name>`; remove the directory separately.
+In a colocated repo, `git worktree add` mutates refs behind jj's back. Use `jj workspace add ../repo-<name>`, one workspace per agent, based on a stable commit (`trunk()` or a described change), never another session's live `@`. "Working copy is stale" is routine: `jj workspace update-stale` re-syncs. Finish with `jj workspace forget <name>`. Remove the directory separately.
 
 ## A change description is text, not a scratchpad
 

@@ -3,7 +3,7 @@ name: VersionControl
 description: "Git and Jujutsu discipline for commits, pushes, pull-request review loops, history rewrites, worktrees, and repository governance. USE WHEN committing, pushing, creating or babysitting pull requests, responding to review bots, or changing Git history. Also use when cleaning branches, setting branch protection or CODEOWNERS, or working in a jj colocated repository. NOT FOR one-shot read-only pull-request audits, queue reports, or code review outside an active review-and-fix loop."
 compatibility: "Requires Git. Jujutsu repositories require jj. GitHub and GitLab tasks require gh or glab and network access."
 metadata:
-    version: 0.3.0
+    version: 0.4.0
     upstream: https://github.com/N4M3Z/forge-core
 ---
 
@@ -17,7 +17,7 @@ Commit discipline, staging hygiene, push policy, and repo governance. In a jj co
 - Stage files by name. Never use `git add -A` or `git add .`.
 - Commit with a pathspec (`git commit -- <path>...`). A bare commit can include the user's staged work. Use a bare commit only after the history-rewrite procedure replaces the index with `git read-tree`. When unsure, run `git diff --cached --stat` first.
 - Never commit files that contain secrets. The prek hooks run gitleaks at commit and at push. Never bypass them with `--no-verify`.
-- Do not push unless the user asks. A commit and a push are separate actions.
+- Apply [Authorization.md](Authorization.md) before commits, pushes, or platform writes. It defines safe existing-PR work and actions that require approval.
 - Never force-push unless the user explicitly asks. If the user approves a force-push, use `--force-with-lease`, not `--force`.
 - Automated Jujutsu mode is the default. Keep automated pushes unsigned.
 - Only the owner can start attended Jujutsu signing. An agent must not start or inherit attended mode.
@@ -42,6 +42,7 @@ Name other model contributors with `Co-Authored-By` trailers in the `authors.yam
 
 ### Open the pull request
 
+- Obtain explicit approval for the new pull request under [Authorization.md](Authorization.md).
 - Keep the title under 70 characters.
 - Write the body as `## Summary` bullets plus the sections the repository's checks require (deck requires `## Release Notes`).
 - Create the pull request from a feature branch, never from main.
@@ -56,7 +57,7 @@ A review verdict binds to the head sha. Every rebase discards the standing verdi
 - Rebase a CONFLICTING pull request once, immediately before the merge, not after each movement of the default branch.
 - Summon a review round only on a final head: no pushes planned, and the base checked against the default branch.
 - Process a merge queue serially. Hand the owner every merge-ready pull request first. After the merges, rebase the survivors once, then summon once.
-- Before a push, compare the remote head with the head this session last pushed. When another session moved it, stop and reconcile.
+- Before a push, compare the remote head with the last verified head. When another session moved it, stop and reconcile.
 
 ### Rewrite history
 
@@ -130,6 +131,7 @@ See [Jujutsu.md](Jujutsu.md) for push signing. See [CommitSigning.md](CommitSign
 
 ## References
 
+- [Authorization.md](Authorization.md): read before commits, pushes, or platform writes.
 - [Jujutsu.md](Jujutsu.md): the jj commit and push discipline for colocated repos.
 - [CommitSigning.md](CommitSigning.md): hardware-key signing setup and batch re-signing.
 - [GitWorktrees.md](GitWorktrees.md): worktree creation, safety checks, and cleanup.
