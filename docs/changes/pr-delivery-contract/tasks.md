@@ -16,11 +16,11 @@
 
 ## 3. Validate and measure
 
-- [ ] 3.1 Run schema, prose, links, and Rune validation and verify zero new errors on the final skill diff.
+- [x] 3.1 Run schema, prose, links, and Rune validation and verify zero new errors on the final skill diff.
 - [ ] 3.2 Review historical VersionControl benchmark expectations against the new owner policy and remove obsolete approval expectations.
 - [ ] 3.3 Confirm replay cases and run BenchArtifact with GPT and explicit Claude Opus through verified capture routes.
 - [ ] 3.4 Publish the generated per-model results and verify artifact hashes, exclusions, grading criteria, and available efficiency metrics.
-- [ ] 3.5 Complete adversarial review and verify that each retained finding has a repair or an explicit owner decision.
+- [x] 3.5 Complete adversarial review and verify that each retained finding has a repair or an explicit owner decision.
 
 ## 4. Publish and deploy
 

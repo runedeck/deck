@@ -29,6 +29,7 @@ This is source coverage, not an executed behavioral replay or benchmark result.
 - The existing attribution suites pass 37 unit tests and 31 integration tests.
 - Rune source validation reports zero errors and five existing advisory warnings.
 - The standalone skill schema, Markdown, and Vale checks pass.
+- The guarded publication checks pass, including offline links, strict OpenSpec validation, secret scans, provenance digests, and outgoing attribution.
 - A temporary Agent Skills installation contains all nine selected files without skips or warnings.
 - The official `skills-ref` check remains unavailable. Its launcher cannot create its normal tool-cache file, including after an escalated attempt.
 
