@@ -1,11 +1,13 @@
-# typos configuration (DECK-0010).
+# typos configuration. KEYS holds base64 key material. Sidecars and
+# third-party notices are not this repository's prose.
 [files]
-# KEYS holds base64 key material. Sidecars and third-party notices are
-# not this repository's prose.
 extend-exclude = [
     "KEYS",
     ".provenance",
     ".claude",
+    ".codex",
+    ".gemini",
+    ".opencode",
     "**/THIRD_PARTY_NOTICES.md",
     "runes/core/skills/SimplifiedTechnicalEnglish/scripts",
     # Vendored third-party style package with regex word stems.
@@ -14,4 +16,4 @@ extend-exclude = [
 
 [default]
 # Mermaid node identifiers such as BA in fenced diagrams.
-extend-ignore-re = ["[A-Z]{2} ?-->", "--> ?[A-Z]{2}", "[A-Z]{2}\\["]
+extend-ignore-re = ["[A-Z]{2} ?-->", "--> ?[A-Z]{2}", "[A-Z]{2}\\[", "\"fpr\""]

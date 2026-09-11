@@ -1,6 +1,6 @@
 ## 1. Extraction
 
-- [x] 1.1 Create `runes/core/skills/BenchArtifact/` and move BuildSkill's `EvalLoop.md` content, `scripts/aggregate_benchmark.py`, `templates/agents/`, `eval-viewer/`, and `references/schemas.md` into it; `assets/eval_review.html` stays with BuildSkill's description-optimization pipeline
+- [x] 1.1 Create `runes/core/skills/BenchArtifact/` and move BuildSkill's `EvalLoop.md` content, `scripts/aggregate_benchmark.py`, `templates/agents/`, `eval-viewer/`, and `references/schemas.md` into it. `assets/eval_review.html` stays with BuildSkill's description-optimization pipeline
 - [x] 1.2 Rename BuildSkill-shaped terms to artifact-neutral ones (`skill_name` to `artifact_name`, per-kind configuration names) across the moved scripts and docs
 - [x] 1.3 Replace BuildSkill's evaluation companion with a pointer to BenchArtifact and update every BuildSkill reference into the moved directories
 
@@ -8,7 +8,7 @@
 
 - [x] 2.1 Define the with-artifact and baseline configurations per kind (skill, rule, agent) in `SKILL.md`
 - [x] 2.2 Add the model parameter to the runner instructions and record the model in each run's `timing.json`
-- [x] 2.3 Key the aggregator by configuration and model; no cross-model averaging
+- [x] 2.3 Key the aggregator by configuration and model. No cross-model averaging
 
 ## 3. Comparison report
 
@@ -26,8 +26,8 @@
 - [x] 5.1 Split execution into NativeBench (default) and RuneBench behind `--cross-harness`
 - [x] 5.2 Freeze manifests per iteration, refuse re-entry, retain raw provider stdout
 - [x] 5.3 Verify each route with a preflight and a context canary before the matrix
-- [x] 5.4 Grade with the artifact's checker; correct the corpus density denominator to checker words
-- [x] 5.5 Judge pairs blind and cross-vendor; record winners and reasons per dimension
+- [x] 5.4 Grade with the artifact's checker. Correct the corpus density denominator to checker words
+- [x] 5.5 Judge pairs blind and cross-vendor. Record winners and reasons per dimension
 - [x] 5.6 Rebuild the report: verdict first, artifact identity, browsable pair viewer with judgments
 - [x] 5.7 Write `benchmark.md` as one compact delta table for pull request bodies
 - [x] 5.8 Run the six-model STE matrix (iteration-4) and record the split verdict

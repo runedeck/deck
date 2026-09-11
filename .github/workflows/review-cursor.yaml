@@ -14,7 +14,7 @@ on:
 
 permissions:
     contents: read
-    pull-requests: read
+    pull-requests: write
     issues: write
 
 # The label name is part of the group. Every labeled event starts a run,
@@ -31,8 +31,9 @@ jobs:
         if: github.event.pull_request.draft == false && !contains(github.event.pull_request.labels.*.name, 'skip:cursor') && ((github.event.action == 'labeled' && github.event.label.name == 'review:cursor') || (github.event.action == 'ready_for_review' && contains(github.event.pull_request.labels.*.name, 'review:cursor')))
         uses: runedeck/seer/.github/workflows/review-cursor.yaml@main
         secrets:
+            # The body consumes the label with an app token, then posts the
+            # summon with the owner-minted token because Cursor ignores
+            # bot-authored review comments.
             RUNEWRIGHT_APP_ID: ${{ secrets.RUNEWRIGHT_APP_ID }}
             RUNEWRIGHT_APP_KEY: ${{ secrets.RUNEWRIGHT_APP_KEY }}
-            # Cursor ignores bot-authored review comments; the summon posts
-            # with this owner-minted token instead.
             RUNEWRIGHT_GITHUB_TOKEN: ${{ secrets.RUNEWRIGHT_GITHUB_TOKEN }}

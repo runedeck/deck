@@ -197,7 +197,6 @@ Find these personal data types:
 - home addresses and exact private locations
 - birth data and government identifiers
 - financial, health, family, travel, and calendar data
-
 - private employment, ownership, governance, and customer data
 - private hostnames, device identifiers, and internal notes
 - document metadata that identifies a private person or system

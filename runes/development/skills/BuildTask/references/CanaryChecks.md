@@ -35,11 +35,9 @@ Run the complete rendered prompt once with the intended provider settings.
 
 - Confirm that the selected model ran.
 - Confirm that no fallback model ran when fallback is disabled.
-
 - Confirm that the run used only the approved context.
 - Confirm that the run used only the approved tools.
 - Confirm that the run made no prohibited write.
-
 - Confirm that each sensitive value stayed fully redacted.
 - Confirm that the final notification used the required format.
 - Confirm that the run reported each important coverage limit.

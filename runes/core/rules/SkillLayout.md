@@ -1,4 +1,4 @@
-A skill directory carries one entrypoint and everything that entrypoint routes to. `SKILL.md` is the entrypoint. Its name is fixed; nothing else in the directory shares it.
+A skill directory carries one entrypoint and everything that entrypoint routes to. `SKILL.md` is the entrypoint. Its name is fixed. Nothing else in the directory shares it.
 
 Companion documents sit beside `SKILL.md` and use PascalCase. The canonical skill directory and frontmatter `name` also use PascalCase.
 

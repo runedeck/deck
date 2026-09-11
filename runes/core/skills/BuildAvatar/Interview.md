@@ -5,7 +5,7 @@ The question bank for BuildAvatar. Target 20 to 30 questions across five to eigh
 ## Method
 
 - Pre-fill every option you can infer from the session, the machine, and existing memory files. An inference becomes a confirmation question, never a silent fact.
-- Keep `Other` open on every question; users answer fastest when the likely answer is one click and the correction is one sentence.
+- Keep `Other` open on every question. Users answer fastest when the likely answer is one click and the correction is one sentence.
 - Invite a provider memory export early: "In claude.ai Settings, Memory, ask: export everything in your memory about me, verbatim. Paste the result into any answer." One paste can fill three sections.
 - Push back on a vague answer with one concrete follow-up. Record hedges as the user states them.
 - Summarize each round in one sentence before the next.
@@ -65,4 +65,4 @@ The question bank for BuildAvatar. Target 20 to 30 questions across five to eigh
 
 ## After the rounds
 
-Read every `Other` and note field before you compose; users put the richest material there, including whole memory exports. Map each answer to its file section. Anything still blank after two asks becomes an open item in the report, not a third ask.
+Read every `Other` and note field before you compose. Users put the richest material there, including whole memory exports. Map each answer to its file section. Anything still blank after two asks becomes an open item in the report, not a third ask.

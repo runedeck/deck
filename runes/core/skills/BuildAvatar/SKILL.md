@@ -28,7 +28,7 @@ Build the user's avatar: one canonical `AGENTS.md` that tells every AI tool who 
 
 ### Run the interview
 
-Run the question bank in [Interview.md](Interview.md): 20 to 30 questions across five to eight `AskUserQuestion` rounds, eight sections from profile to goals and beliefs. A short confirmation pass is not an interview. Rich session context does not cancel the interview; it converts fact questions into confirmations while the depth questions (examples, annoyances, boundaries, goals, beliefs) still run. Skip a section only when an existing avatar answers it and the user confirms the content still holds.
+Run the question bank in [Interview.md](Interview.md): 20 to 30 questions across five to eight `AskUserQuestion` rounds, eight sections from profile to goals and beliefs. A short confirmation pass is not an interview. Rich session context does not cancel the interview. It converts fact questions into confirmations while the depth questions (examples, annoyances, boundaries, goals, beliefs) still run. Skip a section only when an existing avatar answers it and the user confirms the content still holds.
 
 Without `AskUserQuestion`, ask the same question bank through plain conversation. Ask one question in each message and do not count tool rounds.
 
@@ -38,7 +38,7 @@ For an update interview, show the current section content and ask what changed.
 
 Write the answers as a compact identity file at the target location:
 
-```
+```text
 # Agents brief
 
 <!-- avatar:begin -->
@@ -81,7 +81,7 @@ Keep the file under 500 words. Every line must earn context cost in every sessio
 
 ### Propagate to local harness memory
 
-Deploy the managed block to each surface that exists on the machine. Check for each path first; skip absent harnesses silently.
+Deploy the managed block to each surface that exists on the machine. Check for each path first. Skip absent harnesses silently.
 
 - Claude Code global: Write the managed block to `~/.claude/CLAUDE.md`.
 - Codex: Write the managed block to `~/.codex/AGENTS.md`.
@@ -94,9 +94,9 @@ Show the reconciliation table (surface, action: append block, replace block, ski
 
 ### Generate provider import prompts
 
-Web providers have no file to write; the user edits their memory in the provider's own settings UI. Create a provider-safe copy of the anonymized or full block per the PII decision. Remove the complete `Never store or repeat` section from this copy, including its heading. Generate a paste-ready prompt from only the provider-safe copy:
+Web providers have no file to write. The user edits their memory in the provider's own settings UI. Create a provider-safe copy of the anonymized or full block per the PII decision. Remove the complete `Never store or repeat` section from this copy, including its heading. Generate a paste-ready prompt from only the provider-safe copy:
 
-```
+```text
 Update your memory about me from this brief. Store the "Who I am" section
 as my profile, "How to respond to me" as my preferences, and each "Topics"
 bullet as a topic. Store only facts that appear in this brief. Do not infer

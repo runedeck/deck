@@ -35,7 +35,6 @@ Ask for a missing value when the caller does not supply it.
 - Never run the task.
 - Never create or change provider state.
 - Never write a rendered prompt to a local file.
-
 - Never use account memory as a placeholder source.
 - Never infer a missing identity value.
 - Never weaken a permission to make the task succeed.
@@ -102,7 +101,6 @@ Tell the user to run the manual canary before schedule activation.
 - Confirm that each value passed its typed schema.
 - Confirm that the write policy is explicit.
 - Confirm that the fallback policy is explicit.
-
 - Confirm that the prompt requires redaction when the task handles sensitive data.
 - Confirm that the prompt reports coverage limits.
 - Confirm that the prompt sends only the permitted notifications.

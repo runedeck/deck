@@ -50,11 +50,11 @@ flowchart LR
     AG -->|keychain + OAuth token bridge| OK2[" "]
 ```
 
-The baseline arm gets no artifact. Gemini's agy lane still fails on real-length prompts; the failure signature is recorded in the iteration-4 and iteration-5 records.
+The baseline arm gets no artifact. Gemini's agy lane still fails on real-length prompts. The failure signature is recorded in the iteration-4 and iteration-5 records.
 
 ## One pair, three verdicts
 
-Each case runs twice per model: identical prompt, files, and mode; only the artifact differs. Judging is blind and cross-vendor so no model grades its own vendor's output.
+Each case runs twice per model: identical prompt, files, and mode. Only the artifact differs. Judging is blind and cross-vendor so no model grades its own vendor's output.
 
 ```mermaid
 flowchart LR
@@ -79,4 +79,4 @@ flowchart LR
     DECK -->|shells out| CLI -->|writes into| WS
 ```
 
-When runedeck/bench exists, the workspace wrapper and its configurations move there. The deck keeps the method definition; the cli keeps execution.
+When runedeck/bench exists, the workspace wrapper and its configurations move there. The deck keeps the method definition. The cli keeps execution.

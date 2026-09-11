@@ -4,7 +4,7 @@ How a skill reaches the model decides what belongs where, and how it is phrased 
 
 ## How a skill loads
 
-The frontmatter description is always in context; the body lazy-loads when the skill triggers; companions load only when something reads them. So: trigger phrases live in the description, always-apply routing and constraints in the body, conditional material in companions.
+The frontmatter description is always in context. The body lazy-loads when the skill triggers. Companions load only when something reads them. So: trigger phrases live in the description, always-apply routing and constraints in the body, conditional material in companions.
 
 State the load condition wherever you link:
 
@@ -35,7 +35,7 @@ A reference file past roughly 300 lines earns a table of contents at the top, so
 
 ## Explaining why
 
-A rule with its rationale attached survives situations you did not anticipate; a bare imperative holds only in the cases you enumerated. Upstream skill authoring guidance draws the same conclusion: reframe all-caps imperatives as reasoning the model can apply.[SKILLCREATOR]
+A rule with its rationale attached survives situations you did not anticipate. A bare imperative holds only in the cases you enumerated. Upstream skill authoring guidance draws the same conclusion: reframe all-caps imperatives as reasoning the model can apply.[SKILLCREATOR]
 
 Treat an all-caps ALWAYS or NEVER as a signal you have not explained something yet.
 

@@ -29,8 +29,8 @@ The Simplified Technical English benchmark exposed a spread of execution costs. 
 ## Decision Drivers
 
 - The method must stay constant while the execution mechanics vary, or results stop being comparable across setups
-- The calibration targets are Claude and Codex; other harnesses are secondary evidence
-- Weaker harnesses confuse easily and need tailored treatment; that work must not block the primary loop
+- The calibration targets are Claude and Codex. Other harnesses are secondary evidence
+- Weaker harnesses confuse easily and need tailored treatment. That work must not block the primary loop
 - The eventual home for heavyweight evaluation is runedeck/bench, which does not exist yet
 
 ## Considered Options
@@ -46,7 +46,7 @@ Chosen option: **Execution ladder**. Each rung buys more isolation and more mode
 1. **Minimal.** The current harness runs the cases through its own agent tool. No subprocesses, no route registry. This is the NativeBench procedure and the default.
 2. **Value for time.** Claude and Codex run through `claude -p` and `codex exec`, through `rune run` when it is available. A scratch run on two cases with grading only returns a first table in about five minutes.
 3. **Maximal.** The explicit cross-harness matrix: every configured harness, clean state, context canaries, raw output retention, and blind cross-vendor judging. This produced the iteration-4 verdict.
-4. **runedeck/bench.** The best evaluations will run from runedeck/bench once it exists. The configuration files are the migration unit; the interim wrapper retires.
+4. **runedeck/bench.** The best evaluations will run from runedeck/bench once it exists. The configuration files are the migration unit. The interim wrapper retires.
 
 ### Consequences
 

@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Deck-only validators: the declared world's SHACL validator and the openspec
+# CLI for strict change validation. install-tools runs this after the pinned
+# shared toolchain, so Quality, the canary, and template updates all get them.
+set -euo pipefail
+
+RUDOF_VERSION="0.3.12"
+RUDOF_LINUX_AMD64_SHA256="a9d6d8dc101b6896a43150d18e2b2c070f34ffbf747f376977e1eb6c892f9a92"
+OPENSPEC_VERSION="1.10.0"
+
+install_directory="${HOME}/.local/bin"
+mkdir -p "$install_directory"
+
+if ! command -v rudof >/dev/null 2>&1 || [ "$(rudof --version 2>/dev/null | awk '{print $2}')" != "$RUDOF_VERSION" ]; then
+    case "$(uname -s)-$(uname -m)" in
+        Linux-x86_64)
+            scratch=$(mktemp -d "${TMPDIR:-/tmp}/rudof.XXXXXX")
+            curl -fsSL -o "$scratch/rudof" "https://github.com/rudof-project/rudof/releases/download/${RUDOF_VERSION}/rudof_${RUDOF_VERSION}_x86_64_linux_gnu"
+            printf '%s  %s\n' "$RUDOF_LINUX_AMD64_SHA256" "$scratch/rudof" | sha256sum --check --status
+            install -m 0755 "$scratch/rudof" "$install_directory/rudof"
+            command rm -rf "$scratch"
+            ;;
+        *)
+            printf 'rudof %s: no pinned digest for this platform; install it by hand or set REQUIRE_GATES unset locally\n' "$RUDOF_VERSION" >&2
+            ;;
+    esac
+fi
+
+if command -v npm >/dev/null 2>&1 && { ! command -v openspec >/dev/null 2>&1 || [ "$(openspec --version 2>/dev/null)" != "$OPENSPEC_VERSION" ]; }; then
+    # The openspec CLI expects an openspec/ root. The shadow directory maps
+    # it to docs/ without a repository entry.
+    repository_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
+    shadow="${HOME}/.openspec-ci"
+    mkdir -p "$shadow"
+    ln -sfn "$repository_root/docs" "$shadow/openspec"
+    npm_prefix="${HOME}/.local/lib/openspec"
+    npm install --silent --prefix "$npm_prefix" "@fission-ai/openspec@${OPENSPEC_VERSION}"
+    printf '#!/bin/sh\ncd "%s" && exec "%s/node_modules/@fission-ai/openspec/bin/openspec.js" "$@"\n' "$shadow" "$npm_prefix" > "$install_directory/openspec"
+    chmod +x "$install_directory/openspec"
+fi
