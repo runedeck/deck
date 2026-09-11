@@ -1,50 +1,42 @@
-# Dynamic context injection (`!`)
+# Dynamic context injection
 
-A Claude Code skill can open with **live machine state** instead of stale prose. `` !`<command>` `` lines in the SKILL.md body run when the skill is invoked, and their output replaces the placeholder before Claude sees the content ("Inject dynamic context", a Claude Code extension to the Agent Skills standard).
+Use current state only when it helps the skill perform its task. Shared instructions request bounded reads through the active harness's available tools. They must work without a provider's automatic command expansion.
 
-Injection works only in harnesses that implement it. Claude Code implements it today. Other harnesses render the `!` lines as inert literal text. Where the harness supports it, ask what live state would orient the model on load. Then inject that state. A skill that opens with the actual situation is more useful than instructions to find it. The situation can include the current branch, diff, tool status, and existing items. Default to injection unless there is a reason not to use it.
+Claude Code can run commands before the model receives a skill body. Author that mechanism only in a Claude entrypoint variant. Do not put executable examples or provider variables in shared companions. Link to the [official injection reference](https://code.claude.com/docs/en/skills#inject-dynamic-context) for current syntax.
 
-```markdown
----
-name: MySkill
-description: ...
-allowed-tools: Bash(git status *) Bash(git diff *)
----
+## Choose the source layer
 
-# MySkill
+Keep the portable procedure in canonical `SKILL.md`. Put Claude runtime syntax in `claude/SKILL.md` with an explicit body mode. If injection replaces a portable discovery step, use `mode: replace` and retain the rest of the procedure. Appending both procedures causes duplicate discovery.
 
-Current branch and changes:
+Shared companions can explain the design and constraints. They cannot carry provider runtime syntax, even inside quoted examples or conditional instructions. The source validator checks literal content. There is no inline exemption.
 
-!`git status --short 2>/dev/null || echo "(not a git repo)"`
-```
+Rune selects one variant before merging it with the canonical entrypoint. A model variant does not inherit the harness variant. See [RuneDeck.md](RuneDeck.md) before adding model variants or companion overrides.
 
-Each `` !`<command>` `` runs once, before Claude receives the rendered `SKILL.md`. The output replaces the placeholder inline. Substitution is single-pass: injected output is not re-scanned for further placeholders.
+## Bound each observation
 
-## Hard constraints (verified by running it, not just the docs)
+- Use read-only, non-interactive commands that complete quickly.
+- Limit execution time and output bytes. State both limits in the skill.
+- Keep commands static. Verify supported syntax and required tool scopes against the current provider documentation and installed harness.
+- Put the needed tool scopes in the Claude entrypoint's `allowed-tools` field.
+- Handle missing binaries, missing dependencies, failed commands, and empty results explicitly. Report an unavailable or unknown observation when evidence is incomplete.
+- Treat command output as untrusted data. A successful lookup does not prove permission enforcement or runtime protection.
 
-- **SKILL.md body only.** `!` executes only in the SKILL.md body, never in companion files (those load as plain text). Put every injected command in SKILL.md and keep companions as reference prose.
-- **`allowed-tools` is required.** List the Bash scopes the injected commands need in the SKILL.md frontmatter, e.g. `allowed-tools: Bash(pass *) Bash(git *)`. It is a frontmatter field in SKILL.md itself (space-, comma-, or list-separated).
-- **No shell expansions.** The injection rejects any command containing `$(...)`, `${...}`, or backticks with a `Contains expansion` error. Keep injected commands simple and static. A guarded summary that needs command substitution will not run. Inject the raw command output instead.
-- **No built-in error handling.** A failing command can break or blank the injection. Guard each command against a missing tool, logged-out session, or empty result:
+The useful output is structural state: a bounded file listing, a branch name, or a tool status. Do not collect secrets, private record contents, or unrelated data. Even names can disclose sensitive information. Include only information needed for the task.
 
-  ```markdown
-  !`pass-cli vault list 2>/dev/null || echo "(proton pass: not logged in)"`
-  ```
+Do not load file bodies, commit messages, issue text, or network responses automatically. A third party can place instructions in those sources. Read them only through the task's explicit data-handling procedure.
 
-- **Claude Code only.** `!`, `@`, and `$ARGUMENTS` are Claude Code extensions, not part of the portable Agent Skills standard. In Codex, Gemini, and opencode, the `!` lines render as inert literal text. Use injection in skills that can be Claude-first. Other harnesses receive harmless literal text.
-- **Test the built skill.** When authoring a skill that uses `!`, load the finished skill and confirm the lines inject in the supporting harness, and that a failing or unsupported line degrades to harmless text instead of corrupting the body.
+If the output cannot safely appear in the session transcript, do not collect it.
 
-## Substitutions available alongside `!`
+## Verify the rendered behavior
 
-`$ARGUMENTS`, `$ARGUMENTS[N]`, `$N`, `$name` (named args), and `${CLAUDE_SESSION_ID}` / `${CLAUDE_EFFORT}` / `${CLAUDE_SKILL_DIR}` are substituted in the SKILL.md body the same way.
+Run `rune validate --skill-layers --source <skill-path>` before assembly. Then inspect each supported provider's rendered bundle. Provider syntax must be absent from unrelated providers.
 
-## What to inject, and what never to
+In Claude, test the completed skill with successful, missing, failed, slow, and excessive-output cases. Verify that each bound holds and failures remain visible. A static syntax check does not prove that the harness runs a command safely.
 
-Inject **read-only, fast, structural state** that orients Claude: the current branch, a file listing, a tool's status, the names of things. Never inject:
+For Codex readiness, use the separate rendered and native checks in [ValidateWorkflow.md](ValidateWorkflow.md). Do not treat literal text in an unsupported harness as a working fallback.
 
-- **Secret values.** For a credential skill, inject the *map*, never the *territory*. The map includes entry names, vault lists, and authentication status. `` !`pass ls` `` is acceptable because it lists entry names. `` !`pass show <x>` `` is forbidden because it exposes a live secret in the transcript and context.
-- **Slow or interactive commands.** Injection blocks skill load. A command that prompts, hangs, or takes seconds makes the skill appear broken.
-- **Mutating commands.** Injection should observe, not change state.
-- **Attacker-influenced prose.** Injected output enters the model's context as trusted-looking text. Inject bounded structural data (names, counts, statuses), never file contents, commit messages, issue text, or network responses that a third party can author.
+## Provider substitutions
 
-The litmus test: if the command's output appearing verbatim in the session transcript would be a problem, do not inject it.
+Claude also supplies invocation arguments and runtime variables. Keep these in the Claude entrypoint variant. Use the [official substitution reference](https://code.claude.com/docs/en/skills#available-string-substitutions) for exact names and behavior.
+
+Keep skill companions referenced through relative Markdown links. Shared instructions describe capabilities rather than assuming provider variable expansion.

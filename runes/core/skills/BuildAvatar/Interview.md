@@ -1,11 +1,11 @@
 # The avatar interview
 
-The question bank for BuildAvatar. Target 20 to 30 questions across five to eight rounds of the `AskUserQuestion` tool, at most four questions per round. A short confirmation pass is not an interview.
+The question bank for BuildAvatar. Target 20 to 30 questions across the eight sections below. Use the available structured question tool within its actual question limit. Add enough rounds to complete the bank. Without that tool, ask one question in each message. A short confirmation pass is not an interview.
 
 ## Method
 
 - Pre-fill every option you can infer from the session, the machine, and existing memory files. An inference becomes a confirmation question, never a silent fact.
-- Keep `Other` open on every question; users answer fastest when the likely answer is one click and the correction is one sentence.
+- Allow a free-text correction on every question when the tool supports it. Otherwise, ask for corrections in plain conversation.
 - Invite a provider memory export early: "In claude.ai Settings, Memory, ask: export everything in your memory about me, verbatim. Paste the result into any answer." One paste can fill three sections.
 - Push back on a vague answer with one concrete follow-up. Record hedges as the user states them.
 - Summarize each round in one sentence before the next.
@@ -65,4 +65,4 @@ The question bank for BuildAvatar. Target 20 to 30 questions across five to eigh
 
 ## After the rounds
 
-Read every `Other` and note field before you compose; users put the richest material there, including whole memory exports. Map each answer to its file section. Anything still blank after two asks becomes an open item in the report, not a third ask.
+Read every `Other` and note field before you compose. Users put the richest material there, including whole memory exports. Map each answer to its file section. Anything still blank after two asks becomes an open item in the report, not a third ask.
