@@ -2,7 +2,7 @@
 
 ### Requirement: Prose Seal Renewal
 
-A mechanical prose correction to a sealed file SHALL be followed by `rune adopt reseal` for that artifact, and the reseal SHALL preserve the source and review facts while rewriting the subject digest.
+A mechanical prose correction to a sealed file MUST be followed by `rune adopt reseal` for that artifact, and the reseal MUST preserve the source and review facts while rewriting the subject digest.
 
 #### Scenario: Sealed file changes after prose correction
 

@@ -2,7 +2,7 @@
 
 ### Requirement: Consumer Reference Recovery
 
-The deck SHALL record in `answers.yaml` a skeleton commit that resolves on the skeleton repository, and each Copier update SHALL move from that commit to the new one.
+The deck MUST record in `answers.yaml` a skeleton commit that resolves on the skeleton repository, and each Copier update MUST move from that commit to the new one.
 
 #### Scenario: Consumer pin names the new skeleton commit
 
@@ -11,7 +11,7 @@ The deck SHALL record in `answers.yaml` a skeleton commit that resolves on the s
 
 ### Requirement: Consumer Additions
 
-The deck SHALL carry its own checks as additions on top of the template's hook list, Makefile targets, lint excludes, and Quality steps, and a Copier update SHALL preserve them.
+The deck MUST carry its own checks as additions on top of the template's hook list, Makefile targets, lint excludes, and Quality steps, and a Copier update MUST preserve them.
 
 #### Scenario: Copier update preserves declared additions
 
@@ -20,7 +20,7 @@ The deck SHALL carry its own checks as additions on top of the template's hook l
 
 ### Requirement: Provenance Test Execution
 
-Quality SHALL run the provenance digest tests beside the attribution and push check tests.
+Quality MUST run the provenance digest tests beside the attribution and push check tests.
 
 #### Scenario: Quality runs provenance tests
 

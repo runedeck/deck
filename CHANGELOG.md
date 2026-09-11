@@ -30,6 +30,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- Every specification and delta uses MUST, and commit-attribution splits off worktree-identity so each capability stays under 150 lines.
 - The VersionControl skill: the primary checkout stays on the default branch, and each work branch gets a worktree.
 - The VersionControl skill: a landing checklist and a supersession check for dirty worktrees.
 - The VersionControl skill: a jj colocated repository uses jj workspaces and the repository jj push alias.
