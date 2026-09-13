@@ -11,7 +11,7 @@ A skill packages a procedure, convention, or tool interface that an AI model sho
 - `assets/`: static resources such as document templates and data files.
 - `templates/`: fill-in prompt templates the skill hands to subagents.
 
-Reference companions with relative Markdown links, state when to read each one ("Read [ValidateWorkflow.md](ValidateWorkflow.md) when checking an existing skill", never a bare "there is also a validate workflow"), and keep reference chains shallow. Do not use `@file` references because they inject the complete companion when the skill loads. Dynamic context commands execute only from the `SKILL.md` body. See [DynamicContextInjection.md](DynamicContextInjection.md).
+Reference companions with relative Markdown links, state when to read each one ("Read [ValidateWorkflow.md](ValidateWorkflow.md) when checking an existing skill", never a bare "there is also a validate workflow"), and keep reference chains shallow. Do not use `@file` references because they inject the complete companion when the skill loads. Provider dynamic context commands belong only in that provider's entrypoint variant. See [DynamicContextInjection.md](DynamicContextInjection.md).
 
 ## Canonical frontmatter
 
@@ -24,7 +24,6 @@ compatibility: Requires Python 3.11+ for the evaluation scripts.
 metadata:
     version: 0.1.0
     upstream: https://example.com/upstream-skill
-allowed-tools: Read Write Edit Bash(git status *)
 ---
 ```
 
@@ -37,9 +36,9 @@ Agent Skills requires `name` and `description`. It defines `license`, `compatibi
 
 Canonical source supports Agent Skills fields and three assembly directives at the top level. `targets` routes the skill to named providers. `disable-model-invocation` and `user-invocable` set Claude Code invocation controls.
 
-Assembly consumes `targets` and deploys the invocation controls. Provider overlays supply all other provider-specific fields.
+Assembly consumes `targets` and retains invocation controls only for providers that support them. Harness entrypoint variants supply other provider-specific fields. The optional `allowed-tools` key is portable, but its values must follow the source layer's harness policy. Put provider tool scopes in that provider's entrypoint variant.
 
-Validate the source with the nearest `.mdschema` and the project validator. Validate the installed `agentskills` copy with the official `skills-ref` validator.
+Validate the source with the nearest `.mdschema` and the project validator. In Rune, also require `rune validate --skill-layers --source <skill-path>`. Validate the installed `agentskills` copy with the official `skills-ref` validator. Check rendered and native readiness separately, as [ValidateWorkflow.md](ValidateWorkflow.md) describes.
 
 ## Section convention
 
@@ -86,7 +85,7 @@ Dynamic context commands are fast, read-only, non-interactive, free of secrets, 
 
 Target 100 lines for a `SKILL.md` body, ceiling 150. Markdown companions stay under 150 lines. Code companions may run longer, but modular code is the default.
 
-Anthropic's spec allows 500 lines.[AGENTSKILLS] The tighter target is deliberate: the body is paid for on every invocation. Move schemas, configuration examples, and provider detail into companions early.
+The Agent Skills specification recommends fewer than 500 lines.[AGENTSKILLS] The tighter target is deliberate: the body is paid for on every invocation. Move schemas and portable guidance into companions early. Keep exact provider runtime examples in supported entrypoint variants or official references.
 
 ## Naming
 

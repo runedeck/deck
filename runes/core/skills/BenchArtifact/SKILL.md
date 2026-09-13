@@ -4,7 +4,6 @@ description: "Benchmark one skill, rule, or agent against a baseline. Use native
 compatibility: "Native mode requires a harness with agent support. Cross-harness mode requires Python 3.11 and Rune."
 metadata:
     version: 0.3.0
-allowed-tools: Bash(python3 *), Bash(mkdir *), Bash(cp *), Read, Write, Edit, Grep, Glob, Agent
 ---
 
 # BenchArtifact

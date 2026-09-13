@@ -13,7 +13,7 @@ Build the user's avatar: one canonical `AGENTS.md` that tells every AI tool who 
 ## Prerequisites
 
 - The target location for the canonical file. Default: `~/.config/rune/avatar/AGENTS.md`, a private git repository that a chezmoi external deploys next to the rune configuration. An existing file at the target starts an update interview instead of a full one. Commit and push the repository after every avatar change.
-- The `AskUserQuestion` tool for the interview. Without it, use plain conversation and ask one question in each message. The round limits apply only to `AskUserQuestion`.
+- Use the active harness's structured question tool when it is available for this task. Otherwise, use plain conversation and ask one question in each message.
 
 ## Constraints
 
@@ -21,16 +21,16 @@ Build the user's avatar: one canonical `AGENTS.md` that tells every AI tool who 
 - Never auto-apply. Present a reconciliation table of every planned write, and wait for the user's confirmation.
 - Own only the managed block. Every deployed surface gets the content between `<!-- avatar:begin -->` and `<!-- avatar:end -->` markers. Never touch text outside the markers. A rerun replaces the block in place.
 - Interview for facts the harness cannot discover. Do not ask about repository conventions, code style the linters enforce, or anything a `CLAUDE.md` already records.
-- Run one interview round at a time. Ask at most four questions in each `AskUserQuestion` round. Push back on vague answers and ask for a concrete example. Summarize each section in one sentence before the next.
+- Run one interview round at a time. Keep each round within the active tool's question limit. Add rounds as needed to complete the interview. Challenge vague answers and ask for a concrete example. Summarize each section in one sentence before the next.
 - Modality is content. Record hedges and uncertainty as the user states them.
 
 ## Instructions
 
 ### Run the interview
 
-Run the question bank in [Interview.md](Interview.md): 20 to 30 questions across five to eight `AskUserQuestion` rounds, eight sections from profile to goals and beliefs. A short confirmation pass is not an interview. Rich session context does not cancel the interview. It converts fact questions into confirmations while the depth questions (examples, annoyances, boundaries, goals, beliefs) still run. Skip a section only when an existing avatar answers it and the user confirms the content still holds.
+Run the question bank in [Interview.md](Interview.md): 20 to 30 questions across eight sections from profile to goals and beliefs. Set the number of rounds from the active tool's capacity. A short confirmation pass is not an interview. Rich session context does not cancel the interview. It converts fact questions into confirmations while the depth questions (examples, annoyances, boundaries, goals, beliefs) still run. Skip a section only when an existing avatar answers it and the user confirms the content still holds.
 
-Without `AskUserQuestion`, ask the same question bank through plain conversation. Ask one question in each message and do not count tool rounds.
+Without a structured question tool, ask the same question bank through plain conversation. Ask one question in each message and do not count tool rounds.
 
 For an update interview, show the current section content and ask what changed.
 
@@ -38,7 +38,7 @@ For an update interview, show the current section content and ask what changed.
 
 Write the answers as a compact identity file at the target location:
 
-```text
+```markdown
 # Agents brief
 
 <!-- avatar:begin -->

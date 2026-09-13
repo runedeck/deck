@@ -17,6 +17,7 @@ permissions:
 jobs:
     quality:
         runs-on: ubuntu-latest
+        timeout-minutes: 20
         steps:
             - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
               with:
@@ -85,6 +86,9 @@ jobs:
 
             # Local hooks, generated CI, and template updates all consume the
             # same reviewed tool versions and archive digests.
+            # The shared installer ends by running scripts/install-tools.local,
+            # which installs the deck-only validators (rudof, openspec) the
+            # REQUIRE_GATES hooks demand.
             - name: Install tools
               run: bash scripts/install-tools
 

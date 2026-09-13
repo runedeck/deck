@@ -15,7 +15,7 @@ if ! command -v rudof >/dev/null 2>&1 || [ "$(rudof --version 2>/dev/null | awk 
     case "$(uname -s)-$(uname -m)" in
         Linux-x86_64)
             scratch=$(mktemp -d "${TMPDIR:-/tmp}/rudof.XXXXXX")
-            curl -fsSL -o "$scratch/rudof" "https://github.com/rudof-project/rudof/releases/download/${RUDOF_VERSION}/rudof_${RUDOF_VERSION}_x86_64_linux_gnu"
+            curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-connrefused -o "$scratch/rudof" "https://github.com/rudof-project/rudof/releases/download/${RUDOF_VERSION}/rudof_${RUDOF_VERSION}_x86_64_linux_gnu"
             printf '%s  %s\n' "$RUDOF_LINUX_AMD64_SHA256" "$scratch/rudof" | sha256sum --check --status
             install -m 0755 "$scratch/rudof" "$install_directory/rudof"
             command rm -rf "$scratch"
