@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- The ContinuousIntegration skill in core: run the repository's commit and push check stages locally and repeatedly, with every tool required, and record each stage's own exit status before a push or a signature (DECK-0013).
 - Five micro-rules in core, extracted from the tuicr workshop brief: CaptureOnTouch, FixAtTheHighestLeverage, ReportFailures, FlagRuleConflicts, and OwnersVoice.
 - The VerifyClaims and Deslop rules in core: evidence before assertion, and slop stripped at write time.
 - The agent-pipeline change: the idea-to-merge flywheel design, DECK-0008 and DECK-0009, the idea-intake, artifact-extraction, and declared-constraints capabilities, and the IntakeIdea skill.
