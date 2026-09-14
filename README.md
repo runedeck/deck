@@ -4,7 +4,7 @@ The deck: a collection of runes â€” markdown skills, agents, rules, and hooks â€
 
 The deck grows as artifacts pass adoption review. It includes the `meta`, `development`, `council`, `research`, and `security` domains.
 
-The `BuildTask` skill prepares provider tasks. The `ConfigureScanners` skill prepares public exposure scanners.
+The `BuildTask` skill prepares provider tasks. The `ConfigureScanners` skill prepares public exposure scanners. The `TerminalRecording` skill records scripted terminal demos as casts, GIFs, and MP4s.
 
 ## Use it
 
