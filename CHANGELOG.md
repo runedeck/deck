@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- The TerminalRecording skill in development: a scripted asciinema cast rendered to GIF and MP4 with agg and ffmpeg, recorded from a clean directory and checked for secrets before commit.
 - Five micro-rules in core, extracted from the tuicr workshop brief: CaptureOnTouch, FixAtTheHighestLeverage, ReportFailures, FlagRuleConflicts, and OwnersVoice.
 - The VerifyClaims and Deslop rules in core: evidence before assertion, and slop stripped at write time.
 - The agent-pipeline change: the idea-to-merge flywheel design, DECK-0008 and DECK-0009, the idea-intake, artifact-extraction, and declared-constraints capabilities, and the IntakeIdea skill.
