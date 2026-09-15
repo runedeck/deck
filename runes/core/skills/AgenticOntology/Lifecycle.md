@@ -6,7 +6,7 @@ The artifact lifecycle is the SKOS scheme `rune:stages` in `ontology/rune.ttl`: 
 
 - **capture**: consumes an idea, produces a change proposal. Skill: IntakeIdea.
 - **author**: consumes a proposal, produces a rune. Skills: BuildSkill, AdoptArtifact, BuildAvatar.
-- **prove**: consumes a candidate commit, produces a `rune:Proof`. Skill: ContinuousIntegration.
+- **prove**: consumes a candidate commit, produces a `rune:Proof`. Skills: ContinuousIntegration for the checks, AcceptanceTesting for the behavior.
 - **measure**: consumes a rune, produces a `rune:Verdict`. Skill: BenchArtifact.
 - **review**: consumes a candidate and its proofs, produces an approval or findings. Skill: VersionControl, the BabysitPR companion.
 - **ship**: consumes an approved candidate, produces a merge or a release. Skill: VersionControl.
