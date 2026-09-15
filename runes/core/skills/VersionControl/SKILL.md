@@ -24,6 +24,7 @@ Commit discipline, staging hygiene, push policy, and repo governance. In a jj co
 - Open pull requests with the owner's existing `gh` authentication. Do not override it with an App token.
 - Do not use Runewright for ordinary GitHub work. Reserve App identities for explicit CI or review automation.
 - Use `git switch <branch>`, not `git checkout <branch>`.
+- Run the repository's check stages locally before every push, as the ContinuousIntegration skill describes. A push hook that stops a publication while the owner waits at the signing key is a process defect.
 
 ## Instructions
 
