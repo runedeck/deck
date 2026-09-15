@@ -10,7 +10,6 @@ Map the task definition to one Claude Code Routine.
 4. Add only the non-secret environment values from the task definition.
 5. Deny task network access when the task definition prohibits network access.
 6. Select the most restrictive file permission that completes the task.
-
 7. Permit the read-only terminal only when the task definition requires it.
 8. Permit only the named command classes from the task definition.
 9. Deny each other tool.
@@ -75,7 +74,6 @@ Do not use this fallback when a cloud task cannot access the prepared mirror.
 2. Select the dedicated environment.
 3. Select the specified model.
 4. Select the specified reasoning level.
-
 5. Disable model fallback when the task definition requires this setting.
 6. Paste the complete rendered prompt.
 7. Set the specified schedule and time zone.

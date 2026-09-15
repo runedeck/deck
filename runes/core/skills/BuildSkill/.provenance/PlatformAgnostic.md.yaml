@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BuildSkill/PlatformAgnostic.md
     digest:
-      sha256: 36963424337d5774a94fe8d819901aa14ccc3fc8255e46ea4a7075d752f1d021
+      sha256: 8a97bcdaf7f4b0edaae6c1b510fc5c923c4f28663c7a91d3ba0fad0132c2d6c0
   predicate:
     buildDefinition:
       buildType: adopt/v1

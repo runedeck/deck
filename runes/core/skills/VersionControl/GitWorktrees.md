@@ -4,7 +4,7 @@ Isolated workspaces that share one repo. Work on several branches in parallel wi
 
 ## jj colocated repos: this companion does not apply
 
-If `.jj/` exists at the repo root, do NOT use git worktrees. `git worktree add` mutates refs behind jj's back. Use `jj workspace add ../repo-<name>` instead; see [Jujutsu.md](Jujutsu.md). Check first:
+If `.jj/` exists at the repo root, do NOT use git worktrees. `git worktree add` mutates refs behind jj's back. Use `jj workspace add ../repo-<name>` instead. See [Jujutsu.md](Jujutsu.md). Check first:
 
 ```sh
 [ -d "$(git rev-parse --show-toplevel)/.jj" ] && echo "jj colocated: use jj workspaces"

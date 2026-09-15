@@ -12,4 +12,4 @@
 ## 3. Verification
 
 - [x] 3.1 Validate the skill and ADR schemas
-- [x] 3.2 Run repository hooks; record unrelated existing validation failures
+- [x] 3.2 Run repository hooks. Record unrelated existing validation failures

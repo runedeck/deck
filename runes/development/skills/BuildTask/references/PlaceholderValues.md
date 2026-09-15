@@ -11,7 +11,6 @@ Reject a value that fails its declared type.
 - Set the minimum item count for each list.
 - Reject a private value.
 - Reject a credential or recovery phrase.
-
 - Reject a control character.
 - Reject an unresolved template delimiter.
 - Reject a Markdown heading, code fence, HTML tag, or YAML delimiter.

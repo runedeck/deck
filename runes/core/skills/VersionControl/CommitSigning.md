@@ -76,7 +76,7 @@ launchctl setenv SSH_ASKPASS /opt/homebrew/bin/ssh-askpass
 launchctl setenv SSH_ASKPASS_REQUIRE force
 ```
 
-`launchctl setenv` survives until reboot; persist it with a LaunchAgent plist.
+`launchctl setenv` survives until reboot. Persist it with a LaunchAgent plist.
 
 ### Verify signatures
 
