@@ -4,7 +4,7 @@
 
 # Smoke-test instance graph for the shapes gate. Every node below
 # carries a seeded defect except the first, so a validation run must
-# report exactly four Violations and two Warnings:
+# report exactly four Violations and six Warnings:
 #   rudof shacl-validate -s ontology/shapes.ttl ontology/smoke/instances.ttl
 
 # A conforming record.
@@ -29,3 +29,18 @@ id:DECK-0099 a rune:DecisionRecord ;
 # A rule without a verdict pointer.
 id:UseEfficientCLI a rune:Rule ;
     dcterms:title "UseEfficientCLI" .
+
+# A conforming proof: an IRI commit and a declared kind. It must pass
+# without rune.ttl loaded, which is why the kinds are enumerated.
+id:proof-checks-1 a rune:Proof ;
+    rune:proves id:commit-eafc72cc ;
+    rune:proofKind rune:checks .
+
+# A proof without a candidate commit or a kind: one Warning each.
+id:proof-orphan a rune:Proof .
+
+# A proof with a literal for its commit and a kind outside the scheme:
+# one Warning each.
+id:proof-malformed a rune:Proof ;
+    rune:proves "eafc72cc" ;
+    rune:proofKind rune:vibes .
