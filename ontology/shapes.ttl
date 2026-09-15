@@ -68,3 +68,41 @@ rune:RuleShape a sh:NodeShape ;
         sh:severity sh:Warning ;
         sh:message "A rule carries no bench verdict pointer. Run BenchArtifact and record the verdict." ;
     ] .
+
+# Axiom proof-covers-a-candidate: a proof names the commit it covers and
+# the kind of check it records (DECK-0014). Severity is Warning until
+# the first ContinuousIntegration receipts are extracted as proofs.
+rune:ProofShape a sh:NodeShape ;
+    sh:targetClass rune:Proof ;
+    # One commit, as an IRI under /id/. A literal or a second value is a
+    # malformed proof, not a proof of two commits.
+    sh:property [
+        sh:path rune:proves ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:pattern "^https://runedeck\\.dev/id/" ;
+        sh:severity sh:Warning ;
+        sh:message "A proof names no candidate commit, more than one, or a value that is not an entity IRI under /id/." ;
+    ] ;
+    # A proof is a passing receipt. A run that exited nonzero is a receipt
+    # and a finding, never a proof, so the status is required and zero.
+    sh:property [
+        sh:path rune:exitStatus ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:hasValue 0 ;
+        sh:severity sh:Warning ;
+        sh:message "A proof carries no exit status, or one that is not zero." ;
+    ] ;
+    # The permitted kinds are enumerated here because the hook validates
+    # the instance graph alone: the rdf:type triples that make rune:checks
+    # a ProofKind live in rune.ttl, which the shapes never load.
+    sh:property [
+        sh:path rune:proofKind ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:in ( rune:checks rune:behavior ) ;
+        sh:severity sh:Warning ;
+        sh:message "A proof names no kind, more than one, or a kind outside rune:proofKinds." ;
+    ] .

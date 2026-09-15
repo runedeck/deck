@@ -168,6 +168,56 @@ rune:verdict a rdf:Property ;
     rdfs:range rune:Verdict ;
     rdfs:comment "Links a rule to the bench verdict that justifies it." .
 
+# Prove-stage evidence (DECK-0014): a candidate commit passed one check,
+# with the commit, the check configuration, the validators, and the exit
+# status. The twin of rune:Verdict, which is measure-stage evidence.
+rune:Proof a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "proof" ;
+    rdfs:comment "Evidence from the prove stage that a candidate passed a check." .
+
+# The candidate commit a proof covers, an entity IRI under /id/. A
+# candidate is proven when a proof with exit status zero exists for its
+# commit; that is a query, never a stored state.
+rune:proves a rdf:Property ;
+    rdfs:domain rune:Proof ;
+    rdfs:range prov:Entity ;
+    rdfs:comment "Links a proof to the candidate commit it covers." .
+
+# What the proof recorded: the check configuration it ran, the validators
+# that judged the tree, and the exit status of the check itself.
+rune:configurationDigest a rdf:Property ;
+    rdfs:domain rune:Proof ;
+    rdfs:range xsd:string ;
+    rdfs:comment "The digest of the check configuration the run used." .
+
+rune:validatorVersion a rdf:Property ;
+    rdfs:domain rune:Proof ;
+    rdfs:range xsd:string ;
+    rdfs:comment "One validator name and version. A proof carries one value per validator." .
+
+rune:exitStatus a rdf:Property ;
+    rdfs:domain rune:Proof ;
+    rdfs:range xsd:integer ;
+    rdfs:comment "The exit status of the check itself, never of a filter behind it." .
+
+# The kind of check a proof records.
+rune:proofKinds a skos:ConceptScheme ;
+    dcterms:title "Kinds of proof" .
+
+rune:ProofKind a rdfs:Class ;
+    rdfs:subClassOf skos:Concept ;
+    rdfs:label "proof kind" .
+
+rune:proofKind a rdf:Property ;
+    rdfs:domain rune:Proof ;
+    rdfs:range rune:ProofKind .
+
+rune:checks   a rune:ProofKind ; skos:inScheme rune:proofKinds ; skos:prefLabel "checks" ;
+    rdfs:comment "The repository's own check stages passed on the commit." .
+rune:behavior a rune:ProofKind ; skos:inScheme rune:proofKinds ; skos:prefLabel "behavior" ;
+    rdfs:comment "A recorded run shows the stated behavior." .
+
 # Derivation reuses PROV-O directly: prov:wasDerivedFrom,
 # prov:wasGeneratedBy, prov:wasAttributedTo. No minted class exists.
 # Integrity is two digests. Drift states (new, unchanged, stale,
