@@ -21,7 +21,7 @@ A change is done when its behavior is demonstrated, not when its checks pass. Th
 
 - One scene per scenario, in the order the specification lists them. A scenario with no scene is an unproven requirement, and the pull request says so.
 - Every THEN is an `expect` on the output. A scene without an expectation is a demo, not a proof.
-- Run against the frozen head, the same commit the ContinuousIntegration receipt names, so both proofs cover one candidate. Any edit after the recording restarts both. Record in a clean directory outside every repository, so no instruction file reaches a harness under test.
+- Run against the frozen head, the same commit the ContinuousIntegration receipt names, so both proofs cover one candidate. The commit that files the recording under `docs/proofs/<change>/` is the one edit that does not restart the recording: it changes no behavior, and the transcript digest it carries binds the recording to the tree that ran. The checks run again on that head, so the receipt names what is pushed. Any other edit restarts both. Record in a clean directory outside every repository, so no instruction file reaches a harness under test.
 - Never edit the transcript or the cast. A failed expectation fails the recording, and the fix goes into the candidate, then the recording runs again.
 - Keep the recording short: few commands, short outputs, one scene per scenario. Length hides defects.
 - Do not commit a cast, a GIF, or a transcript before the secret check in Verification passes.
