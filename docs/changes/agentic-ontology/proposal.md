@@ -26,5 +26,5 @@ The deck declares its world in RDF, but nothing says how a term gets in, how an 
 
 - `runes/core/skills/AgenticOntology/` (new).
 - `ontology/rune.ttl`, `ontology/shapes.ttl`, `ontology/smoke/instances.ttl`.
-- `.pre-commit-config.yaml`: the shapes smoke hook asserts four Violations and six Warnings.
+- `.pre-commit-config.yaml`: the shapes smoke hook asserts four Violations and thirteen Warnings.
 - `docs/decisions/`: DECK-0014.

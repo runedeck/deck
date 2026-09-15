@@ -9,7 +9,7 @@
 
 ## 2. Verification
 
-- [x] 2.1 `rudof data ontology/rune.ttl` parses and the smoke fixture reports four Violations and six Warnings
+- [x] 2.1 `rudof data ontology/rune.ttl` parses and the smoke fixture reports four Violations and thirteen Warnings
 - [x] 2.2 `rune validate --skill-layers` on the new skill, Vale, rumdl, typos, and `rune spec validate`
 - [x] 2.3 The commit and push stages through the ContinuousIntegration procedure
 

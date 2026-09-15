@@ -27,7 +27,7 @@ The deck declares what exists once, in `ontology/rune.ttl`, and every other arti
 1. State the concept in one sentence and the stage it belongs to.
 2. Search the corpus for an existing label: `rg -n -i '<concept words>' ontology docs runes --glob '!.workspaces'`. A hit means reuse, not a new term.
 3. Search the established vocabularies in the order [Vocabularies.md](Vocabularies.md) gives. Reuse the term when one fits.
-4. Otherwise mint it: class or concept, `rdfs:label`, `rdfs:comment` of one sentence, and the superclass. Add one shape in `shapes.ttl` at Warning severity, and one seeded instance in `ontology/smoke/instances.ttl` that the shape reports.
+4. Otherwise mint it: class or concept, `rdfs:label`, `rdfs:comment` of one sentence, and the superclass. Add one shape in `shapes.ttl` at Warning severity, and one seeded instance in `ontology/smoke/instances.ttl` that the shape reports. Raise the expected counts in the fixture's header comment and in the `ontology-syntax` hook in `.pre-commit-config.yaml`, which asserts the exact Violation and Warning totals.
 5. Add the term to the glossary that the consuming spec or record cites, and open the change that uses it.
 
 ### Name an artifact
@@ -51,7 +51,7 @@ The deck declares what exists once, in `ontology/rune.ttl`, and every other arti
 
 ## Verification
 
-- `rudof data ontology/rune.ttl` parses, and the shapes smoke hook reports the counts the fixture states.
+- `rudof data ontology/rune.ttl` parses, and the `ontology-syntax` hook passes: the fixture's Violation and Warning totals equal the counts the hook asserts.
 - The drift audit reports a density of one for every label the change touched.
 - Every skill name in the lifecycle table parses as stage verb or discipline noun plus object.
 - The decision record for a new class exists before the class does.

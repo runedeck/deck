@@ -56,4 +56,4 @@ Option 2 puts the rule in every context window and still leaves the ontology beh
 - A new concept costs one ontology edit and one shape before it costs any prose.
 - The density audit is manual until the extractor computes it, which is a recorded follow-up.
 - The skill names `rudof` and `rg`. A checkout without rudof cannot run the shape check, and the hook says so under `REQUIRE_GATES`.
-- The smoke fixture states four Violations and six Warnings, and the hook asserts those counts. The permitted proof kinds are enumerated in the shape, because the hook validates the instance graph without the ontology loaded.
+- The smoke fixture states four Violations and thirteen Warnings, and the hook asserts those counts. A missing property that a shape also constrains by value reports twice, which the fixture comment states. The permitted proof kinds are enumerated in the shape, because the hook validates the instance graph without the ontology loaded.

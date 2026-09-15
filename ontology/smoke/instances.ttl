@@ -4,7 +4,7 @@
 
 # Smoke-test instance graph for the shapes gate. Every node below
 # carries a seeded defect except the first, so a validation run must
-# report exactly four Violations and six Warnings:
+# report exactly four Violations and thirteen Warnings:
 #   rudof shacl-validate -s ontology/shapes.ttl ontology/smoke/instances.ttl
 
 # A conforming record.
@@ -30,13 +30,31 @@ id:DECK-0099 a rune:DecisionRecord ;
 id:UseEfficientCLI a rune:Rule ;
     dcterms:title "UseEfficientCLI" .
 
-# A conforming proof: an IRI commit and a declared kind. It must pass
-# without rune.ttl loaded, which is why the kinds are enumerated.
+# A conforming proof: an entity IRI under /id/, a declared kind, and
+# exit status zero. It must pass without rune.ttl loaded, which is why
+# the kinds are enumerated. A proof that lacks its exit status reports
+# twice, once for the count and once for the value.
 id:proof-checks-1 a rune:Proof ;
     rune:proves id:commit-eafc72cc ;
-    rune:proofKind rune:checks .
+    rune:proofKind rune:checks ;
+    rune:exitStatus 0 .
 
-# A proof without a candidate commit or a kind: one Warning each.
+# A receipt of a failed run: not a proof, one Warning for the exit status.
+id:proof-failed a rune:Proof ;
+    rune:proves id:commit-deadbeef ;
+    rune:proofKind rune:checks ;
+    rune:exitStatus 1 .
+
+# A proof of a commit outside /id/: one Warning for the pattern, and the
+# only node that exercises it, so weakening the pattern changes the count.
+id:proof-foreign a rune:Proof ;
+    rune:proves <https://example.org/commit/1> ;
+    rune:proofKind rune:checks ;
+    rune:exitStatus 0 .
+
+# A proof without a candidate commit, a kind, or an exit status: four
+# Warnings, because the missing exit status reports for its count and its
+# value.
 id:proof-orphan a rune:Proof .
 
 # A proof with a literal for its commit and a kind outside the scheme:

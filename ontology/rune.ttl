@@ -176,8 +176,9 @@ rune:Proof a rdfs:Class ;
     rdfs:label "proof" ;
     rdfs:comment "Evidence from the prove stage that a candidate passed a check." .
 
-# The candidate commit a proof covers. A candidate is proven when a
-# proof exists for its commit; that is a query, never a stored state.
+# The candidate commit a proof covers, an entity IRI under /id/. A
+# candidate is proven when a proof with exit status zero exists for its
+# commit; that is a query, never a stored state.
 rune:proves a rdf:Property ;
     rdfs:domain rune:Proof ;
     rdfs:range prov:Entity ;

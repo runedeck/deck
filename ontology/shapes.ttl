@@ -81,8 +81,19 @@ rune:ProofShape a sh:NodeShape ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:nodeKind sh:IRI ;
+        sh:pattern "^https://runedeck\\.dev/id/" ;
         sh:severity sh:Warning ;
-        sh:message "A proof names no candidate commit, more than one, or a value that is not an IRI." ;
+        sh:message "A proof names no candidate commit, more than one, or a value that is not an entity IRI under /id/." ;
+    ] ;
+    # A proof is a passing receipt. A run that exited nonzero is a receipt
+    # and a finding, never a proof, so the status is required and zero.
+    sh:property [
+        sh:path rune:exitStatus ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:hasValue 0 ;
+        sh:severity sh:Warning ;
+        sh:message "A proof carries no exit status, or one that is not zero." ;
     ] ;
     # The permitted kinds are enumerated here because the hook validates
     # the instance graph alone: the rdf:type triples that make rune:checks
