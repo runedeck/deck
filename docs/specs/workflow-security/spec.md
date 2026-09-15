@@ -8,7 +8,7 @@ This specification defines blocking security scans for repository workflows.
 
 ### Requirement: Blocking security scan
 
-The pre-push Semgrep hook SHALL disable version checks. It SHALL return a nonzero status when it finds a blocking rule match.
+The pre-push Semgrep hook MUST disable version checks. It MUST return a nonzero status when it finds a blocking rule match.
 
 #### Scenario: Semgrep scans the repository
 
@@ -24,7 +24,7 @@ The pre-push Semgrep hook SHALL disable version checks. It SHALL return a nonzer
 
 ### Requirement: Narrow scan exception
 
-A workflow SHALL suppress one Semgrep rule only when a documented control proves that the finding cannot execute untrusted code.
+A workflow MUST suppress one Semgrep rule only when a documented control proves that the finding cannot execute untrusted code.
 
 #### Scenario: Trusted base checkout
 
@@ -36,7 +36,7 @@ A workflow SHALL suppress one Semgrep rule only when a documented control proves
 
 ### Requirement: Narrow secret scope
 
-A workflow SHALL expose each secret only to the step that consumes it.
+A workflow MUST expose each secret only to the step that consumes it.
 
 #### Scenario: Publication credentials are unavailable
 
@@ -47,7 +47,7 @@ A workflow SHALL expose each secret only to the step that consumes it.
 
 ### Requirement: Canonical delta specification
 
-The spec gate SHALL accept canonical delta specifications under `docs/changes/<change>/specs/`.
+The spec gate MUST accept canonical delta specifications under `docs/changes/<change>/specs/`.
 
 #### Scenario: A protected change includes a delta specification
 

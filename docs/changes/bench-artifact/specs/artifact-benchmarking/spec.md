@@ -2,7 +2,7 @@
 
 ### Requirement: Any Artifact Kind
 
-BenchArtifact SHALL benchmark a skill, a rule, or an agent by running the same test cases in a with-artifact configuration and a baseline configuration defined per kind: a skill runs with the skill loaded against no skill, a rule runs with the rule text in context against no rule, and an agent runs the agent definition against a general-purpose baseline. Improving an existing artifact SHALL use the prior version as the baseline.
+BenchArtifact MUST benchmark a skill, a rule, or an agent by running the same test cases in a with-artifact configuration and a baseline configuration defined per kind: a skill runs with the skill loaded against no skill, a rule runs with the rule text in context against no rule, and an agent runs the agent definition against a general-purpose baseline. Improving an existing artifact MUST use the prior version as the baseline.
 
 #### Scenario: Rule benchmark
 
@@ -11,7 +11,7 @@ BenchArtifact SHALL benchmark a skill, a rule, or an agent by running the same t
 
 ### Requirement: Per-Model Breakdown
 
-Every run SHALL record the model that produced it. When more than one model is requested, every configuration SHALL run on every requested model, and aggregation SHALL report each configuration-model pair separately. Aggregates SHALL NOT average across models.
+Every run MUST record the model that produced it. When more than one model is requested, every configuration MUST run on every requested model, and aggregation MUST report each configuration-model pair separately. Aggregates MUST NOT average across models.
 
 #### Scenario: Two models requested
 
@@ -20,7 +20,7 @@ Every run SHALL record the model that produced it. When more than one model is r
 
 ### Requirement: Self-Contained Comparison Report
 
-The benchmark SHALL produce a single self-contained HTML report that renders the configuration-by-model matrix with pass rates, deltas, timing, and token counts, inlining its structured data and styles so the file makes no external requests.
+The benchmark MUST produce a single self-contained HTML report that renders the configuration-by-model matrix with pass rates, deltas, timing, and token counts, inlining its structured data and styles so the file makes no external requests.
 
 #### Scenario: Report opened offline
 
@@ -29,7 +29,7 @@ The benchmark SHALL produce a single self-contained HTML report that renders the
 
 ### Requirement: BuildSkill Delegation
 
-BuildSkill SHALL NOT carry its own copy of the evaluation loop. Its authoring workflow SHALL reference BenchArtifact for measurement, and the extracted scripts, agent templates, and viewer SHALL live only under BenchArtifact.
+BuildSkill MUST NOT carry its own copy of the evaluation loop. Its authoring workflow MUST reference BenchArtifact for measurement, and the extracted scripts, agent templates, and viewer MUST live only under BenchArtifact.
 
 #### Scenario: Skill evaluation after extraction
 
@@ -38,7 +38,7 @@ BuildSkill SHALL NOT carry its own copy of the evaluation loop. Its authoring wo
 
 ### Requirement: Execution Ladder
 
-BenchArtifact SHALL offer ordered execution setups that share one manifest, one grading path, and one verdict rule: a native in-harness procedure as the default, a direct Claude and Codex invocation for a fast first table, and a cross-harness matrix behind an explicit `--cross-harness` flag. A scratch run SHALL label its output as low confidence.
+BenchArtifact MUST offer ordered execution setups that share one manifest, one grading path, and one verdict rule: a native in-harness procedure as the default, a direct Claude and Codex invocation for a fast first table, and a cross-harness matrix behind an explicit `--cross-harness` flag. A scratch run MUST label its output as low confidence.
 
 #### Scenario: Cross-harness requires the flag
 
@@ -47,7 +47,7 @@ BenchArtifact SHALL offer ordered execution setups that share one manifest, one 
 
 ### Requirement: Frozen Iterations
 
-The cross-harness orchestrator SHALL freeze the evaluation manifest into the iteration directory before any provider call, SHALL refuse to run into an iteration that already contains benchmark runs or a different frozen manifest, and SHALL retain raw provider stdout beside each parsed response.
+The cross-harness orchestrator MUST freeze the evaluation manifest into the iteration directory before any provider call, MUST refuse to run into an iteration that already contains benchmark runs or a different frozen manifest, and MUST retain raw provider stdout beside each parsed response.
 
 #### Scenario: Second invocation into one iteration
 
@@ -56,7 +56,7 @@ The cross-harness orchestrator SHALL freeze the evaluation manifest into the ite
 
 ### Requirement: Three-Metric Verdict
 
-The report SHALL state one verdict per model from three signals read together: assertion pass rate, checker density per 100 checker words, and blind pairwise preferences for clarity, fluency, and directness. Blind judging SHALL be cross-vendor so no judge grades output from its own model. The report SHALL withhold a verdict when fewer than half of the planned pairs are valid.
+The report MUST state one verdict per model from three signals read together: assertion pass rate, checker density per 100 checker words, and blind pairwise preferences for clarity, fluency, and directness. Blind judging MUST be cross-vendor so no judge grades output from its own model. The report MUST withhold a verdict when fewer than half of the planned pairs are valid.
 
 #### Scenario: Judge assignment
 
@@ -65,7 +65,7 @@ The report SHALL state one verdict per model from three signals read together: a
 
 ### Requirement: Reviewable Pairs
 
-The report SHALL provide a pair browser over every matched pair: the baseline and treatment responses side by side with their per-run metrics, and the blind judgment with its recorded reasons beside each pair.
+The report MUST provide a pair browser over every matched pair: the baseline and treatment responses side by side with their per-run metrics, and the blind judgment with its recorded reasons beside each pair.
 
 #### Scenario: Reviewer inspects a degraded model
 
@@ -74,7 +74,7 @@ The report SHALL provide a pair browser over every matched pair: the baseline an
 
 ### Requirement: Pull Request Table
 
-Aggregation SHALL write one compact markdown table per executed comparison: one row per model with pairs, assertion movement, checker density movement, and the three preference deltas. Comparisons without executed pairs SHALL NOT appear.
+Aggregation MUST write one compact markdown table per executed comparison: one row per model with pairs, assertion movement, checker density movement, and the three preference deltas. Comparisons without executed pairs MUST NOT appear.
 
 #### Scenario: Table accompanies an artifact pull request
 
