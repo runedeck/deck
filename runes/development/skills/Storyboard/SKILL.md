@@ -1,7 +1,7 @@
 ---
 name: Storyboard
 description: "Draw an ASCII frame of what is about to happen, wait for the owner to confirm it, and close each stage with a frame of what changed. USE WHEN starting work inside a change, before the first file write of a task, before a fan-out or a workflow run, when the plan changes, when the owner asks to see the plan, the schematic, or where things stand, and at the end of a stage. NOT FOR diagrams inside documentation (AsciiDiagrams rule) or progress narration without a decision to confirm."
-compatibility: "Uses AskUserQuestion when the harness has it. Falls back to a plain question. Workflow children cannot ask and therefore never run this skill."
+compatibility: "Uses the harness's question tool when one exists and falls back to a plain question. Workflow children cannot ask and therefore never run this skill."
 metadata:
     version: 0.1.0
     decisions: DECK-0016

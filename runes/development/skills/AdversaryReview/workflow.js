@@ -153,6 +153,8 @@ return {
   dispositions,
   open,
   fatalOpen: open.filter((h) => h.fatal).length,
-  designFlaws: hits.filter((h) => h.designFlaw).map((h) => ({ id: h.id, quote: h.quote })),
+  designFlaws: hits
+    .filter((h) => h.designFlaw && h.fatal && !dispositions.some((d) => d.id === h.id && d.disposition === 'rejected'))
+    .map((h) => ({ id: h.id, quote: h.quote, disposition: (dispositions.find((d) => d.id === h.id) || { disposition: 'open' }).disposition })),
   agentsUsed: used,
 }

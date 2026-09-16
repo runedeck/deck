@@ -37,7 +37,7 @@ One turn, one edge. Read where the change is, print the stage strip, name the ne
     ```
 
 4. Pick the edge. Forward when the current stage's exit signal holds. Return edges: adversary findings, red gates, or requested changes go back to swarm, owner AgentTeam or the session. A fatal hit marked as a design flaw goes back to specify, owner ArchitectureDecision. A closed pull request stops.
-5. Ask the extraction question at every exit, not only at the end: did this pass produce a rule, a skill, or a lesson. If yes, write one line under the change's tasks so LearnFrom runs in a later turn. Do not name a second owner now.
+5. Ask the extraction question at every exit, not only at the end: did this pass produce a rule, a skill, or a lesson. If yes, state the proposed extraction in one line of the reply so the owner or a later LearnFrom turn records it. Write nothing yourself, and do not name a second owner now.
 6. End the turn with the owner named and the one sentence the next turn should start from. When Storyboard is installed, that next turn opens with a frame.
 
 ## Verification

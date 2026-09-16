@@ -212,12 +212,13 @@ Findings only. Change nothing. Cite file:line. Report scope left undone as a fin
 phase('Integrate')
 
 const allBuilt = built.every((b) => b.ok && b.workspace)
+const allComplete = built.every((b) => b.incomplete.length === 0 && (b.pkg.taskIds || []).every((t) => b.done.includes(t)))
 const anyBlocking = reviews.some((r) => r.blocking) || reviews.length !== built.length
-if (!allBuilt || anyBlocking) {
+if (!allBuilt || !allComplete || anyBlocking) {
   return {
     change,
     integrated: false,
-    reason: !allBuilt ? 'One or more packages failed or were blocked. Nothing was integrated.' : 'A review is blocking or missing. Nothing was integrated.',
+    reason: !allBuilt ? 'One or more packages failed or were blocked. Nothing was integrated.' : !allComplete ? 'One or more packages left task ids incomplete. Nothing was integrated.' : 'A review is blocking or missing. Nothing was integrated.',
     packages: built.map((b) => ({ name: b.pkg.name, ok: b.ok, blocked: b.blocked, workspace: b.workspace, done: b.done, incomplete: b.incomplete, files: b.files, checks: b.checks, summary: b.summary })),
     reviews,
     agentsUsed: used,

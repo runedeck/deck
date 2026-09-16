@@ -20,4 +20,4 @@ Rules for the fill:
 
 - Sort by path. Collapse directories with one entry.
 - The last line compares the delta with the plan frame. An empty comparison is written as "matches plan".
-- A delta that differs from the plan is shown with a question. A matching delta is shown without one.
+- Every delta frame ends with the confirmation question. A delta that differs from the plan names the difference above the question.
