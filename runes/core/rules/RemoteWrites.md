@@ -1,0 +1,3 @@
+Remote writes belong to the owner. Never run `gh pr merge`, `gh pr close`, `gh pr comment`, `gh pr review`, `gh pr edit --add-label`, `gh pr edit --remove-label`, `gh issue comment`, `gh issue close`, `git push`, `jj git push`, or a review-thread resolution, and never reach the same effect through the API or a web page. One exception: when the prompt names a review label to summon a reviewer, add exactly that label and no other. The exception is for the agent the owner is talking to, never for a child agent.
+
+Report instead. A status table goes in your reply to the owner, never onto a pull request. Name every pull request by its full `https://` URL and every artifact by its absolute path, so the owner can act on the report without asking.
