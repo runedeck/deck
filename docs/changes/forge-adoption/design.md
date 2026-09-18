@@ -53,6 +53,6 @@ runes/core/rules/RemoteWrites.md
 - A workflow skill reaches a harness with no workflow tool. Guard: `targets`, plus a first line in the body that stops and says so. Task 3.4 verifies the filter and blocks the merge if it does not hold.
 - Companion paths resolve against the child's cwd instead of the skill. Guard: the absolute skill path in every child brief. A `rune validate` check is a follow-up.
 - Nested runs blow the 32-agent cap. Guard: ForgeCycle never invokes a workflow, and each script enforces `meta.caps` before spawning.
-- The prohibitions rule gets stretched, so "one named label" becomes any label. Guard: command-shaped wording, the exception limited to the invoking agent, and child briefs carry the list without the exception.
+- The prohibitions rule gets stretched, so "one named label" becomes any label. Guard: command-shaped wording, both exceptions limited to the invoking agent and to the correctness label, and child briefs carry the list without the exceptions.
 - pi and codex have no rules path yet. Guard: the pi package `AGENTS.md` carries the same command list until task 4.4 lands.
 - No bench and no proof yet, so the only evidence is the adversarial passes on the text. Guard: tasks 4.1 and 4.2 stay open and the ADR status stays proposed.
