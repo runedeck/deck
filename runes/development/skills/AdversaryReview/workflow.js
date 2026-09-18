@@ -10,10 +10,23 @@ export const meta = {
 
 const CAPS = { agents: 4, loops: 1 }
 let used = 0
-const call = (prompt, opts) => {
-  if (used >= CAPS.agents) return Promise.resolve({ ok: false, error: `agent cap ${CAPS.agents} reached` })
+// Normalise the two agent-result shapes. pi returns { ok, output, structured, error }.
+// Claude Code returns the schema object, the text, or null on a skipped or failed agent.
+const envelope = (r, hasSchema) => {
+  if (r && typeof r === 'object' && 'ok' in r && ('output' in r || 'structured' in r || 'error' in r)) return r
+  if (r === null || r === undefined) return { ok: false, error: 'agent returned no result' }
+  if (hasSchema && typeof r === 'object') return { ok: true, structured: r, output: JSON.stringify(r) }
+  if (typeof r === 'string') return { ok: true, output: r }
+  return { ok: false, error: `unexpected agent result of type ${typeof r}` }
+}
+const call = async (prompt, opts) => {
+  if (used >= CAPS.agents) return { ok: false, error: `agent cap ${CAPS.agents} reached` }
   used += 1
-  return agent(prompt, opts)
+  try {
+    return envelope(await agent(prompt, opts), Boolean(opts && opts.schema))
+  } catch (e) {
+    return { ok: false, error: e && e.message ? e.message : String(e) }
+  }
 }
 const models = (args && args.models) || {}
 const withModel = (cls, opts) => (models[cls] ? { ...opts, model: models[cls] } : opts)

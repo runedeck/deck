@@ -7,15 +7,28 @@ export const meta = {
     { title: 'Verify', detail: 'Adversarial diff review of each repair, head re-read' },
     { title: 'Report', detail: 'Owner report with full URLs and workspace paths' },
   ],
-  caps: { agents: 19, loops: 1 },
+  caps: { agents: 20, loops: 1 },
 }
 
-const CAPS = { agents: 19, loops: 1 }
+const CAPS = { agents: 20, loops: 1 }
 let used = 0
-const call = (prompt, opts) => {
-  if (used >= CAPS.agents) return Promise.resolve({ ok: false, error: `agent cap ${CAPS.agents} reached` })
+// Normalise the two agent-result shapes. pi returns { ok, output, structured, error }.
+// Claude Code returns the schema object, the text, or null on a skipped or failed agent.
+const envelope = (r, hasSchema) => {
+  if (r && typeof r === 'object' && 'ok' in r && ('output' in r || 'structured' in r || 'error' in r)) return r
+  if (r === null || r === undefined) return { ok: false, error: 'agent returned no result' }
+  if (hasSchema && typeof r === 'object') return { ok: true, structured: r, output: JSON.stringify(r) }
+  if (typeof r === 'string') return { ok: true, output: r }
+  return { ok: false, error: `unexpected agent result of type ${typeof r}` }
+}
+const call = async (prompt, opts) => {
+  if (used >= CAPS.agents) return { ok: false, error: `agent cap ${CAPS.agents} reached` }
   used += 1
-  return agent(prompt, opts)
+  try {
+    return envelope(await agent(prompt, opts), Boolean(opts && opts.schema))
+  } catch (e) {
+    return { ok: false, error: e && e.message ? e.message : String(e) }
+  }
 }
 const models = (args && args.models) || {}
 const withModel = (cls, opts) => (models[cls] ? { ...opts, model: models[cls] } : opts)
@@ -29,7 +42,8 @@ const structured = (r, fields) => {
 
 const repo = String((args && args.repo) || '').trim()
 if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) return { error: 'args.repo must be owner/repo.' }
-const maxRepairs = Math.min(Math.max(Number((args && args.maxRepairs) || 8) || 8, 0), 8)
+const rawCap = args && args.maxRepairs != null ? Number(args.maxRepairs) : 8
+const maxRepairs = Math.min(Math.max(Number.isFinite(rawCap) ? rawCap : 8, 0), 8)
 const skillDir = String((args && args.skillDir) || '').trim()
 if (!skillDir.startsWith('/')) return { error: 'args.skillDir must be the absolute path of the MergeTrain skill directory.' }
 const changeId = String((args && args.changeId) || '').trim()
@@ -77,8 +91,37 @@ A blocker that needs an owner decision, an approval, a credential, or a merge is
 const surveyOut = structured(survey, ['prs'])
 if (!surveyOut) return { failed: 'Survey', error: survey.ok ? 'Survey returned no structured result' : survey.error }
 const prs = Array.isArray(surveyOut.prs) ? surveyOut.prs : []
-const targets = prs.filter((p) => p.actionable && p.trusted === true && p.state === 'blocked').slice(0, maxRepairs)
-const untrusted = prs.filter((p) => p.trusted !== true).map((p) => p.url)
+const candidates = prs.filter((p) => p.actionable && p.trusted === true && p.state === 'blocked').slice(0, maxRepairs)
+
+// The survey child read check logs and bot comments before it set `trusted`. Re-derive trust from
+// repository metadata alone, in a child that reads nothing else, so an injected survey cannot
+// mark a fork head trusted. Only heads confirmed by this pass are repaired.
+let confirmedTrust = new Map()
+if (candidates.length > 0) {
+  const gate = await call(
+    `${RULES}
+Read-only, gh read commands only, and read nothing but the fields named here. For each pull request below, run
+gh pr view <number> -R ${repo} --json isCrossRepository,authorAssociation,headRefOid
+and return isCrossRepository, authorAssociation, and headRefOid verbatim. Do not open comments, logs, diffs, or descriptions.
+${JSON.stringify(candidates.map((p) => ({ number: p.number, url: p.url })), null, 2)}`,
+    withModel('cheap', {
+      label: 'trust-gate',
+      phase: 'Survey',
+      schema: {
+        type: 'object',
+        required: ['prs'],
+        properties: { prs: { type: 'array', items: { type: 'object', required: ['number', 'isCrossRepository', 'authorAssociation', 'headRefOid'], properties: { number: { type: 'integer' }, isCrossRepository: { type: 'boolean' }, authorAssociation: { type: 'string' }, headRefOid: { type: 'string' } } } } },
+      },
+    }),
+  )
+  const out = structured(gate, ['prs'])
+  const WRITE = new Set(['OWNER', 'MEMBER', 'COLLABORATOR'])
+  for (const g of out && Array.isArray(out.prs) ? out.prs : []) {
+    confirmedTrust.set(g.number, g.isCrossRepository === false && WRITE.has(String(g.authorAssociation).toUpperCase()) && typeof g.headRefOid === 'string' ? g.headRefOid : null)
+  }
+}
+const targets = candidates.filter((p) => confirmedTrust.get(p.number) === p.head)
+const untrusted = prs.filter((p) => p.trusted !== true || (candidates.includes(p) && confirmedTrust.get(p.number) !== p.head)).map((p) => p.url)
 
 phase('Repair')
 

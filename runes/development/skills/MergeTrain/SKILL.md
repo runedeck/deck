@@ -26,7 +26,7 @@ The name says train. The skill never merges. It surveys, repairs in isolation, r
 - Every ready verdict is re-read before the report. A head that moved is reported stale, not ready.
 - A repair child edits inside its own workspace and stops. It never commits, pushes, or opens anything.
 - Every verdict is bound to the head SHA read at survey time. A moved head makes the verdict stale and the child stops.
-- Caps: 1 survey, up to 8 repairs, up to 8 reviews, 1 ready re-check, 1 report. Total 19 agents, one loop, no nested workflow.
+- Caps: 1 survey, up to 8 repairs, up to 8 reviews, 1 trust gate, 1 ready re-check, 1 report. Total 20 agents, one loop, no nested workflow.
 - Every pull request in the report carries its full `https://` URL and every repair its absolute workspace path.
 
 ## Instructions
