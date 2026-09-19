@@ -2,7 +2,7 @@
 
 ### Requirement: Temporary Review State
 
-AdoptArtifact SHALL record block text, verdicts, notes, flags, and timestamps only in temporary rune session state. The deck SHALL NOT commit `review.yaml` or `*.review.yaml` files under `.provenance`.
+AdoptArtifact MUST record block text, verdicts, notes, flags, and timestamps only in temporary rune session state. The deck MUST NOT commit `review.yaml` or `*.review.yaml` files under `.provenance`.
 
 #### Scenario: Adoption finalizes
 
@@ -11,7 +11,7 @@ AdoptArtifact SHALL record block text, verdicts, notes, flags, and timestamps on
 
 ### Requirement: Durable Source Provenance
 
-A finalized adoption SHALL commit a source-level provenance sidecar for each adopted file. Each sidecar SHALL retain the upstream source and digest, reviewed state, and final file digest.
+A finalized adoption MUST commit a source-level provenance sidecar for each adopted file. Each sidecar MUST retain the upstream source and digest, reviewed state, and final file digest.
 
 #### Scenario: Reviewed artifact is staged
 
@@ -20,7 +20,7 @@ A finalized adoption SHALL commit a source-level provenance sidecar for each ado
 
 ### Requirement: Ledger Guard
 
-Repository validation SHALL fail when a tracked `.provenance/review.yaml` or `.provenance/*.review.yaml` file exists.
+Repository validation MUST fail when a tracked `.provenance/review.yaml` or `.provenance/*.review.yaml` file exists.
 
 #### Scenario: Legacy ledger remains tracked
 
@@ -29,7 +29,7 @@ Repository validation SHALL fail when a tracked `.provenance/review.yaml` or `.p
 
 ### Requirement: Context Suffix Normalization
 
-Authorship validation SHALL ignore a trailing `1m` context suffix after a model version digit in display model IDs and email local parts.
+Authorship validation MUST ignore a trailing `1m` context suffix after a model version digit in display model IDs and email local parts.
 
 #### Scenario: One-million-context identity
 
