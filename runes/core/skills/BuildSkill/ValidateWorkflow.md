@@ -4,6 +4,8 @@
 
 You are auditing an existing skill, not improving it. Every check below is pass or fail. The create workflow covers style opinions.
 
+Use the audit stages in [ImplementationLoop.md](ImplementationLoop.md). Freeze the requirements and checker ownership before collecting evidence. Keep independent review separate from automated receipts. Do not edit the target during this workflow.
+
 ## OBJECTIVE
 
 A verdict on the target skill: `COMPLIANT`, or `NON-COMPLIANT` with the file path and a concrete repair for each failure.
@@ -57,7 +59,8 @@ A project's schema checker can be a partial fallback. It can report required sec
 - [ ] Each companion link resolves inside the skill tree.
 - [ ] Each companion link states when the reader should load it.
 - [ ] Detailed procedures and static reference material live in companions rather than expanding the entrypoint.
-- [ ] Dynamic context commands appear only in `SKILL.md` and are bounded, fast, read-only, non-interactive, and free of secrets.
+- [ ] Provider dynamic context commands appear only in the supporting provider's entrypoint variant. They are bounded, fast, read-only, non-interactive, and free of secrets.
+- [ ] Shared companions use portable instructions or official links for exact provider examples. They contain no foreign runtime syntax, even in quoted or conditional text.
 - [ ] No section is empty and no authoring placeholder remains.
 
 ## Step 5: Check tool integration
@@ -86,15 +89,30 @@ When the skill wraps a CLI:
 
 ```sh
 mdschema check --schema <nearest-skill-schema> <skill-path>/SKILL.md
+rune validate --skill-layers --source <skill-path>
 rune install --source runes/<domain> --target <scratch> --provider agentskills --only skills/<SkillName>
 skills-ref validate <scratch>/.agents/skills/<skill-name>
 ```
 
-Run the project validator with these commands. In a Rune deck, use `rune validate --source .`. See [RuneDeck.md](RuneDeck.md).
+Run the project validator with these commands. In a Rune deck, use `rune validate --source .`. The separate source-layer command is required for every changed skill. It checks generic, harness, model, user, and effective content. Use the owning deck's provider and model registry. See [RuneDeck.md](RuneDeck.md).
 
 The source can use PascalCase. `skills-ref` checks the lowercase copy after the provider transform.
 
 Fix errors before declaring the skill valid. A breadth warning remains advisory unless another error is present.
+
+## Step 9: Separate rendered and native readiness
+
+Inspect each declared provider's rendered bundle in an isolated target. Check the complete companion set, relative links, metadata, and selected variant. Source checks do not prove that assembly produced the intended result.
+
+For a Codex readiness claim, inspect the actual deployment:
+
+```sh
+rune doctor --target <scratch> --skill-readiness --json
+```
+
+Resolve every static finding. Full acceptance also requires fresh native catalog and invocation evidence for the same deployment. Use the evidence options in `rune doctor --help` when that evidence is available. Without it, report native readiness as unverified and preserve the nonzero exit status.
+
+`COMPLIANT` describes the required authoring checks. It does not prove native loading, invocation, or permission enforcement. Report rendered findings and native evidence separately. Do not claim full readiness from source validation or a rendered static pass.
 
 ## EXECUTE NOW
 

@@ -6,7 +6,7 @@ When the config is intended to be read by an AI in the loop (a skill, agent, or 
 
 ## Why mirror autoMode
 
-The pattern is already familiar to anyone configuring Claude Code. Entries are prose — descriptions a human (or AI) would naturally write — not regex or tool-pattern grammars. The `$defaults` token gives a splice-or-replace toggle for built-in defaults shipped with the artifact source. Users extend the built-ins by adding entries; they take full ownership by omitting `"$defaults"`.
+The pattern is already familiar to anyone configuring Claude Code. Entries are prose — descriptions a human (or AI) would naturally write — not regex or tool-pattern grammars. The `$defaults` token gives a splice-or-replace toggle for built-in defaults shipped with the artifact source. Users extend the built-ins by adding entries. They take full ownership by omitting `"$defaults"`.
 
 ## Shape
 
@@ -41,7 +41,7 @@ Setting any tier without `"$defaults"` replaces the entire built-in list for tha
 
 ## When NOT to use this pattern
 
-Deterministic consumers (shell scripts, pre-commit hooks, CI checks without model access) can't interpret prose. Ship a sibling artifact for those, in the same config directory under a different filename, with a flat regex list or other machine-readable structure. Don't try to mix prose and regex in one file; the consumer types diverge.
+Deterministic consumers (shell scripts, pre-commit hooks, CI checks without model access) cannot interpret prose. Ship a sibling artifact for those, in the same config directory under a different filename, with a flat regex list or other machine-readable structure. Do not try to mix prose and regex in one file. The consumer types diverge.
 
 ## Discovery and inspection
 

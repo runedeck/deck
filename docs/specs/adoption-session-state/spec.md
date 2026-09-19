@@ -8,7 +8,7 @@ This specification defines temporary review state, durable adoption provenance, 
 
 ### Requirement: Temporary review state
 
-AdoptArtifact SHALL record block text, verdicts, notes, flags, and timestamps only in temporary rune session state. The deck SHALL NOT commit `review.yaml` or `*.review.yaml` files under `.provenance`.
+AdoptArtifact MUST record block text, verdicts, notes, flags, and timestamps only in temporary rune session state. The deck MUST NOT commit `review.yaml` or `*.review.yaml` files under `.provenance`.
 
 #### Scenario: Adoption finalizes
 
@@ -17,7 +17,7 @@ AdoptArtifact SHALL record block text, verdicts, notes, flags, and timestamps on
 
 ### Requirement: Durable source provenance
 
-A finalized adoption SHALL commit one source-level provenance sidecar for each adopted file. Each sidecar SHALL retain the upstream source and digest, reviewed state, and final file digest.
+A finalized adoption MUST commit one source-level provenance sidecar for each adopted file. Each sidecar MUST retain the upstream source and digest, reviewed state, and final file digest.
 
 #### Scenario: Reviewed artifact is staged
 
@@ -26,7 +26,7 @@ A finalized adoption SHALL commit one source-level provenance sidecar for each a
 
 ### Requirement: Ledger guard
 
-Repository validation SHALL fail when a tracked `.provenance/review.yaml` or `.provenance/*.review.yaml` file exists.
+Repository validation MUST fail when a tracked `.provenance/review.yaml` or `.provenance/*.review.yaml` file exists.
 
 #### Scenario: Legacy ledger remains tracked
 
@@ -35,7 +35,7 @@ Repository validation SHALL fail when a tracked `.provenance/review.yaml` or `.p
 
 ### Requirement: Canonical model identities
 
-Authorship validation SHALL apply the context normalization and trusted-policy contract in [Commit Attribution](../commit-attribution/spec.md).
+Authorship validation MUST apply the context normalization and trusted-policy contract in [Commit Attribution](../commit-attribution/spec.md).
 
 #### Scenario: One-million-context identity
 

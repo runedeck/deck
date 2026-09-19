@@ -1,6 +1,6 @@
 # Rune deck integration
 
-Everything in the other companions is portable: it holds for a skill shipped anywhere. This file is the part that only holds inside a Rune deck. Read it when the skill you are authoring lives in one.
+Read this file when the skill you are authoring lives in a Rune deck. Shared companions describe portable procedures and conditional provider features. This file defines the source layout, assembly rules, and validation commands for Rune.
 
 ## Where skills live
 
@@ -20,6 +20,7 @@ The validators enforce the heading convention. The deck applies the length limit
 
 ```sh
 rune validate --source .
+rune validate --skill-layers --source <skill-path>
 ```
 
 Rune's built-in schema checker is a partial fallback. It reports required-section presence and heading depth, but it does not replace standalone `mdschema` for section vocabulary, ordering, uniqueness, or subsection placement:
@@ -28,7 +29,19 @@ Rune's built-in schema checker is a partial fallback. It reports required-sectio
 mdschema check <skill-path>/SKILL.md --schema runes/<domain>/skills/.mdschema
 ```
 
-Both run under `make validate`, which the commit hook invokes.
+The ordinary project and schema checks run under `make validate`, which the commit hook invokes. The source-layer check is separate and required for skill changes. It checks canonical, harness, model, user, and effective content against the configured provider and model registry. Quoted examples and conditional instructions receive the same literal checks as other text.
+
+Do not infer deployment readiness from these checks. Inspect the rendered bundles and obtain native evidence before claiming native readiness. See [ValidateWorkflow.md](ValidateWorkflow.md).
+
+## Source layers
+
+Keep generic instructions in `SKILL.md` and shared companions. Use `<provider>/SKILL.md` for a harness variant and `<provider>/<model>/SKILL.md` for an exact configured model variant. Every variant declares `mode: append`, `mode: prepend`, or `mode: replace`.
+
+A harness variant can contain only metadata with an empty body when its mode is `append` or `prepend`. Model variants can contain only `mode` in frontmatter. Keep effective `name`, `description`, and body nonempty.
+
+Assembly selects one variant: the matching model variant first, otherwise the matching harness variant. It merges that winner with the canonical entrypoint. A model variant does not inherit its harness variant's body or metadata.
+
+Provider and model folders do not supply companion overrides. Keep shared companions at the skill root or in ordinary support directories. A local `user/SKILL.md` is a complete replacement with `mode: replace`, the canonical name, a description, and a full body. Local `user/` companion files replace whole files at matching relative paths.
 
 ## Deployment
 
@@ -44,7 +57,7 @@ The rule converts directory segments, Markdown companion names, and the frontmat
 
 `SKILL.md`, bundled scripts, and assets keep their exact names. Harnesses, Python module paths, and in-document references use those exact names.
 
-Never edit a deployed file under a provider directory. Edit the source and reinstall. Put a local exception in the rune's `user/` override.
+Never edit a deployed file under a provider directory. Edit the source and reinstall. Put a local exception in the rune's `user/` override using the replacement rules above.
 
 ## Per-user configuration
 

@@ -33,7 +33,6 @@ Do not activate a browser scanner before this controlled fixture is available.
 - Confirm the manifest repository, remote, timestamp, fetch status, and digest.
 - Confirm that local refs match the manifest.
 - Confirm that initial and final Git state match.
-
 - Confirm that Git used only the prompt allowlist.
 - Confirm that no pager, alias, external diff, text converter, or lazy fetch ran.
 - Confirm that the scan never opened a tracked symlink.
@@ -53,7 +52,6 @@ Do not add canary data to the target repository.
 - Confirm that no file download or write occurred.
 - Confirm that all expected repository pages completed.
 - Confirm ALERT for a synthetic transcript marker.
-
 - Confirm redaction for synthetic fake secret and PII values.
 - Confirm INCOMPLETE after a synthetic pagination gap or timeout.
 - Confirm that the notification contains no name, handle, query, fragment, or user information.
@@ -66,7 +64,6 @@ Do not add canary data to the target repository.
 - Confirm rejection of local names, IP literals, user information, and HTTP.
 - Confirm that no nonsearch form submission occurred.
 - Confirm that no download or write occurred.
-
 - Confirm redaction for synthetic fake secret and PII values.
 - Confirm INCOMPLETE after a synthetic redirect failure, truncation, or timeout.
 - Confirm that the notification contains no name, handle, query, fragment, or user information.
@@ -79,7 +76,6 @@ Do not add canary data to the target repository.
 - Confirm that only approved public search terms entered a query.
 - Confirm that no social action, download, or write occurred.
 - Confirm each blocked platform appears as a limit.
-
 - Confirm redaction for synthetic fake secret and PII values.
 - Confirm INCOMPLETE after a synthetic platform block, truncation, or timeout.
 - Confirm that the notification contains no name, handle, query, fragment, or user information.

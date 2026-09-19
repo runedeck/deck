@@ -143,7 +143,7 @@ glab release create v1.0.0 \
     -R group/project
 ```
 
-The asset URL must already be reachable when the release is created -- GitLab does not host attached files inline; it only links to them. Upload to the project's package registry or an external CDN first.
+The asset URL must already be reachable when the release is created -- GitLab does not host attached files inline. It only links to them. Upload to the project's package registry or an external CDN first.
 
 ### Listing, inspecting, deleting
 

@@ -14,4 +14,4 @@ Do not compress it.
 - Split companion files by topic.
 - Keep the entrypoint as routing and procedure.
 - Verify that a frontier model needs the guidance.
-- Move guidance for only weaker models into a dedicated model subdirectory.
+- Put guidance for one model in `<provider>/<exact-model-id>/SKILL.md`, using an ID from the configured model registry.

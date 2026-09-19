@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BuildSkill/DescriptionOptimization.md
     digest:
-      sha256: 23c83540ff6f51b4592a40e67c222dfd5a82697e3e7ad7663a12d72b33deb76b
+      sha256: 1f473567d1df2ae9236ab0b2ed39a6ff5846fe1d9e1e86fc6e02ccd8bbd3a46c
   predicate:
     buildDefinition:
       buildType: adopt/v1

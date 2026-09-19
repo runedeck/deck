@@ -1,8 +1,7 @@
-# zizmor baseline registry (DECK-0010). Every entry below is declared
-# debt from the first audit of the workflow fleet, recorded so the gate
-# can block new findings while task 2.14 (declared-world change) owns
-# the triage. Remove an entry when its workflow is repaired; never add
-# one without a reason beside it.
+# zizmor baseline registry. Each entry is declared debt from the first audit
+# of this workflow fleet, recorded so the check can block new findings.
+# Remove an entry when its workflow is repaired; never add one without a
+# reason beside it.
 rules:
     dangerous-triggers:
         # pull_request_target is the deliberate seer design: the review
@@ -14,11 +13,15 @@ rules:
             - review-cascade.yaml
             - review-correctness.yaml
             - review-cursor.yaml
+            - review-pragent.yaml
             - thread-resolver.yaml
+            # workflow_run is the only trigger that sees a merge on main; the
+            # job checks out the completed run's head, never a PR head.
+            - spec-drift.yaml
     unpinned-uses:
-        # runedeck/* first-party references are exempt from SHA pinning
-        # by the action-pinning check in quality.yaml; zizmor cannot
-        # express that policy, so the files carry ignores.
+        # runedeck/* first-party references are exempt from SHA pinning by
+        # the action-pinning check in quality.yaml; zizmor cannot express
+        # that policy, so the files carry ignores.
         ignore:
             - autofix-comment.yaml
             - autofix-suggest.yaml
@@ -27,24 +30,29 @@ rules:
             - review-cascade.yaml
             - review-correctness.yaml
             - review-cursor.yaml
+            - review-pragent.yaml
             - thread-resolver.yaml
     excessive-permissions:
-        # Permission tightening is the 2.14 triage work.
+        # Permission tightening is separate triage work.
         ignore:
             - pr-lint.yaml
             - review-cascade.yaml
             - review-correctness.yaml
     github-app:
-        # The runeseer app token mints are the acceptance design.
+        # App-token mints are the acceptance design; scoping them by
+        # permission input is separate triage work.
         ignore:
             - review-correctness.yaml
+            - spec-drift.yaml
+            - dispatch-template-release.yaml
+            - consumer-parity.yaml
             - template-update.yaml
     artipacked:
-        # persist-credentials hardening is the 2.14 triage work.
+        # persist-credentials hardening is separate triage work.
         ignore:
             - attestations.yaml
             - secret-scan.yaml
     template-injection:
-        # The expansion sites are the 2.14 triage work.
+        # The expansion sites are separate triage work.
         ignore:
             - review-correctness.yaml

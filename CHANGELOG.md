@@ -6,7 +6,9 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
-- The SelfContainedQuestionOptions rule in core: each option in a question names its change in plain words. A numbered list reference remains valid when the user wrote the list.
+- The AcceptanceTesting skill in core: one recorded scene per specification scenario with an expectation on every THEN, a failed expectation fails the recording, and the GIF and transcript are filed as the behavior proof (DECK-0015).
+- The ContinuousIntegration skill in core: run the repository's commit and push check stages locally and repeatedly, with every tool required, and record each stage's own exit status before a push or a signature (DECK-0013).
+- The AgenticOntology skill in core: admit a term into the declared world before prose uses it, name an artifact from its lifecycle stage, audit the corpus for synonyms, and retire a term by deprecation. The ontology gains `rune:Proof` as prove-stage evidence with its shape (DECK-0014).
 - Five micro-rules in core, extracted from the tuicr workshop brief: CaptureOnTouch, FixAtTheHighestLeverage, ReportFailures, FlagRuleConflicts, and OwnersVoice.
 - The VerifyClaims and Deslop rules in core: evidence before assertion, and slop stripped at write time.
 - The agent-pipeline change: the idea-to-merge flywheel design, DECK-0008 and DECK-0009, the idea-intake, artifact-extraction, and declared-constraints capabilities, and the IntakeIdea skill.
@@ -31,6 +33,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- Every specification and delta uses MUST, and commit-attribution splits off worktree-identity so each capability stays under 150 lines.
 - The VersionControl skill: the primary checkout stays on the default branch, and each work branch gets a worktree.
 - The VersionControl skill: a landing checklist and a supersession check for dirty worktrees.
 - The VersionControl skill: a jj colocated repository uses jj workspaces and the repository jj push alias.

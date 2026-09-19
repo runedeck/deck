@@ -6,4 +6,12 @@ Forbidden: `{{placeholders}}`, `[REPLACE THIS]`, `<!-- TODO -->`, stub headings 
 
 Keep YAML frontmatter — that is structure. Reference companions with relative Markdown links, and never reference skills with a `/` prefix inside definitions. Use the skill name directly (e.g. "memory-capture", not "/memory-capture"). The slash is user-facing invocation syntax, not an internal identifier.
 
-A skill or agent that deploys to every provider must not assume one provider. Don't hardcode a single tool's agent identifier, CLI binary, or command syntax (`--agent claude-code`, `claude --resume`) when the artifact also runs under Codex, Gemini, or OpenCode. Parameterize the agent (`--agent <agent>`, listing the supported tools) and name actions neutrally ("the agent's resume command", not `claude --resume`). Documenting a tool's own factual default (a CLI flag that defaults to `claude-code`) is fine; that is the tool's behavior, not your assumption. The one permitted Claude-only extension is dynamic context injection, in a skill that says it uses it; the lines degrade to inert text elsewhere. See [DynamicContextInjection.md](DynamicContextInjection.md).
+A skill or agent that deploys to every provider must not assume one provider. Describe the required capability, such as a structured question tool or a bounded command runner. Use the tool that the active harness exposes. State the fallback when the capability is unavailable.
+
+In a Rune skill, canonical instructions and shared companions use the generic policy. A harness entrypoint variant can use that harness's symbols. A model entrypoint variant uses the same harness policy and only `mode` in its frontmatter. These rules combine with the generic structural checks. They do not measure model quality.
+
+Put provider-specific runtime syntax and metadata in supported entrypoint variants. Link to official references for exact provider examples that shared teaching material needs. A quote, conditional instruction, or example does not exempt a forbidden literal from validation. Do not disguise a token or add a suppression to evade the check.
+
+Run `rune validate --skill-layers --source <skill-path>` for authored generic, harness, model, and effective content. Then inspect the rendered bundles for the declared providers. Passing source checks does not prove native discovery, invocation, or permission enforcement. See [ValidateWorkflow.md](ValidateWorkflow.md).
+
+Dynamic context injection has no exception in shared content. Keep it in the supporting provider's entrypoint variant. See [DynamicContextInjection.md](DynamicContextInjection.md).

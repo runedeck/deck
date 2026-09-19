@@ -10,7 +10,6 @@ Map the task definition to one standalone ChatGPT Scheduled task.
 4. Test the rendered prompt in a regular Work chat.
 5. Create a standalone Scheduled task after the test succeeds.
 6. Do not create the task inside an existing chat.
-
 7. Attach only the resources that the task definition permits.
 8. Select the specified model and reasoning level.
 9. Disable model fallback when the interface supplies this control.
@@ -68,5 +67,5 @@ Only verified provider settings form a stronger control.
 
 ## Official documentation
 
-- https://learn.chatgpt.com/docs/automations
-- https://learn.chatgpt.com/docs/browser
+- <https://learn.chatgpt.com/docs/automations>
+- <https://learn.chatgpt.com/docs/browser>
