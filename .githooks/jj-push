@@ -81,10 +81,27 @@ synthesize_argument_updates() {
     done
 }
 
+# A push that names a change, revision, or --named target checks only
+# that target. A bare push checks every diverged local head, which is
+# what jj git push would send. Bookmark pushes exit above through the
+# isolated-checkout helper.
+arguments_name_a_target() {
+    while [ "$#" -gt 0 ]; do
+        case "$1" in
+            -c|--change|-r|--revision|--named|--change=*|--revision=*|--named=*) return 0 ;;
+        esac
+        shift
+    done
+    return 1
+}
+
 jj status >/dev/null
 {
-    synthesize_ref_updates
-    synthesize_argument_updates "$@"
+    if arguments_name_a_target "$@"; then
+        synthesize_argument_updates "$@"
+    else
+        synthesize_ref_updates
+    fi
 } | sort -u | bash "$workspace_root/.githooks/pre-push" \
     origin "$(git remote get-url origin 2>/dev/null || printf 'origin')"
 
