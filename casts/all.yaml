@@ -1,4 +1,4 @@
 name: all
-description: Everything the deck currently publishes.
+description: Everything the deck publishes.
 runes:
-    - meta/**
+    - '**'

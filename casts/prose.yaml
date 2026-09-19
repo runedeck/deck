@@ -1,0 +1,12 @@
+name: prose
+description: Write and review prose that one reading cannot misread.
+runes:
+    - core/skills/SimplifiedTechnicalEnglish
+    - core/skills/ste
+    - core/rules/UseSimplifiedTechnicalEnglish
+    - core/rules/Deslop
+    - core/rules/SentenceCase
+    - core/rules/WriteConciseReports
+    - core/rules/ReportFailures
+    - core/rules/VerifyClaims
+    - core/rules/SelfContainedQuestionOptions

@@ -1,0 +1,15 @@
+name: delivery
+description: Commit, push, review, and merge through the runedeck ceremony.
+runes:
+    - core/skills/VersionControl
+    - core/skills/SafetyFirst
+    - core/skills/ContinuousIntegration
+    - core/skills/AcceptanceTesting
+    - core/rules/RemoteWrites
+    - core/rules/AnchorWorkingDirectory
+    - core/rules/CaptureOnTouch
+    - development/skills/MergeTrain
+    - development/skills/ForgeCycle
+    - development/skills/AgentTeam
+    - development/skills/Storyboard
+    - development/skills/AdversaryReview

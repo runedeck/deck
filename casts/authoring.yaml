@@ -1,0 +1,11 @@
+name: authoring
+description: Author, adopt, and measure runes in a deck.
+runes:
+    - core/skills/BuildSkill
+    - core/skills/AdoptArtifact
+    - core/skills/BenchArtifact
+    - core/skills/IntakeIdea
+    - core/skills/AgenticOntology
+    - core/rules/RuneShell
+    - core/rules/SkillLayout
+    - core/rules/ArtifactLength

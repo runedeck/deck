@@ -1,0 +1,4 @@
+name: core
+description: Every core rune. The baseline for any consumer.
+runes:
+    - core/**

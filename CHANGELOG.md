@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- Four casts: `core`, `authoring`, `delivery`, and `prose`. A consumer selects a cast in `.rune` instead of listing paths.
 - The AcceptanceTesting skill in core: one recorded scene per specification scenario with an expectation on every THEN, a failed expectation fails the recording, and the GIF and transcript are filed as the behavior proof (DECK-0015).
 - The ContinuousIntegration skill in core: run the repository's commit and push check stages locally and repeatedly, with every tool required, and record each stage's own exit status before a push or a signature (DECK-0013).
 - The AgenticOntology skill in core: admit a term into the declared world before prose uses it, name an artifact from its lifecycle stage, audit the corpus for synonyms, and retire a term by deprecation. The ontology gains `rune:Proof` as prove-stage evidence with its shape (DECK-0014).
@@ -33,6 +34,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- The `all` cast selects every rune. It selected only `meta/**` before.
 - Every specification and delta uses MUST, and model-commit-attribution splits off worktree-commit-identity so each capability stays under 150 lines.
 - The VersionControl skill: the primary checkout stays on the default branch, and each work branch gets a worktree.
 - The VersionControl skill: a landing checklist and a supersession check for dirty worktrees.
