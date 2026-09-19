@@ -56,23 +56,23 @@ Distinguish missing, pending, failing, skipped, and unknown evidence.
 An optional review remains optional. A skipped review provides no substantive approval, even when its check reports success.
 Record an approved override separately from substantive review or provider failure.
 
-Use these labels only when a Rune Deck repository defines them in its current workflow files:
+Read these labels and states when a Rune Deck repository defines them in its current workflow files. Never apply a review label yourself. The controller invites the paid lane on the ready event and on green heads after its triage. The owner may force a round by label.
 
-- `review` starts the full cascade.
-- `review:runeseer` starts a direct Runeseer round.
+- `review` and `review:runeseer` are the owner's force labels.
 - `stage:cursor` and `stage:macroscope` record completed free lanes.
 - `issue:cursor` and `issue:rune` identify provider faults that require recovery.
-- Automation consumes the review labels after each round.
-- A new push dismisses head-specific approvals but does not start another Runeseer round.
+- The ledger on the pull request records `reviewed_sha`, the generation, a status per lane, and a disposition per thread. Read it from the controller's summary comment or artifact, never from the thread resolved flag.
+- A new push voids a running round and dismisses head-specific approvals. The next green head goes through the triage again.
+- The paid budget is three rounds per work item. When it is spent, stop and report. The owner decides.
 
 ### Start a review cycle
 
-1. Capture the current head SHA, required checks, review decision, labels, and unresolved threads.
-2. Fix deterministic failures before you spend a review round.
-3. Clear a circuit-breaker label only after its cause is corrected or an approved override replaces that lane.
-4. Apply the repository's entry label for the required review scope.
-5. Monitor the workflow jobs, bot comments, reviews, and threads until the round reaches a terminal state.
-6. Re-read the head SHA before you accept the verdict. Reconcile ownership if another session changes it.
+1. Capture the current head SHA, the ledger generation, required checks, lane statuses, and every thread with its disposition.
+2. Fix deterministic failures before the controller spends a round.
+3. Report a circuit-breaker label to the owner. Clear it only after its cause is corrected or an approved override replaces that lane.
+4. Wait for the controller. It invites the paid lane after triage. Do not apply a review label.
+5. Monitor the workflow jobs, the ledger, reviews, and threads until the round reaches a terminal state.
+6. Re-read the head SHA and the generation before you accept the verdict. Reconcile ownership if another session changes it.
 
 ### Respond to a finding
 
@@ -89,13 +89,13 @@ Use these labels only when a Rune Deck repository defines them in its current wo
 
 Repeat the review and fix cycle until all conditions are true:
 
-- The substantive checks pass.
-- The required review checks pass.
-- The current head has every required approval.
-- No blocking review thread remains unresolved.
+- The deterministic checks pass.
+- `review/correctness` reports a paid clean verdict or `free lanes only` with its reason.
+- Every expected lane has a terminal status in the ledger.
+- No thread is open or disposed as `owner`.
 - The platform reports no merge conflict or branch-policy blocker.
 
-Report the final state to the user. Do not merge unless the user separately requests the merge.
+Then run `rune sign submit` for the head and report the queue entry, its coverage state, and its full URL to the owner. The owner seals with `rune sign next` and merges. Never merge.
 
 ## Verification
 

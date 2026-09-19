@@ -19,7 +19,7 @@ One turn, one edge. Read where the change is, print the stage strip, name the ne
 ## Constraints
 
 - Never invoke a workflow tool or a workflow skill. Name it and stop.
-- Never merge, push, comment, label, or resolve. The RemoteWrites rule applies to every stage.
+- Never ready a draft, merge, comment, label, or resolve. The RemoteWrites rule applies to every stage. Pushing your own branch after the prek pipeline is allowed.
 - Never nest: a stage that fans out (AgentTeam, MergeTrain) runs in its own turn with its own caps.
 - Take exactly one edge per turn. A second edge waits for the next turn, even when it looks obvious.
 - Keep no state of your own. `tasks.md` tick marks, the storyboard frames, and the pull request are the state.

@@ -45,7 +45,7 @@ Phases, as the script runs them:
 1. Survey: one child applies [Triage.md](Triage.md) and returns one blocker and one `actionable` verdict per pull request, with head SHA and URL.
 2. Repair: one child per actionable blocker, capped, each in a workspace on the pull request head, per the VersionControl Jujutsu or GitWorktrees companion. It stops when the blocker is cleared, when the head moved, or when the blocker needs the owner.
 3. Verify: one child per cleared repair applies [Review.md](Review.md) to the workspace diff and returns ranked findings with a blocking flag.
-4. Report: one child writes the owner report from the structured results. Lead with what the owner must do now.
+4. Report: one child writes the owner report from the structured results. Lead with what the owner must do now. For each head whose ledger is terminal and clean or free-lanes-only, the report names the `rune sign submit` command the session should run next, with the coverage state.
 
 When Storyboard is installed, show its plan graph before the run and its result graph after.
 

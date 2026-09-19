@@ -9,9 +9,9 @@ The twelve stages of DECK-0008, in order. Each has one owner, one entry signal, 
 - **swarm**. Owner: AgentTeam when the tasks split into packages, else the session itself. Entry: a workspace and unchecked tasks. Exit: every package reports done or blocked.
 - **gates**. Owner: VersionControl through ContinuousIntegration, and AdversaryReview for prose and design. Entry: code or text changed. Exit: `rune validate`, tests, and lint green, and no open fatal hit.
 - **skim**. Owner: Storyboard. Entry: gates green. Exit: the owner confirmed the delta frame.
-- **lanes**. Owner: VersionControl for the pull request, then the review bots. Entry: owner confirmed. Exit: pull request open, required checks green, and the correctness reviewer summoned once per head as the RemoteWrites rule allows.
-- **babysit**. Owner: MergeTrain. Entry: pull request open. Exit: every blocker cleared or handed to the owner, each verdict bound to a head SHA.
-- **approve**. Owner: the owner. Entry: a report with URLs. Exit: merged, or closed.
+- **lanes**. Owner: VersionControl for the push, the app for the draft, the owner's key for ready. Entry: owner confirmed. Exit: draft open, `rune sign open` run and touched, the controller's triage recorded.
+- **babysit**. Owner: MergeTrain. Entry: pull request ready. Exit: every blocker cleared or handed to the owner, the ledger terminal, `rune sign submit` run.
+- **approve**. Owner: the owner. Entry: a queue entry with its coverage state. Exit: `rune sign next` touched and merged, or closed.
 - **extract**. Owner: LearnFrom. Entry: merged. Exit: a rule, a skill, or a lesson written, or "nothing to extract" recorded.
 - **recycle**. Owner: `rune install`. Entry: the extraction landed. Exit: the next pass loads it.
 
