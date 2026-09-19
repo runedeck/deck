@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -64,6 +65,15 @@ def main(arguments):
     parser.add_argument("--remote", default="origin")
     parser.add_argument("--dry-run", action="store_true")
     options = parser.parse_args(arguments)
+    # Git lists these names without opening a repository or reading its config.
+    # Reject inherited repository state before validation commands.
+    local_variables = run("git", "rev-parse", "--local-env-vars").splitlines()
+    inherited = sorted(set(local_variables).intersection(os.environ))
+    if inherited:
+        raise ValueError(
+            "Unset repository-local Git variables before pushing: "
+            + ", ".join(inherited)
+        )
     # A literal name keeps validation and publication on the same selection.
     if len(options.bookmark) != 1:
         raise ValueError("Validate and push one literal bookmark at a time.")
@@ -104,7 +114,7 @@ def main(arguments):
     # Do not export Git repository variables into validators or nested tests.
     with tempfile.TemporaryDirectory(prefix="jj-push-validation-") as directory:
         snapshot = Path(directory) / "repo"
-        run("git", "init", "--quiet", str(snapshot))
+        run("git", "init", "--quiet", "--template=", str(snapshot))
         refs = [head, "+refs/remotes/origin/main:refs/remotes/origin/main"]
         if old:
             refs.append(old)
