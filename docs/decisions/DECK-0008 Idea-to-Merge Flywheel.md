@@ -9,7 +9,7 @@ tags:
     - extraction
 status: proposed
 created: 2026-08-19
-updated: 2026-08-19
+updated: 2026-09-10
 author: "@N4M3Z"
 project: deck
 related:
@@ -45,6 +45,16 @@ Agents are the owner's primary computer interface, across terminals, phone remot
 ## Decision Outcome
 
 Option 3. The loop is: prompt, pushback, specify, isolate, swarm, local gates, human skim, CI and review lanes, babysit, approve, extract, recycle. Intake challenges every idea against specifications, decision records, and advisory memory before scaffolding, and sizes the change by blast radius. Every pass closes with the extraction question. Extracted artifacts rejoin the standard lifecycle, rules pay rent through a bench verdict, and shipped extractions reach later passes through the normal install path. Four placement decisions complete the loop. Memory stays advisory and never authoritative. Obsidian leaves the flow and the vault stays an archive. pi joins as a provider edge, and the eventual pi integration is a thin extension that wraps the rune binary. Copy-on-write workspaces are an acceptable isolation instance because they copy whole trees and never touch git refs, while bookmark and push discipline stay with jj.
+
+### Pull request delivery amendment
+
+The middle stages need observable completion evidence, not only named tools and procedures.
+The [pull-request delivery contract](../changes/pr-delivery-contract/specs/pull-request-delivery/spec.md) defines that evidence for the existing babysitting stage.
+This amendment keeps VersionControl as the procedure owner and preserves the existing publication-authorization contract.
+It adds no pipeline stage, orchestration service, or council-based acceptance rule.
+
+The [design](../changes/pr-delivery-contract/design.md) assigns source contradictions to skill repairs and mechanical defects to their existing tooling owners.
+This separation prevents repeated review failures from producing duplicate rulebooks or unrelated changes in a PR.
 
 ## Consequences
 
