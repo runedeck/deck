@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- The modeled-information-format-alignment change: map ontology terms to the upstream corpus, trial its parts one at a time with a recorded verdict, and take no dependency on a pre-1.0 implementation.
 - DECK-0011 records the review tooling adoption: five open-source tools for the review funnel, with custom code kept for the ceremony only.
 - The Links workflow fetches every external URL one time each week. The commit path stays offline.
 - The Core Vale style: a named citation (CORE-0009), the word directory (CORE-0004), and MUST in a specification (CORE-0019). The last one is an error and runs on specification files only.
