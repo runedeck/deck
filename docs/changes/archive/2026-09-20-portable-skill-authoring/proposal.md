@@ -1,7 +1,7 @@
 ---
-adr: "docs/decisions/DECK-0017 Keep Shared Skill Procedures Independent of Harness Syntax.md"
+adr: "docs/decisions/DECK-0018 Keep Shared Skill Procedures Independent of Harness Syntax.md"
 status: accepted
-decisions: ["DECK-0017 Keep Shared Skill Procedures Independent of Harness Syntax"]
+decisions: ["DECK-0018 Keep Shared Skill Procedures Independent of Harness Syntax"]
 ---
 
 # Portable skill authoring

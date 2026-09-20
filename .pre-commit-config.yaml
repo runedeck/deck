@@ -206,6 +206,15 @@ repos:
             pass_filenames: false
             files: ^docs/(changes|specs)/
 
+          # Two sessions that each take the next free decision number
+          # collide only when both reach main. The check fails the second.
+          - id: check-decision-numbers
+            name: decision record ids are unique
+            entry: python3 scripts/check-decision-numbers
+            language: system
+            pass_filenames: false
+            files: ^docs/decisions/
+
           # A rune edit must carry its refreshed provenance subject digest,
           # so a stale sidecar fails before the weekly audit finds it.
           - id: check-provenance
