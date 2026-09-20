@@ -215,6 +215,25 @@ repos:
             pass_filenames: false
             files: ^docs/decisions/
 
+          # The decisions schema ran nowhere, so a record without a required
+          # field reached main. Every record is checked, because one bad
+          # record is cheap to find and a partial check hides the rest.
+          - id: mdschema-decisions
+            name: decision records match the directory schema
+            entry: sh -c 'if command -v mdschema >/dev/null 2>&1; then for record in docs/decisions/*.md; do mdschema check "$record" --schema docs/decisions/.mdschema >/dev/null 2>&1 || { mdschema check "$record" --schema docs/decisions/.mdschema; exit 1; }; done; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and mdschema is absent"; exit 1; fi'
+            language: system
+            pass_filenames: false
+            files: ^docs/decisions/
+
+          # Each added record field has a bare name and an x-rune- long
+          # form. A record uses one form, and no other x- prefix is valid.
+          - id: check-decision-fields
+            name: decision record fields use one accepted form
+            entry: python3 scripts/check-decision-fields
+            language: system
+            pass_filenames: false
+            files: ^docs/decisions/
+
           # A proposal lists its records and a record names its change. A
           # one-sided link fails here, so the pair never drifts apart.
           - id: check-decision-links

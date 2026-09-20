@@ -41,6 +41,11 @@ def field(block, key):
     return items
 
 
+def change_of(record):
+    block = frontmatter(record)
+    return field(block, "change") + field(block, "x-rune-change")
+
+
 def check(root):
     errors = []
     decisions = root / "docs" / "decisions"
@@ -56,10 +61,10 @@ def check(root):
             record = records.get(entry)
             if record is None:
                 continue
-            if change_id not in field(frontmatter(record), "change"):
+            if change_id not in change_of(record):
                 errors.append(f"{record}: `change` does not name {change_id}, which lists it in `decisions`")
     for stem, record in sorted(records.items()):
-        for change_id in field(frontmatter(record), "change"):
+        for change_id in change_of(record):
             proposal = proposals.get(change_id)
             if proposal is None:
                 continue

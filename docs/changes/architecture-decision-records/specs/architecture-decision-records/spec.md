@@ -80,3 +80,31 @@ A check MUST NOT reject a frontmatter field it does not know. The frontmatter MU
 
 - **WHEN** a record carries a field that the schema does not list
 - **THEN** validation passes and the field stays
+
+### Requirement: Added fields have two forms
+
+Each added field MUST have a bare canonical name and a long form with the `x-rune-` prefix. A record MUST satisfy a required field with one form and MUST NOT set both. A field with another `x-` prefix MUST fail validation.
+
+#### Scenario: Record uses the long form
+
+- **WHEN** a record writes `x-rune-accountable` and no `accountable`
+- **THEN** validation passes
+
+#### Scenario: Record sets both forms
+
+- **WHEN** a record writes `accountable` and `x-rune-accountable`
+- **THEN** validation fails and names the field
+
+#### Scenario: Record carries a foreign prefix
+
+- **WHEN** a record writes a field that starts with `x-forge-`
+- **THEN** validation fails and names `x-rune-` as the accepted prefix
+
+### Requirement: Directory schema runs on every record
+
+The `docs/decisions/.mdschema` file MUST run against every record before a commit and in CI.
+
+#### Scenario: Record misses a required heading
+
+- **WHEN** a commit adds a record without a Considered Options section
+- **THEN** the commit stage fails on that record

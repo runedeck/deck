@@ -1,6 +1,6 @@
 ---
 title: "MADR Frontmatter Extensions"
-description: "Records add accountability, provenance, and change-link fields to the structured MADR frontmatter, written as bare field names."
+description: "Records add accountability, provenance, and change-link fields to the structured MADR frontmatter. Each field has a bare canonical name and a compliant x-rune- long form."
 type: adr
 category: process
 tags:
@@ -27,32 +27,40 @@ change: architecture-decision-records
 
 ## Context and Problem Statement
 
-[CORE-0011](CORE-0011 ADR Template Choice.md) adopts structured MADR. Its frontmatter does not say who approves a decision, where an adapted decision came from, or which change delivered it. Structured MADR permits added fields with an `x-` prefix.
+[CORE-0011](CORE-0011 ADR Template Choice.md) adopts structured MADR. Its frontmatter does not say who approves a decision, where an adapted decision came from, or which change delivered it. Structured MADR permits added fields when they carry an `x-` prefix, and a strict validator rejects an added field without one.
 
 ## Considered Options
 
 1. No added fields. Accountability and provenance stay in the body as prose, where no check reads them.
-2. Prefixed fields such as `x-responsible`. Upstream validators accept them, and every record becomes harder to read.
-3. Bare field names, validated by the deck's own schema.
+2. Prefixed fields only, such as `x-rune-responsible`. A strict validator accepts them, and every record becomes harder to read.
+3. Bare field names only. Records read well, and a strict structured MADR validator rejects them.
+4. Both forms: a bare canonical name and a compliant `x-rune-` long form for each added field.
 
 ## Decision Outcome
 
-Option 3. A record MUST carry these fields, and an empty list is a statement, never an omission:
+Option 4. The bare name is canonical, and records in the deck use it. The long form exists so that a record can pass a strict structured MADR validator without a mapping step.
 
-| Field | Type | Meaning |
-|---|---|---|
-| `responsible` | list | who does the work |
-| `accountable` | list | who approves the decision |
-| `consulted` | list | whose input was used, people and models |
-| `informed` | list | who is told the outcome |
-| `upstream` | list | sources the decision was adapted from |
-| `related` | list | neighbor records by id and title |
-| `change` | string or list | the change id, or ids, that delivered the decision |
+| Canonical | Long form | Type | Meaning |
+|---|---|---|---|
+| `responsible` | `x-rune-responsible` | list | who does the work |
+| `accountable` | `x-rune-accountable` | list | who approves the decision |
+| `consulted` | `x-rune-consulted` | list | whose input was used, people and models |
+| `informed` | `x-rune-informed` | list | who is told the outcome |
+| `upstream` | `x-rune-upstream` | list | sources the decision was adapted from |
+| `related` | `x-rune-related` | list | neighbor records by id and title |
+| `change` | `x-rune-change` | string or list | the change id, or ids, that delivered the decision |
 
-A record MAY carry more fields when they do not conflict with these. A check MUST NOT reject an unknown field. The frontmatter MUST be enough to rebuild the record's location: `type`, `project`, and the id in the title give the path.
+- A record MUST carry `responsible`, `accountable`, and `upstream`, each in one form. An empty list is a statement, never an omission.
+- A record MUST NOT set both forms of one field.
+- `x-rune-` is the only accepted prefix. A field with another `x-` prefix MUST fail the check.
+- A record MAY carry other fields without an `x-` prefix when they do not conflict with these. A check MUST NOT reject them.
+- The frontmatter MUST be enough to rebuild the record's location: `type`, `project`, and the id in the title give the path.
+
+`scripts/check-decision-fields` enforces the first three rules. The directory schema marks the three required fields optional, because a schema cannot state that either form satisfies a field.
 
 ## Consequences
 
-- The deck's records do not validate against the upstream structured MADR schema without a mapping, because the names have no prefix.
-- One schema file in the deck owns the field list, so a field change is one edit.
+- A record written with bare names does not pass a strict structured MADR validator. A record written with the long form does.
+- Two forms for one field are two ways to write the same fact. The check forbids both at once, and the deck's own records stay on the bare form.
 - The `change` field makes the link from a record to its change a fact a check can read.
+- The public format home states the same rule in its README, and its JSON Schema still requires the bare names. A long-form record fails that schema until the home changes it.
