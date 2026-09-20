@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+"""Check the extension fields of each decision record.
+
+runeADR adds accountability and provenance fields to Structured MADR.
+Each field has a bare canonical name and a compliant long form with the
+`x-rune-` prefix, which a strict Structured MADR validator accepts. A
+record satisfies a field with either form and never with both. No other
+`x-` prefix is a runeADR field.
+"""
+import pathlib
+import re
+import sys
+
+PREFIX = "x-rune-"
+REQUIRED = ("responsible", "accountable", "upstream")
+OPTIONAL = ("consulted", "informed", "related", "change")
+
+
+def keys(path):
+    text = path.read_text()
+    if not text.startswith("---\n"):
+        return None
+    end = text.find("\n---", 4)
+    if end == -1:
+        return None
+    return re.findall(r"^([A-Za-z0-9_-]+):", text[4:end], re.M)
+
+
+def check(root):
+    errors = []
+    decisions = root / "docs" / "decisions"
+    if not decisions.is_dir():
+        return errors
+    for path in sorted(decisions.glob("*.md")):
+        found = keys(path)
+        if found is None:
+            errors.append(f"{path}: no frontmatter")
+            continue
+        for name in REQUIRED + OPTIONAL:
+            bare, long_form = name in found, PREFIX + name in found
+            if bare and long_form:
+                errors.append(f"{path}: `{name}` and `{PREFIX}{name}` are both set. Use one form.")
+            if name in REQUIRED and not bare and not long_form:
+                errors.append(f"{path}: `{name}` is missing. Write `{name}` or `{PREFIX}{name}`.")
+        for key in found:
+            if key.startswith("x-") and not key.startswith(PREFIX):
+                errors.append(f"{path}: `{key}` is not a runeADR field. The accepted prefix is `{PREFIX}`.")
+    return errors
+
+
+def main():
+    root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else ".")
+    errors = check(root)
+    for line in errors:
+        print(line)
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -6,7 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
-- The architecture-decision-records change: records CORE-0010 to CORE-0012 state the record format, and two checks fail on a shared record id and on a one-sided link between a change and its record.
+- The architecture-decision-records change: records CORE-0010 to CORE-0012 state the record format, and two checks fail on a shared record id and on a one-sided link between a change and its record. Each added record field has a bare name and an `x-rune-` long form, and the decisions schema now runs on every record.
 - Four casts: `core`, `authoring`, `delivery`, and `prose`. A consumer selects a cast in `.rune` instead of listing paths.
 - The AcceptanceTesting skill in core: one recorded scene per specification scenario with an expectation on every THEN, a failed expectation fails the recording, and the GIF and transcript are filed as the behavior proof (DECK-0015).
 - The ContinuousIntegration skill in core: run the repository's commit and push check stages locally and repeatedly, with every tool required, and record each stage's own exit status before a push or a signature (DECK-0013).

@@ -1,6 +1,11 @@
 # The format is runeADR, and its public home is
 # https://github.com/runedeck/adr. This schema mirrors the home's
 # adr.mdschema, and a format change lands at the home first.
+#
+# One difference: `responsible`, `accountable`, and `upstream` are optional
+# here. Each has a bare name and an `x-rune-` long form, and this schema
+# cannot state that either form satisfies the field.
+# scripts/check-decision-fields enforces that rule.
 frontmatter:
     fields:
         - name: title
@@ -28,8 +33,10 @@ frontmatter:
           optional: true
         - name: responsible
           type: array
+          optional: true
         - name: accountable
           type: array
+          optional: true
         - name: consulted
           type: array
           optional: true
@@ -38,6 +45,7 @@ frontmatter:
           optional: true
         - name: upstream
           type: array
+          optional: true
 
 heading_rules:
     no_skip_levels: true
