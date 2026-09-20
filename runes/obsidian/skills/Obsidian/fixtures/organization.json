@@ -1,0 +1,48 @@
+{
+    "evidence_kind": "synthetic_cli_observations",
+    "vault_rules": {
+        "topic_home": "Index",
+        "work_home": "Crafts/Painting",
+        "knowledge_home": "Crafts/Painting/Euthia",
+        "art_home": "Library/Gallery/Euthia",
+        "inventory_home": "Library/Inventory/Painting",
+        "retired_tags": ["lang/en"],
+        "log_pattern": "### [[2026-09-09]]\n- [#] #log/effort Checked the wolf reference.",
+        "unused_fields": ["upstream"]
+    },
+    "template": {"tags": ["type/project", "lang/en"], "upstream": ""},
+    "notes": [
+        {"path": "Index/Miniature Painting.md", "title": "Miniature Painting", "role": "topic", "reviewed": true, "aliases": ["minipainting"], "links": [], "backlinks": ["Library/Inventory/Painting/Grim Black.md"]},
+        {"path": "Crafts/Painting/Miniature Painting.md", "title": "Miniature Painting", "role": "manual hub", "aliases": [], "links": ["Crafts/Painting/Euthia Plans.md"], "backlinks": ["Crafts/Painting/Euthia Plans.md", "Crafts/Painting/Euthia References.md"]},
+        {"path": "Crafts/Painting/Euthia Plans.md", "title": "Euthia Plans", "role": "project with reusable recipe", "tags": ["type/project"], "links": ["Crafts/Painting/Miniature Painting.md"], "body": "Recipe: Grim Black on the main fur.\nSource: https://example.org/wolf-art\n![[wolf-reference.svg]]\n## Work log\n### [[2026-09-09]]\n- [#] #log/effort Checked the wolf reference.\n"},
+        {"path": "Crafts/Painting/Euthia References.md", "title": "Euthia References", "role": "resource", "tags": ["type/reference"], "links": ["Crafts/Painting/Miniature Painting.md", "Library/Gallery/Euthia/Wolf Art.md"]},
+        {"path": "Crafts/Painting/Wolf Guide.md", "title": "Wolf Guide", "role": "guide", "tags": ["type/guide"], "links": ["Crafts/Painting/Euthia Plans.md"], "uses": ["Grim Black"], "body": "Recipe: Grim Black on the main fur.\n"},
+        {"path": "Library/Gallery/Euthia/Wolf Art.md", "title": "Wolf Art", "role": "artwork", "tags": ["type/artwork/euthia"], "collection": "Euthia Art Collection", "art.full_illustration": true, "art.painted": false, "source_status": "artist unresolved", "thumbnail": "wolf-reference.svg", "links": []},
+        {"path": "Library/Inventory/Painting/Grim Black.md", "title": "Grim Black", "role": "inventory", "tags": ["type/item/paint"], "links": ["Index/Miniature Painting.md"]},
+        {"path": "Library/Inventory/Painting/Slaughter Red.md", "title": "Slaughter Red", "role": "inventory", "tags": ["type/item/paint"], "links": []},
+        {"path": "Library/Gallery/Artist A/Spring.md", "title": "Spring", "role": "artwork", "artist": "Artist A", "links": []},
+        {"path": "Library/Gallery/Artist B/Spring.md", "title": "Spring", "role": "artwork", "artist": "Artist B", "links": []}
+    ],
+    "views": [
+        {"path": "Templates/Keyword.base", "view": "Resources", "context": "Index/Miniature Painting.md", "filter": "file.links.contains(this.file) && !file.hasTag('type/project') && !file.hasTag('type/event') && !file.hasTag('type/journal')"},
+        {"path": "Templates/Project.base", "view": "Resources", "context": "Crafts/Painting/Euthia Plans.md", "filter": "file.links.contains(this.file) && !file.hasTag('type/project') && !file.hasTag('type/event') && !file.hasTag('type/journal')"},
+        {"path": "Library/Gallery/Euthia/Art.base", "view": "Painted", "filter": "file.hasTag('type/artwork/euthia') && art.painted == true"}
+    ],
+    "wrong_context_observation": {"command": "base:query", "path": "Templates/Keyword.base", "this.file": "Templates/Keyword.base", "rows": []},
+    "wrong_target_readback": {"content_matches": true, "source": "Crafts/Painting/Euthia Plans.md", "visible_link": "Miniature Painting", "resolved_target": "Crafts/Painting/Miniature Painting.md"},
+    "failure": {"exit_code": 1, "stdout": "", "stderr": "Vault unavailable"},
+    "folder_note_rename": {
+        "plugin_behavior": "Renaming the same-named folder note renames its parent folder",
+        "requested_source": "Crafts/Painting/Painting.md",
+        "requested_destination": "Crafts/Painting/Painting Overview.md",
+        "before_parent": "Crafts/Painting",
+        "before_siblings": ["Crafts/Painting/Unrelated Guide.md"],
+        "cli_exit_code": 0,
+        "actual_destination": "Crafts/Painting Overview/Painting Overview.md",
+        "actual_parent": "Crafts/Painting Overview",
+        "actual_siblings": ["Crafts/Painting Overview/Unrelated Guide.md"]
+    },
+    "intervening_edit": "User swatch: The fur needs a lighter ridge.\n",
+    "post_migration_edit": "User decision: Paint the wolf next.\n",
+    "asset": {"path": "wolf-reference.svg", "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"8\" height=\"8\"><rect width=\"8\" height=\"8\" fill=\"gray\"/></svg>\n", "purpose": "Synthetic preservation fixture; not recovered artwork"}
+}
