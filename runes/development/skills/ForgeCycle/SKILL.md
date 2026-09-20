@@ -33,7 +33,7 @@ One turn, one edge. Read where the change is, print the stage strip, name the ne
 
     ```text
     prompt · pushback · specify · isolate · [swarm] · gates · skim · lanes · babysit · approve · extract · recycle
-    next: gates  owner: VersionControl (ContinuousIntegration)   change: forge-adoption  9/21 tasks
+    next: gates  owner: VersionControl (ContinuousIntegration)   change: agentic-merge-train  3/8 tasks
     ```
 
 4. Pick the edge. Forward when the current stage's exit signal holds. Return edges: adversary findings, red gates, or requested changes go back to swarm, owner AgentTeam or the session. A fatal hit marked as a design flaw goes back to specify, owner ArchitectureDecision. A closed pull request stops.
