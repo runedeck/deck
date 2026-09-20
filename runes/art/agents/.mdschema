@@ -1,0 +1,19 @@
+frontmatter:
+    fields:
+        - name: name
+          type: string
+        - name: description
+          type: string
+        - name: model
+          type: string
+          optional: true
+        - name: tools
+          type: string
+          optional: true
+        - name: version
+          type: string
+          optional: true
+
+heading_rules:
+    no_skip_levels: true
+    max_depth: 3
