@@ -1,8 +1,8 @@
-# Workflow Security Specification
+# Secure Review Workflows Specification
 
 ## Purpose
 
-This specification defines blocking security scans for repository workflows.
+The repository's review workflows run code from pull requests and hold publication credentials. This specification defines the blocking security scan and the two narrowing rules, one for a scan exception and one for secret scope, that keep that exposure small.
 
 ## Requirements
 
@@ -44,13 +44,3 @@ A workflow MUST expose each secret only to the step that consumes it.
 - **THEN** it emits only `available=false`
 - **AND** the artifact step uses that output as a non-secret signal
 - **AND** no workflow or job `env` exposes the credentials
-
-### Requirement: Canonical delta specification
-
-The spec gate MUST accept canonical delta specifications under `docs/changes/<change>/specs/`.
-
-#### Scenario: A protected change includes a delta specification
-
-- **WHEN** a pull request changes a protected path
-- **AND** it changes a file under `docs/changes/<change>/specs/`
-- **THEN** the spec gate accepts the specification

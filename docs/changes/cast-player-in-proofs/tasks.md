@@ -2,7 +2,7 @@
 
 ## 1. Authoring
 
-- [x] 1.1 `Recording.md` Embed section: play the cast on a page, keep the GIF for image-only surfaces
+- [x] 1.1 `Recording.md` Embed section: play the cast on a page, keep the GIF where only an image renders
 
 ## 2. Verification
 

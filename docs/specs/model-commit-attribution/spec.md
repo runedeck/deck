@@ -1,4 +1,4 @@
-# Commit Attribution Specification
+# Model Commit Attribution Specification
 
 ## Purpose
 

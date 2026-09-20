@@ -1,8 +1,8 @@
-# Worktree Identity Specification
+# Worktree Commit Identity Specification
 
 ## Purpose
 
-How a workspace gets its model identity before any commit exists, and how an explicit-bookmark push validates the exact outgoing history in an isolated checkout.
+A workspace gets its model identity before any commit exists, and an explicit-bookmark push validates the exact outgoing history in an isolated checkout. This is the deck's own copy of the push contract. The skeleton's `worktree-identity` specification covers provisioning and cleanup of the checkout itself.
 
 ## Requirements
 

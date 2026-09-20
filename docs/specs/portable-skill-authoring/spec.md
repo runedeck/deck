@@ -1,8 +1,8 @@
-# portable-skill-authoring Specification
+# Portable Skill Authoring Specification
 
 ## Purpose
 
-TBD - created by archiving change portable-skill-authoring. Update Purpose after archive.
+A shared skill states what to do in capability terms, so every harness can run it. Native tool names and scopes stay in that harness's metadata variant, an author proves compliance with the source-layer check before claiming it, and skill creation runs through the repeatable artifact loop. DECK-0018 records the decision.
 
 ## Requirements
 

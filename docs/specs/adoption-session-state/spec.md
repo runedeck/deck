@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This specification defines temporary review state, durable adoption provenance, ledger validation, and canonical model identities.
+An adoption review keeps its working state in the rune session and commits only the provenance of what it adopted. This specification defines that split, the guard that keeps review ledgers out of the tree, and the identity contract adoption shares with commit attribution.
 
 ## Requirements
 
@@ -33,20 +33,11 @@ Repository validation MUST fail when a tracked `.provenance/review.yaml` or `.pr
 - **WHEN** a tracked review ledger exists
 - **THEN** the review-ledger hook fails and identifies its path
 
-### Requirement: Canonical model identities
+### Requirement: Model identities follow commit attribution
 
-Authorship validation MUST apply the context normalization and trusted-policy contract in [Commit Attribution](../model-commit-attribution/spec.md).
+Authorship validation during adoption MUST apply the context normalization and the trusted-policy contract of [Commit Attribution](../model-commit-attribution/spec.md), including the `1m` context suffix rule.
 
 #### Scenario: One-million-context identity
 
 - **WHEN** a commit uses `claude-opus-51m` or `claude-fable-51m`
 - **THEN** validation compares it as `claude-opus-5` or `claude-fable-5`
-
-### Requirement: Context suffix normalization
-
-Authorship validation MUST ignore a trailing `1m` context suffix after a model version digit in display model IDs and email local parts.
-
-#### Scenario: One-million-context identity
-
-- **WHEN** a commit uses `claude-opus-51m` or `claude-fable-51m`
-- **THEN** authorship validation compares it as `claude-opus-5` or `claude-fable-5`
