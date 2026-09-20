@@ -40,3 +40,10 @@ Commit the GIF under `docs/proofs/<change>/proof.gif` and embed it:
 ```
 
 The pull request's Testing section carries the same image with the commit id it proves.
+
+A GIF loops and cannot pause with position. On a page that a person reads, play the cast instead, through the
+html-tools cast player: it pauses, resumes, scrubs, and names the scene the playhead is in, from the
+`# Scenario:` lines the driver prints. Vendor html-tools into the page's repository with
+`python3 -m htmltools export <repo>/vendor/html-tools`, load `vendor/html-tools/runtime/cast-player.js`, put the
+cast text in a `<script type="text/plain">` block, and call `CastPlayer.attach(host, castText)`. Keep the GIF
+for surfaces that render images only, such as a pull request body.
