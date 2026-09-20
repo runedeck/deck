@@ -18,3 +18,4 @@
 - [ ] 3.2 Extract filed proofs as `rune:Proof` instances of kind `behavior` once `rune graph export` exists
 - [ ] 3.3 Add asciinema, agg, and ffmpeg to `scripts/install-tools` once a Linux runner records proofs in CI
 - [ ] 3.4 Close #64 when this change merges
+- [ ] 3.5 Merge check: warn on every scenario in the delta specification that has no scene under `docs/proofs/<change>/`, never block

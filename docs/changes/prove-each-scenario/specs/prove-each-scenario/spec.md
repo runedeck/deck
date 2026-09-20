@@ -2,7 +2,13 @@
 
 ### Requirement: A change with behavior carries a recorded proof
 
-A change that alters user-visible behavior MUST carry one recorded scene per scenario of its delta specification, run end to end against the frozen candidate that the check receipt names. Each THEN clause MUST be asserted with an expectation on the output, and a missed expectation MUST fail the recording. The pull request MUST embed the recording with the commit id it proves and MUST name every scenario without a scene as unproven.
+A change that alters user-visible behavior MUST carry one recorded scene per scenario of its delta specification, run end to end against the frozen candidate that the check receipt names. Each THEN clause MUST be asserted with an expectation on the output, and a missed expectation MUST fail the recording. The proof artifact MUST be a GIF recording with its transcript, filed under `docs/proofs/<change>/`. The pull request MUST embed the recording with the commit id it proves and MUST name every scenario without a scene as unproven. A merge check MUST warn, not block, on a scenario without a proof.
+
+#### Scenario: Scenario has no proof at merge
+
+- **WHEN** a pull request reaches merge with a scenario that has no scene under `docs/proofs/<change>/`
+- **THEN** the check reports the scenario as unproven with a warning
+- **AND** the merge proceeds
 
 #### Scenario: Implementation is finished
 
