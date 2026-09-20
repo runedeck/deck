@@ -4,7 +4,7 @@ status: accepted
 decisions: ["DECK-0001 Artifact Benchmarking Skill", "DECK-0002 Benchmark Execution Ladder", "DECK-0003 Three-Metric Verdict and Cross-Vendor Judging"]
 ---
 
-# Bench Artifact
+# Benchmark all artifacts
 
 ## Why
 
@@ -20,7 +20,7 @@ See the linked ADR for the decision rationale. This proposal records the change 
 
 ## Capabilities
 
-- artifact-benchmarking (new)
+- benchmark-all-artifacts (new)
 
 ## Impact
 

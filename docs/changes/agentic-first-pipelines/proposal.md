@@ -4,7 +4,7 @@ status: accepted
 decisions: ["DECK-0008 Idea-to-Merge Flywheel", "DECK-0009 Declared Constraints over Proposed Changes"]
 ---
 
-# Agent Pipeline
+# Agentic-first pipelines
 
 ## Why
 

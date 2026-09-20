@@ -22,3 +22,7 @@ A frame before the first write and a delta frame after the stage give one confir
 
 - `runes/development/skills/Storyboard/` (new).
 - Split from the forge-adoption change on 2026-09-20. DECK-0016 records the adoption as a whole.
+
+## Risks
+
+- The question tool differs per harness. Guard: AskUserQuestion in Claude Code, a plain question elsewhere, `ask-user` in pi as a later package change.

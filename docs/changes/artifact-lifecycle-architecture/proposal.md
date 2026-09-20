@@ -4,7 +4,7 @@ status: accepted
 decisions: ["DECK-0005 Artifact Lifecycle and Evidence Tokens", "DECK-0006 State Stores and Provider Edges", "DECK-0007 Retirement Path"]
 ---
 
-# Stack Architecture
+# Artifact lifecycle architecture
 
 ## Why
 

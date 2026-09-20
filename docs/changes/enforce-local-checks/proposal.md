@@ -4,7 +4,7 @@ status: accepted
 decisions: ["DECK-0013 Local Checks Before Publication"]
 ---
 
-# Local checks
+# Enforce local checks
 
 ## Why
 

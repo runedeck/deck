@@ -23,3 +23,8 @@ Multi-track research was one of four fan-out shapes. One skill splits a question
 
 - `runes/development/skills/ResearchGrid/` (new).
 - Split from the forge-adoption change on 2026-09-20. DECK-0016 records the adoption as a whole.
+
+## Risks
+
+- A workflow skill reaches a harness with no workflow tool. Guard: `targets`, plus a first line in the body that stops and says so. Task 3.4 verifies the filter.
+- The verifier shares a model with the gatherer. Guard: both models required and unequal, else the run stops.

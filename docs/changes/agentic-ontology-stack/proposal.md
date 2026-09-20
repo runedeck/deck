@@ -4,7 +4,7 @@ status: accepted
 decisions: ["DECK-0014 Vocabulary Governance"]
 ---
 
-# Agentic Ontology
+# Agentic ontology stack
 
 ## Why
 

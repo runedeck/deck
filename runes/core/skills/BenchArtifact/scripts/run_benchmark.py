@@ -445,7 +445,7 @@ def stage_artifact(
 ) -> tuple[Path | None, Path | None]:
     if not artifact:
         return None, None
-    artifact_root = scratch / ".benchmark-all-artifacts"
+    artifact_root = scratch / ".bench-artifact"
     artifact_root.mkdir()
     target = artifact_root / artifact.name
     if artifact.is_file():

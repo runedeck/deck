@@ -4,7 +4,7 @@ status: accepted
 decisions: ["CORE-0013 Context Economy", "CORE-0014 No Performance Personas", "CORE-0015 Positive Instruction", "CORE-0016 Adversarial Review over Councils", "CORE-0017 The Inference Turn"]
 ---
 
-# Context Economy
+# Measure context economy
 
 ## Why
 

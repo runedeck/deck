@@ -27,10 +27,10 @@ A workflow skill MUST deploy only to harnesses with a workflow tool, and the dep
 
 Every child brief MUST restate the RemoteWrites command list without the label exception, and MUST name the absolute path of the skill directory for companions.
 
-#### Scenario: Repair child finishes
+#### Scenario: Track child finishes
 
-- **WHEN** a MergeTrain repair child clears a blocker
-- **THEN** it stops with the workspace path and the changed files, and no remote state has changed
+- **WHEN** a ResearchGrid track child returns its rows
+- **THEN** it returns only rows with a cited source, and no remote state has changed
 
 ### Requirement: ResearchGrid verifies independently
 

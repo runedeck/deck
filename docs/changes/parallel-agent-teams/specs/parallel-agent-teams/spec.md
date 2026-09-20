@@ -27,9 +27,9 @@ A workflow skill MUST deploy only to harnesses with a workflow tool, and the dep
 
 Every child brief MUST restate the RemoteWrites command list without the label exception, and MUST name the absolute path of the skill directory for companions.
 
-#### Scenario: Repair child finishes
+#### Scenario: Package child finishes
 
-- **WHEN** a MergeTrain repair child clears a blocker
+- **WHEN** an AgentTeam package child completes its tasks
 - **THEN** it stops with the workspace path and the changed files, and no remote state has changed
 
 ### Requirement: AgentTeam integrates

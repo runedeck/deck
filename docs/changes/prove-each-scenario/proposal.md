@@ -4,7 +4,7 @@ status: accepted
 decisions: ["DECK-0015 Behavior Proof per Change"]
 ---
 
-# Behavior Proof
+# Prove each scenario
 
 ## Why
 

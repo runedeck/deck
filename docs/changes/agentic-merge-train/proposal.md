@@ -23,3 +23,8 @@ Merge polling was one of four fan-out shapes that consumed the owner's sessions.
 
 - `runes/development/skills/MergeTrain/` (new).
 - Split from the forge-adoption change on 2026-09-20. DECK-0016 records the adoption as a whole.
+
+## Risks
+
+- A workflow skill reaches a harness with no workflow tool. Guard: `targets`, plus a first line in the body that stops and says so. Task 3.4 verifies the filter and blocks the merge if it does not hold.
+- Companion paths resolve against the child's cwd instead of the skill. Guard: the absolute skill path in every child brief. A `rune validate` check is task 4.4.

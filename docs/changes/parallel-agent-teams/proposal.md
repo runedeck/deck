@@ -23,3 +23,8 @@ Per-workspace briefs were retyped for every parallel implementation. One skill s
 
 - `runes/development/skills/AgentTeam/` (new).
 - Split from the forge-adoption change on 2026-09-20. DECK-0016 records the adoption as a whole.
+
+## Risks
+
+- A workflow skill reaches a harness with no workflow tool. Guard: `targets`, plus a first line in the body that stops and says so. Task 3.4 verifies the filter.
+- Two parallel packages want one file. Guard: the planner merges them or makes one depend on the other.

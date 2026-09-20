@@ -15,7 +15,7 @@
 - [ ] 3.1 `rune validate`, `rune spec validate parallel-research-grid`, `mdschema check --schema` on every new document, Vale, rumdl, typos
 - [ ] 3.2 `node --check` on `workflow.js`, and a static check that every `agent(` result is `.ok`-tested
 - [ ] 3.3 One manual run from pi through cliproxyapi, the tool input compared byte for byte with `workflow.js`, transcript kept in the workshop
-- [ ] 3.4 Confirm `targets: [claude, agentskills]` filters deployment in `rune assemble`
+- [ ] 3.4 Confirm `targets: [claude, agentskills]` filters deployment in `rune assemble`. If it does not, the workflow skill does not merge until it does
 
 ## 4. Deferred by owner decision
 

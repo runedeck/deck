@@ -4,7 +4,7 @@ status: accepted
 decisions: ["DECK-0010 Declared World in RDF"]
 ---
 
-# Declared World
+# Declared world model
 
 ## Why
 

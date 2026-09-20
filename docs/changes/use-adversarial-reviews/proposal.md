@@ -23,3 +23,8 @@ Hostile prose rounds were run by hand. One skill attacks the original from three
 
 - `runes/development/skills/AdversaryReview/` (new).
 - Split from the forge-adoption change on 2026-09-20. DECK-0016 records the adoption as a whole.
+
+## Risks
+
+- A workflow skill reaches a harness with no workflow tool. Guard: `targets`, plus a first line in the body that stops and says so. Task 3.4 verifies the filter.
+- A hit ends neither fixed nor refuted. Guard: it stays open in the report. There is no accepted disposition.

@@ -9,7 +9,7 @@ tags:
     - workflows
 status: proposed
 created: 2026-09-16
-updated: 2026-09-16
+updated: 2026-09-20
 author: "@N4M3Z"
 project: deck
 related:
@@ -76,7 +76,7 @@ change documents, both 2026-09-16) bound these into the change as requirements:
 - ResearchGrid verifies with a different model and an excerpt.
 - MergeTrain binds every verdict to the surveyed head SHA and never merges.
 
-This change edits nothing outside the deck. Benches and behavior proofs are deferred by owner
+These changes edit nothing outside the deck. Benches and behavior proofs are deferred by owner
 decision, and the status stays proposed until they exist.
 
 ## Consequences

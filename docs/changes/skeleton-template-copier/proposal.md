@@ -4,7 +4,7 @@ status: accepted
 decisions: ["DECK-0012 Consumer Ceremony Synchronization"]
 ---
 
-# Consumers Copier
+# Skeleton template copier
 
 ## Why
 
