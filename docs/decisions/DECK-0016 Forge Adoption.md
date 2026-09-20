@@ -22,6 +22,14 @@ related:
     - "Implement change tasks in parallel workspaces"
     - "Refute a draft before accepting it"
     - "Research in parallel tracks with cross-model verification"
+change:
+    - restrict-remote-writes
+    - openspec-change-router
+    - ascii-frame-storyboards
+    - agentic-merge-train
+    - parallel-agent-teams
+    - use-adversarial-reviews
+    - parallel-research-grid
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5-1", "gpt-6-astra", "grok-4.6", "lumo-max"]

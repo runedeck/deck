@@ -1,3 +1,6 @@
+# The format is runeADR, and its public home is
+# https://github.com/runedeck/adr. This schema mirrors the home's
+# adr.mdschema, and a format change lands at the home first.
 frontmatter:
     fields:
         - name: title

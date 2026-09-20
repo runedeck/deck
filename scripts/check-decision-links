@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+"""Check that each change and its decision records link both ways.
+
+A proposal lists its records in the `decisions` frontmatter field. A
+record names its change, or changes, in the `change` field. A record
+that still lives in its change as `adr.md` has no id yet, so a
+`decisions` entry that matches no file under docs/decisions/ is a draft
+and is not checked. Archived changes are history and are not checked.
+"""
+import pathlib
+import re
+import sys
+
+
+def frontmatter(path):
+    text = path.read_text()
+    if not text.startswith("---\n"):
+        return ""
+    end = text.find("\n---", 4)
+    return text[4:end] if end != -1 else ""
+
+
+def field(block, key):
+    """Return a frontmatter value as a list: inline list, block list, or scalar."""
+    match = re.search(rf"^{key}:[ \t]*(.*)$", block, re.M)
+    if not match:
+        return []
+    inline = match.group(1).strip()
+    if inline.startswith("["):
+        return [item.strip().strip("\"'") for item in inline.strip("[]").split(",") if item.strip()]
+    if inline:
+        return [inline.strip("\"'")]
+    items = []
+    for line in block[match.end():].splitlines()[0:]:
+        if not line.strip():
+            continue
+        entry = re.match(r"^\s+-\s+(.*)$", line)
+        if not entry:
+            break
+        items.append(entry.group(1).strip().strip("\"'"))
+    return items
+
+
+def check(root):
+    errors = []
+    decisions = root / "docs" / "decisions"
+    changes = root / "docs" / "changes"
+    records = {p.stem: p for p in decisions.glob("*.md")} if decisions.is_dir() else {}
+    proposals = {
+        p.parent.name: p
+        for p in changes.glob("*/proposal.md")
+        if p.parent.name != "archive"
+    }
+    for change_id, proposal in sorted(proposals.items()):
+        for entry in field(frontmatter(proposal), "decisions"):
+            record = records.get(entry)
+            if record is None:
+                continue
+            if change_id not in field(frontmatter(record), "change"):
+                errors.append(f"{record}: `change` does not name {change_id}, which lists it in `decisions`")
+    for stem, record in sorted(records.items()):
+        for change_id in field(frontmatter(record), "change"):
+            proposal = proposals.get(change_id)
+            if proposal is None:
+                continue
+            if stem not in field(frontmatter(proposal), "decisions"):
+                errors.append(f"{proposal}: `decisions` does not list {stem}, which names this change")
+    return errors
+
+
+def main():
+    root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else ".")
+    errors = check(root)
+    for line in errors:
+        print(line)
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
