@@ -18,7 +18,7 @@ Every repository declares its checks in `.pre-commit-config.yaml`, and CI runs t
 
 ### New Capabilities
 
-- `local-checks`: a session runs the repository's own check stages locally and repeatedly before it asks for a push or a signature.
+- `enforce-local-checks`: a session runs the repository's own check stages locally and repeatedly before it asks for a push or a signature.
 
 ## Impact
 
