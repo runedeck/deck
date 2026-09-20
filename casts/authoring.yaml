@@ -9,3 +9,4 @@ runes:
     - core/rules/RuneShell
     - core/rules/SkillLayout
     - core/rules/ArtifactLength
+    - core/rules/ScenarioTitles

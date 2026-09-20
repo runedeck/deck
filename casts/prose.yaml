@@ -10,3 +10,9 @@ runes:
     - core/rules/ReportFailures
     - core/rules/VerifyClaims
     - core/rules/SelfContainedQuestionOptions
+    - core/rules/CiteSources
+    - core/rules/LessIsMore
+    - core/rules/NoEmDash
+    - core/rules/NoItemCounts
+    - core/rules/NoAgenticAttribution
+    - core/rules/AsciiDiagrams

@@ -13,3 +13,5 @@ runes:
     - development/skills/AgentTeam
     - development/skills/Storyboard
     - development/skills/AdversaryReview
+    - core/rules/OnePurpose
+    - core/rules/AvoidDuplication

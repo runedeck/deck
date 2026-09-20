@@ -1,0 +1,1 @@
+Cite the origin of every factual data point: a number, a date, a limit, a rate, a threshold. Use a reference-style link with a short uppercase tag, and put the link definition at the end of the file. An unsourced claim is unverifiable.
