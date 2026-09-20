@@ -15,7 +15,7 @@
 
 ## 3. Follow-up
 
-- [ ] 3.1 Extract ContinuousIntegration receipts as `rune:Proof` instances once `rune graph export` exists (declared-world task 2.4)
+- [ ] 3.1 Extract ContinuousIntegration receipts as `rune:Proof` instances once `rune graph export` exists (declared-world-model task 2.4)
 - [ ] 3.2 Compute semantic density in the extractor instead of by hand
 - [ ] 3.3 Run the first drift audit over receipt, proof, attestation, and evidence, and merge the survivors
 - [ ] 3.4 Move the proof shape to Violation after the first extracted proofs conform

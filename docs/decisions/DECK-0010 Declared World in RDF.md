@@ -60,4 +60,4 @@ Option 3. The decisions in detail:
 - The gate grows through the extraction flywheel: an observed failure becomes a permanent shape.
 - The instance graph gives provenance queries for free once commits and verdicts enter it.
 - The rudof dependency is young (0.x). Mitigation: the shapes are standard SHACL, so pySHACL or Apache Jena can cross-check the same files off the gate path.
-- The deck learns nomenclature debt: contributors must learn five terms (triple, ontology, shape, IRI, closed world). The design document in the declared-world change carries the primer.
+- The deck learns nomenclature debt: contributors must learn five terms (triple, ontology, shape, IRI, closed world). The design document in the declared-world-model change carries the primer.

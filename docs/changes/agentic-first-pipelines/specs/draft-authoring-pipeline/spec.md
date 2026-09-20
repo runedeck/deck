@@ -20,7 +20,7 @@ After pull request creation, the [PR lint workflow](../../../../../.github/workf
 The [Deck provider list](../../../../../deck.yaml) defines the supported harness set. Codex has no post-edit hook and MUST use this fallback.
 
 - **WHEN** a supported harness has no post-edit hook
-- **THEN** the agent runs the Markdown and schema checks from the [Declared World gate ladder](../../../declared-world/design.md#the-gate-ladder) before owner review
+- **THEN** the agent runs the Markdown and schema checks from the [Declared World gate ladder](../../../declared-world-model/design.md#the-gate-ladder) before owner review
 
 ### Requirement: Deterministic pass precedes review
 

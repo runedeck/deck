@@ -21,7 +21,7 @@ Agents propose artifacts. The deck needs a deterministic layer that decides what
 
 ## Capabilities
 
-- declared-world (new)
+- declared-world-model (new)
 
 ## Impact
 
