@@ -18,13 +18,13 @@ Ideas enter the stack ad hoc, and finished passes leave without teaching anythin
 
 ## Capabilities
 
-- idea-intake (new)
-- artifact-extraction (new)
-- declared-constraints (new)
+- intake-with-pushback (new)
+- extract-valuable-lessons (new)
+- declared-ontology-constraints (new)
 
 ## Impact
 
-- `docs/changes/agent-pipeline/`: proposal, design, delta specifications, tasks.
+- `docs/changes/agentic-first-pipelines/`: proposal, design, delta specifications, tasks.
 - `docs/decisions/DECK-0008 Idea-to-Merge Flywheel.md` and `docs/decisions/DECK-0009 Declared Constraints over Proposed Changes.md`.
 - `runes/core/skills/IntakeIdea/SKILL.md`: the new intake skill.
 - `CHANGELOG.md`.

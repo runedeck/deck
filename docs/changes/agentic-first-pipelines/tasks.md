@@ -2,9 +2,9 @@
 
 - [x] 1.1 Design the flywheel: stages, contracts, instances, placement decisions
 - [x] 1.2 Record DECK-0008 Idea-to-Merge Flywheel
-- [x] 1.3 State the idea-intake and artifact-extraction contracts as delta specifications
+- [x] 1.3 State the intake-with-pushback and extract-valuable-lessons contracts as delta specifications
 - [x] 1.4 Add the IntakeIdea skill as the first intake instance
-- [x] 1.5 State the draft-gating contract as a delta specification: register, deterministic pass before review, review points by blast radius
+- [x] 1.5 State the draft-authoring-pipeline contract as a delta specification: register, deterministic pass before review, review points by blast radius
 
 ## 2. Follow-up passes through the pipeline itself
 
@@ -21,5 +21,5 @@
 ## 3. Verification
 
 - [x] 3.1 mdschema passes on every new document
-- [x] 3.2 rune spec validate agent-pipeline passes
+- [x] 3.2 rune spec validate agentic-first-pipelines passes
 - [x] 3.3 rune validate reports no new errors

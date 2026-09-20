@@ -41,7 +41,7 @@ This change adds no provider integration, workflow implementation, new model cat
 
 ## Pushback
 
-Outcome: a bounded extension of the babysitting stage in `agent-pipeline`, not a replacement pipeline.
+Outcome: a bounded extension of the babysitting stage in `agentic-first-pipelines`, not a replacement pipeline.
 That change defines intake and extraction but does not define a complete PR delivery contract.
 The current skill already defines merge-ready conditions and publication approval.
 This proposal targets contradictory instructions and gaps in obtaining evidence, rather than repeating those definitions.

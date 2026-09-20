@@ -11,7 +11,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 - The AgenticOntology skill in core: admit a term into the declared world before prose uses it, name an artifact from its lifecycle stage, audit the corpus for synonyms, and retire a term by deprecation. The ontology gains `rune:Proof` as prove-stage evidence with its shape (DECK-0014).
 - Five micro-rules in core, extracted from the tuicr workshop brief: CaptureOnTouch, FixAtTheHighestLeverage, ReportFailures, FlagRuleConflicts, and OwnersVoice.
 - The VerifyClaims and Deslop rules in core: evidence before assertion, and slop stripped at write time.
-- The agent-pipeline change: the idea-to-merge flywheel design, DECK-0008 and DECK-0009, the idea-intake, artifact-extraction, and declared-constraints capabilities, and the IntakeIdea skill.
+- The agentic-first-pipelines change: the idea-to-merge flywheel design, DECK-0008 and DECK-0009, the intake-with-pushback, extract-valuable-lessons, and declared-ontology-constraints capabilities, and the IntakeIdea skill.
 - The VersionControl BabysitPR companion runs review pipelines, repairs bot findings, and repeats until the current head is merge-ready.
 - The check-provenance hook: a rune or sidecar edit fails when its provenance subject digest is stale, and `--fix` repairs it.
 - BenchArtifact ships bench.py again: one config-driven driver for the quick, snapshot, plan, run, grade, judge, and report steps.
