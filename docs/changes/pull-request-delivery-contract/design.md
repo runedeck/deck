@@ -3,7 +3,7 @@
 ## Context
 
 See [proposal.md](proposal.md) for motivation and scope.
-The new [delivery specification](specs/deliver-pull-requests/spec.md) extends an existing stage rather than adding a pipeline stage.
+The new [delivery specification](specs/pull-request-delivery-contract/spec.md) extends an existing stage rather than adding a pipeline stage.
 The [authorization PR](https://github.com/runedeck/deck/pull/56) already defines permission and post-push verification.
 
 ## Goals / Non-Goals

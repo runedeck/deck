@@ -7,7 +7,7 @@ tags:
     - architecture
     - ontology
     - validation
-status: proposed
+status: accepted
 created: 2026-08-26
 updated: 2026-08-26
 author: "@N4M3Z"
@@ -20,6 +20,7 @@ accountable: ["@N4M3Z"]
 consulted: []
 informed: []
 upstream: []
+change: declared-world-model
 ---
 
 # Declared World in RDF

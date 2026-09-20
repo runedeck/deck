@@ -120,7 +120,7 @@ Deck MUST also receive the related Copier update before this move.
 
 ### Requirement: Ceremony Delivery
 
-The release ceremony MUST satisfy the existing `Governance ships through its own flow` requirement in the lifecycle-stage-evidence specification.
+The release ceremony MUST satisfy the existing `Governance ships through its own flow` requirement in the artifact-lifecycle-architecture specification.
 
 #### Scenario: Deck receives the release ceremony
 

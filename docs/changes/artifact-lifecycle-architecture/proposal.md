@@ -1,6 +1,7 @@
 ---
 adr: "docs/decisions/DECK-0005 Artifact Lifecycle and Evidence Tokens.md"
-status: proposed
+status: accepted
+decisions: ["DECK-0005 Artifact Lifecycle and Evidence Tokens", "DECK-0006 State Stores and Provider Edges", "DECK-0007 Retirement Path"]
 ---
 
 # Stack Architecture
@@ -18,7 +19,7 @@ The stack grew as tools: build skills, an adoption state machine, a bench harnes
 
 ## Capabilities
 
-- lifecycle-stage-evidence (new)
+- artifact-lifecycle-architecture (new)
 
 ## Impact
 

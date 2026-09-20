@@ -1,6 +1,7 @@
 # portable-skill-authoring Specification
 
 ## Purpose
+
 TBD - created by archiving change portable-skill-authoring. Update Purpose after archive.
 
 ## Requirements

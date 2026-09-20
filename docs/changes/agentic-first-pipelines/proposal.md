@@ -1,6 +1,7 @@
 ---
 adr: "docs/decisions/DECK-0008 Idea-to-Merge Flywheel.md"
-status: proposed
+status: accepted
+decisions: ["DECK-0008 Idea-to-Merge Flywheel", "DECK-0009 Declared Constraints over Proposed Changes"]
 ---
 
 # Agent Pipeline

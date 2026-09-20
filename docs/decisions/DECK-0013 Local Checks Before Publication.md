@@ -7,7 +7,7 @@ tags:
     - ceremony
     - checks
     - publication
-status: proposed
+status: accepted
 created: 2026-09-14
 updated: 2026-09-14
 author: "@N4M3Z"
@@ -19,6 +19,7 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5-1"]
 informed: []
 upstream: []
+change: enforce-local-checks
 ---
 
 # Local Checks Before Publication

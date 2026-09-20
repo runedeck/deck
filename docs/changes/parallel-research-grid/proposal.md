@@ -1,8 +1,7 @@
 ---
 adr: docs/changes/parallel-research-grid/adr.md
 status: proposed
-decisions:
-    - DECK-0016 Forge Adoption
+decisions: ["Research in parallel tracks with cross-model verification", "DECK-0016 Forge Adoption"]
 ---
 
 # Research in parallel tracks with cross-model verification
@@ -13,7 +12,7 @@ Multi-track research was one of four fan-out shapes. One skill splits a question
 
 ## What Changes
 
-- The ResearchGrid skill at `runes/development/skills/ResearchGrid/`, condensed from forge for frontier models.
+- The ResearchGrid skill at `runes/development/skills/ResearchGrid/`, rewritten from its forge origin for frontier models.
 - Deploys only where a workflow tool exists (`targets: [claude, agentskills]`) and stops with one sentence elsewhere.
 
 ## Capabilities

@@ -7,7 +7,7 @@ tags:
     - ontology
     - naming
     - evidence
-status: proposed
+status: accepted
 created: 2026-09-15
 updated: 2026-09-15
 author: "@N4M3Z"
@@ -20,6 +20,7 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5-1"]
 informed: []
 upstream: []
+change: agentic-ontology-stack
 ---
 
 # Vocabulary Governance

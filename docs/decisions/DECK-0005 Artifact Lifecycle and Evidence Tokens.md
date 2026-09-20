@@ -7,7 +7,7 @@ tags:
     - architecture
     - lifecycle
     - evidence
-status: proposed
+status: accepted
 created: 2026-08-19
 updated: 2026-08-19
 author: "@N4M3Z"
@@ -21,6 +21,7 @@ accountable: ["@N4M3Z"]
 consulted: []
 informed: []
 upstream: []
+change: artifact-lifecycle-architecture
 ---
 
 # Artifact Lifecycle and Evidence Tokens

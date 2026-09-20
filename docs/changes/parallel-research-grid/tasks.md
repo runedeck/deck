@@ -6,7 +6,9 @@
 
 ## 2. Adversarial review
 
-- [x] 2.1 astra and grok refuted the change documents and the authored artifact on 2026-09-16. Dispositions are recorded in the forge-adoption change history.
+- [x] 2.1 astra and grok refuted the change documents on 2026-09-16. Dispositions kept for this change: meta.caps without ceilings (fixed), rejected versus unsupported rows (fixed, both defined)
+- [x] 2.2 astra and grok refuted the authored skills on 2026-09-16. Dispositions kept for this change: child briefs without the RemoteWrites list or the skill path in Report, Table, Settle, Split, Verify (fixed, one contract prefixes every call and the script refuses a relative or missing skill path), `.ok` without structured fields treated as clean (fixed, fail closed on missing fields), ResearchGrid same-model fallback (fixed, both models required and unequal)
+- [x] 2.3 The complete disposition list is in the forge-adoption tasks at deck commit 025ef47f8d28 (`git show 025ef47f8d28:docs/changes/forge-adoption/tasks.md`)
 
 ## 3. Verification
 

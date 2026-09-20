@@ -1,6 +1,7 @@
 ---
 adr: "docs/decisions/DECK-0013 Local Checks Before Publication.md"
-status: proposed
+status: accepted
+decisions: ["DECK-0013 Local Checks Before Publication"]
 ---
 
 # Local checks

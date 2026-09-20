@@ -1,19 +1,18 @@
 ---
 adr: docs/changes/openspec-change-router/adr.md
 status: proposed
-decisions:
-    - DECK-0016 Forge Adoption
+decisions: ["Route each change to its next stage", "DECK-0016 Forge Adoption"]
 ---
 
 # Route each change to its next stage
 
 ## Why
 
-DECK-0008 names the loop from idea to merge but no skill routed a change to its next stage. Sessions guessed the stage and skipped the owner of it.
+DECK-0008 names the loop from idea to merge but no skill routed a change to its next stage. The router is the missing edge.
 
 ## What Changes
 
-- The ForgeCycle skill at `runes/development/skills/ForgeCycle/`, condensed from forge for frontier models.
+- The ForgeCycle skill at `runes/development/skills/ForgeCycle/`, rewritten from its forge origin for frontier models.
 
 ## Capabilities
 

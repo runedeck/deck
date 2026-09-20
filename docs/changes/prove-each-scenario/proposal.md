@@ -1,6 +1,7 @@
 ---
 adr: "docs/decisions/DECK-0015 Behavior Proof per Change.md"
-status: proposed
+status: accepted
+decisions: ["DECK-0015 Behavior Proof per Change"]
 ---
 
 # Behavior Proof

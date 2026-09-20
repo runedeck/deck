@@ -1,8 +1,7 @@
 ---
 adr: docs/changes/parallel-agent-teams/adr.md
 status: proposed
-decisions:
-    - DECK-0016 Forge Adoption
+decisions: ["Implement change tasks in parallel workspaces", "DECK-0016 Forge Adoption"]
 ---
 
 # Implement change tasks in parallel workspaces
@@ -13,7 +12,7 @@ Per-workspace briefs were retyped for every parallel implementation. One skill s
 
 ## What Changes
 
-- The AgentTeam skill at `runes/development/skills/AgentTeam/`, condensed from forge for frontier models.
+- The AgentTeam skill at `runes/development/skills/AgentTeam/`, rewritten from its forge origin for frontier models.
 - Deploys only where a workflow tool exists (`targets: [claude, agentskills]`) and stops with one sentence elsewhere.
 
 ## Capabilities

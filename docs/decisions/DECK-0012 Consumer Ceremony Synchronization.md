@@ -7,7 +7,7 @@ tags:
     - ceremony
     - template
     - provenance
-status: proposed
+status: accepted
 created: 2026-09-11
 updated: 2026-09-11
 author: "@N4M3Z"
@@ -20,6 +20,7 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5"]
 informed: []
 upstream: []
+change: skeleton-template-copier
 ---
 
 # Consumer Ceremony Synchronization

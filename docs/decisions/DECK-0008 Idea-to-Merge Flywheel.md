@@ -7,7 +7,7 @@ tags:
     - architecture
     - pipeline
     - extraction
-status: proposed
+status: accepted
 created: 2026-08-19
 updated: 2026-09-10
 author: "@N4M3Z"
@@ -20,6 +20,7 @@ accountable: ["@N4M3Z"]
 consulted: []
 informed: []
 upstream: []
+change: agentic-first-pipelines
 ---
 
 # Idea-to-Merge Flywheel
@@ -49,7 +50,7 @@ Option 3. The loop is: prompt, pushback, specify, isolate, swarm, local gates, h
 ### Pull request delivery amendment
 
 The middle stages need observable completion evidence, not only named tools and procedures.
-The [pull-request delivery contract](../changes/pull-request-delivery-contract/specs/deliver-pull-requests/spec.md) defines that evidence for the existing babysitting stage.
+The [pull-request delivery contract](../changes/pull-request-delivery-contract/specs/pull-request-delivery-contract/spec.md) defines that evidence for the existing babysitting stage.
 This amendment keeps VersionControl as the procedure owner and preserves the existing publication-authorization contract.
 It adds no pipeline stage, orchestration service, or council-based acceptance rule.
 

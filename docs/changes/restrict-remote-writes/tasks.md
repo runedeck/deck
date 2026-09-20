@@ -7,7 +7,9 @@
 
 ## 2. Adversarial review
 
-- [x] 2.1 astra and grok refuted the change documents and the authored artifact on 2026-09-16. Dispositions are recorded in the forge-adoption change history.
+- [x] 2.1 astra and grok refuted the change documents on 2026-09-16. Dispositions kept for this change: rule as command list (fixed), "MUST load in every session" (fixed, scoped to harnesses with a rules path plus the interim `AGENTS.md`)
+- [x] 2.2 astra and grok refuted the authored skills on 2026-09-16. Dispositions kept for this change: child briefs without the RemoteWrites list or the skill path in Report, Table, Settle, Split, Verify (fixed, one contract prefixes every call and the script refuses a relative or missing skill path)
+- [x] 2.3 The complete disposition list is in the forge-adoption tasks at deck commit 025ef47f8d28 (`git show 025ef47f8d28:docs/changes/forge-adoption/tasks.md`)
 
 ## 3. Verification
 
@@ -16,3 +18,4 @@
 ## 4. Deferred by owner decision
 
 - [ ] 4.1 Bench case with the same prompt and no rule as baseline (BenchArtifact)
+- [ ] 4.2 Behavior proof per scenario (DECK-0015)

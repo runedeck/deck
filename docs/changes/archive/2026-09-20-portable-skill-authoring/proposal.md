@@ -40,4 +40,4 @@ The separate `portable-safety-discovery` change covers SafetyFirst in the same c
 The CLI architecture PR supplies the validator. This change adds no validator bypass or new deployment route.
 The active Claude issue run retains its own schemas, hooks, and consumer work.
 
-BuildSkill uses [one loop companion](../../../runes/core/skills/BuildSkill/ImplementationLoop.md).
+BuildSkill uses [one loop companion](../../../../runes/core/skills/BuildSkill/ImplementationLoop.md).

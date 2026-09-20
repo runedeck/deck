@@ -1,8 +1,7 @@
 ---
 adr: docs/changes/restrict-remote-writes/adr.md
 status: proposed
-decisions:
-    - DECK-0016 Forge Adoption
+decisions: ["Restrict remote writes", "DECK-0016 Forge Adoption"]
 ---
 
 # Restrict remote writes
@@ -13,7 +12,7 @@ Prohibitions against merging, commenting, labelling, and pushing were retyped in
 
 ## What Changes
 
-- The RemoteWrites rule at `runes/core/rules/RemoteWrites.md`, condensed from forge for frontier models.
+- The RemoteWrites rule at `runes/core/rules/RemoteWrites.md`, rewritten from its forge origin for frontier models.
 
 ## Capabilities
 

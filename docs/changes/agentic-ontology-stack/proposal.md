@@ -1,6 +1,7 @@
 ---
 adr: "docs/decisions/DECK-0014 Vocabulary Governance.md"
-status: proposed
+status: accepted
+decisions: ["DECK-0014 Vocabulary Governance"]
 ---
 
 # Agentic Ontology

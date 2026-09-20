@@ -1,6 +1,7 @@
 ---
 adr: "docs/decisions/DECK-0008 Idea-to-Merge Flywheel.md"
-status: proposed
+status: accepted
+decisions: []
 ---
 
 # Pull request delivery contract
@@ -24,7 +25,7 @@ VersionControl contains contradictory rebase instructions and lacks bounded reco
 
 ### New Capabilities
 
-- `deliver-pull-requests`: Evidence and recovery requirements for the existing PR babysitting stage.
+- `pull-request-delivery-contract`: Evidence and recovery requirements for the existing PR babysitting stage.
 
 ### Modified Capabilities
 

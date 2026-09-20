@@ -7,7 +7,7 @@ tags:
     - architecture
     - context
     - pipeline
-status: proposed
+status: accepted
 created: 2026-08-27
 updated: 2026-08-27
 author: "@N4M3Z"
@@ -18,6 +18,7 @@ responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
 consulted: []
 informed: []
+change: measure-context-economy
 ---
 
 # The Inference Turn

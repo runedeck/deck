@@ -1,11 +1,10 @@
 ---
 adr: docs/changes/agentic-merge-train/adr.md
 status: proposed
-decisions:
-    - DECK-0016 Forge Adoption
+decisions: ["Survey the queue and repair eligible blockers", "DECK-0016 Forge Adoption"]
 ---
 
-# Clear the pull request queue in one pass
+# Survey the queue and repair eligible blockers
 
 ## Why
 
@@ -13,7 +12,7 @@ Merge polling was one of four fan-out shapes that consumed the owner's sessions.
 
 ## What Changes
 
-- The MergeTrain skill at `runes/development/skills/MergeTrain/`, condensed from forge for frontier models.
+- The MergeTrain skill at `runes/development/skills/MergeTrain/`, rewritten from its forge origin for frontier models.
 - Deploys only where a workflow tool exists (`targets: [claude, agentskills]`) and stops with one sentence elsewhere.
 
 ## Capabilities

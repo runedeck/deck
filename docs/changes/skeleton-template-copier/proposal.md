@@ -1,6 +1,7 @@
 ---
 adr: "docs/decisions/DECK-0012 Consumer Ceremony Synchronization.md"
-status: proposed
+status: accepted
+decisions: ["DECK-0012 Consumer Ceremony Synchronization"]
 ---
 
 # Consumers Copier

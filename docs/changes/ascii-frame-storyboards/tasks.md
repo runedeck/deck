@@ -6,7 +6,8 @@
 
 ## 2. Adversarial review
 
-- [x] 2.1 astra and grok refuted the change documents and the authored artifact on 2026-09-16. Dispositions are recorded in the forge-adoption change history.
+- [x] 2.1 astra and grok refuted the authored skills on 2026-09-16. Dispositions kept for this change: fan-out frame mid-workflow (fixed, planOnly run then plan argument), Storyboard delta saved without confirmation (fixed), ASCII-only glyphs (rejected, the spec says one glyph set, box drawing stays)
+- [x] 2.2 The complete disposition list is in the forge-adoption tasks at deck commit 025ef47f8d28 (`git show 025ef47f8d28:docs/changes/forge-adoption/tasks.md`)
 
 ## 3. Verification
 

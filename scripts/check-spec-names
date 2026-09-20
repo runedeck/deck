@@ -3,8 +3,9 @@
 
 A change id is a directory name under docs/changes/. A capability name
 is a directory name under docs/changes/<id>/specs/ or docs/specs/. Each
-name has at least three hyphen-separated words. A change with two or
-more capabilities gives each a name that differs from the change id.
+name has at least three hyphen-separated words. A change with one
+capability names it after the change id. A change with two or more
+capabilities gives each a name that differs from the change id.
 Archived changes under docs/changes/archive/ keep their historical names.
 """
 import pathlib
@@ -32,6 +33,8 @@ def check(root):
                 errors.append(f"{cap}: capability name has fewer than {MIN_WORDS} words")
             if len(caps) > 1 and cap.name == change.name:
                 errors.append(f"{cap}: capability shares the change id in a change with several capabilities")
+            if len(caps) == 1 and cap.name != change.name:
+                errors.append(f"{cap}: the single capability must take the change id {change.name}")
     if specs.is_dir():
         for cap in sorted(p for p in specs.iterdir() if p.is_dir()):
             if word_count(cap.name) < MIN_WORDS:
