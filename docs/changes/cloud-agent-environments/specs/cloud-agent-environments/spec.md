@@ -49,7 +49,7 @@ The suite MUST use local test assets and isolated installation paths.
 
 ### Requirement: Trusted commit attribution
 
-The cloud environment MUST apply the [canonical commit attribution contract](https://github.com/runedeck/deck/blob/269099293e9f8aec8cf801697359c2a733c022dd/docs/specs/commit-attribution/spec.md).
+The cloud environment MUST apply the [canonical commit attribution contract](https://github.com/runedeck/deck/blob/269099293e9f8aec8cf801697359c2a733c022dd/docs/specs/local-push-validation/spec.md).
 The local checker and identity helper MUST use that contract for outgoing commits.
 An explicit-bookmark push MUST validate the selected bookmark through the same contract.
 

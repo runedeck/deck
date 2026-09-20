@@ -37,7 +37,7 @@ The checker MUST inspect the complete reachable history of an orphan target.
 ### Requirement: Future model attribution
 
 `scripts/author-identity.py` MUST accept formatted model identities under domains that the trusted policy approves.
-The helper MUST apply the identity and contributor constraints in the [commit attribution specification](https://github.com/runedeck/deck/blob/0dd75051f4d47f3ca86dbb41cd555e46072a7e9d/docs/specs/commit-attribution/spec.md).
+The helper MUST apply the identity and contributor constraints in the [commit attribution specification](https://github.com/runedeck/deck/blob/0dd75051f4d47f3ca86dbb41cd555e46072a7e9d/docs/specs/local-push-validation/spec.md).
 
 #### Scenario: A new version uses an approved harness
 

@@ -35,7 +35,7 @@ Repository validation MUST fail when a tracked `.provenance/review.yaml` or `.pr
 
 ### Requirement: Canonical model identities
 
-Authorship validation MUST apply the context normalization and trusted-policy contract in [Commit Attribution](../commit-attribution/spec.md).
+Authorship validation MUST apply the context normalization and trusted-policy contract in [Commit Attribution](../model-commit-attribution/spec.md).
 
 #### Scenario: One-million-context identity
 

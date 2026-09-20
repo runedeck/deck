@@ -61,7 +61,7 @@ Missing terminal diagnostics belong in a separate reviewer-tooling repair.
 
 ### Preserve existing sources of truth
 
-The [commit-attribution specification](../../specs/commit-attribution/spec.md) already supports future models.
+The [model-commit-attribution specification](../../specs/local-push-validation/spec.md) already supports future models.
 The [release-note-publishing change](../release-note-publishing/proposal.md) already addresses shared CHANGELOG writes.
 BenchArtifact owns paired measurement and report generation.
 This change references those contracts rather than copying their implementation into VersionControl.
