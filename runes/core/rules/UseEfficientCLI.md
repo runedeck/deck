@@ -14,7 +14,9 @@ Search selectively. Use `fd` to find files. Use `rg` to search content. Use `ast
 
 Parse structured data with a structural parser. Use `yq` for YAML and `jq` for JSON, never `awk`, `sed`, or `grep`. Line tools break on indentation, quoting, and multi-line values, and the breakage is silent. Use `mlr` (miller) for CSV and TSV. `awk` stays valid for small programs over plain text.
 
-Use `sd` for find-and-replace edits. Read a file region with an available file-reading tool. If none is available, use a bounded shell read. Page JSON or YAML output with `jless` when you must explore it. Compare code structurally with `difft` (`jj diff --tool difft`) when a line diff drowns the change.
+Use `sd` for find-and-replace edits. When another command named `sd` shadows it on the path, call the tool by its full path. Read a file region with an available file-reading tool. If none is available, use a bounded shell read. Page JSON or YAML output with `jless` when you must explore it. Compare code structurally with `difft` (`jj diff --tool difft`) when a line diff drowns the change.
+
+The shell may run with `noclobber` set. A plain `>` or `2>` redirect to an existing file then fails with `file exists`. Use `>|` and `2>|` when you intend to overwrite, and `>>` when you intend to append. Do not disable the option.
 
 Request selected GitHub fields with `gh ... --json <fields>` and `--jq`. Read only what the task needs. Never load a complete directory or repository into context.
 
