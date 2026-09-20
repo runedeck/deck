@@ -49,11 +49,11 @@ Option 3. The loop is: prompt, pushback, specify, isolate, swarm, local gates, h
 ### Pull request delivery amendment
 
 The middle stages need observable completion evidence, not only named tools and procedures.
-The [pull-request delivery contract](../changes/pr-delivery-contract/specs/pull-request-delivery/spec.md) defines that evidence for the existing babysitting stage.
+The [pull-request delivery contract](../changes/pull-request-delivery-contract/specs/deliver-pull-requests/spec.md) defines that evidence for the existing babysitting stage.
 This amendment keeps VersionControl as the procedure owner and preserves the existing publication-authorization contract.
 It adds no pipeline stage, orchestration service, or council-based acceptance rule.
 
-The [design](../changes/pr-delivery-contract/design.md) assigns source contradictions to skill repairs and mechanical defects to their existing tooling owners.
+The [design](../changes/pull-request-delivery-contract/design.md) assigns source contradictions to skill repairs and mechanical defects to their existing tooling owners.
 This separation prevents repeated review failures from producing duplicate rulebooks or unrelated changes in a PR.
 
 ## Consequences
