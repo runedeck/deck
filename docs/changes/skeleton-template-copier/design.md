@@ -11,7 +11,7 @@ The alternative was to keep the deck's copies and cherry-pick template hunks. Th
 - `answers.yaml`, `.pre-commit-config.yaml`, `Makefile`, `.github/workflows/quality.yaml`: template base plus deck additions.
 - `.vale.ini`, `.rumdl.toml`, `typos.toml`: template base plus deck excludes and the Simplified Technical English sample overrides.
 - `runes/**/.provenance/*.yaml`: resealed after the prose corrections.
-- `docs/changes/consumers-copier`: this change.
+- `docs/changes/skeleton-template-copier`: this change.
 
 ## Risks
 

@@ -19,7 +19,7 @@ The deck's checks and the skeleton template disagreed in every shared file, its 
 
 ## Capabilities
 
-- template-composition (new)
+- layered-template-composition (new)
 - adoption-session-state (modified)
 
 ## Impact
