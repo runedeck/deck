@@ -84,7 +84,7 @@ Deploy through the normal Rune path after evidence and review requirements pass.
 Rollback restores the prior skill through that same path.
 
 This change introduces no automated enforcement check.
-Any later enforcement follows the [Gate Ratchet](../context-economy/specs/context-economy/spec.md#requirement-gate-ratchet), including debt and a flip condition.
+Any later enforcement follows the [Gate Ratchet](../measure-context-economy/specs/measure-context-economy/spec.md#requirement-gate-ratchet), including debt and a flip condition.
 
 ## Research status
 

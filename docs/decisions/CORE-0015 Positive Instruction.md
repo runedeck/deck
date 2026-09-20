@@ -44,5 +44,5 @@ Chosen option: positive instruction as the norm.
 ### Consequences
 
 - [+] Rules read as direction instead of a minefield.
-- [+] The rewrite in the context-economy change has a measurable target.
+- [+] The rewrite in the measure-context-economy change has a measurable target.
 - [-] Some prohibitions need careful positive rewording to keep their exact scope.

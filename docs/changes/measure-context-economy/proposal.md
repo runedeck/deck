@@ -20,7 +20,7 @@ Claude 5 generation models need less instruction, not more. Anthropic removed ov
 
 ## Capabilities
 
-- context-economy (new)
+- measure-context-economy (new)
 
 ## Impact
 

@@ -25,7 +25,7 @@
 
 ## 4. Verification
 
-- [ ] 4.1 `rune spec validate context-economy` passes
+- [ ] 4.1 `rune spec validate measure-context-economy` passes
 - [ ] 4.2 `make validate` and the quality workflow pass with the new gates at warning
 - [ ] 4.3 The rule corpus lands under 900 words total, from 2232
 - [ ] 4.4 Every gate fires on a seeded violation, including zero-instruction, two-instruction, over-budget, cross-rune duplication, and reviewer-fault cases
