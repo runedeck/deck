@@ -41,7 +41,7 @@ A harness variant can contain only metadata with an empty body when its mode is 
 
 Assembly selects one variant: the matching model variant first, otherwise the matching harness variant. It merges that winner with the canonical entrypoint. A model variant does not inherit its harness variant's body or metadata.
 
-Provider and model folders do not supply companion overrides. Keep shared companions at the skill root or in ordinary support directories. A local `user/SKILL.md` is a complete replacement with `mode: replace`, the canonical name, a description, and a full body. Local `user/` companion files replace whole files at matching relative paths.
+Provider and model directories do not supply companion overrides. Keep shared companions at the skill root or in ordinary support directories. A local `user/SKILL.md` is a complete replacement with `mode: replace`, the canonical name, a description, and a full body. Local `user/` companion files replace whole files at matching relative paths.
 
 ## Deployment
 

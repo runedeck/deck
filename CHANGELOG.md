@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- The Core Vale style: a named citation (CORE-0009), the word directory (CORE-0004), and MUST in a specification (CORE-0019). The last one is an error and runs on specification files only.
 - Writing and conduct rules in core, with the text the owner already runs: CiteSources, LessIsMore, NoEmDash, NoItemCounts, NoAgenticAttribution, AsciiDiagrams, ScenarioTitles, OnePurpose, and AvoidDuplication. The `prose`, `authoring`, and `delivery` casts select them.
 - The spec-change-lifecycle change and CORE-0019: the change layout, testable requirements, one canonical tree, three-word names, archive as acceptance, and the owner's review of each rule before archive.
 - The core-foundation-principles change: records CORE-0001 to CORE-0009 and CORE-0018 state the first principles, and four capabilities make them checkable: plain-text-wins, markdown-first-authoring, harness-independent-authoring, and lint-enforced-foundations.
@@ -22,7 +23,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 - BenchArtifact ships bench.py again: one config-driven driver for the quick, snapshot, plan, run, grade, judge, and report steps.
 - The AnchorWorkingDirectory rule in core: each shell command chain starts from an absolute path.
 - The declared world: `ontology/rune.ttl` names the deck's kinds with established vocabularies, and `ontology/shapes.ttl` states the first three axioms as SHACL shapes (DECK-0010).
-- Six guarded prek hooks: rumdl, typos, Vale with the STE and Deslop styles, lychee offline, actionlint, and zizmor. Each hook skips when its binary is absent. Two more prove the ontology parses and validate changed spec folders with the openspec CLI.
+- Six guarded prek hooks: rumdl, typos, Vale with the STE and Deslop styles, lychee offline, actionlint, and zizmor. Each hook skips when its binary is absent. Two more prove the ontology parses and validate changed spec directories with the openspec CLI.
 - Repo-local dcg packs: the tool policy redirects grep to rg and find to fd and blocks casual secret reads, and the repository guardrails block bare git push and shell writes into `.provenance/`.
 - The backlog at `docs/todos/todo.txt` uses the todo.txt format. The dated markdown backlog retires.
 - Benchmark tables carry an output-token column: corpus mean per arm and the delta, so efficiency artifacts can show their token effect.

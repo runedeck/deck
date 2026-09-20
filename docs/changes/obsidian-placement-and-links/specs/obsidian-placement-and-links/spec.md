@@ -7,9 +7,9 @@ Keep note identity, roles, and application views consistent as content finds its
 
 ### Requirement: Inspect the current vault before organization
 
-The workflow SHALL inspect the target vault through its supported Obsidian CLI before proposing an organization change.
+The workflow MUST inspect the target vault through its supported Obsidian CLI before proposing an organization change.
 It MUST examine relevant note content, properties, resolved links, backlinks, aliases, and Base filters.
-It SHALL use current vault rules and working examples to interpret those observations.
+It MUST use current vault rules and working examples to interpret those observations.
 It MUST distinguish observed behavior from proposed conventions when templates or notes disagree.
 
 #### Scenario: A folder listing hides a topic relationship
@@ -26,10 +26,10 @@ It MUST distinguish observed behavior from proposed conventions when templates o
 
 ### Requirement: Choose a human-readable home and note role together
 
-For each organized note, the workflow SHALL identify its purpose, note role, and proposed physical home.
+For each organized note, the workflow MUST identify its purpose, note role, and proposed physical home.
 The home MUST follow the vault's established routing and support human browsing.
 Folder placement MUST NOT redefine a topic as a project, resource, or container merely because names match.
-Existing suitable homes SHALL remain valid when only relationships need correction.
+Existing suitable homes MUST remain valid when only relationships need correction.
 
 #### Scenario: Painting work and reusable knowledge
 
@@ -40,11 +40,11 @@ Existing suitable homes SHALL remain valid when only relationships need correcti
 
 ### Requirement: Add meaningful relationships when notes find their place
 
-The workflow SHALL assess relationships as part of each note's placement, creation, or revision.
+The workflow MUST assess relationships as part of each note's placement, creation, or revision.
 It MUST propose links supported by the note's subject, work context, membership, cited sources, or actual dependencies.
-It SHALL reuse existing topic, project, resource, collection, and item identities where they fit.
+It MUST reuse existing topic, project, resource, collection, and item identities where they fit.
 It MUST NOT create links solely from shared folder placement or a goal of increasing graph density.
-It SHALL use existing property meanings instead of introducing a mandatory hierarchy field.
+It MUST use existing property meanings instead of introducing a mandatory hierarchy field.
 
 #### Scenario: A miniature guide uses an existing paint
 
@@ -61,9 +61,9 @@ It SHALL use existing property meanings instead of introducing a mandatory hiera
 ### Requirement: Verify note identity and resolved destinations
 
 The workflow MUST detect ambiguous names and aliases among the affected notes and their intended targets.
-It SHALL verify the actual resolved destination of each affected relationship through Obsidian.
+It MUST verify the actual resolved destination of each affected relationship through Obsidian.
 It MUST NOT treat a resolved link as correct solely because its visible title matches the intended topic.
-Duplicate names SHALL trigger an explicit identity decision before an affected rename, merge, or retarget operation.
+Duplicate names MUST trigger an explicit identity decision before an affected rename, merge, or retarget operation.
 The workflow MUST preserve unrelated identities when resolving that decision.
 
 #### Scenario: Two Miniature Painting notes divide the graph
@@ -75,10 +75,10 @@ The workflow MUST preserve unrelated identities when resolving that decision.
 
 ### Requirement: Respect the relationship rules of existing views
 
-The workflow SHALL inspect the selection rules of every affected Base view.
+The workflow MUST inspect the selection rules of every affected Base view.
 It MUST distinguish direct links, transitive relationships, property membership, and tag membership.
-For a context-dependent view, it SHALL verify the expected embedding context or report view validation as incomplete.
-It SHALL add a direct relationship when that relationship is meaningful and required for intended view membership.
+For a context-dependent view, it MUST verify the expected embedding context or report view validation as incomplete.
+It MUST add a direct relationship when that relationship is meaningful and required for intended view membership.
 It MUST NOT retag records or add unrelated links merely to force them into a view.
 
 #### Scenario: A topic view requires a direct link
@@ -101,9 +101,9 @@ It MUST NOT retag records or add unrelated links merely to force them into a vie
 
 ### Requirement: Preserve knowledge and links during authorized changes
 
-An organization proposal SHALL identify affected notes, destinations, role changes, relationship changes, and expected view membership.
+An organization proposal MUST identify affected notes, destinations, role changes, relationship changes, and expected view membership.
 When applied with authorization, it MUST preserve content, provenance, source assets, and dated work logs.
-It SHALL preserve existing references through supported link updates or unambiguous aliases where appropriate.
+It MUST preserve existing references through supported link updates or unambiguous aliases where appropriate.
 It MUST follow the target vault's review and logging standards and retain enough scoped evidence to reverse its own changes.
 Reversal MUST preserve intervening user edits.
 
@@ -123,9 +123,9 @@ Reversal MUST preserve intervening user edits.
 
 ### Requirement: Clean metadata without losing meaning or view dependencies
 
-The workflow SHALL normalize affected frontmatter using the target vault's current conventions.
+The workflow MUST normalize affected frontmatter using the target vault's current conventions.
 It MUST inspect field consumers before removing empty, obsolete, or apparently unused metadata.
-It SHALL preserve value types, meaningful false or unknown states, source uncertainty, and fields used by schemas or Base views.
+It MUST preserve value types, meaningful false or unknown states, source uncertainty, and fields used by schemas or Base views.
 It MUST NOT infer substantive review or painting completion from formatting or reference availability.
 
 #### Scenario: Noisy artwork frontmatter drives a gallery
@@ -137,10 +137,10 @@ It MUST NOT infer substantive review or painting completion from formatting or r
 
 ### Requirement: Validate files and graph outcomes separately
 
-The workflow SHALL report separate results for saved content, resolved relationships, and affected application views.
+The workflow MUST report separate results for saved content, resolved relationships, and affected application views.
 It MUST verify intended link destinations, relevant backlinks, local assets, and expected Base membership after applied changes.
 A successful file read MUST NOT establish graph correctness or visual correctness.
-Validation SHALL remain scoped to the authorized change and report unrelated defects separately.
+Validation MUST remain scoped to the authorized change and report unrelated defects separately.
 
 #### Scenario: Content succeeds while a topic link is wrong
 
@@ -150,10 +150,10 @@ Validation SHALL remain scoped to the authorized change and report unrelated def
 
 ### Requirement: Report unavailable application evidence without unsafe fallback
 
-When Obsidian CLI evidence is unavailable, the workflow SHALL identify the failed validation layer and preserve completed discovery work.
+When Obsidian CLI evidence is unavailable, the workflow MUST identify the failed validation layer and preserve completed discovery work.
 It MUST NOT present filesystem observations as application verification.
 It MUST NOT invoke the Obsidian GUI executable as a replacement CLI launcher.
-It SHALL follow existing authorization rules for any requested GUI inspection.
+It MUST follow existing authorization rules for any requested GUI inspection.
 
 #### Scenario: The dedicated CLI cannot read the vault
 

@@ -41,7 +41,7 @@ No separate Codex variant is needed because its discovery procedure matches the 
 
 Shared companions pass through the existing assembly pipeline.
 This change does not depend on provider-specific companion replacement or section merging.
-Qualifier folders must not appear as extra skills in the assembled bundle.
+Qualifier directories must not appear as extra skills in the assembled bundle.
 
 ## Provenance
 

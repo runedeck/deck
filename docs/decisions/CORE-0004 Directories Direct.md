@@ -40,7 +40,7 @@ Principles:
 - Optimize for discoverability over categorization: "where would someone look for it?"
 - A well-named directory removes the need for documentation about where each thing goes
 - Directory names in qualifier paths (`claude/`, `opus-4-6/`, `user/`) have functional consequences. A typo silently disables content.
-- Use "directories", not "folders", in docs, commit messages, and conversation
+- Use `directories`, not `folders`, in docs, commit messages, and conversation
 
 A directory name MUST state a routing purpose. A directory that groups by type alone, such as `misc/`, MUST NOT be added.
 

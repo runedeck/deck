@@ -1,0 +1,11 @@
+# A requirement uses MUST, one verb for one meaning (CORE-0019). OpenSpec
+# accepts SHALL, so its validator does not catch this. The rule is on for
+# specification files only.
+extends: substitution
+message: "Use '%s' instead of '%s' in a requirement (CORE-0019)."
+level: error
+ignorecase: false
+scope: sentence
+swap:
+  SHALL NOT: MUST NOT
+  SHALL: MUST

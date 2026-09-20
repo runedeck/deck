@@ -33,7 +33,7 @@ None.
 ## Impact
 
 This change affects only SafetyFirst content, its shared probe helper, its source digest, and focused tests.
-It uses existing provider folders, body replacement, and shared companion handling.
+It uses existing provider directories, body replacement, and shared companion handling.
 It adds no provider, deployment route, CLI feature, or numbered architecture decision.
 
 VCS authorization and denial-recovery policy remain separate readiness work.

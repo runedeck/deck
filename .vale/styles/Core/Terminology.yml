@@ -1,0 +1,11 @@
+# Directories Direct (CORE-0004): the term is directory, never folder.
+# A domain whose product uses the word (Obsidian, a mailbox) turns this
+# rule off for its paths in .vale.ini.
+extends: substitution
+message: "Use '%s' instead of '%s' (CORE-0004)."
+level: warning
+ignorecase: true
+scope: sentence
+swap:
+  folder: directory
+  folders: directories

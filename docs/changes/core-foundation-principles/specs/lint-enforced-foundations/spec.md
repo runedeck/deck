@@ -2,7 +2,7 @@
 
 ### Requirement: Checker Coverage
 
-The checker map MUST name, for every requirement in the plain-text-wins, markdown-first, and harness-independence capabilities, the enforcing check (mdschema, `rune validate`, a commit hook, or a Vale style) or the declared gap. A gap closes with a checker that starts as a warning with a declared baseline.
+The checker map MUST name, for every requirement in the plain-text-wins, markdown-first-authoring, and harness-independent-authoring capabilities, the enforcing check (mdschema, `rune validate`, a commit hook, or a Vale style) or the declared gap. A gap closes with a checker that starts as a warning with a declared baseline.
 
 #### Scenario: Foundation requirement has no checker
 

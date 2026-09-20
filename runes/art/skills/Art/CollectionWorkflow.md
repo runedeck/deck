@@ -41,7 +41,7 @@ Keep third-party artwork rights separate from the collection's own license.
 Link painting plans to their references and inventory instead of copying inconsistent paint lists into several notes.
 For Obsidian, load the shared `Obsidian` skill through [ObsidianWorkflow.md](ObsidianWorkflow.md) when organization or link identity needs work.
 Choose the physical home and meaningful topic, project, resource, and ingredient links together.
-Do not link records solely because they share a folder or gallery.
+Do not link records solely because they share a directory or gallery.
 
 Make related note, asset, coverage, and gallery changes together.
 Keep changes scoped and recoverable. Preserve unrelated user edits.

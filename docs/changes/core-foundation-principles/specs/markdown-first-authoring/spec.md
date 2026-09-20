@@ -34,7 +34,7 @@ Frontmatter MUST stay flat: scalar values and lists of scalars, never nested obj
 
 ### Requirement: Directories Direct
 
-A directory name MUST state routing, never categorization. A qualifier directory name is configuration, and a typo silently disables its content. The term is directory, never folder, in docs, commit messages, and conversation.
+A directory name MUST state routing, never categorization. A qualifier directory name is configuration, and a typo silently disables its content. The term is `directory`, never `folder`, in docs, commit messages, and conversation.
 
 #### Scenario: Content goes into a catch-all directory
 

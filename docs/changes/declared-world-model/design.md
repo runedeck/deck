@@ -58,7 +58,7 @@ Every tool is a single binary. No Java. No Python on the gate path. All hooks sk
 
 ## Spec layout
 
-`docs/` already matches the openspec directory contract: `docs/changes/` holds change folders and `docs/specs/` holds capability specifications. The openspec CLI hard-codes the `openspec/` directory name, so the dotfiles wrapper keeps one symlink per repository under `~/.openspec/<org>/<repo>` that points at `docs/`. The repository carries no extra entry, and `openspec validate --strict` becomes a usable gate.
+`docs/` already matches the openspec directory contract: `docs/changes/` holds change directories and `docs/specs/` holds capability specifications. The openspec CLI hard-codes the `openspec/` directory name, so the dotfiles wrapper keeps one symlink per repository under `~/.openspec/<org>/<repo>` that points at `docs/`. The repository carries no extra entry, and `openspec validate --strict` becomes a usable gate.
 
 ## Portability
 

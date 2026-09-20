@@ -77,7 +77,7 @@ Claude's invocation MUST bound lookup and runtime startup through an outer timeo
 
 Both entrypoints MUST reference the same shared workflow at its assembled relative path.
 The extracted non-discovery policy MUST remain unchanged by this change.
-The assembled bundle MUST contain that companion and MUST exclude provider qualifier folders.
+The assembled bundle MUST contain that companion and MUST exclude provider qualifier directories.
 The Claude source links MUST resolve through an alias to the canonical companion without a copied policy body.
 
 #### Scenario: Source lint resolves the variant links

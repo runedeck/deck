@@ -1,0 +1,9 @@
+# A numbered citation carries no meaning at the point of use (CORE-0009).
+# A reference link whose text is a number, such as [2020][TAG], is valid,
+# so a following bracket or parenthesis ends the match.
+extends: existence
+message: "Cite with a named reference link, not a number (CORE-0009)."
+level: warning
+nonword: true
+raw:
+  - '\[\d+\](?![(\[])'
