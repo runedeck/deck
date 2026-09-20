@@ -83,3 +83,17 @@ The checker map MUST name, for every requirement in the plain-text-wins, markdow
 
 - **WHEN** the checker map reaches Portable Instructions
 - **THEN** it names the declared gap, because portability review stays human judgment
+
+### Requirement: External links are checked on a schedule
+
+A scheduled workflow MUST fetch every external URL in the documents and the runes one time each week. The commit path MUST stay offline, so it checks only local links and fragments. The workflow MUST install its tool through the shared installer, so that one pinned version and one archive digest serve every path.
+
+#### Scenario: External page disappears
+
+- **WHEN** a cited page returns an error on the weekly run
+- **THEN** the Links workflow fails and names the file and the URL
+
+#### Scenario: Commit path has no network
+
+- **WHEN** a commit adds a link to an external page
+- **THEN** the commit stage checks its form only, and the weekly run checks that it resolves

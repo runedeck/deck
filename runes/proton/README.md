@@ -24,7 +24,7 @@ Open the mail project with `opencode` and ask about the inbox. Mutations ask for
 
 ## Requirements
 
-- [rune-cli](https://github.com/runedeck/rune)
+- [rune-cli](https://github.com/runedeck/cli)
 - [Proton Mail Bridge](https://proton.me/mail/bridge)
 
 ## License

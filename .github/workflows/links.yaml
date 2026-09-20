@@ -1,0 +1,34 @@
+name: Links
+
+# Link rot is a function of time, not of commits. The commit path and the
+# quality workflow run lychee offline, so this schedule is the one check
+# that fetches external URLs.
+
+on:
+    schedule:
+        - cron: "17 6 * * 1"
+    workflow_dispatch: {}
+
+permissions:
+    contents: read
+
+jobs:
+    links:
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+              with:
+                  persist-credentials: false
+
+            # The shared installer holds the one pinned lychee version and
+            # its archive digest, so this workflow carries no second copy.
+            - name: Install tools
+              run: bash scripts/install-tools
+
+            - name: Check external links
+              run: |
+                  lychee --no-progress --include-fragments \
+                      --accept '200..=299,429' \
+                      --exclude-path docs/changes/archive \
+                      'README.md' 'docs/**/*.md' 'runes/**/*.md'
