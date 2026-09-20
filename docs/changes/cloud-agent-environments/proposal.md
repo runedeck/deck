@@ -14,7 +14,7 @@ The cloud agent environment installs the deck's pinned tools on every run and pu
 
 ## Capabilities
 
-- `cloud-environment`
+- `cloud-agent-environments`
 
 ## Impact
 
