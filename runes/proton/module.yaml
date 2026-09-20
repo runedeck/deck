@@ -1,0 +1,4 @@
+name: proton
+version: 0.1.0
+description: Operate Proton Mail on a Lumo model through a local mail connector, with a boundary that keeps mail out of other harnesses.
+events: []
