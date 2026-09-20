@@ -28,4 +28,4 @@ The same holds for the model reading a diagnostic. A CLI error that says `proof`
 
 ## Limits
 
-The count is by hand. The procedure gives the searches and the grouping rule, and a person or an agent does the grouping. No tool computes density from the corpus yet. The follow-up in the agentic-ontology tasks names the extractor as the place that could.
+The count is by hand. The procedure gives the searches and the grouping rule, and a person or an agent does the grouping. No tool computes density from the corpus yet. The follow-up in the agentic-ontology-stack tasks names the extractor as the place that could.

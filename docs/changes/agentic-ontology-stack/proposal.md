@@ -20,7 +20,7 @@ The deck declares its world in RDF, but nothing says how a term gets in, how an 
 
 ## Capabilities
 
-- agentic-ontology (new)
+- agentic-ontology-stack (new)
 
 ## Impact
 
