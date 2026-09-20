@@ -27,6 +27,13 @@
 - [ ] 4.1 Publish the validated skill repair on its authorized PR branch and verify its remote head and complete readiness evidence.
 - [ ] 4.2 After owner merge and deployment approval, deploy through Rune and verify the installed skill and companion fingerprints.
 
+## 5. Owner-directed push to the default branch
+
+- [x] 5.1 State the path in the VersionControl Authorization companion and the exception in the RemoteWrites rule
+- [x] 5.2 State the requirement and its four scenarios in the delta specification
+- [ ] 5.3 The guarded push sets `REQUIRE_GATES=1`, so that a missing tool fails the push. It does not set it today, and a skip for a missing tool still prints as a pass
+- [ ] 5.4 A prek hook runs the skill-layer check that the CI `contract` job runs, so the local set equals the CI set
+
 Implementation and verification evidence appears in [verification.md](verification.md).
 The Sol cases and independent recovery replay complete the repair checks.
 The unchecked tasks retain the missing Opus evidence, complete readiness assessment, and post-merge deployment.

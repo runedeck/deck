@@ -37,6 +37,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- The VersionControl skill: the owner can direct a small fix straight to the default branch. The full prek check set must pass locally with `REQUIRE_GATES=1` first, and the push is a fast-forward through the guarded push.
 - The `all` cast selects every rune. It selected only `meta/**` before.
 - Every specification and delta uses MUST, and model-commit-attribution splits off worktree-commit-identity so each capability stays under 150 lines.
 - The VersionControl skill: the primary checkout stays on the default branch, and each work branch gets a worktree.

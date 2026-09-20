@@ -128,3 +128,31 @@ It MUST preserve the distinction between syntax validation and proof of model ex
 
 - **WHEN** the outgoing identity fails the trusted checker
 - **THEN** the pass repairs the declaration or reports the policy conflict without weakening the checker
+
+### Requirement: Owner-directed push to the default branch
+
+An agent MUST NOT push to the default branch unless the owner directs it in the conversation and names the repository. The direction MUST NOT carry over to another repository or to a later task. This path is for a small fix: a correction that adds no capability and changes no requirement.
+
+Before the push, the full check set MUST pass locally through prek on the exact head: the commit stage on all files and the push stage on the outgoing range, both with `REQUIRE_GATES=1`. A hook that was skipped for a missing tool MUST count as a failure. Each check that CI runs and prek lacks MUST also pass locally, or the agent MUST name it as not run.
+
+The push MUST be a fast-forward through the repository's guarded push command. The agent MUST NOT force-push and MUST NOT push an intermediate branch. After the push, the agent MUST read the remote head and the check runs on it, and MUST report them.
+
+#### Scenario: Owner directs a small fix to main
+
+- **WHEN** the owner says to push a fix straight to main of a named repository, and the full prek check set passes with `REQUIRE_GATES=1`
+- **THEN** the agent fast-forwards the default branch through the guarded push and reports the new head and its check runs
+
+#### Scenario: Tool is missing locally
+
+- **WHEN** a hook is skipped because its tool is not installed
+- **THEN** the agent does not push, and it reports the missing tool
+
+#### Scenario: Direction names another repository
+
+- **WHEN** the owner directed direct pushes for one repository, and the agent has a fix for a different one
+- **THEN** the agent does not push to that default branch and asks first
+
+#### Scenario: Change adds a capability
+
+- **WHEN** the change adds a capability or changes a requirement
+- **THEN** the change uses the review ceremony, unless the owner directs this path for that change by name
