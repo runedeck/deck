@@ -433,7 +433,7 @@ class RunBenchmarkTests(unittest.TestCase):
 
         context, staged = RUN.stage_artifact(skill, scratch, control)
 
-        copied = scratch / ".bench-artifact" / skill.name
+        copied = scratch / ".benchmark-all-artifacts" / skill.name
         self.assertEqual(staged, copied)
         self.assertEqual((copied / "asset.bin").read_bytes(), b"\x00\xffartifact")
         self.assertIn(f"Skill directory: {copied}", context.read_text())
@@ -450,7 +450,7 @@ class RunBenchmarkTests(unittest.TestCase):
         context, staged = RUN.stage_artifact(artifact, scratch, control)
 
         self.assertEqual(context, staged)
-        self.assertEqual(staged, scratch / ".bench-artifact" / "agent.md")
+        self.assertEqual(staged, scratch / ".benchmark-all-artifacts" / "agent.md")
         self.assertEqual(staged.read_text(), "AGENT")
 
     def test_skill_directory_rejects_symbolic_links(self):
