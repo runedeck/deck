@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- The core-foundation-principles change: records CORE-0001 to CORE-0009 and CORE-0018 state the first principles, and four capabilities make them checkable: plain-text-wins, markdown-first-authoring, harness-independent-authoring, and lint-enforced-foundations.
 - The architecture-decision-records change: records CORE-0010 to CORE-0012 state the record format, and two checks fail on a shared record id and on a one-sided link between a change and its record. Each added record field has a bare name and an `x-rune-` long form, and the decisions schema now runs on every record.
 - Four casts: `core`, `authoring`, `delivery`, and `prose`. A consumer selects a cast in `.rune` instead of listing paths.
 - The AcceptanceTesting skill in core: one recorded scene per specification scenario with an expectation on every THEN, a failed expectation fails the recording, and the GIF and transcript are filed as the behavior proof (DECK-0015).
