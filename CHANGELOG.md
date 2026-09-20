@@ -57,6 +57,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Fixed
 
+- The decision record shape accepts every uppercase family. It allowed DECK and RUNE only, so all nineteen CORE records failed on the real graph, and the smoke fixture never showed it. A new hook validates the real graph on every ontology, record, or rule commit.
 - The RTK guidance preserves standard-input payloads through passthrough or file arguments.
 - The meta module again includes its required empty defaults file.
 - Stable shell now validates the `rune` skill with the shared meta skill schema.

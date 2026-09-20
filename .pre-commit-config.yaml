@@ -152,10 +152,20 @@ repos:
           # so deleting or breaking a shape fails the hook.
           - id: ontology-syntax
             name: ontology syntax and shapes smoke test
-            entry: sh -c 'if command -v rudof >/dev/null 2>&1; then rudof data ontology/rune.ttl >/dev/null || exit 1; r=$(rudof shacl-validate -s ontology/shapes.ttl -r turtle ontology/smoke/instances.ttl 2>/dev/null); v=$(printf "%s" "$r" | grep -c "sh:Violation"); w=$(printf "%s" "$r" | grep -c "sh:Warning"); [ "$v" -eq 4 ] && [ "$w" -eq 13 ] || { echo "shapes smoke test expected 4 Violations and 13 Warnings, got $v and $w"; exit 1; }; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and rudof is absent"; exit 1; fi'
+            entry: sh -c 'if command -v rudof >/dev/null 2>&1; then rudof data ontology/rune.ttl >/dev/null || exit 1; r=$(rudof shacl-validate -s ontology/shapes.ttl -r turtle ontology/smoke/instances.ttl 2>/dev/null); v=$(printf "%s" "$r" | grep -c "sh:Violation"); w=$(printf "%s" "$r" | grep -c "sh:Warning"); [ "$v" -eq 5 ] && [ "$w" -eq 13 ] || { echo "shapes smoke test expected 5 Violations and 13 Warnings, got $v and $w"; exit 1; }; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and rudof is absent"; exit 1; fi'
             language: system
             pass_filenames: false
             files: ^ontology/.*\.ttl$
+
+          # The smoke fixture proves the shapes. This hook proves the deck:
+          # it exports the real graph and fails on any Violation. A Warning
+          # is declared debt, such as a rule without a verdict, and passes.
+          - id: ontology-graph
+            name: declared world validates the real graph
+            entry: sh -c 'if command -v rudof >/dev/null 2>&1 && command -v rune >/dev/null 2>&1; then g=$(mktemp); rune graph export --source . > "$g" || exit 1; r=$(rudof shacl-validate -s ontology/shapes.ttl -r turtle "$g" 2>/dev/null); rm -f "$g"; v=$(printf "%s" "$r" | rg -c "sh:Violation"); [ "${v:-0}" -eq 0 ] || { printf "%s" "$r" | rg -B2 -A6 "sh:Violation" | rg "focusNode|resultMessage"; echo "the real graph has $v Violations"; exit 1; }; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and rudof or rune is absent"; exit 1; fi'
+            language: system
+            pass_filenames: false
+            files: ^(ontology/|docs/decisions/|runes/.*/rules/)
 
           - id: openspec-validate
             name: openspec validate (strict)

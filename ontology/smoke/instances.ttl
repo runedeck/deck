@@ -62,3 +62,15 @@ id:proof-orphan a rune:Proof .
 id:proof-malformed a rune:Proof ;
     rune:proves "eafc72cc" ;
     rune:proofKind rune:vibes .
+
+# A CORE record is valid: the family is any uppercase word (2026-09-20).
+<https://runedeck.dev/id/CORE-0001> a rune:DecisionRecord ;
+    dcterms:identifier "CORE-0001" ;
+    dcterms:title "Markdown as System Language" ;
+    rune:sourcePath "docs/decisions/CORE-0001 Markdown as System Language.md" .
+
+# A lowercase family is not an identifier: one Violation.
+<https://runedeck.dev/id/core-0002> a rune:DecisionRecord ;
+    dcterms:identifier "core-0002" ;
+    dcterms:title "Lowercase family" ;
+    rune:sourcePath "docs/decisions/core-0002 Lowercase family.md" .

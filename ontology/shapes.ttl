@@ -20,8 +20,8 @@ rune:DecisionRecordShape a sh:NodeShape ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:datatype xsd:string ;
-        sh:pattern "^(DECK|RUNE)-[0-9]{4}$" ;
-        sh:message "A decision record carries exactly one DECK-NNNN or RUNE-NNNN identifier." ;
+        sh:pattern "^[A-Z]+-[0-9]{4}$" ;
+        sh:message "A decision record carries exactly one FAMILY-NNNN identifier, such as DECK-0001 or CORE-0001." ;
     ] ;
     sh:property [
         sh:path dcterms:title ;

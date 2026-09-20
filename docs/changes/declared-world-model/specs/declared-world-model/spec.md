@@ -58,3 +58,12 @@ CI MUST select one commit range for both commit-stage and pre-push checks. Hooks
 
 - **WHEN** CI checks a pull request with an available base commit
 - **THEN** both stages use the same range and repository validators keep their configured behavior
+
+### Requirement: Shapes run on the real graph
+
+A hook MUST export the real artifact graph and validate it against the shapes before a commit that touches the ontology, a decision record, or a rule. A Violation on the real graph MUST fail the hook. The smoke fixture alone MUST NOT count as proof of the deck.
+
+#### Scenario: Shape rejects a record family the deck uses
+
+- **WHEN** a shape's identifier pattern excludes a family that a record on main carries
+- **THEN** the real-graph hook fails and names the record, before the commit
