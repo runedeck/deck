@@ -18,10 +18,10 @@ The stack grew as tools: build skills, an adoption state machine, a bench harnes
 
 ## Capabilities
 
-- artifact-lifecycle (new)
+- lifecycle-stage-evidence (new)
 
 ## Impact
 
-- `docs/changes/stack-architecture/`: this proposal, the design document, the delta specification, and the follow-up tasks.
+- `docs/changes/artifact-lifecycle-architecture/`: this proposal, the design document, the delta specification, and the follow-up tasks.
 - `docs/decisions/`: DECK-0005, DECK-0006, DECK-0007.
 - No rune, cast, command, workflow, or consumer behavior changes.

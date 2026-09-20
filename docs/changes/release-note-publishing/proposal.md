@@ -11,7 +11,7 @@ Pushback outcome: survivor.
 
 Deck collects a `## Release Notes` list in each pull request. No specification or active change publishes those notes.
 
-The `agentic-first-pipelines` change lists `CHANGELOG.md` only as an affected file. The `stack-architecture` change defines ceremony delivery, not release publishing.
+The `agentic-first-pipelines` change lists `CHANGELOG.md` only as an affected file. The `artifact-lifecycle-architecture` change defines ceremony delivery, not release publishing.
 
 This change adds the missing release-publishing capability.
 

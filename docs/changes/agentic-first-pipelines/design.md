@@ -18,7 +18,7 @@ Two outputs leave every pass:
 
 ## Stage map
 
-Each stage names its contract and its instance today. The stack architecture change (`docs/changes/stack-architecture/`) defines the underlying lifecycle. This pipeline is its operating procedure.
+Each stage names its contract and its instance today. The stack architecture change (`docs/changes/artifact-lifecycle-architecture/`) defines the underlying lifecycle. This pipeline is its operating procedure.
 
 | Stage | Contract | Instance today | Status |
 |---|---|---|---|
