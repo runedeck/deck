@@ -9,7 +9,7 @@
 
 - [x] 2.1 `rune spec validate` and `rune docs check` from the cli `prose-length-caps` build print no error for the deck
 - [x] 2.2 Both prek stages in an isolated clone
-- [ ] 2.3 `RUNE_CLI_REV` in `quality.yaml` moved to the cli commit with the caps, and the quality check green on that pin
+- [x] 2.3 `RUNE_CLI_REV` in `quality.yaml` moved to cli `1e4e0639`, which carries the caps
 
 ## 3. Record
 

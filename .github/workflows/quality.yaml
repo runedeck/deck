@@ -105,7 +105,7 @@ jobs:
             # An in-tree checkout would land under the all-files hooks.
             - name: Install the pinned rune
               env:
-                  RUNE_CLI_REV: 64fc7e85fbb9a3e65d95e45ad8825b5ee1cdbeaa
+                  RUNE_CLI_REV: 1e4e063994b8c21449a1d42df9f1357f807a4aaa
               run: |
                   cargo install --quiet --git https://github.com/runedeck/cli --rev "$RUNE_CLI_REV" rune-cli
                   rune --version
