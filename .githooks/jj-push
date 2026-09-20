@@ -4,6 +4,16 @@ set -euo pipefail
 workspace_root=$(jj workspace root)
 cd "$workspace_root"
 
+# The default workspace stays on the default branch with a clean working
+# copy. Work happens in .workspaces/<name>. A push from the default
+# workspace is refused so the primary checkout never carries a branch.
+case "$(jj log --no-graph -r @ -T 'working_copies')" in
+    *default@*)
+        echo "jj push: refused from the default workspace. Push from a workspace under .workspaces/." >&2
+        exit 1
+        ;;
+esac
+
 for argument in "$@"; do
     case "$argument" in
         -b*|--bookmark|--bookmark=*)

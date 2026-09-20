@@ -30,3 +30,9 @@ __pycache__/
 
 # Quarantine: rune repair and reseal move evidence here, never delete it
 .trash/
+
+# Tool state that lives beside the deck and never in it.
+config.yaml
+docs/config.yaml
+codebook.toml
+.specstory/
