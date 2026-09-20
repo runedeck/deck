@@ -76,13 +76,15 @@ The draft metadata MUST record the cutover commit. The workflow MUST apply the o
 
 The selected state MUST delete the file or replace its full contents with one heading and one link to the repository Releases page.
 
-Release automation MUST be the only process that generates repository changelog output. Feature pull requests MUST NOT modify `CHANGELOG.md`.
-
 #### Scenario: The first release migrates existing history
 
 - **WHEN** the repository has no earlier release boundary and the owner selects the cutover commit and file state
 - **THEN** the first draft contains compiled interval notes followed by the exact changelog body and cutover metadata
 - **AND** the workflow applies the selected file state
+
+### Requirement: Release automation owns the changelog
+
+Release automation MUST be the only process that generates repository changelog output. Feature pull requests MUST NOT modify `CHANGELOG.md`.
 
 #### Scenario: A release needs repository changelog output
 
@@ -99,10 +101,6 @@ On each evaluation, the gate MUST refresh the SHA only for a seeded pull request
 
 The gate MUST remove an entry when its pull request closes or stops changing `CHANGELOG.md`. It MUST NOT add or restore debt after seeding.
 
-The gate MUST move to blocking after the baseline is empty. The Skeleton payload MUST omit the file before this move.
-
-Deck MUST also receive the related Copier update before this move.
-
 #### Scenario: An existing feature pull request changes the changelog
 
 - **WHEN** a baseline head changes `CHANGELOG.md` during the warning phase
@@ -112,6 +110,12 @@ Deck MUST also receive the related Copier update before this move.
 
 - **WHEN** a seeded pull request receives a new head that still changes `CHANGELOG.md`
 - **THEN** the gate refreshes that entry to the new head SHA and reports the declared debt
+
+### Requirement: Changelog Gate Moves to Blocking
+
+The gate MUST move to blocking after the baseline is empty. The Skeleton payload MUST omit the file before this move.
+
+Deck MUST also receive the related Copier update before this move.
 
 #### Scenario: The flip condition becomes true
 

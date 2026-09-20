@@ -83,15 +83,23 @@ A required update MUST receive a scoped repair under the existing publication an
 - **WHEN** the platform confirms a conflict on a selected PR
 - **THEN** the pass isolates its repair and applies the existing authorization contract before publication
 
-### Requirement: Reviewer recovery has a bounded budget
+### Requirement: Reset rounds stay distinct from retries
 
 The pass MUST distinguish expected reset rounds from adjudication results and provider failures using the live workflow and terminal evidence.
-It MUST record the head, run, observed failure, and attempt count before another summon.
+A blocked reviewer MUST leave unaffected PRs eligible for continued work.
+
+#### Scenario: A reset round completes as designed
+
+- **WHEN** terminal evidence confirms an expected reset round
+- **THEN** the pass follows the workflow's next review step and keeps the reset distinct from a provider-failure retry
+
+### Requirement: Reviewer recovery has a bounded budget
+
+The pass MUST record the head, run, observed failure, and attempt count before another summon.
 An explicit owner budget MUST control recovery.
 When no budget exists, the pass MUST permit at most one retry for the same unresolved failure on an unchanged head.
 Retrying a known permanent failure MUST require corrective action regardless of the remaining budget.
 After that budget is exhausted, a new attempt MUST require a corrected cause, new diagnostic evidence, or an explicit owner instruction.
-A blocked reviewer MUST leave unaffected PRs eligible for continued work.
 
 #### Scenario: The same unresolved failure repeats
 
@@ -102,11 +110,6 @@ A blocked reviewer MUST leave unaffected PRs eligible for continued work.
 
 - **WHEN** a wrapper fails before provider execution because the CLI rejects an option
 - **THEN** the pass records the incompatibility and requires an authorized corrective action before another attempt
-
-#### Scenario: A reset round completes as designed
-
-- **WHEN** terminal evidence confirms an expected reset round
-- **THEN** the pass follows the workflow's next review step and keeps the reset distinct from a provider-failure retry
 
 #### Scenario: Logs do not reveal the provider cause
 
@@ -133,19 +136,10 @@ It MUST preserve the distinction between syntax validation and proof of model ex
 
 An agent MUST NOT push to the default branch unless the owner directs it in the conversation and names the repository. The direction MUST NOT carry over to another repository or to a later task. This path is for a small fix: a correction that adds no capability and changes no requirement.
 
-Before the push, the full check set MUST pass locally through prek on the exact head: the commit stage on all files and the push stage on the outgoing range, both with `REQUIRE_GATES=1`. A hook that was skipped for a missing tool MUST count as a failure. Each check that CI runs and prek lacks MUST also pass locally, or the agent MUST name it as not run.
-
-The push MUST be a fast-forward through the repository's guarded push command. The agent MUST NOT force-push and MUST NOT push an intermediate branch. After the push, the agent MUST read the remote head and the check runs on it, and MUST report them.
-
 #### Scenario: Owner directs a small fix to main
 
 - **WHEN** the owner says to push a fix straight to main of a named repository, and the full prek check set passes with `REQUIRE_GATES=1`
 - **THEN** the agent fast-forwards the default branch through the guarded push and reports the new head and its check runs
-
-#### Scenario: Tool is missing locally
-
-- **WHEN** a hook is skipped because its tool is not installed
-- **THEN** the agent does not push, and it reports the missing tool
 
 #### Scenario: Direction names another repository
 
@@ -156,3 +150,21 @@ The push MUST be a fast-forward through the repository's guarded push command. T
 
 - **WHEN** the change adds a capability or changes a requirement
 - **THEN** the change uses the review ceremony, unless the owner directs this path for that change by name
+
+### Requirement: Local checks before an owner-directed push
+
+Before the push, the full check set MUST pass locally through prek on the exact head: the commit stage on all files and the push stage on the outgoing range, both with `REQUIRE_GATES=1`. A hook that was skipped for a missing tool MUST count as a failure. Each check that CI runs and prek lacks MUST also pass locally, or the agent MUST name it as not run.
+
+#### Scenario: Tool is missing locally
+
+- **WHEN** a hook is skipped because its tool is not installed
+- **THEN** the agent does not push, and it reports the missing tool
+
+### Requirement: Owner-directed push is a fast-forward
+
+The push MUST be a fast-forward through the repository's guarded push command. The agent MUST NOT force-push and MUST NOT push an intermediate branch. After the push, the agent MUST read the remote head and the check runs on it, and MUST report them.
+
+#### Scenario: Remote moved before the push
+
+- **WHEN** the default branch on the remote no longer matches the head the agent built on
+- **THEN** the agent does not push, and it reports the remote head instead of rebasing onto it silently

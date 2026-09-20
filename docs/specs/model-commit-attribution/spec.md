@@ -39,6 +39,23 @@ For an orphan branch, it MUST inspect every commit reachable from the supplied h
 Target selection MUST prefer `--to-ref`, `PRE_COMMIT_TO_REF`, `GITLEAKS_PUSH_TO_REF`, then `HEAD`.
 It MUST fail when policy or history cannot be read.
 
+#### Scenario: Head attempts to authorize itself
+
+- **WHEN** the head changes the checker or adds an unapproved domain
+- **THEN** the trusted base inputs continue to determine the result
+
+#### Scenario: Outgoing orphan differs from the working copy
+
+- **WHEN** the hook supplies an orphan target through `GITLEAKS_PUSH_TO_REF` and `HEAD` points to the default branch
+- **THEN** validation checks the complete outgoing history against the trusted policy
+
+#### Scenario: Explicit target overrides the hook environment
+
+- **WHEN** the caller supplies `--to-ref` and an environment target
+- **THEN** validation checks the explicit target
+
+### Requirement: Policy domains and parsing
+
 An explicit `model_domains:` list MUST define the approved domains.
 An absent list MUST derive domains only from valid model entries in trusted `authors:`.
 An explicit empty list MUST allow only exact author entries.
@@ -55,25 +72,10 @@ Policy validation MUST run even when the commit range is empty.
 - **WHEN** the base sets `model_domains: []`
 - **THEN** only exact author entries pass
 
-#### Scenario: Head attempts to authorize itself
-
-- **WHEN** the head changes the checker or adds an unapproved domain
-- **THEN** the trusted base inputs continue to determine the result
-
 #### Scenario: Invalid empty range
 
 - **WHEN** the range is empty and the trusted policy is malformed
 - **THEN** validation fails
-
-#### Scenario: Outgoing orphan differs from the working copy
-
-- **WHEN** the hook supplies an orphan target through `GITLEAKS_PUSH_TO_REF` and `HEAD` points to the default branch
-- **THEN** validation checks the complete outgoing history against the trusted policy
-
-#### Scenario: Explicit target overrides the hook environment
-
-- **WHEN** the caller supplies `--to-ref` and an environment target
-- **THEN** validation checks the explicit target
 
 ### Requirement: Contributor separation
 

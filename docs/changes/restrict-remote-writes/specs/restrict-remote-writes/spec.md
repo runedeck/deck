@@ -2,12 +2,21 @@
 
 ### Requirement: Remote writes belong to the owner
 
-An agent MUST NOT run `gh pr merge`, `gh pr close`, `gh pr comment`, `gh pr review`, `gh pr edit --add-label`, `gh pr edit --remove-label`, `gh issue comment`, `gh issue close`, `git push`, `jj git push`, or a review-thread resolution call, and MUST NOT reach the same effects through the API. Two exceptions belong to the invoking agent only, never to a child: the single review label the prompt names, and the repository's correctness review label, applied once to a pull request the agent opened or babysits, after its required checks pass on the current head. The agent MUST NOT repeat a summon while a round is pending. The rule MUST load in every harness where rune installs core rules. Where rune has no rules path yet, the harness's `AGENTS.md` MUST carry the same list until the assembly target exists.
+An agent MUST NOT run `gh pr merge`, `gh pr close`, `gh pr comment`, `gh pr review`, `gh pr edit --add-label`, `gh pr edit --remove-label`, `gh issue comment`, `gh issue close`, `git push`, `jj git push`, or a review-thread resolution call, and MUST NOT reach the same effects through the API. The rule MUST load in every harness where rune installs core rules. Where rune has no rules path yet, the harness's `AGENTS.md` MUST carry the same list until the assembly target exists.
 
 #### Scenario: Routine session finishes a fix
 
 - **WHEN** a session with no workflow skill loaded finishes a code fix
 - **THEN** it runs none of the listed commands and reports what the owner can push
+
+#### Scenario: Harness has no rules path
+
+- **WHEN** rune installs core rules for a harness that has no rules path yet
+- **THEN** that harness's `AGENTS.md` carries the same command list
+
+### Requirement: Two labels are the only remote writes
+
+Two exceptions belong to the invoking agent only, never to a child: the single review label the prompt names, and the repository's correctness review label, applied once to a pull request the agent opened or babysits, after its required checks pass on the current head. The agent MUST NOT repeat a summon while a round is pending.
 
 #### Scenario: Prompt names a review label
 

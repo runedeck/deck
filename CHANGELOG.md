@@ -6,63 +6,83 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
-- The modeled-information-format-alignment change: map ontology terms to the upstream corpus, trial its parts one at a time with a recorded verdict, and take no dependency on a pre-1.0 implementation.
-- DECK-0011 records the review tooling adoption: five open-source tools for the review funnel, with custom code kept for the ceremony only.
-- The Links workflow fetches every external URL one time each week. The commit path stays offline.
-- The Core Vale style: a named citation (CORE-0009), the word directory (CORE-0004), and MUST in a specification (CORE-0019). The last one is an error and runs on specification files only.
-- Writing and conduct rules in core, with the text the owner already runs: CiteSources, LessIsMore, NoEmDash, NoItemCounts, NoAgenticAttribution, AsciiDiagrams, ScenarioTitles, OnePurpose, and AvoidDuplication. The `prose`, `authoring`, and `delivery` casts select them.
-- The spec-change-lifecycle change and CORE-0019: the change layout, testable requirements, one canonical tree, three-word names, archive as acceptance, and the owner's review of each rule before archive.
-- The core-foundation-principles change: records CORE-0001 to CORE-0009 and CORE-0018 state the first principles, and four capabilities make them checkable: plain-text-wins, markdown-first-authoring, harness-independent-authoring, and lint-enforced-foundations.
-- The architecture-decision-records change: records CORE-0010 to CORE-0012 state the record format, and two checks fail on a shared record id and on a one-sided link between a change and its record. Each added record field has a bare name and an `x-rune-` long form, and the decisions schema now runs on every record.
-- Four casts: `core`, `authoring`, `delivery`, and `prose`. A consumer selects a cast in `.rune` instead of listing paths.
-- The AcceptanceTesting skill in core: one recorded scene per specification scenario with an expectation on every THEN, a failed expectation fails the recording, and the GIF and transcript are filed as the behavior proof (DECK-0015).
-- The ContinuousIntegration skill in core: run the repository's commit and push check stages locally and repeatedly, with every tool required, and record each stage's own exit status before a push or a signature (DECK-0013).
-- The AgenticOntology skill in core: admit a term into the declared world before prose uses it, name an artifact from its lifecycle stage, audit the corpus for synonyms, and retire a term by deprecation. The ontology gains `rune:Proof` as prove-stage evidence with its shape (DECK-0014).
-- Five micro-rules in core, extracted from the tuicr workshop brief: CaptureOnTouch, FixAtTheHighestLeverage, ReportFailures, FlagRuleConflicts, and OwnersVoice.
-- The VerifyClaims and Deslop rules in core: evidence before assertion, and slop stripped at write time.
-- The agentic-first-pipelines change: the idea-to-merge flywheel design, DECK-0008 and DECK-0009, the intake-with-pushback, extract-valuable-lessons, and declared-ontology-constraints capabilities, and the IntakeIdea skill.
-- The VersionControl BabysitPR companion runs review pipelines, repairs bot findings, and repeats until the current head is merge-ready.
-- The check-provenance hook: a rune or sidecar edit fails when its provenance subject digest is stale, and `--fix` repairs it.
-- BenchArtifact ships bench.py again: one config-driven driver for the quick, snapshot, plan, run, grade, judge, and report steps.
-- The AnchorWorkingDirectory rule in core: each shell command chain starts from an absolute path.
-- The declared world: `ontology/rune.ttl` names the deck's kinds with established vocabularies, and `ontology/shapes.ttl` states the first three axioms as SHACL shapes (DECK-0010).
-- Six guarded prek hooks: rumdl, typos, Vale with the STE and Deslop styles, lychee offline, actionlint, and zizmor. Each hook skips when its binary is absent. Two more prove the ontology parses and validate changed spec directories with the openspec CLI.
-- Repo-local dcg packs: the tool policy redirects grep to rg and find to fd and blocks casual secret reads, and the repository guardrails block bare git push and shell writes into `.provenance/`.
-- The backlog at `docs/todos/todo.txt` uses the todo.txt format. The dated markdown backlog retires.
-- Benchmark tables carry an output-token column: corpus mean per arm and the delta, so efficiency artifacts can show their token effect.
-- Initial scaffold.
-- BenchArtifact skill: benchmark any skill, rule, or agent against a baseline across models, with per-model aggregation and a self-contained comparison report (DECK-0001).
-- The ReviewMarkers rule in core, adopted through the block-review ceremony.
-- The UseSimplifiedTechnicalEnglish rule in core: all prose follows ASD-STE100, with a bad and good example pair.
-- The SimplifiedTechnicalEnglish skill in core, adopted from two upstreams and merged: the STE rule set, the 39 recurring errors, worked examples, measured samples, and the ste-lint checker.
-- The VersionControl skill in core: commit and staging discipline, push policy, history rewrites, branch cleanup, worktrees, jj colocated flow, hardware-key signing, and platform governance companions.
-- The `ste` skill provides a short Claude command for `SimplifiedTechnicalEnglish`. It stays hidden from model invocation.
-- The RTK skill and the UseEfficientCLI rule in core: prefix shell commands with the rtk proxy for 60 to 90 percent output-token savings, and search selectively with fd, rg, ast-grep, and gh --json field selection.
-- BuildTask prepares provider tasks. ConfigureScanners adds four prompt-only public exposure scanners for Claude and ChatGPT.
+- Map the ontology terms to the upstream corpus, trial each part alone with a recorded verdict, and take no dependency on a pre-1.0 implementation (modeled-information-format-alignment).
+- Adopt five open-source tools for the review funnel and keep custom code for the ceremony only (DECK-0011).
+- Add the Links workflow, which fetches every external URL one time each week and leaves the commit path offline.
+- Add the Core Vale style rule for a named citation (CORE-0009).
+- Add the Core Vale style rule for the word directory (CORE-0004).
+- Add the Core Vale style rule that requires MUST in a specification, an error that runs on specification files only (CORE-0019).
+- Add the writing and conduct rules in core: CiteSources, LessIsMore, NoEmDash, NoItemCounts, NoAgenticAttribution, AsciiDiagrams, ScenarioTitles, OnePurpose, and AvoidDuplication.
+- Select the writing and conduct rules from the `prose`, `authoring`, and `delivery` casts.
+- Add the change layout, testable requirements, one canonical tree, three-word names, archive as acceptance, and owner review of each rule before archive (spec-change-lifecycle, CORE-0019).
+- Add records CORE-0001 to CORE-0009 and CORE-0018 for the first principles (core-foundation-principles).
+- Add four capabilities that make the first principles checkable: plain-text-wins, markdown-first-authoring, harness-independent-authoring, and lint-enforced-foundations.
+- Add records CORE-0010 to CORE-0012 for the decision record format (architecture-decision-records).
+- Add two checks that fail on a shared record id and on a one-sided link between a change and its record (architecture-decision-records).
+- Add a bare name and an `x-rune-` long form to each record field, and run the decisions schema on every record.
+- Add four casts, `core`, `authoring`, `delivery`, and `prose`, so a consumer selects a cast in `.rune` instead of listing paths.
+- Add the AcceptanceTesting skill in core: one recorded scene for each scenario, an expectation on every THEN, and the GIF and transcript filed as behavior proof (DECK-0015).
+- Fail a recording when an expectation fails (DECK-0015).
+- Add the ContinuousIntegration skill in core: run the commit and push check stages locally with every tool required, and record each stage exit status before a push or a signature (DECK-0013).
+- Add the AgenticOntology skill in core: admit a term before prose uses it, name an artifact from its lifecycle stage, audit for synonyms, and retire a term by deprecation (DECK-0014).
+- Add `rune:Proof` to the ontology as prove-stage evidence, with its shape (DECK-0014).
+- Add five micro-rules in core: CaptureOnTouch, FixAtTheHighestLeverage, ReportFailures, FlagRuleConflicts, and OwnersVoice.
+- Add the VerifyClaims and Deslop rules in core: evidence before assertion, and slop stripped at write time.
+- Add the idea-to-merge flywheel design with records DECK-0008 and DECK-0009 (agentic-first-pipelines).
+- Add the intake-with-pushback, extract-valuable-lessons, and declared-ontology-constraints capabilities and the IntakeIdea skill (agentic-first-pipelines).
+- Add the VersionControl BabysitPR companion, which runs review pipelines, repairs bot findings, and repeats until the head is merge-ready.
+- Add the check-provenance hook: a rune or sidecar edit fails when its provenance subject digest is stale, and `--fix` repairs it.
+- Restore bench.py in BenchArtifact as one config-driven driver for the quick, snapshot, plan, run, grade, judge, and report steps.
+- Add the AnchorWorkingDirectory rule in core: each shell command chain starts from an absolute path.
+- Add `ontology/rune.ttl`, which names the deck kinds with established vocabularies (DECK-0010).
+- Add `ontology/shapes.ttl`, which states the first three axioms as SHACL shapes (DECK-0010).
+- Add six guarded prek hooks: rumdl, typos, Vale with the STE and Deslop styles, lychee offline, actionlint, and zizmor. Each hook skips when its binary is absent.
+- Add a prek hook that proves the ontology parses.
+- Add a prek hook that validates changed spec directories with the openspec CLI.
+- Add a repo-local dcg tool policy that redirects grep to rg and find to fd and blocks casual secret reads.
+- Add repo-local dcg guardrails that block bare git push and shell writes into `.provenance/`.
+- Add the backlog at `docs/todos/todo.txt` in the todo.txt format.
+- Add an output-token column to benchmark tables with the corpus mean for each arm and the delta.
+- Add the initial scaffold.
+- Add the BenchArtifact skill to benchmark any skill, rule, or agent against a baseline across models, with per-model aggregation and a self-contained report (DECK-0001).
+- Add the ReviewMarkers rule in core through the block-review ceremony.
+- Add the UseSimplifiedTechnicalEnglish rule in core: all prose follows ASD-STE100, with a bad and good example pair.
+- Add the SimplifiedTechnicalEnglish skill in core from two merged upstreams: the STE rule set, the 39 recurring errors, worked examples, measured samples, and the ste-lint checker.
+- Add the VersionControl skill in core: commit and staging discipline, push policy, history rewrites, branch cleanup, worktrees, jj colocated flow, and hardware-key signing.
+- Add the VersionControl platform governance companions, `GitHub.md` for `gh` and `GitLab.md` for `glab`.
+- Add the `ste` skill, a short Claude command for `SimplifiedTechnicalEnglish` that stays hidden from model invocation.
+- Add the RTK skill in core: prefix shell commands with the rtk proxy for 60 to 90 percent output-token savings.
+- Add the UseEfficientCLI rule in core: search selectively with fd, rg, ast-grep, and gh --json field selection.
+- Add the BuildTask skill, which prepares provider tasks.
+- Add the ConfigureScanners skill with four prompt-only public exposure scanners for Claude and ChatGPT.
 
 ### Changed
 
-- The VersionControl skill: the owner can direct a small fix straight to the default branch. The full prek check set must pass locally with `REQUIRE_GATES=1` first, and the push is a fast-forward through the guarded push.
-- The `all` cast selects every rune. It selected only `meta/**` before.
-- Every specification and delta uses MUST, and model-commit-attribution splits off worktree-commit-identity so each capability stays under 150 lines.
-- The VersionControl skill: the primary checkout stays on the default branch, and each work branch gets a worktree.
-- The VersionControl skill: a landing checklist and a supersession check for dirty worktrees.
-- The VersionControl skill: a jj colocated repository uses jj workspaces and the repository jj push alias.
-- The VersionControl skill: no generation footer, tool badge, or session link in commit messages and pull request bodies.
-- The spec waiver label is `ignore:spec`, matching the `ignore:` family every runedeck repository uses. `spec:none` retires.
-- AdoptArtifact keeps block verdicts in temporary CLI sessions and commits only source-level provenance sidecars (DECK-0002).
-- The authorship check reads separate author and trailer lists from `authors.yaml`. A trailer attribution can no longer validate an author field.
-- BuildSkill defers its evaluation step to BenchArtifact. The loop, agent templates, review viewer, and evaluation schemas moved there.
-- The core skill schema now accepts `targets`, `disable-model-invocation`, and `user-invocable`.
-
-### Fixed
-
-- The decision record shape accepts every uppercase family. It allowed DECK and RUNE only, so all nineteen CORE records failed on the real graph, and the smoke fixture never showed it. A new hook validates the real graph on every ontology, record, or rule commit.
-- The RTK guidance preserves standard-input payloads through passthrough or file arguments.
-- The meta module again includes its required empty defaults file.
-- Stable shell now validates the `rune` skill with the shared meta skill schema.
-- The skill hook validates each entrypoint against its nearest `.mdschema`.
+- Allow the owner to direct a small fix straight to the default branch in VersionControl.
+- Require the full prek check set locally with `REQUIRE_GATES=1` and a fast-forward guarded push for a direct fix.
+- Change the `all` cast to select every rune. It selected only `meta/**` before.
+- Change every specification and delta to use MUST.
+- Split worktree-commit-identity out of model-commit-attribution so each capability stays under 150 lines.
+- Change VersionControl so the primary checkout stays on the default branch and each work branch gets a worktree.
+- Document a landing checklist and a supersession check for dirty worktrees in VersionControl.
+- Change VersionControl so a jj colocated repository uses jj workspaces and the repository jj push alias.
+- Refuse a generation footer, tool badge, or session link in commit messages and pull request bodies (VersionControl).
+- Rename the spec waiver label from `spec:none` to `ignore:spec`, matching the `ignore:` family every runedeck repository uses.
+- Change AdoptArtifact to keep block verdicts in temporary CLI sessions and commit only source-level provenance sidecars (DECK-0002).
+- Change the authorship check to read separate author and trailer lists from `authors.yaml`, so a trailer attribution no longer validates an author field.
+- Move the BuildSkill evaluation step to BenchArtifact, with the loop, agent templates, review viewer, and evaluation schemas.
+- Change the core skill schema to accept `targets`, `disable-model-invocation`, and `user-invocable`.
 
 ### Removed
 
-- Legacy per-block review ledgers from BuildSkill and ReviewMarkers.
+- Remove the legacy per-block review ledgers from BuildSkill and ReviewMarkers.
+- Remove the dated markdown backlog.
+
+### Fixed
+
+- Fix the decision record shape to accept every uppercase family. It allowed DECK and RUNE only, so all nineteen CORE records failed on the real graph.
+- Add a hook that validates the real graph on every ontology, record, or rule commit.
+- Fix the RTK guidance to preserve standard-input payloads through passthrough or file arguments.
+- Fix the meta module to include its required empty defaults file.
+- Fix stable shell to validate the `rune` skill with the shared meta skill schema.
+- Fix the skill hook to validate each entrypoint against its nearest `.mdschema`.
