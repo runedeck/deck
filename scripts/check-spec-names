@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+"""Check change ids and capability names under docs/.
+
+A change id is a directory name under docs/changes/. A capability name
+is a directory name under docs/changes/<id>/specs/ or docs/specs/. Each
+name has at least three hyphen-separated words. A change with two or
+more capabilities gives each a name that differs from the change id.
+Archived changes under docs/changes/archive/ keep their historical names.
+"""
+import pathlib
+import sys
+
+MIN_WORDS = 3
+
+
+def word_count(name):
+    return len([part for part in name.split("-") if part])
+
+
+def check(root):
+    errors = []
+    changes = root / "docs" / "changes"
+    specs = root / "docs" / "specs"
+    for change in sorted(p for p in changes.iterdir() if p.is_dir()):
+        if change.name == "archive" or change.name.startswith("."):
+            continue
+        if word_count(change.name) < MIN_WORDS:
+            errors.append(f"{change}: change id has fewer than {MIN_WORDS} words")
+        caps = sorted(p for p in (change / "specs").glob("*") if p.is_dir())
+        for cap in caps:
+            if word_count(cap.name) < MIN_WORDS:
+                errors.append(f"{cap}: capability name has fewer than {MIN_WORDS} words")
+            if len(caps) > 1 and cap.name == change.name:
+                errors.append(f"{cap}: capability shares the change id in a change with several capabilities")
+    if specs.is_dir():
+        for cap in sorted(p for p in specs.iterdir() if p.is_dir()):
+            if word_count(cap.name) < MIN_WORDS:
+                errors.append(f"{cap}: capability name has fewer than {MIN_WORDS} words")
+    return errors
+
+
+def main():
+    root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else ".")
+    errors = check(root)
+    for line in errors:
+        print(line)
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

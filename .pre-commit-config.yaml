@@ -196,6 +196,16 @@ repos:
             pass_filenames: false
             stages: [pre-push]
 
+          # A change id or capability name with fewer than three words is
+          # cryptic. The check runs on every docs/ edit until rune spec
+          # doctor carries the same rule.
+          - id: check-spec-names
+            name: spec and change names
+            entry: python3 scripts/check-spec-names
+            language: system
+            pass_filenames: false
+            files: ^docs/(changes|specs)/
+
           # A rune edit must carry its refreshed provenance subject digest,
           # so a stale sidecar fails before the weekly audit finds it.
           - id: check-provenance
