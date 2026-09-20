@@ -19,7 +19,7 @@ A candidate that passes every check can still do the wrong thing. The specificat
 
 ## Capabilities
 
-- behavior-proof (new)
+- prove-each-scenario (new)
 
 ## Impact
 
