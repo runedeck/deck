@@ -20,7 +20,8 @@ permissions:
 jobs:
     quality:
         runs-on: ubuntu-latest
-        timeout-minutes: 20
+        # The pinned rune build takes several minutes on the runner.
+        timeout-minutes: 30
         steps:
             - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
               with:
@@ -97,6 +98,17 @@ jobs:
             # REQUIRE_GATES hooks demand.
             - name: Install tools
               run: bash scripts/install-tools
+
+            # The ontology-graph hook runs `rune graph export` under
+            # REQUIRE_GATES. The runner has cargo; the cli is pinned by
+            # commit, the same way the contract job pins its candidate.
+            # An in-tree checkout would land under the all-files hooks.
+            - name: Install the pinned rune
+              env:
+                  RUNE_CLI_REV: 64fc7e85fbb9a3e65d95e45ad8825b5ee1cdbeaa
+              run: |
+                  cargo install --quiet --git https://github.com/runedeck/cli --rev "$RUNE_CLI_REV" rune-cli
+                  rune --version
 
             # Select the event range once so both prek stages inspect the same
             # change. Inspect all files only when no base commit exists.
