@@ -1,3 +1,9 @@
+---
+adr: docs/changes/portable-safety-discovery/adr.md
+status: proposed
+decisions: ["Portable discovery with a shared guard procedure"]
+---
+
 # Portable SafetyFirst discovery
 
 ## Why

@@ -17,7 +17,7 @@
 
 ## 4. Verification
 
-- [ ] 4.1 `rune validate` passes on the deck
+- [x] 4.1 `rune validate` passes on the deck (131 checked, 0 errors, 2026-09-20)
 - [x] 4.2 No path under BuildSkill references the removed directories
 - [ ] 4.3 A rule benchmark runs end to end (ReviewMarkers with and without the rule) and produces the per-model report
 

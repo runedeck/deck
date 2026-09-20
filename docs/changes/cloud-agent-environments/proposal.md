@@ -1,3 +1,8 @@
+---
+status: proposed
+decisions: []
+---
+
 # Cloud environment
 
 ## Why

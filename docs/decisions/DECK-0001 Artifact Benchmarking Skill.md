@@ -4,7 +4,7 @@ description: "Extract the evaluation loop from BuildSkill into a standalone Benc
 type: adr
 category: "architecture"
 tags: ["benchmarking", "evaluation", "skills"]
-status: proposed
+status: accepted
 created: 2026-08-13
 updated: 2026-08-13
 author: "Martin Zeman"
@@ -15,6 +15,7 @@ accountable: []
 consulted: []
 informed: []
 upstream: []
+change: benchmark-all-artifacts
 ---
 
 # Artifact Benchmarking Skill

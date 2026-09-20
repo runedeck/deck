@@ -18,6 +18,7 @@ accountable: ["@N4M3Z"]
 consulted: []
 informed: []
 upstream: []
+change: benchmark-all-artifacts
 ---
 
 # Three-Metric Verdict and Cross-Vendor Judging

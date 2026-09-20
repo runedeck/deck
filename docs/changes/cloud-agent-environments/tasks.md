@@ -10,3 +10,7 @@
 ## 2. Verification
 
 - [x] 2.1 Run the installer regression suite in the quality workflow with local assets and isolated paths
+
+## 3. In-house environment
+
+- [ ] 3.1 A KVM-hosted agent environment installs the pinned tools and pushes under a roster identity, as the Cursor cloud one does

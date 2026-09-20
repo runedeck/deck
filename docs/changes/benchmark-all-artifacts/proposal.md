@@ -1,6 +1,7 @@
 ---
 adr: "docs/decisions/DECK-0001 Artifact Benchmarking Skill.md"
-status: implemented
+status: accepted
+decisions: ["DECK-0001 Artifact Benchmarking Skill", "DECK-0002 Benchmark Execution Ladder", "DECK-0003 Three-Metric Verdict and Cross-Vendor Judging"]
 ---
 
 # Bench Artifact

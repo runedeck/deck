@@ -4,7 +4,7 @@ description: "Align shared skill instructions and rules with layered validation.
 type: adr
 category: deck
 tags: [skills, portability, authoring]
-status: proposed
+status: accepted
 created: 2026-09-11
 updated: 2026-09-11
 author: "@N4M3Z"
@@ -14,6 +14,7 @@ accountable: ["@N4M3Z"]
 consulted: ["gpt-6-astra"]
 informed: []
 upstream: []
+change: portable-skill-authoring
 ---
 
 # Keep shared skill procedures independent of harness syntax
