@@ -1,6 +1,8 @@
 ---
 adr: "docs/decisions/DECK-0004 Temporary Adoption State.md"
-status: proposed
+status: accepted
+decisions:
+    - DECK-0004 Temporary Adoption State
 ---
 
 # Adopt Session State

@@ -4,12 +4,13 @@ description: "Keep block verdicts in temporary rune sessions and commit only sou
 type: adr
 category: "architecture"
 tags: ["adoption", "provenance", "review"]
-status: proposed
+status: accepted
 created: 2026-08-13
 updated: 2026-08-13
 author: "Martin Zeman"
 project: "deck"
 related: []
+change: adopt-session-state
 responsible: []
 accountable: []
 consulted: []

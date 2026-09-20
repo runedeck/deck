@@ -41,3 +41,12 @@ Authorship validation MUST apply the context normalization and trusted-policy co
 
 - **WHEN** a commit uses `claude-opus-51m` or `claude-fable-51m`
 - **THEN** validation compares it as `claude-opus-5` or `claude-fable-5`
+
+### Requirement: Context suffix normalization
+
+Authorship validation MUST ignore a trailing `1m` context suffix after a model version digit in display model IDs and email local parts.
+
+#### Scenario: One-million-context identity
+
+- **WHEN** a commit uses `claude-opus-51m` or `claude-fable-51m`
+- **THEN** authorship validation compares it as `claude-opus-5` or `claude-fable-5`
