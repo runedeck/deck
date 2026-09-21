@@ -11,7 +11,9 @@ repos:
           - id: trailing-whitespace
             exclude: '(^|/)\.provenance/'
           - id: check-yaml
-            exclude: ^templates/
+            # ai-tells is vendored upstream YAML; three files end with a
+            # stray document marker that Vale accepts.
+            exclude: ^(templates/|\.vale/styles/ai-tells/)
           - id: check-json
 
     - repo: local

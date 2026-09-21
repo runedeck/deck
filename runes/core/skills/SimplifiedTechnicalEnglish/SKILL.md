@@ -36,7 +36,7 @@ Structural rules, numbered per ASD-STE100 Issue 9:
 - Use one name for one thing (1.11, 9.4). Pick one verb for one action and reuse it. Never rotate `check`, `verify`, and `confirm`.
 - Use the short common word: `use`, not `utilize` or `leverage`, and `before`, not `prior to`. Do not use marketing adjectives. [references/recurring-errors.md](references/recurring-errors.md) carries the standard's own list of the most frequent writer errors.
 - Prefer literal verbs. Treat `bake`, `land`, `orchestrate`, `scaffold`, `ship`, `surface`, and `wire up` as soft findings when the model uses them as verbs. The checker skips literal noun uses after a determiner or preposition.
-- Do not use jargon nouns such as `gate`, `arm`, or `knob` for software concepts. The checker counts them in any position.
+- A jargon noun such as `gate`, `arm`, or `knob` is allowed once, set in italics and defined at first use. Do not repeat it in a paragraph. The checker no longer counts these words. The Vale rules STE.Overused* and Core.UndefinedTerm do.
 - Answer the question that the prompt asked. Do not add detail that the prompt did not request.
 
 Guards that outrank every rule above:

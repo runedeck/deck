@@ -10,8 +10,9 @@ extend-exclude = [
     ".opencode",
     "**/THIRD_PARTY_NOTICES.md",
     "runes/core/skills/SimplifiedTechnicalEnglish/scripts",
-    # Vendored third-party style package with regex word stems.
+    # Vendored third-party style packages with regex word stems.
     ".vale/styles/Deslop",
+    ".vale/styles/ai-tells",
 ]
 
 [default]

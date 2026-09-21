@@ -33,7 +33,7 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(result["config_sha256"], self.digest)
 
     def test_software_metaphors_are_soft_findings(self):
-        result = STE_LINT.lint("Bake the value, gate the merge, and land the change.")
+        result = STE_LINT.lint("Bake the value, orchestrate the merge, and land the change.")
 
         self.assertEqual(result["violations"]["banned_word"], 3)
         self.assertEqual(result["severity_totals"], {"hard": 0, "soft": 3})
@@ -48,11 +48,13 @@ class ConfigTests(unittest.TestCase):
                 result = STE_LINT.lint(text)
                 self.assertEqual(result["violations"]["banned_word"], 0)
 
-    def test_jargon_nouns_count_as_banned_words(self):
+    def test_jargon_nouns_pass_once(self):
+        # One use is allowed. Overuse and a missing definition are Vale's
+        # job (STE.Overused*, Core.UndefinedTerm), not this checker's.
         for text in ("The release gate is open.", "Turn the knob on the treatment arm."):
             with self.subTest(text=text):
                 result = STE_LINT.lint(text)
-                self.assertGreaterEqual(result["violations"]["banned_word"], 1)
+                self.assertEqual(result["violations"]["banned_word"], 0)
 
     def test_verb_position_counts_verb_only_words(self):
         for text in (

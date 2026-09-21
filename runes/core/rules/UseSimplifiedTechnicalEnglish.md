@@ -12,7 +12,7 @@ Use a verb for an action, not a noun. Do not use phrasal verbs, semicolons, cont
 
 Prefer literal verbs. Strongly discourage `bake`, `land`, `orchestrate`, `scaffold`, `ship`, `surface`, and `wire up` as verbs. Literal noun uses stay valid.
 
-Do not use jargon nouns such as `gate`, `arm`, or `knob` for software concepts.
+A jargon noun such as `gate`, `arm`, or `knob` is allowed once, set in italics and defined at first use. Do not repeat it in a paragraph: name the check, file, or flag it stands for.
 
 Answer the question that the prompt asked. Do not add detail that the prompt did not request.
 
