@@ -1,0 +1,14 @@
+
+# Scenario: Reader pauses a proof
+# Space during the second scene stops playback, and the page names that scene by number and title.
+❯ node pause.js
+playing: false
+Scene 2 of 5: The pin admits the key that carries it
+
+# Scenario: Pull request shows the proof
+# A pull request body renders images only, so it embeds the GIF that stays committed beside the cast.
+❯ ls docs/proofs/trusted-key-anchor | grep -E 'proof\.(gif|cast)'
+proof.cast
+proof.gif
+❯ grep -o 'Keep the GIF for surfaces that render images only, such as a pull request body' /Users/N4M3Z/Developer/runedeck/deck/.workspaces/proofs-group1/runes/core/skills/AcceptanceTesting/Recording.md
+Keep the GIF for surfaces that render images only, such as a pull request body

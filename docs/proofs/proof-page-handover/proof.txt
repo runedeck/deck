@@ -1,0 +1,23 @@
+
+# Scenario: Proof finished
+# After the recording and the transcript check, the generator builds the page; the handover is its path.
+❯ python3 proof-page.py --title 'Pinned Signers' --player vendor/cast-player.js --cast trusted-key-anchor=docs/proofs/trusted-key-anchor/proof.cast --caption trusted-key-anchor='KEYS pins a signer by fingerprint' --meta trusted-key-anchor='skeleton 2b5762ef' --out proof-set.html
+proof-set.html (1 casts)
+❯ grep -c 'CastPlayer.attach(document' proof-set.html
+1
+
+# Scenario: Owner asks where the proof is
+# The skill's answer is the page path, never the GIF alone.
+❯ grep -o 'A message that names the GIF alone is an unfinished handover' /Users/N4M3Z/Developer/runedeck/deck/.workspaces/proofs-group1/runes/core/skills/AcceptanceTesting/SKILL.md
+A message that names the GIF alone is an unfinished handover
+
+# Scenario: Cast with five scenes
+# The scene list comes from the cast's own Scenario lines, in playback order.
+❯ grep -o '<li>[^<]*' proof-set.html | sed 's/<li>//'
+KEYS names signers by fingerprint
+The pin admits the key that carries it
+Fetched bytes that do not carry the pin are dropped
+Malformed lines fail closed
+verify-seal builds its keyring through the resolver
+❯ grep -o '<li>' proof-set.html | wc -l | tr -d ' '
+5

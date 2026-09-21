@@ -8,7 +8,8 @@
 
 - [x] 2.1 `rune validate --skill-layers --source runes/core/skills/AcceptanceTesting` and both prek stages
 - [x] 2.2 The workshop proof page of 2026-09-20 plays its three casts through the player
+- [x] 2.3 Recorded proof `docs/proofs/cast-player-in-proofs/`: pause and scene label under node, GIF beside the cast
 
 ## 3. Record
 
-- [ ] 3.1 Archive moves `adr.md` to `docs/decisions/` with the next free DECK number
+- [x] 3.1 Archive moves `adr.md` to `docs/decisions/` with the next free DECK number

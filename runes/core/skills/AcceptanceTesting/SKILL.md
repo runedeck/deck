@@ -52,7 +52,7 @@ echo "record-exit=$?"
 ### File the proof
 
 1. Commit the cast, the GIF, and the transcript under `docs/proofs/<change>/`. Embed the GIF in the pull request's Testing section with the commit id it proves.
-2. State which scenarios have scenes. A scenario without one is listed as unproven.
+2. State which scenarios have scenes. A scenario without one is listed as unproven. A change with no user-visible behavior states that no behavior proof applies.
 3. Record the proof in the receipt shape the ContinuousIntegration skill gives, with the same candidate commit, and add the scenario list, `record-exit`, and the transcript digest. This is the `rune:Proof` of kind `behavior`.
 4. Hand over a page, not a GIF path. Build it with [proof-page.py](scripts/proof-page.py): one `--cast name=path` per proof, a `--caption` and `--meta` per name, and `--player` pointing at the html-tools `runtime/cast-player.js`. The page plays each cast with pause, a scrubber, and the scene under the playhead, and lists the scenes beside it. [Recording.md](Recording.md) names where the page lives. Give the owner the page's absolute path. A message that names the GIF alone is an unfinished handover.
 

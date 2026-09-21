@@ -9,8 +9,9 @@
 ## 2. Verification
 
 - [x] 2.1 The generator builds a page from the trusted-key-anchor cast and lists its five scenes in order
-- [ ] 2.2 `rune validate --skill-layers --source runes/core/skills/AcceptanceTesting` and both prek stages
+- [x] 2.2 `rune validate --skill-layers --source runes/core/skills/AcceptanceTesting` and both prek stages (landed as deck `0ec32f27`)
+- [x] 2.3 Recorded proof `docs/proofs/proof-page-handover/`: the generator on a five-scene cast, the handover line in the skill
 
 ## 3. Record
 
-- [ ] 3.1 Archive under the governing ADR (`cast-player-in-proofs`), no new ADR
+- [x] 3.1 Archive under the governing ADR (`cast-player-in-proofs`), no new ADR

@@ -14,7 +14,7 @@
 
 ## 3. Follow-up
 
-- [ ] 3.1 Record the first proof for a cli change and file it under `docs/proofs/`
+- [x] 3.1 Record the first proof for a cli change and file it under `docs/proofs/` (cli carries four. This change's own proof is `docs/proofs/prove-each-scenario/`, five scenes, the merge-warning scenario recorded as unproven)
 - [ ] 3.2 Extract filed proofs as `rune:Proof` instances of kind `behavior` once `rune graph export` exists
 - [ ] 3.3 Add asciinema, agg, and ffmpeg to `scripts/install-tools` once a Linux runner records proofs in CI
 - [ ] 3.4 Close #64 when this change merges

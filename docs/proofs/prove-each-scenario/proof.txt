@@ -1,0 +1,35 @@
+
+# Scenario: Implementation is finished
+# One scene per scenario, one expectation per THEN: the driver prints each scene as it runs it.
+❯ bash passing.sh 2>&1 | grep -c 'Scenario: '
+2
+
+# Scenario: Expectation misses
+# A THEN that does not match fails the recording: the driver exits nonzero and names the miss.
+❯ bash failing.sh > out.txt 2>&1; echo "exit $?"
+exit 1
+❯ grep -i 'expect' out.txt | head -1
+expectation failed in scenario "Greeting prints": /goodbye/
+
+# Scenario: Proof is filed
+# A filed proof carries the recording, the transcript, and a record with the exit status and the transcript digest. The skeleton's trusted-key-anchor proof is one.
+❯ ls docs/proofs/trusted-key-anchor
+README.md
+proof.cast
+proof.gif
+proof.txt
+record.sh
+❯ grep -E 'exit 0|digest' docs/proofs/trusted-key-anchor/README.md
+`docs/proofs/driver.sh`. `proof.cast` is its recording on 2026-09-21, exit 0. `proof.txt` is the transcript
+Transcript digest (`shasum -a 256 proof.txt`): `044ce9761172e5c85433caad5888ec21361836069f0dd7699d464722e1c2316c`
+
+# Scenario: Change has no behavior
+# The skill tells the pull request to say so when no behavior proof applies.
+❯ grep -o 'no behavior proof applies' /Users/N4M3Z/Developer/runedeck/deck/.workspaces/proofs-group1/runes/core/skills/AcceptanceTesting/SKILL.md
+no behavior proof applies
+
+# Scenario: Scenario has no proof at merge
+# Unproven: the warning merge check is task 3.5 of the change and does not exist yet. This scene records the gap.
+❯ ls /Users/N4M3Z/Developer/runedeck/deck/.workspaces/proofs-group1/.github/workflows | grep -c 'proof' || echo 'no proof check workflow'
+0
+no proof check workflow
