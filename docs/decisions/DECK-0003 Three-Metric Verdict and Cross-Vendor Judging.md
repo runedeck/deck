@@ -36,9 +36,9 @@ A single score hides the failure modes that matter. A model can drive a style ch
 
 ## Considered Options
 
-1. **One combined score** — a single number per run, simple to rank, hides every trade-off
-2. **Checker density with validity filter** — assertions gate validity, density decides, prose damage invisible
-3. **Three metrics, cross-vendor judging** — separate signals read together, judges assigned across vendors
+1. **One combined score**: a single number per run, simple to rank, hides every trade-off
+2. **Checker density with validity filter**: assertions gate validity, density decides, prose damage invisible
+3. **Three metrics, cross-vendor judging**: separate signals read together, judges assigned across vendors
 
 ## Decision Outcome
 
@@ -59,5 +59,5 @@ An artifact earns its place when its claimed behavior improves, assertions hold,
 
 ## More Information
 
-- [DECK-0002 Benchmark Execution Ladder](DECK-0002%20Benchmark%20Execution%20Ladder.md) — where each metric runs
-- `runes/core/skills/BenchArtifact/references/schemas.md` — the judgment record shape
+- [DECK-0002 Benchmark Execution Ladder](DECK-0002%20Benchmark%20Execution%20Ladder.md): where each metric runs
+- `runes/core/skills/BenchArtifact/references/schemas.md`: the judgment record shape

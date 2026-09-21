@@ -68,11 +68,11 @@ gh api repos/OWNER/REPO/rulesets/RULESET_ID --method DELETE
 - `OrganizationAdmin`: Use 0 for an organization-wide administrator bypass.
 - `Team`: Use the team database ID. Find it with `gh api orgs/ORG/teams/SLUG`.
 
-`User` is **not** a valid actor type — use `RepositoryRole` instead.
+`User` is **not** a valid actor type, use `RepositoryRole` instead.
 
 ### Legacy Branch Protection
 
-Still works but rulesets are preferred. The legacy endpoint returns 404 when only rulesets are configured — check rulesets first.
+Still works but rulesets are preferred. The legacy endpoint returns 404 when only rulesets are configured: check rulesets first.
 
 ```bash
 gh api repos/OWNER/REPO/branches/main/protection

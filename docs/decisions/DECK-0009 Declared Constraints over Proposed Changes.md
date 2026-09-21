@@ -39,9 +39,9 @@ Agents hallucinate entities and then everyone verifies by hand. Comments go out 
 
 ## Considered Options
 
-1. **Prose contracts only** — keep lifecycle rules in specifications and enforce them in review.
-2. **Full semantic-web stack now** — RDF store, OWL ontology, reasoner, from day one.
-3. **Declared constraints, grown from existing schemas** — state the artifact graph and its axioms in the deck, map metadata to public vocabularies, and build small deterministic checkers per constraint. Adopt heavier reasoning only when a constraint needs it.
+1. **Prose contracts only**: keep lifecycle rules in specifications and enforce them in review.
+2. **Full semantic-web stack now**: RDF store, OWL ontology, reasoner, from day one.
+3. **Declared constraints, grown from existing schemas**: state the artifact graph and its axioms in the deck, map metadata to public vocabularies, and build small deterministic checkers per constraint. Adopt heavier reasoning only when a constraint needs it.
 
 ## Decision Outcome
 

@@ -8,7 +8,7 @@ Deltas are treatment minus baseline within one model. Lower lint density is bett
 
 | Model | Verdict | Pairs | Assertions | Lint /100w | Tokens | Clarity | Fluency | Directness |
 |---|---|---:|---|---|---|---:|---:|---:|
-| gpt-5.6-sol | No material improvement | 3 | 1.00 → 1.00 | 0.00 → 0.00 | — → — | — | — | — |
+| gpt-5.6-sol | No material improvement | 3 | 1.00 → 1.00 | 0.00 → 0.00 | (→) | (|) |, |
 
 Verdict rule: facts must hold, findings must fall, and blind preference must stay acceptable.
 Dimension settings: clarity: trade-off below 0.4, win above 0.5, weight 1 · fluency: trade-off below 0.4, win above 0.5, weight 0.5 · directness: trade-off below 0.4, win above 0.5, weight 1.

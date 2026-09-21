@@ -39,9 +39,9 @@ The stack grew one tool at a time: build skills, an adoption state machine, a be
 
 ## Considered Options
 
-1. **Tool-centric documentation** — describe each tool well and leave the pipeline implicit.
-2. **One monolithic pipeline tool** — build a single orchestrator that owns every step.
-3. **Named stages with evidence tokens** — keep the tools, name the stages, and define one token per stage as the promotion condition.
+1. **Tool-centric documentation**: describe each tool well and leave the pipeline implicit.
+2. **One monolithic pipeline tool**: build a single orchestrator that owns every step.
+3. **Named stages with evidence tokens**: keep the tools, name the stages, and define one token per stage as the promotion condition.
 
 ## Decision Outcome
 

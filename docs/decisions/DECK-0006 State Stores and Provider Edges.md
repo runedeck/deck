@@ -38,9 +38,9 @@ Artifact state lives in four places: workshop directories under `~/Agents/<owner
 
 ## Considered Options
 
-1. **One store** — everything in the deck, providers read it directly.
-2. **Free placement** — any state anywhere, conventions only.
-3. **Four stores with content contracts and two provider edges** — each store has a MUST and a MUST NOT list. Providers plug in at Ship and Operate only.
+1. **One store**: everything in the deck, providers read it directly.
+2. **Free placement**: any state anywhere, conventions only.
+3. **Four stores with content contracts and two provider edges**: each store has a MUST and a MUST NOT list. Providers plug in at Ship and Operate only.
 
 ## Decision Outcome
 

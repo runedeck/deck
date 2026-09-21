@@ -39,9 +39,9 @@ The stack defines how artifacts arrive and nothing about how they leave. The fir
 
 ## Considered Options
 
-1. **Ad-hoc deletion** — remove files where noticed, keep no rule.
-2. **Tombstones everywhere** — keep a marker for every removed artifact in every store.
-3. **Reviewed reverse path with evidence retention** — removal follows the review ceremony, evidence stays, provenance is scoped to ownership boundaries.
+1. **Ad-hoc deletion**: remove files where noticed, keep no rule.
+2. **Tombstones everywhere**: keep a marker for every removed artifact in every store.
+3. **Reviewed reverse path with evidence retention**: removal follows the review ceremony, evidence stays, provenance is scoped to ownership boundaries.
 
 ## Decision Outcome
 

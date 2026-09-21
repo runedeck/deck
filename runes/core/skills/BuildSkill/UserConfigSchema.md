@@ -6,7 +6,7 @@ When the config is intended to be read by an AI in the loop (a skill, agent, or 
 
 ## Why mirror autoMode
 
-The pattern is already familiar to anyone configuring Claude Code. Entries are prose — descriptions a human (or AI) would naturally write — not regex or tool-pattern grammars. The `$defaults` token gives a splice-or-replace toggle for built-in defaults shipped with the artifact source. Users extend the built-ins by adding entries. They take full ownership by omitting `"$defaults"`.
+The pattern is already familiar to anyone configuring Claude Code. Entries are prose (descriptions a human (or AI) would naturally write) not regex or tool-pattern grammars. The `$defaults` token gives a splice-or-replace toggle for built-in defaults shipped with the artifact source. Users extend the built-ins by adding entries. They take full ownership by omitting `"$defaults"`.
 
 ## Shape
 

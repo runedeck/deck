@@ -18,7 +18,7 @@ Each stage has one input contract, one output contract, and one evidence token. 
 
 | Stage | Instance today | Input contract | Evidence token |
 |---|---|---|---|
-| Capture | LearnFrom, CaptureOnTouch, workshop ledgers | none — anything enters | a dated note with owner and source context |
+| Capture | LearnFrom, CaptureOnTouch, workshop ledgers | none: anything enters | a dated note with owner and source context |
 | Author | BuildSkill, BuildRule, BuildAgent, BuildTask | a captured note or an upstream import | a schema-valid artifact (mdschema + kind schema) |
 | Prove | authorship ceremony, rune adopt + sidecars | a schema-valid artifact | first-party: a listed author identity. Third-party: a sealed block-review record and an in-toto sidecar |
 | Measure | BenchArtifact, bench driver, DECK-0001..0003 | a proven artifact and a bench manifest | a three-metric verdict per model |
@@ -44,7 +44,7 @@ The governance plane has two artifact kinds and one enforcement loop:
 - **Decision records** (`docs/decisions/`, `DECK-NNNN` and `RUNE-NNNN`) record why a contract has its shape.
 - **Ceremony** (workflows, hooks, labels, `authors.yaml`) enforces both. Its source of truth is the skeleton, and consumers receive it through Copier updates.
 
-The governance plane MUST obey its own flow: a ceremony change is authored in the skeleton (both the repository root and `templates/base/`), reviewed there, and shipped to consumers through `copier update` — never hand-copied. Drift between skeleton and consumers is an Operate-stage signal that MUST be watched by an audit routine, which issue #45 already instantiates.
+The governance plane MUST obey its own flow: a ceremony change is authored in the skeleton (both the repository root and `templates/base/`), reviewed there, and shipped to consumers through `copier update`: never hand-copied. Drift between skeleton and consumers is an Operate-stage signal that MUST be watched by an audit routine, which issue #45 already instantiates.
 
 ## The state plane
 
@@ -53,7 +53,7 @@ The governance plane MUST obey its own flow: a ceremony change is authored in th
 | Workshop | `~/Agents/<owner>/<project>` | anything: ledgers, briefs, captures, reference copies | anything a consumer installs from |
 | Deck | `runedeck/deck` and sibling repos | reviewed, proven, schema-valid artifacts and their sidecars | rendered personal values, and review transcripts (DECK-0004 Temporary Adoption State) |
 | Consumer | `~/Agents/runedeck` (`.rune`, `private/`) | the manifest, rendered private prompts, deploy manifests | canonical artifact content |
-| Provider account | Claude, Codex, ChatGPT, Gemini surfaces | routine configuration installed from templates | unique state — an account MUST be reproducible from the deck and the consumer |
+| Provider account | Claude, Codex, ChatGPT, Gemini surfaces | routine configuration installed from templates | unique state: an account MUST be reproducible from the deck and the consumer |
 
 Promotion between stores follows the flow plane. Workshop content enters the deck only through Author and Prove. Deck content reaches a consumer only through Review and Ship. Provider accounts receive only rendered instances of shipped templates.
 
@@ -61,7 +61,7 @@ Promotion between stores follows the flow plane. Workshop content enters the dec
 
 Providers plug in at exactly two edges, and nowhere else:
 
-1. **Ship-side**: assembly transforms driven by provider configuration — `targets` routing, keep-fields, casing rules, plugin layout, qualifier overlays. The canonical artifact carries Agent Skills fields plus three assembly directives (`targets`, `disable-model-invocation`, `user-invocable`). Everything else a provider needs arrives from provider data during assembly.
+1. **Ship-side**: assembly transforms driven by provider configuration: `targets` routing, keep-fields, casing rules, plugin layout, qualifier overlays. The canonical artifact carries Agent Skills fields plus three assembly directives (`targets`, `disable-model-invocation`, `user-invocable`). Everything else a provider needs arrives from provider data during assembly.
 2. **Operate-side**: routines and environments per provider capability, assigned by data sensitivity (DECK-0004). Providers get adapted variants, not copies, and each variant records its trust model in its header.
 
 The provider-independence contract: deleting a provider MUST require zero edits to canonical artifacts. Adding a provider MUST require only a provider configuration, optional overlays, and routine variants.

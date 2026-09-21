@@ -1,6 +1,6 @@
 # runedeck
 
-The deck: a collection of runes — markdown skills, agents, rules, and hooks — that [rune](https://github.com/runedeck/cli) deploys into AI coding harnesses (`.claude`, `.codex`, `.gemini`, `.opencode`).
+The deck: a collection of runes (markdown skills, agents, rules, and hooks) that [rune](https://github.com/runedeck/cli) deploys into AI coding harnesses (`.claude`, `.codex`, `.gemini`, `.opencode`).
 
 The deck grows as artifacts pass adoption review. It includes the `meta`, `development`, `council`, `research`, and `security` domains.
 

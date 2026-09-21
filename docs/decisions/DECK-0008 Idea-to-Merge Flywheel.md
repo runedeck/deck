@@ -39,9 +39,9 @@ Agents are the owner's primary computer interface, across terminals, phone remot
 
 ## Considered Options
 
-1. **A linear pipeline** — prompt to merge, extraction stays a habit.
-2. **A monolithic orchestrator** — one tool owns intake through merge.
-3. **A named loop over existing instances** — contracts for intake and extraction, existing tools for every middle stage, enforcement added later.
+1. **A linear pipeline**: prompt to merge, extraction stays a habit.
+2. **A monolithic orchestrator**: one tool owns intake through merge.
+3. **A named loop over existing instances**: contracts for intake and extraction, existing tools for every middle stage, enforcement added later.
 
 ## Decision Outcome
 

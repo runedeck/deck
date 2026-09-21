@@ -26,6 +26,7 @@ Commit discipline, staging hygiene, push policy, and repo governance. In a jj co
 - Do not use Runewright for ordinary GitHub work. Reserve App identities for explicit CI or review automation.
 - Use `git switch <branch>`, not `git checkout <branch>`.
 - The RemoteWrites rule binds every session. For a whole queue rather than one pull request, the MergeTrain skill surveys and repairs and the owner merges.
+- Run `gh`, `glab`, and `jj git push` as the whole command line, with no `cd &&` prefix and no pipe. The Claude Code sandbox exclusion list matches the full line, so a compound line runs sandboxed, where the credential store is denied. Set the directory with `-R <path>` or `-C <path>` instead.
 - Prove the frozen candidate before every push: its checks through the ContinuousIntegration skill, and, when the change has user-visible behavior, its specification scenarios through the AcceptanceTesting skill. Both proofs name the same commit. A push hook that stops a publication while the owner waits at the signing key is a process defect.
 
 ## Instructions

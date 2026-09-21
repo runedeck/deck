@@ -36,9 +36,9 @@ The Simplified Technical English benchmark exposed a spread of execution costs. 
 
 ## Considered Options
 
-1. **Always maximal** — every benchmark runs the full cross-harness matrix, hours per iteration
-2. **Always native** — every benchmark runs inside the current harness, single-vendor evidence only
-3. **Execution ladder** — ordered setups that share one manifest, one grading path, and one verdict rule
+1. **Always maximal**: every benchmark runs the full cross-harness matrix, hours per iteration
+2. **Always native**: every benchmark runs inside the current harness, single-vendor evidence only
+3. **Execution ladder**: ordered setups that share one manifest, one grading path, and one verdict rule
 
 ## Decision Outcome
 
@@ -59,6 +59,6 @@ Chosen option: **Execution ladder**. Each rung buys more isolation and more mode
 
 ## More Information
 
-- [DECK-0001 Artifact Benchmarking Skill](DECK-0001%20Artifact%20Benchmarking%20Skill.md) — the extraction this ladder executes
-- `runes/core/skills/BenchArtifact/NativeBench.md` — the minimal rung
-- `runes/core/skills/BenchArtifact/RuneBench.md` — the maximal rung
+- [DECK-0001 Artifact Benchmarking Skill](DECK-0001%20Artifact%20Benchmarking%20Skill.md): the extraction this ladder executes
+- `runes/core/skills/BenchArtifact/NativeBench.md`: the minimal rung
+- `runes/core/skills/BenchArtifact/RuneBench.md`: the maximal rung

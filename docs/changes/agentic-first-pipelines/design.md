@@ -22,7 +22,7 @@ Each stage names its contract and its instance today. The stack architecture cha
 
 | Stage | Contract | Instance today | Status |
 |---|---|---|---|
-| Prompt | a raw idea in any medium: voice transcript, sketch note, written text | none — ideas arrive ad hoc | **gap: the IntakeIdea skill in this change** |
+| Prompt | a raw idea in any medium: voice transcript, sketch note, written text | none: ideas arrive ad hoc | **gap: the IntakeIdea skill in this change** |
 | Pushback | the agent challenges the idea against existing specs, decision records, and memory before any scaffold. The output is a sharpened intent or a rejection with reasons | openspec-explore skill, informally | partial |
 | Specify | `rune spec propose` scaffolds the change. Blast radius decides depth: micro-changes skip the specification, machinery changes carry one, decisions carry a decision record | rune spec, docs/decisions, spec/presence check | exists |
 | Isolate | each implementing agent works in a disposable workspace. Colocated repositories use jj workspaces. Copy-on-write snapshots (anomalyco/rift) are an acceptable isolation instance because they copy the whole tree and never touch git refs | jj workspaces | exists, rift optional |
