@@ -59,6 +59,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- Change the ceremony files to skeleton `60ad8249` through `copier update`: owner-seal and verify-seal messages and nonce, jq guards, versioned display names, `thread-resolver.yaml` retired.
 - Allow the owner to direct a small fix straight to the default branch in VersionControl.
 - Require the full prek check set locally with `REQUIRE_GATES=1` and a fast-forward guarded push for a direct fix.
 - Change the `all` cast to select every rune. It selected only `meta/**` before.
