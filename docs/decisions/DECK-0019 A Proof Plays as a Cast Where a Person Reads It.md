@@ -1,6 +1,6 @@
 ---
 title: "A proof plays as a cast where a person reads it"
-description: "A recorded proof on a page plays its asciinema cast through the html-tools player, with pause and the current scene, and the GIF stays for image-only surfaces."
+description: "A recorded proof on a page plays its asciinema cast through the html-tools player, with pause and the current scene, and the GIF remains for places that render images only."
 type: adr
 category: process
 tags:
@@ -41,7 +41,7 @@ Option 3. The player is one vanilla script in html-tools, tested without a brows
 The skill MUST keep these rules:
 
 - A page that shows a proof MUST play the cast through the html-tools player.
-- The GIF MUST stay committed beside the cast.
+- The GIF MUST remain beside the cast in the repository.
 
 ## Proof
 

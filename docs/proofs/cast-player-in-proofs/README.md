@@ -1,6 +1,6 @@
 # Behavior proof: cast-player-in-proofs
 
-`record.sh` holds one scene per scenario of the `cast-player-in-proofs` delta specification, in the grammar of
+`record.sh` contains one scene per scenario of the `cast-player-in-proofs` delta specification, in the grammar of
 `docs/proofs/driver.sh`. The candidate is the html-tools cast player (`runtime/cast-player.js`), driven under node without a browser: parse, scenes, controller, and sceneAt on the skeleton's trusted-key-anchor cast. `proof.cast` is its recording on 2026-09-21 through
 `docs/proofs/cast.py`, exit 0 (`record-exit=0`). `proof.txt` is the transcript `asciinema convert -f txt` wrote from
 it, and `proof.gif` the render.
@@ -12,7 +12,7 @@ Scenes, in the order the specification lists them:
 - Reader pauses a proof
 - Pull request shows the proof
 
-The page behavior (Space pauses, the label names the scene) is proven through the same functions the page calls. The DOM wiring itself is not exercised here.
+The page behavior (Space pauses, the label states the scene) is proven through the same functions the page calls. The DOM wiring itself is not exercised here.
 
 Re-record after a change to the scenes or the candidate:
 

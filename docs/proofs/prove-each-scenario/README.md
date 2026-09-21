@@ -1,6 +1,6 @@
 # Behavior proof: prove-each-scenario
 
-`record.sh` holds one scene per scenario of the `prove-each-scenario` delta specification, in the grammar of
+`record.sh` contains one scene per scenario of the `prove-each-scenario` delta specification, in the grammar of
 `docs/proofs/driver.sh`. The candidate is the AcceptanceTesting driver grammar, proven on itself: a copied `record.sh` with two scenes, one that passes and one whose expectation misses. `proof.cast` is its recording on 2026-09-21 through
 `docs/proofs/cast.py`, exit 0 (`record-exit=0`). `proof.txt` is the transcript `asciinema convert -f txt` wrote from
 it, and `proof.gif` the render.

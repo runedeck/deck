@@ -2,13 +2,13 @@
 
 ## Purpose
 
-TBD - created by archiving change cast-player-in-proofs. Update Purpose after archive.
+A recorded proof shown on a page plays its cast through the html-tools player, with pause, a scrubber, and the current scene. The GIF remains in the repository for a pull request body and other places that render images only. This specification defines that split.
 
 ## Requirements
 
 ### Requirement: A proof on a page plays its cast
 
-When a recorded proof is shown on a page that a person reads, the page MUST play the cast through the html-tools cast player, with pause, resume, a scrubber, and the scene the playhead is in, taken from the driver's `# Scenario:` lines. The GIF MUST stay committed beside the cast for surfaces that render images only, such as a pull request body.
+When a recorded proof is shown on a page that a person reads, the page MUST play the cast through the html-tools cast player, with pause, resume, a scrubber, and the scene the playhead is in, taken from the driver's `# Scenario:` lines. The GIF MUST remain beside the cast in the repository, for a pull request body and any other place that renders images only.
 
 #### Scenario: Reader pauses a proof
 

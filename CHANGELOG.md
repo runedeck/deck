@@ -60,6 +60,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- Write the Purpose of the `cast-player-in-proofs` and `proof-page-handover` specifications in place of the archive stub.
 - Change the correctness caller to skeleton `5e4657bf`: the controller runs on every same-repository push, draft or ready, so the green draft starts the review round.
 - Change the ceremony files to skeleton `60ad8249` through `copier update`: owner-seal and verify-seal messages and nonce, jq guards, versioned display names, `thread-resolver.yaml` retired.
 - Allow the owner to direct a small fix straight to the default branch in VersionControl.

@@ -2,18 +2,18 @@
 
 ## Purpose
 
-TBD - created by archiving change proof-page-handover. Update Purpose after archive.
+A finished proof is handed to the owner as a page that plays each cast and lists its scenes, never as a GIF path. This specification defines the handover and the page generator `scripts/proof-page.py` in the AcceptanceTesting skill.
 
 ## Requirements
 
 ### Requirement: A proof is handed over as a page
 
-When a recorded proof is finished, the handover to the owner MUST be a page that plays each cast through the html-tools cast player and lists one scene per scenario. The message MUST carry the page's absolute path. A message that names only the GIF is an unfinished handover.
+When a recorded proof is finished, the handover to the owner MUST be a page that plays each cast through the html-tools cast player and lists one scene per scenario. The message MUST contain the page's absolute path. A message with only the GIF path is an unfinished handover.
 
 #### Scenario: Proof finished
 
 - **WHEN** the recording exits with status 0 and the transcript check passes
-- **THEN** the skill builds the page with `scripts/proof-page.py` and the handover names its absolute path
+- **THEN** the skill builds the page with `scripts/proof-page.py` and the handover states its absolute path
 
 #### Scenario: Owner asks where the proof is
 

@@ -1,6 +1,6 @@
 # Behavior proof: proof-page-handover
 
-`record.sh` holds one scene per scenario of the `proof-page-handover` delta specification, in the grammar of
+`record.sh` contains one scene per scenario of the `proof-page-handover` delta specification, in the grammar of
 `docs/proofs/driver.sh`. The candidate is the AcceptanceTesting page generator `scripts/proof-page.py`, run on the skeleton's trusted-key-anchor cast. `proof.cast` is its recording on 2026-09-21 through
 `docs/proofs/cast.py`, exit 0 (`record-exit=0`). `proof.txt` is the transcript `asciinema convert -f txt` wrote from
 it, and `proof.gif` the render.
