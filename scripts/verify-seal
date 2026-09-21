@@ -92,13 +92,15 @@ require_empty() {
         || fail "$2 $1 is not an empty commit: its tree differs from its parent's"
 }
 
-# One keyring for every signature check in this run.
+# One keyring for every signature check in this run. KEYS names signers by
+# fingerprint; scripts/trusted-keys fetches each one's bytes (WKD, GitHub,
+# cache) and admits them only when the pinned fingerprint is in the result.
 import_keys() {
     [ -z "$gnupg_home" ] || return 0
     gnupg_home=$(mktemp -d "${RUNNER_TEMP:-${TMPDIR:?TMPDIR must be set}}/verify-seal-gpg.XXXXXX")
     chmod 0700 "$gnupg_home"
-    "$gpg_program" --homedir "$gnupg_home" --batch --import "$keys" >/dev/null 2>&1 \
-        || fail "could not import trusted OpenPGP keys from $keys"
+    TRUSTED_KEYS_GPG=$gpg_program bash "$(dirname "$0")/trusted-keys" --keys "$keys" --homedir "$gnupg_home" >/dev/null \
+        || fail "could not resolve the trusted signers in $keys"
 }
 
 # The signature must verify, and its fingerprint must be one KEYS carries.
