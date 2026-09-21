@@ -83,6 +83,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Fixed
 
+- Fix the identity tests to expect the versioned display names the synced `author-identity.py` derives (`Claude Fable 5.2`, not `Claude`).
 - Fix the decision record shape to accept every uppercase family. It allowed DECK and RUNE only, so all nineteen CORE records failed on the real graph.
 - Add a hook that validates the real graph on every ontology, record, or rule commit.
 - Fix the RTK guidance to preserve standard-input payloads through passthrough or file arguments.

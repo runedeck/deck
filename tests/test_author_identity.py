@@ -235,7 +235,7 @@ class IdentityTests(unittest.TestCase):
     def test_resolve_generates_future_model_identity(self):
         self.assertEqual(
             identity.resolve_identity(self.policy, "gpt-6-astra[1m]", "codex"),
-            model_identity(),
+            model_identity(name="Codex Gpt 6 Astra"),
         )
 
     def test_resolve_rejects_unknown_harness_or_model(self):
@@ -395,7 +395,7 @@ class IdentityTests(unittest.TestCase):
                 invoke("resolve", "--model", "gpt-6-astra", "--harness", "codex")[
                     1
                 ].strip(),
-                model_identity(),
+                model_identity(name="Codex Gpt 6 Astra"),
             )
             path.write_text("authors: []\n", encoding="utf-8")
             self.assertEqual(invoke("check-policy")[0], 2)
@@ -416,7 +416,9 @@ class RepositoryPolicyTests(unittest.TestCase):
 
     def test_cursor_resolves_confirmed_fable_model(self):
         expected = model_identity(
-            "claude-fable-5-1", domain="cursor.noreply.nexus.local", name="Cursor"
+            "claude-fable-5-1",
+            domain="cursor.noreply.nexus.local",
+            name="Cursor Claude Fable 5.1",
         )
         self.assertEqual(
             identity.resolve_identity(self.policy, "claude-fable-5-1", "cursor"),
@@ -425,13 +427,16 @@ class RepositoryPolicyTests(unittest.TestCase):
         identity.validate_identity(self.policy, expected)
 
     def test_cursor_accepts_future_versions_without_catalog_entries(self):
-        for model in ("claude-fable-5-2", "future-model-2040.12"):
+        for model, name in (
+                ("claude-fable-5-2", "Cursor Claude Fable 5.2"),
+                ("future-model-2040.12", "Cursor Future Model 2040.12"),
+            ):
             with self.subTest(model=model):
                 author = identity.resolve_identity(self.policy, model, "cursor")
                 self.assertEqual(
                     author,
                     model_identity(
-                        model, domain="cursor.noreply.nexus.local", name="Cursor"
+                        model, domain="cursor.noreply.nexus.local", name=name
                     ),
                 )
                 identity.validate_identity(self.policy, author)
