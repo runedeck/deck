@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- AcceptanceTesting hands over a proof as a page: `scripts/proof-page.py` builds it from the casts with the html-tools player, and the GIF alone is an unfinished handover (proof-page-handover).
 - Map the ontology terms to the upstream corpus, trial each part alone with a recorded verdict, and take no dependency on a pre-1.0 implementation (modeled-information-format-alignment).
 - Adopt five open-source tools for the review funnel and keep custom code for the ceremony only (DECK-0011).
 - Add the Links workflow, which fetches every external URL one time each week and leaves the commit path offline.

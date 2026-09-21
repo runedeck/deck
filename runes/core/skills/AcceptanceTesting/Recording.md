@@ -41,9 +41,24 @@ Commit the GIF under `docs/proofs/<change>/proof.gif` and embed it:
 
 The pull request's Testing section carries the same image with the commit id it proves.
 
-A GIF loops and cannot pause with position. On a page that a person reads, play the cast instead, through the
-html-tools cast player: it pauses, resumes, scrubs, and names the scene the playhead is in, from the
-`# Scenario:` lines the driver prints. Vendor html-tools into the page's repository with
-`python3 -m htmltools export <repo>/vendor/html-tools`, load `vendor/html-tools/runtime/cast-player.js`, put the
-cast text in a `<script type="text/plain">` block, and call `CastPlayer.attach(host, castText)`. Keep the GIF
-for surfaces that render images only, such as a pull request body.
+A GIF loops and cannot pause with position. Where a person reads, the proof is a page that plays the cast
+through the html-tools cast player: it pauses, resumes, scrubs, and names the scene the playhead is in, from the
+`# Scenario:` lines the driver prints. Keep the GIF for surfaces that render images only, such as a pull request body.
+
+## Page
+
+`scripts/proof-page.py` writes the page. It inlines the player and each cast, so the file opens offline:
+
+```sh
+python3 <skill>/scripts/proof-page.py --title "<Two To Four Words>" --eyebrow "<repo>, <date>" \
+    --player vendor/html-tools/runtime/cast-player.js \
+    --cast <change>=docs/proofs/<change>/proof.cast \
+    --caption <change>="<what the proof shows, one sentence>" \
+    --meta <change>="<repo> <head>" --meta <change>="transcript sha256 <first 8>…" \
+    --out <page>
+```
+
+The page lives in the owner's workshop under `docs/specs/<date>-proof-set.html`, one page per landing round, so
+proofs from several repositories sit together and survive the change directories. The player comes from
+`python3 -m htmltools export <repo>/vendor/html-tools`, or from a checkout of html-tools when the workshop has no
+vendor directory. The handover message carries the page's absolute path.
