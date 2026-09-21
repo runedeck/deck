@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- Add the DetachedJob skill in development: start a long command in its own session so no tool timeout, terminal close, or session exit stops it, then wait for its exit code and read its log.
 - Add recorded proofs for prove-each-scenario, cast-player-in-proofs, and proof-page-handover under `docs/proofs/`, and DECK-0019 from the archived cast-player decision.
 - AcceptanceTesting hands over a proof as a page: `scripts/proof-page.py` builds it from the casts with the html-tools player, and the GIF alone is an unfinished handover (proof-page-handover).
 - Map the ontology terms to the upstream corpus, trial each part alone with a recorded verdict, and take no dependency on a pre-1.0 implementation (modeled-information-format-alignment).
