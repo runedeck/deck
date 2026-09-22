@@ -8,16 +8,17 @@ tags:
     - config
 status: accepted
 created: 2026-02-19
-updated: 2026-09-20
+updated: 2026-03-30
 author: "@N4M3Z"
 project: deck
 related:
     - "CORE-0005 Variables in Markdown Instructions and Templates"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5", "gpt-5.6-sol"]
+consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
-upstream: []
+upstream:
+    - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0009%20YAML%20Configuration%20Files.md"
 change: core-foundation-principles
 ---
 
@@ -46,9 +47,9 @@ Chosen option: **YAML with deep merge**. Each module includes `defaults.yaml` wi
 
 A module MUST include a committed `defaults.yaml` that works without user input. A user override MUST live in a git-ignored `config.yaml` and MUST merge over the defaults field by field.
 
-## Consequences
+### Consequences
 
-- The module works out of the box with zero user configuration
-- Users override one field without knowing the full schema
-- The config loading bridges config to ENV vars consumed by skills and shell commands
-- Deep merge semantics can surprise: array replacement versus append, null versus missing
+- [+] The module works out of the box with zero user configuration
+- [+] Users override one field without knowing the full schema
+- [+] The config loading bridges config to ENV vars consumed by skills and shell commands
+- [-] Deep merge semantics can surprise: array replacement versus append, null versus missing

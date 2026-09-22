@@ -16,7 +16,7 @@ related:
     - "DECK-0012 Consumer Ceremony Synchronization"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5-1"]
+consulted: ["claude-fable-5-1@claude"]
 informed: []
 upstream: []
 change: enforce-local-checks
@@ -48,8 +48,8 @@ ContinuousIntegration runs `REQUIRE_GATES=1 make validate` after every edit batc
 
 Option 2 finds the same defects, one push later, with the owner waiting. Option 3 is the state this decision replaces.
 
-## Consequences
+### Consequences
 
-- A session spends a few minutes per edit batch on checks it would otherwise meet once at the end, and the push reaches the key without a validation stop.
-- The skill names `make validate` and the checked push hook. A repository without either falls back to direct `prek` invocations, which the skill also gives.
-- The mandate is skill-level until the rule and the cli and skeleton specifications carry it.
+- [-] A session spends a few minutes per edit batch on checks it would otherwise meet once at the end, and the push reaches the key without a validation stop.
+- [+] The skill names `make validate` and the checked push hook. A repository without either falls back to direct `prek` invocations, which the skill also gives.
+- [-] The mandate is skill-level until the rule and the cli and skeleton specifications carry it.

@@ -16,7 +16,7 @@ related:
     - "CORE-0001 Markdown as System Language"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5", "gpt-5.6-sol"]
+consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
 upstream: []
 change: core-foundation-principles
@@ -47,9 +47,9 @@ Chosen option: **reference-style links**. A document cites a source with a named
 
 A document MUST cite an external source with a reference-style link: a short uppercase tag inline and one link definition at the end of the file.
 
-## Consequences
+### Consequences
 
-- A citation names its source where it is used
-- Sources add and retire without renumbering
-- Plain markdown: GitHub, Obsidian, and lychee all understand it
-- Tags must stay unique within a file, and review checks this until a checker exists
+- [+] A citation names its source where it is used
+- [+] Sources add and retire without renumbering
+- [+] Plain markdown: GitHub, Obsidian, and lychee all understand it
+- [-] Tags must stay unique within a file, and review checks this until a checker exists

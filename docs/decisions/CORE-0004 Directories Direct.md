@@ -8,15 +8,16 @@ tags:
     - naming
 status: accepted
 created: 2026-03-19
-updated: 2026-09-20
+updated: 2026-03-30
 author: "@N4M3Z"
 project: deck
 related: []
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5", "gpt-5.6-sol"]
+consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
-upstream: []
+upstream:
+    - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0006%20Directories%20Direct.md"
 change: core-foundation-principles
 ---
 
@@ -44,8 +45,8 @@ Principles:
 
 A directory name MUST state a routing purpose. A directory that groups by type alone, such as `misc/`, MUST NOT be added.
 
-## Consequences
+### Consequences
 
-- The directory tree is self-documenting
-- No separate "where to put things" guide
-- Qualifier directories double as routing labels: naming is configuration
+- [+] The directory tree is self-documenting
+- [+] No separate "where to put things" guide
+- [+] Qualifier directories double as routing labels: naming is configuration

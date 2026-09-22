@@ -9,7 +9,7 @@ tags:
     - fixtures
 status: accepted
 created: 2026-04-05
-updated: 2026-09-20
+updated: 2026-04-05
 author: "@N4M3Z"
 project: deck
 related:
@@ -20,7 +20,8 @@ accountable:
     - "@N4M3Z"
 consulted: []
 informed: []
-upstream: []
+upstream:
+    - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0012%20Fixture-Based%20Canary%20Testing.md"
 change: core-foundation-principles
 ---
 
@@ -42,11 +43,11 @@ Option 3. A checker the deck depends on MUST have at least one input that it acc
 
 The ontology hook is the instance in the deck. It validates `ontology/smoke/instances.ttl` against the shapes and asserts the exact count of violations and warnings, so a removed shape fails the hook.
 
-## Consequences
+### Consequences
 
-- A new canary is one file in the right place.
-- Most checkers in the deck have no canary yet. The scripts under `scripts/` that check names, record ids, record fields, and record links were each proven by hand with a passing and a failing input, and those inputs are not committed.
-- An exact count is brittle on purpose. A new shape changes the count, and the author updates the assertion in the same commit.
+- [+] A new canary is one file in the right place.
+- [-] Most checkers in the deck have no canary yet. The scripts under `scripts/` that check names, record ids, record fields, and record links were each proven by hand with a passing and a failing input, and those inputs are not committed.
+- [-] An exact count is brittle on purpose. A new shape changes the count, and the author updates the assertion in the same commit.
 
 ## More Information
 

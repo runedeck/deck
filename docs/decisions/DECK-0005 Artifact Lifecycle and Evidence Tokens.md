@@ -47,9 +47,9 @@ The stack grew one tool at a time: build skills, an adoption state machine, a be
 
 Option 3. The lifecycle is Capture, Author, Prove, Measure, Review, Ship, Operate. Each stage issues one evidence token: a dated capture note, a schema-validation pass, a provenance identity, a per-model bench verdict, an exact-head clean review, a deploy-manifest digest, and routine coverage. A stage MUST NOT consume an artifact without the previous token. Evidence is append-only and survives retirement. Operate feeds Capture: drift reports, audit findings, and bench regressions are captured notes. The workshop leverage ladder selects the stage that owns a repeated problem: architecture into Author, lints into Review, rules into Author with Measure paying their rent, human review as the floor.
 
-## Consequences
+### Consequences
 
-- Existing tools become stage instances, not the definition. A replacement tool moves no contract.
-- The gap register in the artifact-lifecycle-architecture change lists every hop that is manual today. Each is now a named defect, not background noise.
-- Future gates (a rule without a verdict, an adoption without a sealed record) have a specification to cite.
-- The token model gives retirement a clean rule: remove the artifact, keep the tokens.
+- [+] Existing tools become stage instances, not the definition. A replacement tool moves no contract.
+- [+] The gap register in the artifact-lifecycle-architecture change lists every hop that is manual today. Each is now a named defect, not background noise.
+- [+] Future gates (a rule without a verdict, an adoption without a sealed record) have a specification to cite.
+- [+] The token model gives retirement a clean rule: remove the artifact, keep the tokens.

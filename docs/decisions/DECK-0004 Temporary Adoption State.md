@@ -44,9 +44,9 @@ Keep block text, verdicts, notes, flags, and timestamps in temporary CLI session
 
 The repository rejects tracked `.provenance/review.yaml` and `.provenance/*.review.yaml` files. Existing ledgers are removed after their ordinary provenance sidecars are verified. The rune CLI owns session placement, crash recovery, doctor checks, and reseal behavior under runedeck/cli#21.
 
-## Consequences
+### Consequences
 
-- Git history stays concise while block review remains mandatory.
-- Source URLs, upstream digests, transforms, reviewed state, and final file digests remain durable.
-- Review notes are process data and do not become a second provenance authority.
-- Legacy ledgers require removal, but their reviewed sidecars remain valid.
+- [+] Git history stays concise while block review remains mandatory.
+- [+] Source URLs, upstream digests, transforms, reviewed state, and final file digests remain durable.
+- [+] Review notes are process data and do not become a second provenance authority.
+- [-] Legacy ledgers require removal, but their reviewed sidecars remain valid.

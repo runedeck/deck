@@ -17,7 +17,7 @@ related:
     - "DECK-0010 Declared World in RDF"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5"]
+consulted: ["claude-fable-5@claude"]
 informed: []
 upstream: []
 change: skeleton-template-copier
@@ -49,9 +49,9 @@ Prose the generated Vale style rejects is corrected at the reported position, an
 
 Option 2 has no baseline to recover: the deck's additions arrived across dozens of commits. Option 3 leaves Copier with two equal references and applies nothing, so the next update would conflict on every line again.
 
-## Consequences
+### Consequences
 
-- Copier updates from the recorded commit again, and the weekly parity audit compares against a real baseline.
-- Deck-only checks live as additions on top of the template's hook list. A future template change to a shared hook merges cleanly. A change to a deck-only hook is the deck's to make.
-- Every prose edit in a sealed file cost a reseal. The sidecars record the new digests with the original review facts intact.
-- The `.vale.ini` path overrides are deck-specific and will conflict on the next template change to that file. The divergence register does not cover it yet, because the register only approves whole-file differences.
+- [+] Copier updates from the recorded commit again, and the weekly parity audit compares against a real baseline.
+- [+] Deck-only checks live as additions on top of the template's hook list. A future template change to a shared hook merges cleanly. A change to a deck-only hook is the deck's to make.
+- [-] Every prose edit in a sealed file cost a reseal. The sidecars record the new digests with the original review facts intact.
+- [-] The `.vale.ini` path overrides are deck-specific and will conflict on the next template change to that file. The divergence register does not cover it yet, because the register only approves whole-file differences.

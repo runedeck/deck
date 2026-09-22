@@ -14,7 +14,7 @@ project: deck
 related: []
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5-1"]
+consulted: ["claude-fable-5-1@claude"]
 informed: []
 upstream: []
 change: architecture-decision-records
@@ -42,11 +42,11 @@ Decisions are made in conversations, threads, and commit messages. None of those
 
 Option 3. A decision with alternatives MUST be one record in `docs/decisions/`. A record MUST carry a status from proposed to accepted to superseded. The directory schema MUST validate the record shape.
 
-## Consequences
+### Consequences
 
-- One directory listing shows every decision.
-- The status field makes a contradiction of an accepted decision visible at review.
-- Each record costs authoring time. A change that weighed no alternative still writes a short record, because the record states what the change wants.
+- [+] One directory listing shows every decision.
+- [+] The status field makes a contradiction of an accepted decision visible at review.
+- [-] Each record costs authoring time. A change that weighed no alternative still writes a short record, because the record states what the change wants.
 
 ## More Information
 

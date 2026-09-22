@@ -10,16 +10,18 @@ tags:
     - templates
 status: accepted
 created: 2026-02-19
-updated: 2026-09-20
+updated: 2026-03-30
 author: "@N4M3Z"
 project: deck
 related:
     - "CORE-0003 YAML Frontmatter for Machine Readability"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5", "gpt-5.6-sol"]
+consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
-upstream: [PlaintextTemplateVariables.md]
+upstream:
+    - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0008%20Variables%20in%20Markdown%20Instructions%20and%20Templates.md"
+    - "https://github.com/N4M3Z/forge-core/blob/main/rules/PlaintextTemplateVariables.md"
 change: core-foundation-principles
 ---
 
@@ -62,12 +64,12 @@ Obsidian Templater templates continue to use `{{VARIABLE}}`. The two patterns ne
 
 An instruction MUST name a configurable value as `$VARIABLE`. A plain-text template MUST use `${VARIABLE}` placeholders that `envsubst` resolves. The two patterns MUST NOT mix in one file with the Templater `{{VARIABLE}}` pattern.
 
-## Consequences
+### Consequences
 
-- Shell commands and AI instructions share the same configuration mechanism
-- Templates are instantiable with `envsubst`, with zero custom tooling
-- `%%` comments are invisible in Obsidian preview and visible in source: guidance without noise
-- The environment must hold the values before the instruction is useful, so a config loading layer is required
-- Two patterns coexist (`${VAR}` and `{{VAR}}`), mitigated by the rule that they never mix in one file
+- [+] Shell commands and AI instructions share the same configuration mechanism
+- [+] Templates are instantiable with `envsubst`, with zero custom tooling
+- [+] `%%` comments are invisible in Obsidian preview and visible in source: guidance without noise
+- [-] The environment must hold the values before the instruction is useful, so a config loading layer is required
+- [-] Two patterns coexist (`${VAR}` and `{{VAR}}`), mitigated by the rule that they never mix in one file
 
 [TEMPLATER]: https://silentvoid13.github.io/Templater/

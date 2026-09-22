@@ -17,7 +17,7 @@ related:
     - "DECK-0014 Vocabulary Governance"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5-1"]
+consulted: ["claude-fable-5-1@claude"]
 informed: []
 upstream: []
 change: prove-each-scenario
@@ -49,9 +49,9 @@ A change with user-visible behavior carries one scene per scenario of its delta 
 
 Option 2 records what happened without saying what should have. Option 3 is the state this decision replaces.
 
-## Consequences
+### Consequences
 
-- An implementation is not done until its scenes pass, which adds a recording pass to every change with behavior. A prose-only change carries no proof and says so.
-- The proof is only as good as the scenarios. A specification without scenarios cannot be proven, which is a defect in the specification.
-- The skill depends on asciinema, agg, and ffmpeg, which `scripts/install-tools` does not install. The skill's prerequisites name the Homebrew formulae.
-- The `behavior` proof kind in `rune:proofKinds` gains its producer.
+- [-] An implementation is not done until its scenes pass, which adds a recording pass to every change with behavior. A prose-only change carries no proof and says so.
+- [-] The proof is only as good as the scenarios. A specification without scenarios cannot be proven, which is a defect in the specification.
+- [-] The skill depends on asciinema, agg, and ffmpeg, which `scripts/install-tools` does not install. The skill's prerequisites name the Homebrew formulae.
+- [+] The `behavior` proof kind in `rune:proofKinds` gains its producer.

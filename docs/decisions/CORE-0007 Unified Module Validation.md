@@ -9,7 +9,7 @@ tags:
     - pre-commit
 status: accepted
 created: 2026-04-02
-updated: 2026-09-20
+updated: 2026-04-17
 author: "@N4M3Z"
 project: deck
 related:
@@ -17,9 +17,10 @@ related:
     - "CORE-0018 Fixture-Based Canary Testing"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5", "gpt-5.6-sol"]
+consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
-upstream: []
+upstream:
+    - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0010%20Unified%20Module%20Validation.md"
 change: core-foundation-principles
 ---
 
@@ -48,9 +49,9 @@ A guarded hook skips when its tool is absent, so a fresh clone stays usable. CI 
 
 The deck keeps one checker for each concern: rumdl for Markdown structure, Vale for prose style, typos for spelling, lychee for links, gitleaks for secrets, actionlint and zizmor for workflows, mdschema for document frames, shellcheck for shell, ruff for Python, and rudof for the declared graph. A tool MUST be a single binary that works offline on the commit path. A tool change MUST arrive through a decision record.
 
-## Consequences
+### Consequences
 
-- The check list is one file, so a new check is one edit and reaches every path.
-- CI runs checks that a local run can skip. A local pass with skipped hooks is not a pass, and the hook output is the only place that shows the skip.
-- CI builds the rune CLI from source for the `contract` job, so CI can run a check that the installed CLI lacks. A local pass does not prove that job.
-- The commit hook has one fallback: when prek is absent it runs gitleaks alone and says so.
+- [+] The check list is one file, so a new check is one edit and reaches every path.
+- [-] CI runs checks that a local run can skip. A local pass with skipped hooks is not a pass, and the hook output is the only place that shows the skip.
+- [-] CI builds the rune CLI from source for the `contract` job, so CI can run a check that the installed CLI lacks. A local pass does not prove that job.
+- [-] The commit hook has one fallback: when prek is absent it runs gitleaks alone and says so.

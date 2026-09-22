@@ -1,0 +1,131 @@
+#!/usr/bin/env python3
+"""Check the parts of a decision record that the directory schema cannot.
+
+The schema checks headings and field presence. This check reads the
+content: each consequence under `### Consequences` starts with `[+]` or
+`[-]`, each `consulted` entry is a human handle or `<model-id>@<harness>`
+with a harness from `authors.yaml`, and each `upstream` and `related`
+entry resolves to a record, a capability, a requirement, or a URL.
+"""
+import importlib.machinery
+import importlib.util
+import pathlib
+import re
+import sys
+
+HERE = pathlib.Path(__file__).resolve().parent
+LOADER = importlib.machinery.SourceFileLoader("check_decision_links", str(HERE / "check-decision-links"))
+LINKS = importlib.util.module_from_spec(importlib.util.spec_from_loader(LOADER.name, LOADER))
+LOADER.exec_module(LINKS)
+
+SIGN = re.compile(r"^- \[[+-]\] \S")
+HANDLE = re.compile(r"^@[A-Za-z0-9_-]+$")
+MODEL = re.compile(r"^([a-z0-9][a-z0-9.-]*)@([a-z0-9-]+)$")
+# Any absolute URI: https://, obsidian://open?vault=…, urn:.
+URL = re.compile(r"^[a-z][a-z0-9+.-]*:\S+$")
+REQUIREMENT = re.compile(r"^### Requirement: (.+?)\s*$", re.M)
+
+
+def slug(title):
+    return re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
+
+
+def harnesses(root):
+    """The first label of each `model_domains` entry in authors.yaml."""
+    path = root / "authors.yaml"
+    if not path.is_file():
+        return set()
+    block = path.read_text()
+    match = re.search(r"^model_domains:\s*$", block, re.M)
+    if not match:
+        return set()
+    found = set()
+    for line in block[match.end():].splitlines():
+        entry = re.match(r"^\s+-\s+([a-z0-9-]+)\.", line)
+        if not entry:
+            if line.strip():
+                break
+            continue
+        found.add(entry.group(1))
+    return found
+
+
+def capabilities(root):
+    """Capability name to its requirement slugs, from canonical and active specs."""
+    found = {}
+    paths = list((root / "docs" / "specs").glob("*/spec.md"))
+    paths += [
+        p for p in (root / "docs" / "changes").glob("*/specs/*/spec.md") if p.parts[-4] != "archive"
+    ]
+    for path in paths:
+        slugs = found.setdefault(path.parent.name, set())
+        slugs.update(slug(title) for title in REQUIREMENT.findall(path.read_text()))
+    return found
+
+
+def consequences(text):
+    """The list items under `### Consequences` inside `## Decision Outcome`, and the H2 misplacement."""
+    items, h2, h3, misplaced = [], "", "", False
+    for line in text.splitlines():
+        if line.startswith("## "):
+            h2, h3 = line[3:].strip(), ""
+            misplaced = misplaced or h2 == "Consequences"
+        elif line.startswith("### "):
+            h3 = line[4:].strip()
+        elif line.startswith("- ") and h2 == "Decision Outcome" and h3 == "Consequences":
+            items.append(line)
+    return items, misplaced
+
+
+def check(root):
+    errors = []
+    decisions = root / "docs" / "decisions"
+    if not decisions.is_dir():
+        return errors
+    known = harnesses(root)
+    caps = capabilities(root)
+    stems = {p.stem for p in decisions.glob("*.md")}
+    # A draft record has no id yet, so `related` names it by title.
+    for draft in (root / "docs" / "changes").glob("*/adr.md"):
+        stems.update(LINKS.field(LINKS.frontmatter(draft), "title"))
+    for path in sorted(decisions.glob("*.md")):
+        text = path.read_text()
+        block = LINKS.frontmatter(path)
+        items, misplaced = consequences(text)
+        if misplaced:
+            errors.append(f"{path}: `## Consequences` is its own section. Write `### Consequences` under `## Decision Outcome`.")
+        for item in items:
+            if not SIGN.match(item):
+                errors.append(f"{path}: consequence has no sign: `{item}`. Start it with `[+]` or `[-]`.")
+        for entry in LINKS.field(block, "consulted") + LINKS.field(block, "x-rune-consulted"):
+            if HANDLE.match(entry):
+                continue
+            model = MODEL.match(entry)
+            if not model:
+                errors.append(f"{path}: consulted `{entry}` is neither `@handle` nor `<model-id>@<harness>`.")
+            elif model.group(2) not in known:
+                errors.append(f"{path}: consulted `{entry}` names an unknown harness. Known: {', '.join(sorted(known))}.")
+        for key in ("upstream", "related"):
+            for entry in LINKS.field(block, key) + LINKS.field(block, "x-rune-" + key):
+                if URL.match(entry) or entry.removesuffix(".md") in stems:
+                    continue
+                # An idea snapshot or another file in the repository, by its path from the root.
+                if "/" in entry and (root / entry).is_file():
+                    continue
+                capability, _, requirement = entry.partition("#")
+                if capability in caps and (not requirement or requirement in caps[capability]):
+                    continue
+                errors.append(f"{path}: {key} `{entry}` matches no record, capability, requirement, file, or URL.")
+    return errors
+
+
+def main():
+    root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else ".")
+    errors = check(root)
+    for line in errors:
+        print(line)
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

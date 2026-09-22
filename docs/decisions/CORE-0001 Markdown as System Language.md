@@ -8,15 +8,25 @@ tags:
     - markdown
 status: accepted
 created: 2026-02-19
-updated: 2026-09-20
+updated: 2026-03-30
 author: "@N4M3Z"
 project: deck
 related: []
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5", "gpt-5.6-sol"]
+consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
-upstream: [MarkdownFirst.md]
+upstream:
+    - "obsidian://open?vault=Atlas&file=Library%2FCanvas%2FMarkdown%20First"
+    - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0001%20Markdown%20as%20System%20Language.md"
+    - "https://github.com/N4M3Z/forge-core/blob/main/rules/MarkdownFirst.md"
+    - "plain-text-wins#plain-text-representation"
+    - "markdown-first-authoring#markdown-system-language"
+    - "markdown-first-authoring#metadata-inside-files"
+    - "markdown-first-authoring#flat-frontmatter"
+    - "harness-independent-authoring#author-once"
+    - "harness-independent-authoring#portable-instructions"
+    - "lint-enforced-foundations#checker-coverage"
 change: core-foundation-principles
 ---
 
@@ -47,13 +57,13 @@ Chosen option: **Markdown with YAML frontmatter**. Everything is markdown: skill
 
 Every skill, agent, rule, decision record, and document MUST be a Markdown file. A file that carries metadata MUST carry it as YAML frontmatter ([CORE-0003](CORE-0003 YAML Frontmatter for Machine Readability.md)).
 
-## Consequences
+### Consequences
 
-- Zero dependencies: any AI tool that reads files can consume the content
-- Authors iterate by editing prose, not by debugging code or schemas
-- The same files render in Obsidian, GitHub, and AI tool contexts without conversion
-- Nothing checks content logic at compile time. Structural checks rely on mdschema, and semantic correctness requires review.
-- Free-form markdown checks nothing by itself, so the system needs many linters and validation tools ([CORE-0007](CORE-0007 Unified Module Validation.md))
+- [+] Zero dependencies: any AI tool that reads files can consume the content
+- [+] Authors iterate by editing prose, not by debugging code or schemas
+- [+] The same files render in Obsidian, GitHub, and AI tool contexts without conversion
+- [-] Nothing checks content logic at compile time. Structural checks rely on mdschema, and semantic correctness requires review.
+- [-] Free-form markdown checks nothing by itself, so the system needs many linters and validation tools ([CORE-0007](CORE-0007 Unified Module Validation.md))
 
 [OBS]: https://obsidian.md/
 [OBS-FM]: https://obsidian.md/changelog/2020-08-21-desktop-v0.8.5/

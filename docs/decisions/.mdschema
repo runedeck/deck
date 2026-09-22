@@ -76,12 +76,11 @@ structure:
           - heading:
                 pattern: "## Decision Outcome"
             allow_additional: true
-          - heading:
-                pattern: "## Consequences"
-            optional: true
-            allow_additional: true
-            lists:
-                - min: 1
+            children:
+                - heading:
+                      pattern: "### Consequences"
+                  lists:
+                      - min: 1
           - heading:
                 pattern: "## More Information"
             optional: true

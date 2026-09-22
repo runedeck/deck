@@ -13,7 +13,6 @@ updated: 2026-08-19
 author: "@N4M3Z"
 project: deck
 related:
-    - "DECK-0004 Routine Environment Matrix"
     - "DECK-0005 Artifact Lifecycle and Evidence Tokens"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
@@ -46,9 +45,9 @@ Artifact state lives in four places: workshop directories under `~/Agents/<owner
 
 Option 3. The workshop holds anything, and nothing installs from it. The deck holds only reviewed, proven, schema-valid artifacts and their sidecars, and never review transcripts or personal values. The consumer holds the manifest, deploy manifests, and rendered private prompts, and never canonical content. The provider account holds only configuration rendered from shipped templates, and MUST stay reproducible from the deck plus the consumer. Providers enter at two edges: Ship-side through assembly configuration (`targets`, keep-fields, casing rules, overlays) and Operate-side through adapted routine variants under the DECK-0004 matrix. Canonical frontmatter carries Agent Skills fields plus the three assembly directives, and nothing else.
 
-## Consequences
+### Consequences
 
-- Removing a provider changes zero canonical artifacts. Adding one needs a provider configuration, optional overlays, and routine variants.
-- Reproducibility becomes testable: rebuild a provider account from templates and compare.
-- The store contracts give the audit routines concrete assertions: canonical content outside the deck, or personal values inside it, are violations, not judgment calls.
-- The workshop stays the one free surface, which keeps capture cheap.
+- [+] Removing a provider changes zero canonical artifacts. Adding one needs a provider configuration, optional overlays, and routine variants.
+- [+] Reproducibility becomes testable: rebuild a provider account from templates and compare.
+- [+] The store contracts give the audit routines concrete assertions: canonical content outside the deck, or personal values inside it, are violations, not judgment calls.
+- [+] The workshop stays the one free surface, which keeps capture cheap.

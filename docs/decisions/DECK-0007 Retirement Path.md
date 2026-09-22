@@ -47,9 +47,9 @@ The stack defines how artifacts arrive and nothing about how they leave. The fir
 
 Option 3. Retirement runs the flow in reverse, per store. The provider account drops its rendered configuration. The consumer drops the manifest entry, and pruning removes the deployed files the deploy manifest tracks. The deck removes the artifact and its sidecar in a reviewed change that records the reason. The workshop ledger captures the retirement decision. Evidence records (bench verdicts, review history, decision records) stay. The teardown also sets the provenance principle: sidecars exist to import trust across an ownership boundary. First-party artifacts carry their trust in the authorship ceremony, so removing first-party sidecars is a correction, not a loss.
 
-## Consequences
+### Consequences
 
-- Retirement becomes auditable: a reviewed change per removal, and drift routines can flag artifacts present in one store and absent upstream.
-- The provenance rule shrinks the sidecar population to adopted artifacts, which shrinks the check-provenance surface.
-- A future `rune retire` command has a defined transaction to implement: one artifact, three stores, one review.
-- Evidence retention means benchmarks of retired artifacts remain citable when a successor claims the same behavior.
+- [+] Retirement becomes auditable: a reviewed change per removal, and drift routines can flag artifacts present in one store and absent upstream.
+- [+] The provenance rule shrinks the sidecar population to adopted artifacts, which shrinks the check-provenance surface.
+- [+] A future `rune retire` command has a defined transaction to implement: one artifact, three stores, one review.
+- [+] Evidence retention means benchmarks of retired artifacts remain citable when a successor claims the same behavior.

@@ -8,6 +8,9 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 - Add the Dotfiles Scanner and Online Mentions routines with a deterministic detector the run takes from the deck object store, and retire GitHub Exposure (scanner-routines-from-deck).
 - Add `routines/`: the Repository Digest and Weekly Ceremony Audit prompts as deck files a Claude Code routine reads at `main`, with the instance values in the provider stub (routine-prompts-from-deck).
+- Add `scripts/check-ontology`: the smoke fixture's findings are named in `ontology/smoke/expected.tsv` (node, path, constraint, message) instead of counted, and the real-graph check prints each Violation by node. Both hooks call it.
+- Add `supersedes`, `archived`, and `status` to the record vocabulary, a JSON-LD context that maps every frontmatter key to its term, and shapes for supersession and asserted status (enforce-record-shape).
+- Add `scripts/check-decision-shape`: a sign on each consequence, a harness on each consulted model, and a resolvable `upstream` or `related` entry (enforce-record-shape).
 - Add the PreferTrash rule in core: delete with `trash`, the FreeDesktop-layout script every repository and the dotfiles ship, never with `rm`; recovery is a move back from `~/.local/share/Trash`.
 - Add the DetachedJob skill in development: start a long command in its own session so no tool timeout, terminal close, or session exit stops it, then wait for its exit code and read its log.
 - Add recorded proofs for prove-each-scenario, cast-player-in-proofs, and proof-page-handover under `docs/proofs/`, and DECK-0019 from the archived cast-player decision.
@@ -66,6 +69,8 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 - Change the Dotfiles Scanner to read acknowledgements from `.auditignore.yaml` and to run the detector from a checked copy in the scratch directory (scanner-routines-from-deck).
 - Routine notifications open with the result and whether to act, group details in bullets, end with one next step, and show health only when degraded (routine-prompts-from-deck).
+- Require `### Consequences` under `## Decision Outcome` with `[+]` and `[-]` items, as the runeADR template states, and convert every record (enforce-record-shape).
+- Restore the source dates and the provenance of CORE-0001, correct the section order in CORE-0011, and repair two `related` entries that named records that do not exist.
 - Fix the guarded push: the root checkout is refused by workspace identity (the old template test passed a dirty root), and a head that does not descend from the remote bookmark is refused.
 - RemoteWrites: a remote pull request or branch write is offered, not refused: the session lists the commands and asks "Do you want me to do this on your behalf?" A yes covers them once.
 - Sync the ceremony files to skeleton `6374d8fc` through `copier update`: seven dcg packs with fixtures, `.dcg.toml`, the lane table, the direct-push signature check, admin-role rulesets.
@@ -99,6 +104,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 - Fix the Repository Digest and Weekly Ceremony Audit to end with the notification text only (routine-prompts-from-deck).
 - Fix every routine to send the final message text as the notification, with a listed headline (routine-prompts-from-deck).
 - Fix the Weekly Ceremony Audit to deepen the deck and skeleton checkouts before it classifies a difference (routine-prompts-from-deck).
+- Fix the AcceptanceTesting proof page: declare UTF-8, wrap a line longer than the screen, and keep the screen at the recorded height so the controls do not move during playback.
 - Fix the identity tests to expect the versioned display names the synced `author-identity.py` derives (`Claude Fable 5.2`, not `Claude`).
 - Fix the decision record shape to accept every uppercase family. It allowed DECK and RUNE only, so all nineteen CORE records failed on the real graph.
 - Add a hook that validates the real graph on every ontology, record, or rule commit.

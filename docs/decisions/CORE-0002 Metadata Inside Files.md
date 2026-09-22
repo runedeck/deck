@@ -9,16 +9,17 @@ tags:
     - portability
 status: accepted
 created: 2026-03-30
-updated: 2026-09-20
+updated: 2026-03-30
 author: "@N4M3Z"
 project: deck
 related:
     - "CORE-0001 Markdown as System Language"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5", "gpt-5.6-sol"]
+consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
-upstream: []
+upstream:
+    - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0002%20Metadata%20Inside%20Files.md"
 change: core-foundation-principles
 ---
 
@@ -59,12 +60,12 @@ The mechanism for embedded metadata in markdown files is YAML frontmatter.
 
 Metadata MUST live inside the file it describes. A sealed provenance sidecar under `.provenance/` is the one exception, because a seal cannot live in the content it attests.
 
-## Consequences
+### Consequences
 
-- Files are self-describing and portable across any system that can read text
-- No external dependency for metadata: no database, no service, no proprietary format
-- Removes an entire class of bugs: orphaned metadata, stale sidecars, sync failures
-- File size increases slightly. Compact YAML frontmatter keeps the cost small.
+- [+] Files are self-describing and portable across any system that can read text
+- [+] No external dependency for metadata: no database, no service, no proprietary format
+- [+] Removes an entire class of bugs: orphaned metadata, stale sidecars, sync failures
+- [-] File size increases slightly. Compact YAML frontmatter keeps the cost small.
 
 [EVERNOTE]: https://evernote.com/
 [DEVON]: https://www.devontechnologies.com/apps/devonthink

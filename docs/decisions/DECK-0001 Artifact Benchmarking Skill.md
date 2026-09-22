@@ -44,9 +44,9 @@ Extract the loop into a standalone BenchArtifact skill in core. BuildSkill keeps
 
 Keeping the loop inside BuildSkill would grow a skill-authoring guide into a benchmarking product and leave rules and agents reaching into another skill's internals. Starting in the rune CLI would gate a working measurement loop behind a Rust port. The skill form keeps the loop editable while its shape settles, and the CLI import follows once it has.
 
-## Consequences
+### Consequences
 
-- Rule and agent adoptions can demand measurement before they land. The ReviewMarkers rule is the first candidate.
-- BuildSkill shrinks and gains a dependency on a sibling skill for its evaluation step.
-- The per-model matrix multiplies run counts. Benchmarks stay affordable only while test sets stay small.
-- The viewer and aggregator fork from BuildSkill's copies at extraction. Divergence between the two is resolved by the CLI import, which retires the skill-side scripts.
+- [+] Rule and agent adoptions can demand measurement before they land. The ReviewMarkers rule is the first candidate.
+- [-] BuildSkill shrinks and gains a dependency on a sibling skill for its evaluation step.
+- [-] The per-model matrix multiplies run counts. Benchmarks stay affordable only while test sets stay small.
+- [-] The viewer and aggregator fork from BuildSkill's copies at extraction. Divergence between the two is resolved by the CLI import, which retires the skill-side scripts.

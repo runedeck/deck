@@ -11,7 +11,7 @@ author: "@N4M3Z"
 project: runedeck
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["gpt-6-astra"]
+consulted: ["gpt-6-astra@codex"]
 informed: []
 upstream: []
 change: portable-skill-authoring
@@ -39,8 +39,8 @@ Keep native scopes and procedures in explicit harness entrypoint variants.
 Require the layer gate before declaring authoring compliance.
 Preserve native evidence as a separate acceptance condition.
 
-## Consequences
+### Consequences
 
-- Shared instructions remain usable without a fixed harness tool catalog.
-- Provider-specific metadata stays with its provider.
-- The change requires no new assembly mechanism and grants no deployment or approval authority.
+- [+] Shared instructions remain usable without a fixed harness tool catalog.
+- [+] Provider-specific metadata stays with its provider.
+- [+] The change requires no new assembly mechanism and grants no deployment or approval authority.

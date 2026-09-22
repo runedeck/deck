@@ -16,7 +16,7 @@ related:
     - "DECK-0005 Artifact Lifecycle and Evidence Tokens"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5"]
+consulted: ["claude-fable-5@claude"]
 informed: []
 upstream: []
 change: review-tooling
@@ -52,13 +52,13 @@ Option 3. The review funnel MUST use a maintained open-source package for plumbi
 
 PR-Agent runs in command mode, never in its GitHub Action mode. The Action reviews on pull request events, and the ceremony allows a lane to run only on a maintainer's label. The lane needs one org secret, a model API key. When the key is absent, the lane stops with a clear fault.
 
-## Consequences
+### Consequences
 
-- The comment publish paths, the lane waits, and the findings posting stop being custom code
-- The funnel keeps a reviewer that runs on open code against a model the org chooses
-- One more org secret and one more container image to pin and refresh
-- The change lives in the skeleton repository as `review-tooling`, so this record names a change that the deck does not hold.
-- A fourth lane lengthens the funnel by one model call, and `skip:pr-agent` stands it down
+- [+] The comment publish paths, the lane waits, and the findings posting stop being custom code
+- [+] The funnel keeps a reviewer that runs on open code against a model the org chooses
+- [-] One more org secret and one more container image to pin and refresh
+- [-] The change lives in the skeleton repository as `review-tooling`, so this record names a change that the deck does not hold.
+- [-] A fourth lane lengthens the funnel by one model call, and `skip:pr-agent` stands it down
 
 [TABLE]: https://github.com/runedeck/skeleton/blob/main/docs/changes/review-tooling/design.md
 [REVIEWDOG]: https://github.com/reviewdog/reviewdog

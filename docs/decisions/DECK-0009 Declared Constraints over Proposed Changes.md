@@ -47,9 +47,9 @@ Agents hallucinate entities and then everyone verifies by hand. Comments go out 
 
 Option 3. The deck declares its world: artifact kinds, lifecycle stages, evidence tokens, and the permitted relations between them, with public vocabulary terms reused where they exist. Lifecycle rules become axioms in the description-logic style (functional properties for one-time facts, domain and range for who may hold what), and each axiom gets a deterministic checker. A deterministic check verifies every named entity in a proposal against the declared world, so a hallucinated reference fails a check instead of surviving until review. The existing schemas remain the ontology's first layer, and the graph layer grows from them without a platform rewrite.
 
-## Consequences
+### Consequences
 
-- The evidence-token gates from DECK-0005 acquire an enforcement mechanism that is neither prose nor review labor.
-- Intake pushback gains a deterministic ground: a check, not an argument, rejects an idea that references nonexistent capabilities.
-- The vocabulary mapping keeps deck metadata legible to external tooling at low cost.
-- The heavier machinery (RDF serialization, OWL reasoners) stays optional until a constraint needs inference, which keeps complexity matched to the task.
+- [+] The evidence-token gates from DECK-0005 acquire an enforcement mechanism that is neither prose nor review labor.
+- [+] Intake pushback gains a deterministic ground: a check, not an argument, rejects an idea that references nonexistent capabilities.
+- [+] The vocabulary mapping keeps deck metadata legible to external tooling at low cost.
+- [+] The heavier machinery (RDF serialization, OWL reasoners) stays optional until a constraint needs inference, which keeps complexity matched to the task.

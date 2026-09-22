@@ -9,17 +9,17 @@ tags:
     - structured-madr
 status: accepted
 created: 2026-02-19
-updated: 2026-09-20
+updated: 2026-09-22
 author: "@N4M3Z"
 project: deck
 related:
     - "CORE-0010 Adopt Architecture Decision Records"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5-1"]
+consulted: ["claude-fable-5-1@claude"]
 informed: []
 upstream: []
-change: architecture-decision-records
+change: ["architecture-decision-records", "enforce-record-shape"]
 ---
 
 # ADR Template Choice
@@ -43,18 +43,19 @@ change: architecture-decision-records
 
 ## Decision Outcome
 
-Option 4. A record MUST have these sections in order: Context and Problem Statement, Considered Options, Decision Outcome, Consequences. Decision Drivers and More Information are optional. The `docs/decisions/.mdschema` file MUST validate the frontmatter fields and the heading order. [CORE-0012](CORE-0012 MADR Frontmatter Extensions.md) states the added fields.
+Option 4. A record MUST have these sections in order: Context and Problem Statement, Considered Options, and Decision Outcome, with Consequences as a subsection of Decision Outcome. Decision Drivers and More Information are optional. The `docs/decisions/.mdschema` file MUST validate the frontmatter fields and the heading order. [CORE-0012](CORE-0012 MADR Frontmatter Extensions.md) states the added fields.
 
-## Consequences
+### Consequences
 
-- The schema rejects a record with a missing field before it reaches review.
-- The template is heavier than the Nygard record. A small decision still fills each required section.
-- The deck validates with its own schema file, not with the upstream JSON Schema, so an upstream field change does not reach the deck by itself.
+- [+] The schema rejects a record with a missing field before it reaches review.
+- [-] The template is heavier than the Nygard record. A small decision still fills each required section.
+- [-] The deck validates with its own schema file, not with the upstream JSON Schema, so an upstream field change does not reach the deck by itself.
 
 ## More Information
 
 - [Structured MADR][SMADR]
 - [MADR Template Primer][PRIMER]
+- 2026-09-22: the outcome listed Consequences as a fourth top-level section. The runeADR template puts it under Decision Outcome, and 31 records had followed the wrong sentence. The enforce-record-shape change corrected the sentence and the records.
 
 [SMADR]: https://github.com/zircote/structured-madr "structured-madr, schema and validator"
 [PRIMER]: https://www.ozimmer.ch/practices/2022/11/22/MADRTemplatePrimer.html "Olaf Zimmermann, MADR Template Primer, 2022"

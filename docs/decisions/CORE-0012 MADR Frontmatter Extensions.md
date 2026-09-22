@@ -17,7 +17,7 @@ related:
     - "CORE-0002 Metadata Inside Files"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5-1"]
+consulted: ["claude-fable-5-1@claude"]
 informed: []
 upstream: []
 change: architecture-decision-records
@@ -58,9 +58,9 @@ Option 4. The bare name is canonical, and records in the deck use it. The long f
 
 `scripts/check-decision-fields` enforces the first three rules. The directory schema marks the three required fields optional, because a schema cannot state that either form satisfies a field.
 
-## Consequences
+### Consequences
 
-- A record written with bare names does not pass a strict structured MADR validator. A record written with the long form does.
-- Two forms for one field are two ways to write the same fact. The check forbids both at once, and the deck's own records stay on the bare form.
-- The `change` field makes the link from a record to its change a fact a check can read.
-- The public format home states the same rule in its README, and its JSON Schema still requires the bare names. A long-form record fails that schema until the home changes it.
+- [-] A record written with bare names does not pass a strict structured MADR validator. A record written with the long form does.
+- [-] Two forms for one field are two ways to write the same fact. The check forbids both at once, and the deck's own records stay on the bare form.
+- [+] The `change` field makes the link from a record to its change a fact a check can read.
+- [-] The public format home states the same rule in its README, and its JSON Schema still requires the bare names. A long-form record fails that schema until the home changes it.

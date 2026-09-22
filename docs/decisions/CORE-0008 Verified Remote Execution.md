@@ -9,7 +9,7 @@ tags:
     - supply-chain
 status: accepted
 created: 2026-04-02
-updated: 2026-09-20
+updated: 2026-04-02
 author: "@N4M3Z"
 project: deck
 related:
@@ -18,7 +18,8 @@ responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
 consulted: []
 informed: []
-upstream: []
+upstream:
+    - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0011%20Verified%20Remote%20Execution.md"
 change: core-foundation-principles
 ---
 
@@ -48,11 +49,11 @@ Option 3. A file that CI or a hook fetches from the network MUST be verified aga
 
 A digest update is an explicit act: read the upstream change, update the committed digest, and commit. Each change to executed code then passes through review.
 
-## Consequences
+### Consequences
 
-- A compromised upstream is found at once, because the digest does not match.
-- Each tool upgrade needs a digest for every system and machine the deck supports. That friction is intended.
-- A network failure stops the install. The deck keeps no committed copy of the tools to fall back on.
+- [+] A compromised upstream is found at once, because the digest does not match.
+- [-] Each tool upgrade needs a digest for every system and machine the deck supports. That friction is intended.
+- [-] A network failure stops the install. The deck keeps no committed copy of the tools to fall back on.
 
 ## More Information
 

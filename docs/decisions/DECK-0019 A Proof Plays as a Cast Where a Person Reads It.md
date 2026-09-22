@@ -13,10 +13,10 @@ updated: 2026-09-21
 author: "@N4M3Z"
 project: deck
 related:
-    - "DECK-0015 Recorded Behavior Proofs"
+    - "DECK-0015 Behavior Proof per Change"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5-1"]
+consulted: ["claude-fable-5-1@claude"]
 informed: []
 upstream: []
 change: cast-player-in-proofs
@@ -43,11 +43,11 @@ The skill MUST keep these rules:
 - A page that shows a proof MUST play the cast through the html-tools player.
 - The GIF MUST remain beside the cast in the repository.
 
-## Proof
+### Consequences
 
-Recorded proofs `docs/proofs/cast-player-in-proofs/` (pause and scene label under node) and `docs/proofs/proof-page-handover/` (the page generator on a five-scene cast), 2026-09-21.
+- [-] A page that shows proofs vendors html-tools. The workshop's proof page of 2026-09-20 inlines the script instead, because it is one file with no repository of its own.
+- [-] The scene marker is the driver's comment line. A recording made outside the driver has no scenes, only a scrubber.
 
-## Consequences
+## More Information
 
-- A page that shows proofs vendors html-tools. The workshop's proof page of 2026-09-20 inlines the script instead, because it is one file with no repository of its own.
-- The scene marker is the driver's comment line. A recording made outside the driver has no scenes, only a scrubber.
+- Recorded proofs `docs/proofs/cast-player-in-proofs/` (pause and scene label under node) and `docs/proofs/proof-page-handover/` (the page generator on a five-scene cast), 2026-09-21.

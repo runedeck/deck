@@ -1,0 +1,49 @@
+
+# Scenario: Consequences become their own section
+# The schema requires ### Consequences under ## Decision Outcome. A record with ## Consequences fails.
+❯ mdschema check 'deck/docs/decisions/DECK-0001 Example.md' --schema docs/decisions/.mdschema
+/tmp/claude-501/enforce-record-shape.GY3vlu/deck/docs/decisions/DECK-0001 Example.md
+  ✗ 30:4 [structure] Required element "### Consequences" not found within "Decision Outcome"
+
+✗ Found 1 violation(s) in 1 file(s)
+
+# Scenario: Consequence bullet has no sign
+# Each consequence starts with [+] or [-]. The check names the record and the item.
+❯ python3 scripts/check-decision-shape deck
+deck/docs/decisions/DECK-0001 Example.md: consequence has no sign: `- Cost without a sign`. Start it with `[+]` or `[-]`.
+
+# Scenario: Consulted entry names a model without a harness
+❯ python3 scripts/check-decision-shape deck
+deck/docs/decisions/DECK-0001 Example.md: consulted `claude-fable-5-1` is neither `@handle` nor `<model-id>@<harness>`.
+
+# Scenario: Consulted entry names an unknown harness
+❯ python3 scripts/check-decision-shape deck
+deck/docs/decisions/DECK-0001 Example.md: consulted `gpt-6-astra@openai` names an unknown harness. Known: claude, codex.
+
+# Scenario: Upstream names a file that does not exist
+❯ python3 scripts/check-decision-shape deck
+deck/docs/decisions/DECK-0001 Example.md: upstream `MarkdownFirst.md` matches no record, capability, requirement, file, or URL.
+
+# Scenario: Upstream names a capability requirement
+# A requirement reference resolves in the scratch tree, and the real deck passes with CORE-0001 pointing at seven requirements.
+❯ python3 scripts/check-decision-shape deck; echo "exit $?"
+exit 0
+❯ python3 scripts/check-decision-shape; echo "exit $?"
+exit 0
+❯ grep -E '^    - "[a-z-]+#' docs/decisions/CORE-0001*.md
+    - "plain-text-wins#plain-text-representation"
+    - "markdown-first-authoring#markdown-system-language"
+    - "markdown-first-authoring#metadata-inside-files"
+    - "markdown-first-authoring#flat-frontmatter"
+    - "harness-independent-authoring#author-once"
+    - "harness-independent-authoring#portable-instructions"
+    - "lint-enforced-foundations#checker-coverage"
+
+# Scenario: Record is adopted from forge-core
+# The deck record and its forge-core source carry the same created and updated dates.
+❯ grep -hE '^(created|updated):' */docs/decisions/CORE-0001*.md | sort | uniq -c
+   2 created: 2026-02-19
+   2 updated: 2026-03-30
+❯ grep -o 'forge-core/blob/main/[^"]*' deck/docs/decisions/CORE-0001*.md
+forge-core/blob/main/docs/decisions/CORE-0001%20Markdown%20as%20System%20Language.md
+forge-core/blob/main/rules/MarkdownFirst.md

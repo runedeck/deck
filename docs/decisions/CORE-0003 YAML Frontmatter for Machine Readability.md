@@ -10,7 +10,7 @@ tags:
     - yaml
 status: accepted
 created: 2026-03-30
-updated: 2026-09-20
+updated: 2026-03-30
 author: "@N4M3Z"
 project: deck
 related:
@@ -18,9 +18,10 @@ related:
     - "CORE-0002 Metadata Inside Files"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5", "gpt-5.6-sol"]
+consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
-upstream: [ObsidianFrontmatter.md]
+upstream:
+    - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0003%20YAML%20Frontmatter%20for%20Machine%20Readability.md"
 change: core-foundation-principles
 ---
 
@@ -63,12 +64,12 @@ This decision precedes the MADR template choice because frontmatter is the mecha
 
 Frontmatter MUST be YAML between `---` lines at the top of the file. It MUST stay flat: scalar values and lists of scalars, never nested objects.
 
-## Consequences
+### Consequences
 
-- Every file is queryable by [Dataview][DATAVIEW], validatable by `mdschema`, and parseable by AI tools without custom logic
-- Aligns with the dominant ecosystem convention: no migration cost, no custom tooling
-- Metadata travels with the file across systems, tools, and repositories
-- Authors maintain frontmatter beside prose. Stale metadata is a risk, mitigated by CI validation and [Obsidian][OBS]'s Properties UI.
+- [+] Every file is queryable by [Dataview][DATAVIEW], validatable by `mdschema`, and parseable by AI tools without custom logic
+- [+] Aligns with the dominant ecosystem convention: no migration cost, no custom tooling
+- [+] Metadata travels with the file across systems, tools, and repositories
+- [-] Authors maintain frontmatter beside prose. Stale metadata is a risk, mitigated by CI validation and [Obsidian][OBS]'s Properties UI.
 
 [CC]: https://claude.ai/code
 [CC-DOCS]: https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview
