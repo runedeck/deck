@@ -1,7 +1,7 @@
 ---
 adr: docs/changes/parallel-research-grid/adr.md
 status: proposed
-decisions: ["Research in parallel tracks with cross-model verification", "DECK-0016 Forge Adoption"]
+decisions: ["Research in parallel tracks with cross-model verification"]
 ---
 
 # Research in parallel tracks with cross-model verification
@@ -22,7 +22,6 @@ Multi-track research was one of four fan-out shapes. One skill splits a question
 ## Impact
 
 - `runes/development/skills/ResearchGrid/` (new).
-- Split from the forge-adoption change on 2026-09-20. DECK-0016 records the adoption as a whole.
 
 ## Risks
 

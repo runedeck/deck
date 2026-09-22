@@ -5,7 +5,6 @@ compatibility: "Requires a workflow tool: the pi workflow extension or Claude Co
 targets: [claude, agentskills]
 metadata:
     version: 0.1.0
-    decisions: DECK-0016
 ---
 
 # AgentTeam

@@ -13,7 +13,6 @@ updated: 2026-09-20
 author: "@N4M3Z"
 project: deck
 related:
-    - "DECK-0016 Forge Adoption"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5-1", "gpt-6-astra"]

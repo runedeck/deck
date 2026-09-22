@@ -1,7 +1,7 @@
 ---
 adr: docs/changes/restrict-remote-writes/adr.md
 status: proposed
-decisions: ["Restrict remote writes", "DECK-0016 Forge Adoption"]
+decisions: ["Restrict remote writes"]
 ---
 
 # Restrict remote writes
@@ -21,7 +21,6 @@ Prohibitions against merging, commenting, labelling, and pushing were retyped in
 ## Impact
 
 - `runes/core/rules/RemoteWrites.md` (new).
-- Split from the forge-adoption change on 2026-09-20. DECK-0016 records the adoption as a whole.
 
 ## Risks
 

@@ -1,7 +1,7 @@
 ---
 adr: docs/changes/agentic-merge-train/adr.md
 status: proposed
-decisions: ["Survey the queue and repair eligible blockers", "DECK-0016 Forge Adoption"]
+decisions: ["Survey the queue and repair eligible blockers"]
 ---
 
 # Survey the queue and repair eligible blockers
@@ -22,7 +22,6 @@ Merge polling was one of four fan-out shapes that consumed the owner's sessions.
 ## Impact
 
 - `runes/development/skills/MergeTrain/` (new).
-- Split from the forge-adoption change on 2026-09-20. DECK-0016 records the adoption as a whole.
 
 ## Risks
 

@@ -4,7 +4,6 @@ description: "Draw an ASCII frame of what is about to happen, wait for the owner
 compatibility: "Uses the harness's question tool when one exists and falls back to a plain question. Workflow children cannot ask and therefore never run this skill."
 metadata:
     version: 0.1.0
-    decisions: DECK-0016
 ---
 
 # Storyboard

@@ -7,9 +7,9 @@ tags:
     - architecture
     - review
     - signing
-status: proposed
+status: accepted
 created: 2026-09-19
-updated: 2026-09-19
+updated: 2026-09-23
 author: "@N4M3Z"
 project: deck
 related:
@@ -18,7 +18,7 @@ related:
     - "CORE-0016 Adversarial Review over Councils"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
-consulted: ["claude-fable-5-1", "gpt-6-astra", "grok-4.6", "lumo-max"]
+consulted: ["claude-fable-5-1@claude", "gpt-6-astra@codex", "grok-4.6@grok", "lumo-max@opencode"]
 informed: []
 upstream:
     - "https://github.com/runedeck/skeleton/tree/main/docs/specs/review-ceremony"
@@ -80,15 +80,14 @@ Bound into the design and now requirements:
 - `free lanes only` is a recorded coverage state and a valid queue entry.
 - Outside pull requests enter through `rune sign adopt`.
 
-## Consequences
+### Consequences
 
-- Two key touches per pull request, each authorizing a displayed action
-- The stored owner login can open a pull request, and that pull request cannot merge
-- A lane that vanishes leaves a recorded status, not a hole
-- `rune sign open`, `adopt`, `owner-seal`, the controller ledger, and the triage do not exist
-  yet. Until they do, the deck's rules describe a ceremony the tooling cannot enforce, and this
-  record stays proposed
-- The rune-sign proposal's citation of a CORE-0013 signing decision is stale and points here
+- [+] Two key touches per pull request, each authorizing a displayed action
+- [+] The stored owner login can open a pull request, and that pull request cannot merge
+- [+] A lane that vanishes leaves a recorded status, not a hole
+- [-] `rune sign open`, `adopt`, `owner-seal`, the controller ledger, and the triage do not exist
+  yet. Until they do, the deck's rules describe a ceremony the tooling cannot enforce
+- [-] The rune-sign proposal's citation of a CORE-0013 signing decision is stale and points here
 
 ## Audit
 
@@ -100,3 +99,4 @@ Bound into the design and now requirements:
   app can edit a check run, so the line is the controller's word without a comment or a commit.
   The merge-seal binds the digest, so a rebuilt ledger at the same generation unseals. The
   reviewing app carries `checks: write` for it.
+- 2026-09-23: accepted by the owner. The decision stands while the tooling is pending. A record under `docs/decisions/` is never proposed.

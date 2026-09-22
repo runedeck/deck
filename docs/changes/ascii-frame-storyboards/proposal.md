@@ -1,7 +1,7 @@
 ---
 adr: docs/changes/ascii-frame-storyboards/adr.md
 status: proposed
-decisions: ["Confirm each stage with an ASCII frame", "DECK-0016 Forge Adoption"]
+decisions: ["Confirm each stage with an ASCII frame"]
 ---
 
 # Confirm each stage with an ASCII frame
@@ -21,7 +21,6 @@ A frame before the first write and a delta frame after the stage give one confir
 ## Impact
 
 - `runes/development/skills/Storyboard/` (new).
-- Split from the forge-adoption change on 2026-09-20. DECK-0016 records the adoption as a whole.
 
 ## Risks
 

@@ -1,7 +1,7 @@
 ---
 adr: docs/changes/parallel-agent-teams/adr.md
 status: proposed
-decisions: ["Implement change tasks in parallel workspaces", "DECK-0016 Forge Adoption"]
+decisions: ["Implement change tasks in parallel workspaces"]
 ---
 
 # Implement change tasks in parallel workspaces
@@ -22,7 +22,6 @@ Per-workspace briefs were retyped for every parallel implementation. One skill s
 ## Impact
 
 - `runes/development/skills/AgentTeam/` (new).
-- Split from the forge-adoption change on 2026-09-20. DECK-0016 records the adoption as a whole.
 
 ## Risks
 

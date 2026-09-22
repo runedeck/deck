@@ -1,7 +1,7 @@
 ---
 adr: docs/changes/use-adversarial-reviews/adr.md
 status: proposed
-decisions: ["Refute a draft before accepting it", "DECK-0016 Forge Adoption"]
+decisions: ["Refute a draft before accepting it"]
 ---
 
 # Refute a draft before accepting it
@@ -22,7 +22,6 @@ Hostile prose rounds were run by hand. One skill attacks the original from three
 ## Impact
 
 - `runes/development/skills/AdversaryReview/` (new).
-- Split from the forge-adoption change on 2026-09-20. DECK-0016 records the adoption as a whole.
 
 ## Risks
 

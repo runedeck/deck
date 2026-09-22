@@ -1,7 +1,7 @@
 ---
 adr: docs/changes/openspec-change-router/adr.md
 status: proposed
-decisions: ["Route each change to its next stage", "DECK-0016 Forge Adoption"]
+decisions: ["Route each change to its next stage"]
 ---
 
 # Route each change to its next stage
@@ -21,4 +21,3 @@ DECK-0008 names the loop from idea to merge but no skill routed a change to its 
 ## Impact
 
 - `runes/development/skills/ForgeCycle/` (new).
-- Split from the forge-adoption change on 2026-09-20. DECK-0016 records the adoption as a whole.

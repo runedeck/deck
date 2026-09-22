@@ -4,7 +4,7 @@ description: "Route a spec-driven change to its next stage of the idea-to-merge 
 compatibility: "Requires rune for `rune spec context`. Works in every harness. Stages owned by a skill absent from the harness end the turn with a report."
 metadata:
     version: 0.1.0
-    decisions: DECK-0008, DECK-0016
+    decisions: DECK-0008
 ---
 
 # ForgeCycle
@@ -49,5 +49,5 @@ One turn, one edge. Read where the change is, print the stage strip, name the ne
 ## References
 
 - [Stages.md](Stages.md): the twelve DECK-0008 stages, their owners, entry and exit signals, and return edges.
-- Deck decisions DECK-0008 Idea-to-Merge Flywheel and DECK-0016 Forge Adoption.
+- Deck decision DECK-0008 Idea-to-Merge Flywheel.
 - Condensed from forge-core `ExecutePlan`, `WorkSessionFlow`, and `VerifyCompletion`. Cut: the linear plan executor and the completion checklist, because the change's `tasks.md` and delta specs already carry both.
