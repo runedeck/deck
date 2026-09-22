@@ -25,9 +25,37 @@ The intake pass MUST size the change before scaffolding. A micro-change (prose, 
 
 ### Requirement: Any medium, one entry point
 
-The intake pass MUST accept the idea as text regardless of origin medium. A voice transcript, a sketch description, and written prose enter the same pass unchanged.
+The intake pass MUST accept the idea in the form it arrives: a transcript, pasted or linked, a link to a drawing in the owner's vault, or a short written prompt. Every medium is optional and none is required. The pass MUST read each medium through its own reader and MUST continue with one text, so the origin medium changes nothing downstream.
 
 #### Scenario: A voice transcript enters
 
 - **WHEN** a transcript with filler and repetition enters intake
 - **THEN** the pushback pass extracts the intent, and the origin medium changes nothing downstream
+
+#### Scenario: A drawing link enters
+
+- **WHEN** an `obsidian://` link to a drawing enters intake
+- **THEN** the pass reads the drawing through the Obsidian CLI, origin on the left, and the record's `upstream` lists the link
+
+#### Scenario: Prompt enters alone
+
+- **WHEN** one short written prompt enters intake with no recording and no drawing
+- **THEN** the pass runs the same interview and produces the same change as it would from a recording or a drawing
+
+### Requirement: Interview before the scaffold
+
+After pushback and before any file exists, the intake pass MUST interview the owner about the feature: who it serves, what is different afterwards, what must hold, what must not happen, and how the owner will know it works. The interview MUST stop when the answers state every requirement and its scenarios, and it MUST NOT exceed seven questions in one round.
+
+#### Scenario: Idea arrives without acceptance criteria
+
+- **WHEN** the sharpened intent states an outcome and no way to observe it
+- **THEN** the interview asks for the observable result before it writes a scenario
+
+### Requirement: Owner reviews the MUST statements and the scenarios
+
+The intake pass MUST hand the drafted delta specification to the owner for review before the change counts as proposed. The handoff MUST list every MUST statement and every scenario, one line each, and MUST ask for a verdict on each. A change MUST NOT proceed to implementation while a MUST statement or a scenario has no verdict.
+
+#### Scenario: Owner rejects one MUST
+
+- **WHEN** the owner marks one MUST statement wrong in the review
+- **THEN** the pass rewrites that requirement and its scenarios and asks again for that one, and the accepted ones stay unchanged

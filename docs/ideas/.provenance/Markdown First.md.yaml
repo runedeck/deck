@@ -1,0 +1,24 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: docs/ideas/Markdown First.md
+    digest:
+      sha256: d5f6666db6a357c35e8e9ce18af0d1bc459b6963047f2a7b31e1034ab0641080
+  predicate:
+    buildDefinition:
+      buildType: idea-snapshot/v1
+      externalParameters:
+        upstream_url: obsidian://open?vault=Atlas&file=Library%2FCanvas%2FMarkdown%20First
+        transforms_applied:
+        - obsidian read
+      resolvedDependencies:
+      - name: upstream
+        uri: obsidian://open?vault=Atlas&file=Library%2FCanvas%2FMarkdown%20First
+        digest:
+          sha256: d5f6666db6a357c35e8e9ce18af0d1bc459b6963047f2a7b31e1034ab0641080
+    runDetails:
+      builder:
+        id: scripts/sync-idea
+      metadata:
+        startedOn: 2026-09-23T01:31:12.963354+00:00
