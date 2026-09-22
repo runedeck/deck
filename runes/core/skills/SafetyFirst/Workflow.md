@@ -21,7 +21,7 @@ The best interaction with a guard is none. Use the non-destructive form before t
 - `git restore <path>`: Use `git restore --staged <path>` to keep the worktree, or use `git stash`.
 - `git push --force`: Use `git push --force-with-lease=<branch>` only on your branch.
 - `git branch -D <branch>`: Verify the merge state on the platform. Give force-deletes to the user.
-- `rm -rf <path>`: Use `trash <path>`, or use `rm` for named files in the working directory.
+- `rm -rf <path>`: Use `trash <path>` (the PreferTrash rule), or use `rm` for named files in the working directory.
 - `> ~/<file>` truncation: Append with `>>`, write to a scratch path, or create a backup first.
 - `shutil.rmtree` or `rm -rf` in an inline script: Use the harness file tools or `trash <path>`.
 - A forced deletion of a stuck `.git/worktrees/<name>` stub: Write a raw commit SHA to the stub `HEAD` file. The user prunes the registry.
