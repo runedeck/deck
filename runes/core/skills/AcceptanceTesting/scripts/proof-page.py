@@ -33,7 +33,8 @@ h2{font-size:1.45rem}
 code,.mono{font-family:ui-monospace,monospace;font-size:.86em}
 code{background:var(--code);padding:1px 5px;border-radius:3px}
 figure{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.cast pre{max-height:60vh}
+main .cast{font-size:13px;font-family:"SF Mono",Menlo,Consolas,"DejaVu Sans Mono",monospace}
+main .cast pre{min-height:calc(var(--rows,24) * 1.45em + 28px);max-height:80vh;line-height:1.45;padding:14px 16px;white-space:pre-wrap;overflow-wrap:anywhere}
 figcaption{padding:14px 16px 16px;display:grid;gap:8px}
 figcaption p{margin:0}
 .scenes{margin:0;padding-left:18px;color:var(--muted);font-size:.9rem;columns:2;column-gap:24px}
@@ -67,9 +68,12 @@ def section(name, cast_text, caption, meta):
     items = "".join(f"<li>{html.escape(t)}</li>" for t in scenes(cast_text))
     spans = "".join(f'<span class="mono">{html.escape(m)}</span>' for m in meta)
     safe = cast_text.replace("</script", "<\\/script")
+    # The screen keeps the recorded height from the first frame, so the
+    # controls do not move while lines appear.
+    rows = int(json.loads(cast_text.splitlines()[0]).get("height", 24))
     return (
         f"<section>\n<h2>{html.escape(name)}</h2>\n<figure>\n"
-        f'<div id="cast-{name}"></div>\n'
+        f'<div id="cast-{name}" style="--rows:{rows}"></div>\n'
         f'<script type="text/plain" id="text-{name}">{safe}</script>\n'
         f"<figcaption>\n<p>{html.escape(caption)}</p>\n"
         f'<div class="meta">{spans}</div>\n<ol class="scenes">{items}</ol>\n'
@@ -98,7 +102,7 @@ def main():
     )
     names = json.dumps(list(casts))
     page = (
-        f"<title>{html.escape(args.title)}</title>\n<style>{STYLE}</style>\n<main>\n<header>\n"
+        f'<meta charset="utf-8">\n<title>{html.escape(args.title)}</title>\n<style>{STYLE}</style>\n<main>\n<header>\n'
         f'<div class="eyebrow">{html.escape(args.eyebrow)}</div>\n<h1>{html.escape(args.title)}</h1>\n'
         f'<p class="lede">{html.escape(args.lede)}</p>\n</header>\n{body}</main>\n'
         f"<script>{args.player.read_text()}</script>\n"
