@@ -61,6 +61,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- RemoteWrites: a remote pull request or branch write is offered, not refused: the session lists the commands and asks "Do you want me to do this on your behalf?" A yes covers them once.
 - Sync the ceremony files to skeleton `6374d8fc` through `copier update`: seven dcg packs with fixtures, `.dcg.toml`, the lane table, the direct-push signature check, admin-role rulesets.
 - Write the Purpose of the `cast-player-in-proofs` and `proof-page-handover` specifications in place of the archive stub.
 - Change the correctness caller to skeleton `5e4657bf`: the controller runs on every same-repository push, draft or ready, so the green draft starts the review round.
