@@ -1,6 +1,7 @@
 ---
 adr: "docs/decisions/DECK-0004 Temporary Adoption State.md"
 status: accepted
+archived: 2026-09-20
 decisions:
     - DECK-0004 Temporary Adoption State
 ---

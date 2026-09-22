@@ -1,6 +1,7 @@
 ---
 adr: docs/changes/cast-player-in-proofs/adr.md
-status: proposed
+status: accepted
+archived: 2026-09-21
 decisions: ["A proof plays as a cast where a person reads it"]
 ---
 

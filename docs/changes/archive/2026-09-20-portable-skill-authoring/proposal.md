@@ -1,6 +1,7 @@
 ---
 adr: "docs/decisions/DECK-0018 Keep Shared Skill Procedures Independent of Harness Syntax.md"
 status: accepted
+archived: 2026-09-20
 decisions: ["DECK-0018 Keep Shared Skill Procedures Independent of Harness Syntax"]
 ---
 
