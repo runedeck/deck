@@ -4,15 +4,17 @@ set -euo pipefail
 workspace_root=$(jj workspace root)
 cd "$workspace_root"
 
-# The default workspace stays on the default branch with a clean working
-# copy. Work happens in .workspaces/<name>. A push from the default
-# workspace is refused so the primary checkout never carries a branch.
-case "$(jj log --no-graph -r @ -T 'working_copies')" in
-    *default@*)
-        echo "jj push: refused from the default workspace. Push from a workspace under .workspaces/." >&2
-        exit 1
-        ;;
-esac
+# The root checkout belongs to the owner. An agent pushes from its own
+# workspace under .workspaces/, one per session, reused across changes.
+# The identity test is the workspace root, not the `working_copies`
+# template: that template prints nothing when only the default workspace
+# exists, so the earlier guard passed a dirty root. A stale root makes
+# `jj workspace root` fail, and the assignment then fails closed.
+default_root=$(jj workspace root --name default)
+if [ "$workspace_root" = "$default_root" ]; then
+    echo "jj push: the root checkout is the owner's. Push from the session's workspace under .workspaces/." >&2
+    exit 1
+fi
 
 for argument in "$@"; do
     case "$argument" in

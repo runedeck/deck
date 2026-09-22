@@ -15,6 +15,7 @@ Commit discipline, staging hygiene, push policy, and repo governance. In a jj co
 
 - Declare the actual model identity. Apply the repository's trusted attribution policy and checker to the outgoing range.
 - Use the repository workspace helper when available. Keep identity configuration scoped to that workspace.
+- The root checkout belongs to the owner. Use one `.workspaces/<name>` checkout per session and reuse it across changes. Forget and trash it when the session ends. Base work on a published commit. Never publish the owner's working copy or rewrite another session's commits or their mutable ancestors. A push to the default branch requires the current remote target to be an ancestor of the validated head.
 - Stage files by name. Never use `git add -A` or `git add .`.
 - Commit with a pathspec (`git commit -- <path>...`). A bare commit can include the user's staged work. Use a bare commit only after the history-rewrite procedure replaces the index with `git read-tree`. When unsure, run `git diff --cached --stat` first.
 - Never commit files that contain secrets. The prek hooks run gitleaks at commit and at push. Never bypass them with `--no-verify`.

@@ -62,6 +62,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- Fix the guarded push: the root checkout is refused by workspace identity (the old template test passed a dirty root), and a head that does not descend from the remote bookmark is refused.
 - RemoteWrites: a remote pull request or branch write is offered, not refused: the session lists the commands and asks "Do you want me to do this on your behalf?" A yes covers them once.
 - Sync the ceremony files to skeleton `6374d8fc` through `copier update`: seven dcg packs with fixtures, `.dcg.toml`, the lane table, the direct-push signature check, admin-role rulesets.
 - Write the Purpose of the `cast-player-in-proofs` and `proof-page-handover` specifications in place of the archive stub.
