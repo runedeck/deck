@@ -1,0 +1,11 @@
+# Every file in this directory is a decision record, so the schema fixes
+# the type and the files carry no key.
+frontmatter:
+    fields:
+        - name: title
+          type: string
+        - name: type
+          type: string
+          optional: true
+          enum:
+              - adr

@@ -1,0 +1,118 @@
+# Plain-language rule (readback 2026-10-17): explain every abbreviation at
+# its first use. An all-caps token of two or more letters counts as an
+# abbreviation unless the file also carries it in parentheses after its
+# expansion, "Simplified Technical English (STE)", or before one,
+# "ADR (architecture decision record)". The exceptions are the keyword
+# levels, the scenario keywords, the delta headings, the record id prefixes,
+# the reserved file names, the review markers, and the formats and
+# protocols the tree names without explaining. Text scope, so a definition
+# anywhere in the file counts and code is skipped; YAML front matter is
+# read too, which is why USE, WHEN, NOT, and FOR are listed.
+extends: conditional
+message: "'%s' is an abbreviation with no explanation here. Spell it out at first use, '<words> (abbreviation)'."
+level: suggestion
+scope: text
+ignorecase: false
+first: '\b([A-Z]{2,})\b'
+second: '(?:\((?<a>[A-Z]{2,})\)|\b(?<a>[A-Z]{2,})(?=\s*\([A-Za-z]))'
+exceptions:
+  - MUST
+  - SHOULD
+  - MAY
+  - SHALL
+  - NOT
+  - WHEN
+  - THEN
+  - AND
+  - GIVEN
+  - USE
+  - FOR
+  - ADDED
+  - MODIFIED
+  - REMOVED
+  - RENAMED
+  - CORE
+  - WORKSHOP
+  - DECK
+  - ISSUE
+  - NOTE
+  - SUGGESTION
+  - PRAISE
+  - TODO
+  - README
+  - AGENTS
+  - CLAUDE
+  - SKILL
+  - CHANGELOG
+  - CONTRIBUTING
+  - CODEOWNERS
+  - INSTALL
+  - LICENSE
+  - KEYS
+  - YAML
+  - JSON
+  - TOML
+  - URI
+  - URL
+  - IRI
+  - UTF
+  - BOM
+  - GFM
+  - HTML
+  - SVG
+  - GIF
+  - PNG
+  - CSV
+  - TSV
+  - PDF
+  - ASCII
+  - API
+  - CLI
+  - TUI
+  - GUI
+  - UI
+  - CI
+  - PR
+  - ADR
+  - MADR
+  - RACI
+  - RFC
+  - ID
+  - SHA
+  - RDF
+  - RDFS
+  - OWL
+  - SHACL
+  - SKOS
+  - PROV
+  - TTL
+  - OKF
+  - MIF
+  - AI
+  - LLM
+  - GPT
+  - MCP
+  - STE
+  - ASD
+  - RTK
+  - HTTP
+  - HTTPS
+  - TLS
+  - DNS
+  - SSH
+  - GPG
+  - IP
+  - VPN
+  - VCS
+  - UTC
+  - OK
+  - MIT
+  - EUPL
+  - BSD
+  - SLSA
+  - PII
+  - ENV
+  - PATH
+  - HOME
+  - TMPDIR
+  - EOF

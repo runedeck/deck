@@ -1,0 +1,17 @@
+# markdown-relative-links-matching (requirement Markdown Links Between Files): a
+# repository file references another repository file with a relative
+# Markdown link, and a term is a link to its glossary page in the same
+# form. A wikilink is the vault's form, and an @path reference is what
+# assembly writes into a Claude Code or Gemini instance for an include;
+# a state file writes an include as `![text](relative path)`. Neither
+# form belongs in a repository file outside the Obsidian domains. Text
+# scope: a code span that shows the form is not a use of it. The @ form
+# needs a file extension, so @org/repo passes.
+extends: existence
+message: "'%s' is a wikilink or a harness path reference. Use a relative Markdown link (markdown-relative-links-matching)."
+level: error
+scope: text
+nonword: true
+tokens:
+  - '\[\[[^\]\n]+\]\]'
+  - '(?<![\w`@])@(?:~|\.{1,2})?/?(?:[\w.-]+/)*[\w-]+\.[A-Za-z0-9]+\b'

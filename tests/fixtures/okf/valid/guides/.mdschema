@@ -1,0 +1,12 @@
+# A guide or a how-to lives here, so the schema allows two types and fixes
+# none: a file without a key is untyped, and that is not a finding.
+frontmatter:
+    fields:
+        - name: title
+          type: string
+        - name: type
+          type: string
+          optional: true
+          enum:
+              - guide
+              - howto

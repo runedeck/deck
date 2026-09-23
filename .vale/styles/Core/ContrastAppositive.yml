@@ -1,0 +1,20 @@
+# Deslop (rule): the "X, not Y" tail. A clause names the thing and then
+# spends its last words on what the thing is not: "a sister, not their
+# ship", "facts, not lines", "the socket, never the surface". The denied
+# half adds no fact; it stages a contrast. Sibling of NegativeParallelism,
+# which covers the "not just X but Y" and "It is not X. It is Y." shapes.
+#
+# Matches a comma followed by "not"/"never" and a short noun
+# phrase that closes the clause. The closing punctuation keeps the rule
+# off ordinary mid-sentence negation ("if it fails, not much happens"
+# still matches; accept that as the price of catching the tail).
+#
+# Default (text) scope, so list items and callouts are checked too.
+# One `raw` entry with top-level alternation: multiple raw items are
+# concatenated into one pattern.
+extends: existence
+message: "'X, not Y' contrast: say what it is and drop the denied half (rule Deslop)."
+level: warning
+ignorecase: true
+raw:
+  - ",\\s+(?:not|never)\\s+(?:just\\s+|only\\s+|merely\\s+)?(?:a|an|the|their|its|his|her|your|our|my|one|some)?\\s*[\\w'’-]+(?:\\s+[\\w'’-]+){0,4}(?:[.!?;:)]|\\s*$)"

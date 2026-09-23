@@ -1,0 +1,12 @@
+# Plain-language rule (readback 2026-10-17): every rule names who does what.
+# A be-verb followed by a past participle drops the actor, "the term is
+# reported", so the reader cannot tell which role acts. The tagger decides
+# what a participle is, so "the field is required" also reports; a
+# suggestion, never a failure. An adverb between the two words is not
+# matched.
+extends: sequence
+message: "'%[1]s %[2]s' hides the actor. Say who does it: the validator reports, the fixer edits, the owner signs."
+level: suggestion
+tokens:
+  - pattern: '(?i)(?:am|is|are|was|were|be|been|being)'
+  - tag: ^VBN$

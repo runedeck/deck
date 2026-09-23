@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+"""Check that every check has a fixture it accepts and one it rejects
+(lint-enforced-foundation-requirements, Checker Has Fixtures, CORE-0007).
+
+    scripts/check-fixtures                       check the deck
+    scripts/check-fixtures <dir>                 check another root, for a fixture
+    scripts/check-fixtures --baseline FILE       fail only on a finding the file does not list
+
+A script `scripts/check-<name>` is proven by `tests/fixtures/<name>/valid/`
+and `tests/fixtures/<name>/invalid/`, each holding at least one file that is
+not a dot file, or by a test `tests/test_check_<name>.py` or
+`scripts/test_check_<name>.py` whose text names the script. A Vale rule
+`.vale/styles/Core/<Rule>.yml` is proven by `tests/fixtures/vale/invalid/<rule>.md`
+and `tests/fixtures/vale/valid/<rule>.md`, the rule name in kebab case.
+"""
+import pathlib
+import re
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+
+def kebab(name):
+    """AIVocabularyDensity → ai-vocabulary-density, NoEmDash → no-em-dash."""
+    return re.sub(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", "-", name).lower()
+
+
+def has_files(directory):
+    return directory.is_dir() and any(p.is_file() and not p.name.startswith(".") for p in directory.iterdir())
+
+
+def script_proven(root, name):
+    fixtures = root / "tests" / "fixtures" / name
+    if has_files(fixtures / "valid") and has_files(fixtures / "invalid"):
+        return True
+    test = f"test_check_{name.replace('-', '_')}.py"
+    for candidate in (root / "tests" / test, root / "scripts" / test):
+        if candidate.is_file() and f"check-{name}" in candidate.read_text(errors="replace"):
+            return True
+    return False
+
+
+def check(root):
+    root = pathlib.Path(root).resolve()
+    if not (root / "scripts").is_dir():
+        return [f"{root} has no scripts directory"]
+    errors = []
+    for script in sorted((root / "scripts").glob("check-*")):
+        name = script.name[len("check-"):]
+        if not script_proven(root, name):
+            errors.append(f"scripts/check-{name}: no tests/fixtures/{name}/{{valid,invalid}} with files and no test that names it")
+    for rule in sorted((root / ".vale" / "styles" / "Core").glob("*.yml")) if (root / ".vale").is_dir() else []:
+        slug = kebab(rule.stem)
+        for side in ("invalid", "valid"):
+            if not (root / "tests" / "fixtures" / "vale" / side / f"{slug}.md").is_file():
+                errors.append(f".vale/styles/Core/{rule.name}: no tests/fixtures/vale/{side}/{slug}.md")
+    return errors
+
+
+def main():
+    args = sys.argv[1:]
+    baseline = None
+    if "--baseline" in args:
+        at = args.index("--baseline")
+        baseline = pathlib.Path(args[at + 1])
+        args = args[:at] + args[at + 2:]
+    errors = check(args[0] if args else ROOT)
+    known = set(baseline.read_text().splitlines()) if baseline and baseline.is_file() else set()
+    new = [line for line in errors if line not in known]
+    for line in new:
+        print(line)
+    print(f"fixtures: {len(errors)} findings, {len(new)} outside the baseline" if baseline else f"fixtures: {len(errors)} findings")
+    return 1 if new else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

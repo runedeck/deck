@@ -1,0 +1,227 @@
+#!/usr/bin/env python3
+"""Check the repository as an Open Knowledge Format 0.2 bundle (open-knowledge-format-bundle).
+
+    scripts/check-okf                       check the repository root
+    scripts/check-okf <dir>                 check another root, for a fixture
+    scripts/check-okf --baseline FILE       fail only on a finding the file does not list
+    scripts/check-okf --types [<dir>]       list every file's type and where it comes from
+
+Four rules, one line each on failure:
+
+- type: the key is optional. A file's type is its explicit `type` key (an
+  instruction entrypoint, a skill, rule, agent, or hook under runes/, carries
+  it under the Agent Skills `metadata` map). Without a key, the type comes
+  from the nearest directory schema, the `.mdschema` found walking up from
+  the file's directory, when that schema fixes `type` to one value through a
+  one-item `enum` or a literal `pattern`. A file with neither is untyped,
+  which is not a finding; the graph export fills a derived type in. A key
+  that is present and empty is a finding.
+- id: an `id` key, when present, equals the file's path without `.md`.
+- reserved: `index.md` and `log.md` carry no frontmatter block at all,
+  except `okf_version` alone on the bundle root `index.md`.
+- version: the bundle root `index.md` declares `okf_version: "0.2"`. This
+  is a warning until the generator that writes the root index lands
+  (Bundle Declares Its Version), so it is printed and never fails the check.
+
+The bundle is the tracked tree: `git ls-files` when the root is a
+repository, a walk otherwise. Archived changes, fixtures, and build output
+are outside it by anchored prefix. The baseline lists findings the
+repository carried when the check landed; it is empty now, a new finding
+fails, and a line that leaves the baseline is removed from the file by hand.
+"""
+import pathlib
+import re
+import subprocess
+import sys
+
+RESERVED = {"index.md", "log.md"}
+OUTSIDE = ("docs/changes/archive/", "tests/fixtures/", "build/", ".specstory/", ".provenance/", ".workspaces/", ".worktrees/")
+ENTRYPOINT = re.compile(r"^runes/[^/]+/(?:skills/[^/]+/SKILL\.md|(?:rules|agents|hooks)/[^/]+\.md)$")
+BLOCK = re.compile(r"\A﻿?---[ \t]*\r?\n(.*?)^---[ \t]*(?:\r?\n|\Z)", re.DOTALL | re.MULTILINE)
+KEY = re.compile(r"^(?P<indent>[ \t]*)(?:\"([^\"]+)\"|'([^']+)'|([A-Za-z_][\w-]*))[ \t]*:[ \t]*(.*?)[ \t]*$")
+SCHEMA = ".mdschema"
+LITERAL = re.compile(r"^\^?([A-Za-z0-9_-]+)\$?$")
+
+
+def scalar(value):
+    """The scalar a YAML line carries: unquoted, comment stripped, null and
+    block indicators read as empty."""
+    value = re.sub(r"[ \t]+#.*$", "", value)
+    if value in ("", "|", ">", "null", "~"):
+        return ""
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+        return value[1:-1]
+    return value
+
+
+def frontmatter(text):
+    """(has_block, mapping). Top-level keys map to scalars; a nested block one
+    level down maps to its own mapping; a flow map `{a: b}` is read as one."""
+    match = BLOCK.match(text)
+    if not match:
+        return False, {}
+    data, current, base = {}, None, None
+    for line in match.group(1).splitlines():
+        found = KEY.match(line)
+        if not found:
+            continue
+        indent = len(found.group("indent").expandtabs(4))
+        key = found.group(2) or found.group(3) or found.group(4)
+        raw = found.group(5)
+        if indent == 0:
+            flow = re.fullmatch(r"\{(.*)\}", raw.strip())
+            if flow:
+                data[key] = {k.strip().strip("\"'"): scalar(v.strip()) for k, v in (item.split(":", 1) for item in flow.group(1).split(",") if ":" in item)}
+                current, base = None, None
+            elif not raw.strip():
+                data[key], current, base = {}, key, None
+            else:
+                data[key], current, base = scalar(raw), None, None
+        elif current is not None and isinstance(data.get(current), dict):
+            base = indent if base is None else base
+            if indent == base:
+                data[current][key] = scalar(raw)
+    return True, data
+
+
+def fixed_type(schema_text):
+    """The one value a directory schema fixes for the `type` frontmatter
+    field, or None. The field is the `- name: type` item under
+    `frontmatter.fields`; a one-item `enum` or a literal `pattern` such as
+    `^adr$` fixes it, and anything else, an `enum` of several values
+    included, leaves the type open."""
+    item, indent, enum, pattern, listing = False, 0, [], None, False
+    for line in schema_text.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        lead = len(line) - len(line.lstrip())
+        if stripped.startswith("- name:"):
+            if item:
+                break
+            item, indent = scalar(stripped[len("- name:"):].strip()) == "type", lead
+            continue
+        if not item:
+            continue
+        if lead <= indent:
+            break
+        if stripped.startswith("enum:"):
+            flow = re.fullmatch(r"\[(.*)\]", stripped[len("enum:"):].strip())
+            enum = [scalar(v.strip()) for v in flow.group(1).split(",") if v.strip()] if flow else []
+            listing = flow is None
+        elif stripped.startswith("- "):
+            if listing:
+                enum.append(scalar(stripped[2:].strip()))
+        else:
+            listing = False
+            if stripped.startswith("pattern:"):
+                pattern = scalar(stripped[len("pattern:"):].strip())
+    if len(enum) == 1 and enum[0]:
+        return enum[0]
+    if pattern:
+        literal = LITERAL.match(pattern)
+        return literal.group(1) if literal else None
+    return None
+
+
+def schema_type(root, rel, cache):
+    """Walk up from the file's directory to the root and return the type the
+    nearest schema fixes, or None when no schema on the way fixes one."""
+    directory = pathlib.PurePosixPath(rel).parent
+    chain = [directory, *directory.parents]
+    for folder in chain:
+        if folder not in cache:
+            path = root / folder / SCHEMA
+            cache[folder] = fixed_type(path.read_text(encoding="utf-8", errors="replace")) if path.is_file() else None
+        if cache[folder] is not None:
+            return cache[folder]
+    return None
+
+
+def tracked(root):
+    try:
+        out = subprocess.run(["git", "-C", str(root), "ls-files", "-z", "--cached", "--others", "--exclude-standard"], capture_output=True, check=True).stdout
+        return sorted(p for p in out.decode().split("\0") if p)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return sorted(p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file())
+
+
+def inspect(root):
+    """(errors, warnings, types). types maps each checked file to (type, source),
+    where source is key, schema, or untyped."""
+    root = pathlib.Path(root).resolve()
+    errors, warnings, types, cache = [], [], {}, {}
+    for rel in tracked(root):
+        if not rel.endswith(".md") or rel.startswith(OUTSIDE) or "/.provenance/" in rel or "/build/" in rel:
+            continue
+        path = root / rel
+        if not path.is_file():
+            continue
+        has_block, data = frontmatter(path.read_text(encoding="utf-8", errors="replace"))
+        if path.name in RESERVED:
+            allowed = {"okf_version"} if rel == "index.md" else set()
+            if has_block and (set(data) - allowed or not allowed):
+                errors.append(f"reserved: {rel} carries a frontmatter block" + (f" with keys {sorted(set(data) - allowed)}" if set(data) - allowed else ""))
+            continue
+        if ENTRYPOINT.match(rel):
+            meta = data.get("metadata")
+            present = isinstance(meta, dict) and "type" in meta
+            value = meta.get("type") if present else None
+            where = "metadata.type"
+        else:
+            present = "type" in data
+            value = data.get("type") if isinstance(data.get("type"), str) else None
+            where = "type"
+        if present and not value:
+            errors.append(f"type: {rel} carries an empty {where}; give it a value or remove the key")
+            types[rel] = ("", "untyped")
+        elif value:
+            types[rel] = (value, "key")
+        else:
+            derived = schema_type(root, rel, cache)
+            types[rel] = (derived, "schema") if derived else ("", "untyped")
+        if isinstance(data.get("id"), str) and data["id"] != rel[: -len(".md")]:
+            errors.append(f"id: {rel} carries id {data['id']!r}, the path identifier is {rel[:-3]!r}")
+    index = root / "index.md"
+    if not index.is_file():
+        warnings.append("version: the bundle root index.md is missing")
+    else:
+        _, data = frontmatter(index.read_text(encoding="utf-8", errors="replace"))
+        if data.get("okf_version") != "0.2":
+            warnings.append('version: the bundle root index.md does not declare okf_version: "0.2"')
+    return errors, warnings, types
+
+
+def check(root):
+    """The failing findings alone, for callers that want the old shape."""
+    return inspect(root)[0]
+
+
+def main():
+    args = sys.argv[1:]
+    baseline = None
+    if "--baseline" in args:
+        at = args.index("--baseline")
+        baseline = pathlib.Path(args[at + 1])
+        args = args[:at] + args[at + 2:]
+    listing = "--types" in args
+    args = [a for a in args if a != "--types"]
+    root = args[0] if args else pathlib.Path(__file__).resolve().parent.parent
+    errors, warnings, types = inspect(root)
+    if listing:
+        for rel, (value, source) in sorted(types.items()):
+            print(f"{rel}\t{value}\t{source}")
+        return 0
+    known = set(baseline.read_text().splitlines()) if baseline and baseline.is_file() else set()
+    new = [line for line in errors if line not in known]
+    for line in new:
+        print(line)
+    for line in warnings:
+        print(f"warning: {line}")
+    tail = f", {len(warnings)} warning" + ("s" if len(warnings) != 1 else "") if warnings else ""
+    print((f"okf: {len(errors)} findings, {len(new)} outside the baseline" if baseline else f"okf: {len(errors)} findings") + tail)
+    return 1 if new else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

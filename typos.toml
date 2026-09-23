@@ -2,6 +2,8 @@
 # third-party notices are not this repository's prose.
 [files]
 extend-exclude = [
+    # The judgment proof contains deliberate typos the scenes must catch.
+    "docs/proofs/*-judgment/**",
     "*.asc",
     ".provenance",
     ".claude",

@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+"""Check that a binary asset carries a plain-text description beside it
+(plain-text-is-futureproof, requirement Binary Assets Carry a Description).
+
+    scripts/check-binary-assets            check the deck root
+    scripts/check-binary-assets <dir>      check another root, for a fixture
+
+A tracked file that is not UTF-8 text, or that holds a NUL byte, is a
+binary asset. It MUST have a non-empty sibling `<name>.md`, or a
+`README.md` in its directory that names the file as a whole token, and the
+description says what the file is and where it is used. The tree is
+`git ls-files` when the root is a repository, a walk otherwise, so build
+output and a stray binary never count. Fixtures and provenance sidecars
+are outside the rule.
+"""
+import codecs
+import pathlib
+import re
+import subprocess
+import sys
+
+OUTSIDE = ("tests/fixtures/", ".provenance/", "build/", ".specstory/", ".workspaces/", ".worktrees/")
+
+
+def is_binary(path):
+    decoder = codecs.getincrementaldecoder("utf-8")()
+    with path.open("rb") as handle:
+        while chunk := handle.read(65536):
+            if b"\0" in chunk:
+                return True
+            try:
+                decoder.decode(chunk, final=False)
+            except UnicodeDecodeError:
+                return True
+    try:
+        decoder.decode(b"", final=True)
+    except UnicodeDecodeError:
+        return True
+    return False
+
+
+def described(path):
+    sibling = path.with_name(path.name + ".md")
+    if sibling.is_file() and sibling.read_text(encoding="utf-8", errors="replace").strip():
+        return True
+    readme = path.parent / "README.md"
+    if not readme.is_file():
+        return False
+    text = readme.read_text(encoding="utf-8", errors="replace")
+    return re.search(rf"(?<![\w.-]){re.escape(path.name)}(?![\w.-])", text) is not None
+
+
+def tracked(root):
+    try:
+        out = subprocess.run(["git", "-C", str(root), "ls-files", "-z", "--cached"], capture_output=True, check=True).stdout
+        return sorted(p for p in out.decode().split("\0") if p)
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return sorted(p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file())
+
+
+def check(root):
+    root = pathlib.Path(root).resolve()
+    if not root.is_dir():
+        return [f"binary: {root} is not a directory"]
+    errors = []
+    for rel in tracked(root):
+        if rel.startswith(OUTSIDE) or "/.provenance/" in rel or "/build/" in rel:
+            continue
+        path = root / rel
+        if path.is_file() and is_binary(path) and not described(path):
+            errors.append(f"binary: {rel} has no description beside it")
+    return errors
+
+
+def main():
+    root = sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parent.parent
+    errors = check(root)
+    for line in errors:
+        print(line)
+    print(f"binary assets: {len(errors)} findings")
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

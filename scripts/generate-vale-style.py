@@ -201,16 +201,17 @@ def render_core() -> dict[str, str]:
     return {
         "UndefinedTerm.yml": HEADER
         + "# Deslop (rule): a metaphor noun such as \"gate\" means nothing until the\n"
-        + "# text says which check, file, or flag it stands for. A defined term is\n"
-        + "# set in italics at first use, so an italic, bold, or backticked form\n"
-        + "# anywhere in the text counts as the definition. The nouns are the\n"
-        + "# TERMS subset of OVERUSE, so one list serves this rule and STE.Overused*.\n"
-        + "# Raw scope, because Vale strips the markers before any other scope.\n"
+        + "# text says which check, file, or flag it stands for. A term is a link to\n"
+        + "# its glossary page, so a link, a bold, or a backticked form anywhere in\n"
+        + "# the text counts as the definition, and italics alone are emphasis. The\n"
+        + "# nouns are the TERMS subset of OVERUSE, so one list serves this rule and\n"
+        + "# STE.Overused*. Raw scope, because Vale strips the markers before any\n"
+        + "# other scope.\n"
         + "extends: conditional\n"
-        + "message: \"'%s' is never defined here. Set it in italics at first use and say what it is (rule Deslop).\"\n"
+        + "message: \"'%s' is never defined here. Link it to its glossary page at first use, or say which check, file, or flag it is (rule Deslop).\"\n"
         + "level: warning\nignorecase: true\nscope: raw\n"
         + f"first: '\\b({nouns})s?\\b'\n"
-        + f"second: '[*_`]({nouns})s?[*_`]'\n",
+        + f"second: '(?:\\[(?<a>{nouns})s?\\]\\[|[*_`](?<a>{nouns})s?[*_`])'\n",
     }
 
 

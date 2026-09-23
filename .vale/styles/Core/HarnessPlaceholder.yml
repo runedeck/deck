@@ -1,0 +1,21 @@
+# user-values-and-variables (requirement Harness Placeholders Stay
+# in the Harness File): a placeholder that only one harness expands lives
+# in that harness's companion, never in the shared source. Claude Code
+# expands ${CLAUDE_*}, $CLAUDE_*, $ARGUMENTS, and $N in skill bodies;
+# Gemini expands ${extensionPath}, ${workspacePath}, and {{args}} in its
+# commands; OpenCode expands {env:VAR} and {file:path}. The companion
+# directories are exempt in .vale.ini.
+extends: existence
+message: "'%s' is a placeholder one harness expands. Move the line to that harness's companion (user-values-and-variables)."
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '\$\{?CLAUDE_[A-Z_]+\}?'
+  - '\$ARGUMENTS\b'
+  - '\$\d\b'
+  - '\$\{extensionPath\}'
+  - '\$\{workspacePath\}'
+  - '\{\{args\}\}'
+  - '\{env:\w+\}'
+  - '\{file:[^}]+\}'

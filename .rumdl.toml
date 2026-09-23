@@ -5,10 +5,12 @@
 # with frontmatter and no title field.
 [global]
 disable = ["MD013", "MD025", "MD041"]
-# Adopted artifacts carry digest-bound provenance sidecars, so their bytes
-# stay exactly as adopted. Deployed provider trees are rune output.
+# Adopted artifacts and idea snapshots carry digest-bound provenance
+# sidecars, so their bytes stay exactly as adopted. Deployed provider trees are rune output.
 exclude = [
     ".provenance",
+    "docs/ideas",
+    "tests/fixtures",
     ".claude",
     ".codex",
     ".gemini",
@@ -22,3 +24,10 @@ exclude = [
 # Nested lists indent four spaces, the repository convention.
 [MD007]
 indent = 4
+
+# Reference tags such as `*term* [TERM]` are shortcut references, and an
+# undefined one is an error.
+[MD052]
+shortcut-syntax = true
+# Keep-a-changelog headings, scanner templates, and a literal bot mention.
+ignore = ["Unreleased", "REDACTED", "bot"]

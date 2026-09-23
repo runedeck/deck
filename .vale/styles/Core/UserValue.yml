@@ -1,0 +1,17 @@
+# user-values-and-variables (requirement Variables Are $NAME): a
+# shared instruction states a user-specific or machine-specific value as
+# $NAME and never states it. The values that leak are home directory
+# paths: macOS, Linux, Windows, and the tilde form. /Users/Shared, a URL
+# path, and a dot directory under ~ such as ~/.ssh or ~/.local, which every
+# machine has by convention, are not a person's value. Accounts and hosts
+# are an open gap.
+extends: existence
+message: "'%s' is a user-specific path. Write the value as $NAME (user-values-and-variables)."
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '(?<![\w/:.])/Users/(?!Shared\b)[A-Za-z0-9_.-]+'
+  - '(?<![\w/:.])/home/[A-Za-z0-9_.-]+'
+  - '(?i)C:\\Users\\[A-Za-z0-9_.-]+'
+  - '(?<![\w`])~/(?!\.)[A-Za-z0-9_.-]+'

@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+"""Report items that wait too long in a queue directory
+(directories-direct-the-tools, Catch-All Directories Drain).
+
+    scripts/check-stale-queue                check the repository root
+    scripts/check-stale-queue <dir>          check another root, for a fixture repository
+    scripts/check-stale-queue --queue NAME   treat NAME as one more queue directory
+
+A queue directory is an inbox, temp, or downloads directory at any depth
+of the tracked tree. An item's age is the time since the commit that added
+it at its queue path, read from git history and never from the file
+system, so a checkout date cannot reset it. A file moved into a queue
+starts at zero on the commit that moved it, and an item that left and came
+back counts only its current stay. From day 60 the item is reported as
+stale and the check still passes. From day 67 the item is an error and the
+check fails until the item moves to a directory a tool recognizes, is
+deleted, or is archived. A directory named unsorted inside a queue is that
+archive: nothing under it ages. An item that no commit holds yet has no
+age. Fixtures, build output, archived changes, and workspaces are outside
+the check by anchored prefix, so the fixtures of this check never age.
+
+The thresholds copy GitHub's stale bot: sixty days to the warning, seven
+more to the failure (readback 2026-10-17).
+"""
+import pathlib
+import subprocess
+import sys
+import time
+
+STALE_DAYS = 60
+ERROR_DAYS = 67
+QUEUES = ("inbox", "temp", "downloads")
+ARCHIVE = "unsorted"
+OUTSIDE = ("tests/fixtures/", "build/", ".workspaces/", ".worktrees/", "docs/changes/archive/")
+DAY = 86400
+
+
+def git(root, *args):
+    return subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True, check=False)
+
+
+def tracked(root):
+    result = git(root, "ls-files", "-z", "--cached")
+    if result.returncode != 0:
+        return None
+    return sorted(p for p in result.stdout.split("\0") if p)
+
+
+def queued(rel, queues):
+    """True when the path sits in a queue directory and not in its unsorted archive."""
+    parts = pathlib.PurePosixPath(rel).parts[:-1]
+    for at, part in enumerate(parts):
+        if part.lower() in queues:
+            return ARCHIVE not in (p.lower() for p in parts[at + 1:])
+    return False
+
+
+def entered(root, rel):
+    """Epoch seconds of the commit that added the path, or None without one.
+    A rename is read as a delete and an add, so a move into the queue starts
+    the clock, and the latest add is the start of the current stay."""
+    result = git(root, "log", "--no-renames", "--diff-filter=A", "--format=%ct", "--", rel)
+    stamps = [line for line in result.stdout.split() if line.isdigit()]
+    return int(stamps[0]) if stamps else None
+
+
+def check(root, queues=QUEUES, now=None):
+    """(stale, errors), each a list of report lines."""
+    root = pathlib.Path(root).resolve()
+    now = time.time() if now is None else now
+    files = tracked(root)
+    if files is None:
+        return [], [f"no git history at {root}: the age of a queue item comes from its first commit"]
+    stale, errors = [], []
+    for rel in files:
+        if rel.startswith(OUTSIDE) or not queued(rel, queues):
+            continue
+        since = entered(root, rel)
+        if since is None:
+            continue
+        days = int((now - since) // DAY)
+        if days >= ERROR_DAYS:
+            errors.append(f"error: {rel} has waited {days} days (error from day {ERROR_DAYS}): move it to its home, delete it, or archive it under {ARCHIVE}/")
+        elif days >= STALE_DAYS:
+            stale.append(f"stale: {rel} has waited {days} days (stale from day {STALE_DAYS}, error from day {ERROR_DAYS})")
+    return stale, errors
+
+
+def main():
+    args = sys.argv[1:]
+    queues = set(QUEUES)
+    while "--queue" in args:
+        at = args.index("--queue")
+        queues.add(args[at + 1].lower())
+        args = args[:at] + args[at + 2:]
+    root = args[0] if args else pathlib.Path(__file__).resolve().parent.parent
+    stale, errors = check(root, queues)
+    for line in errors + stale:
+        print(line)
+    print(f"stale-queue: {len(stale)} stale, {len(errors)} errors")
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

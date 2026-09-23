@@ -1,0 +1,6 @@
+scripts/check-authorship: no tests/fixtures/authorship/{valid,invalid} with files and no test that names it
+scripts/check-decision-fields: no tests/fixtures/decision-fields/{valid,invalid} with files and no test that names it
+scripts/check-decision-links: no tests/fixtures/decision-links/{valid,invalid} with files and no test that names it
+scripts/check-decision-numbers: no tests/fixtures/decision-numbers/{valid,invalid} with files and no test that names it
+scripts/check-fixtures: no tests/fixtures/fixtures/{valid,invalid} with files and no test that names it
+scripts/check-spec-names: no tests/fixtures/spec-names/{valid,invalid} with files and no test that names it

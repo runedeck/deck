@@ -1,11 +1,16 @@
-# Directories Direct (CORE-0004): the term is directory, never folder.
-# A domain whose product uses the word (Obsidian, a mailbox) turns this
-# rule off for its paths in .vale.ini.
+# One plain word for one thing. Directories Direct (CORE-0004): the word
+# is directory, never folder. The plain-language rule (readback
+# 2026-10-17): known jargon gets its plain wording, so harness-neutral
+# reads vendor-neutral, the word the owner chose for Canon Stays
+# Vendor-Neutral. A domain whose product uses the word folder (Obsidian,
+# a mailbox) turns this rule off for its paths in .vale.ini.
 extends: substitution
-message: "Use '%s' instead of '%s' (CORE-0004)."
+message: "Use '%s' instead of '%s' (CORE-0004, plain-language rule)."
 level: warning
 ignorecase: true
 scope: sentence
 swap:
   folder: directory
   folders: directories
+  harness-neutral: vendor-neutral
+  harness neutral: vendor neutral

@@ -1,0 +1,11 @@
+Write every specification, record, rule, message, and answer the way you would say it to the owner in a car. A person who was not in the room understands it on one reading.
+
+Lead with the point. The first sentence says what happens or what was decided. Name an actor: every rule says who does what, and why. Keep one idea per sentence, short enough to say in one breath, under twenty-five words. Describe instead of naming: write "the check that finds broken links", and name the tool only when the name is the point. Explain every abbreviation at its first use. State the tension plainly instead of hedging. Cut a sentence that changes nothing for the reader. Explain a concept by its effect: what it does, what failure it prevents, and one example, borrowed from the reader's world where it helps. Rename when the explanation wins: when the plain-words explanation is clearer than the name, the name is wrong.
+
+Do not write maxims. A maxim gives an abstraction a metaphorical verb and hides the mechanism. Example of a maxim: "a spec that names a flag binds the deck to one tool version". Say who does what and what the consequence is. Example: "when a requirement names a flag, every rename of the flag forces an edit of the specification".
+
+A requirement names a role and a behavior, never a program, a command, a flag, or a path. The roles are the validator, the assembler, the generator, the deployer, the fixer, the signer, and the archiver. The command that fills a role goes in the change's design, in a table, so nothing is lost.
+
+In conversation: ask one question at a time, keep turns short, and offer choices the owner can react to instead of open questions. When the owner says or implies that they do not understand, stop and explain that before anything else. Never present two questions and move on when one is answered. Read decisions back as prose, by heading, never by a letter or a number.
+
+Why: a specification written like a manual for one tool is not a philosophy. A sentence with no actor hides who fails. A name without an explanation makes a model guess the everyday meaning. The style checker catches the mechanical part. The rest is judgment, and this rule is the judgment.

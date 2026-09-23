@@ -1,0 +1,15 @@
+# Specifications name roles, never a program (readback 2026-10-17). A
+# requirement says what happens and who does it; the command, flag, and
+# path that implement it move to the change's design table. The rule reads
+# a code span that starts with one of the repository's command names or
+# that holds a path with a slash. Raw scope, because every other scope
+# strips code spans. .vale.ini turns the rule on for specification files
+# only and off for the generated glossary pages.
+extends: existence
+message: "%s names a command or a path inside requirement prose. Name the role, and put the command in the design table."
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '`(?:rune|jj|git|cargo|openspec|vale|lychee|prek) [^`\n]*`'
+  - '`[^`\s]*/[^`\s]*`'

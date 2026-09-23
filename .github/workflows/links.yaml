@@ -1,8 +1,10 @@
 name: Links
 
-# Link rot is a function of time, not of commits. The commit path and the
-# quality workflow run lychee offline, so this schedule is the one check
-# that fetches external URLs.
+# Link rot is a function of time, not of commits. The commit path runs
+# lychee offline and the push path only warns, so this schedule is the one
+# check that fetches every external URL. It reports and never fails: dead
+# links go into one issue that each run updates, and the issue closes when
+# every link resolves again (Link Targets Resolve).
 
 on:
     schedule:
@@ -11,6 +13,7 @@ on:
 
 permissions:
     contents: read
+    issues: write
 
 jobs:
     links:
@@ -26,9 +29,47 @@ jobs:
             - name: Install tools
               run: bash scripts/install-tools
 
+            # Archived changes are frozen history. Nothing else is excluded:
+            # a glossary page link and an ontology link are checked like any
+            # other link.
             - name: Check external links
+              id: lychee
               run: |
+                  set +e
                   lychee --no-progress --include-fragments \
                       --accept '200..=299,429' \
                       --exclude-path docs/changes/archive \
+                      --format markdown --output "$RUNNER_TEMP/links.md" \
                       'README.md' 'docs/**/*.md' 'runes/**/*.md'
+                  status=$?
+                  echo "status=$status" >> "$GITHUB_OUTPUT"
+                  cat "$RUNNER_TEMP/links.md" 2>/dev/null || echo "lychee wrote no report (exit $status)"
+                  exit 0
+
+            # One issue carries the report. A run with dead links creates it
+            # or replaces its body; a clean run closes it.
+            - name: Open, update, or close the report issue
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  REPO: ${{ github.repository }}
+                  STATUS: ${{ steps.lychee.outputs.status }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+                  TITLE: Dead external links
+              run: |
+                  number=$(gh issue list --repo "$REPO" --state open --search "in:title \"$TITLE\"" --json number,title --jq "map(select(.title == \"$TITLE\")) | .[0].number // empty")
+                  today=$(date -u +%Y-%m-%d)
+                  if [ "$STATUS" = "0" ]; then
+                      if [ -n "$number" ]; then
+                          gh issue close "$number" --repo "$REPO" --comment "Every external link resolved on $today. Run: $RUN_URL"
+                      fi
+                      exit 0
+                  fi
+                  {
+                      printf 'Weekly online link check, %s. Run: %s\n\n' "$today" "$RUN_URL"
+                      cat "$RUNNER_TEMP/links.md" 2>/dev/null || printf 'lychee exited %s and wrote no report.\n' "$STATUS"
+                  } > "$RUNNER_TEMP/body.md"
+                  if [ -n "$number" ]; then
+                      gh issue edit "$number" --repo "$REPO" --body-file "$RUNNER_TEMP/body.md"
+                  else
+                      gh issue create --repo "$REPO" --title "$TITLE" --body-file "$RUNNER_TEMP/body.md"
+                  fi

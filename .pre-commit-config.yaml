@@ -118,10 +118,10 @@ repos:
           # Archived change proposals are frozen history, not prose to keep.
           - id: vale
             name: vale prose style
-            entry: sh -c 'if command -v vale >/dev/null 2>&1; then vale --no-wrap "$@"; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and vale is absent"; exit 1; fi' --
+            entry: sh -c 'if command -v vale >/dev/null 2>&1; then vale --no-global --no-wrap "$@"; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and vale is absent"; exit 1; fi' --
             language: system
             types: [markdown]
-            exclude: '(^|/)\.provenance/|^docs/changes/archive/|^runes/core/rules/Deslop\.md$'
+            exclude: '(^|/)\.provenance/|^docs/changes/archive/|^docs/specs/glossary/|^tests/fixtures/|^runes/core/rules/Deslop\.md$'
 
           - id: vale-style-fresh
             name: vale STE style matches its rule source
@@ -130,12 +130,43 @@ repos:
             pass_filenames: false
             files: '^(\.vale/|scripts/generate-vale-style\.py$)'
 
+          # A term link whose tag resolves to no ontology entry is a finding
+          # the validator reports and never repairs. The fixer runs before
+          # the offline link check and the validator, so a new term's page
+          # exists when they read it: `rune spec fix --terms` when the
+          # installed rune has the command, else the fallback script. It adds
+          # a draft entry to the ontology and writes the term's page; the
+          # changed files fail this commit, so the author sees the draft and
+          # commits it with the change (readback 2026-10-17, Validators only report).
+          - id: fix-terms
+            name: draft an undefined term (fixer, before the link check and the validator)
+            entry: sh -c 'if command -v rune >/dev/null 2>&1 && rune spec fix --help >/dev/null 2>&1; then rune spec fix --terms; else python3 scripts/fallback/fix-terms --terms; fi'
+            language: system
+            pass_filenames: false
+            files: ^(docs/|runes/|ontology/rune\.ttl)
+
+          # Link Targets Resolve: every internal link resolves, a term link
+          # to its glossary page included, with no exclusion. The fixer above
+          # wrote any missing term page already. The commit path works
+          # offline, so an external link is checked at push time (below, a
+          # warning) and weekly online (.github/workflows/links.yaml).
           - id: lychee
             name: lychee link check (offline)
             entry: sh -c 'if command -v lychee >/dev/null 2>&1; then lychee --offline --include-fragments --no-progress "$@"; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and lychee is absent"; exit 1; fi' --
             language: system
             types: [markdown]
+            exclude: '(^|/)\.provenance/|^tests/fixtures/'
+
+          # An external link never blocks a commit or a push. At push time
+          # lychee fetches the external links of the changed files and prints
+          # what is dead; the hook always passes.
+          - id: lychee-online
+            name: lychee external links (push, warning only)
+            entry: sh -c 'if command -v lychee >/dev/null 2>&1; then lychee --no-progress --include-fragments --accept "200..=299,429" "$@" || echo "lychee found dead external links (warning only). The weekly links workflow tracks them in an issue."; fi; exit 0' --
+            language: system
+            types: [markdown]
             exclude: '(^|/)\.provenance/'
+            stages: [pre-push]
 
           - id: actionlint
             name: actionlint
@@ -170,27 +201,29 @@ repos:
             pass_filenames: false
             files: ^(ontology/|docs/decisions/|runes/.*/rules/)
 
-          # The ontology is the one definition of every term. A term set in
-          # italics cites its ontology IRI, so a definition has one home.
-          # rune validate and rune spec validate read the ontology directly
-          # (cli 1b0c99f9); the fallback script covers a machine without rune.
+          # The ontology is the one definition of every term. A term is a
+          # link to its glossary page, the first use in a file emphasized,
+          # and the tag's definition points at the page. rune validate and
+          # rune spec validate read the ontology directly; the fallback
+          # script covers a machine without rune.
           - id: check-terms
-            name: defined terms cite the ontology (fallback without rune)
+            name: term links resolve to the ontology (fallback without rune)
             entry: sh -c 'if ! command -v rune >/dev/null 2>&1; then python3 scripts/fallback/check-terms; fi'
             language: system
             pass_filenames: false
             files: ^(docs/|runes/|ontology/rune\.ttl)
 
-          # docs/specs/glossary.md is a render of the ontology. The script hands
-          # over to `rune spec glossary --check` when the installed rune has the
-          # flag (cli change render-spec-glossary) and compares the same bytes
-          # itself otherwise.
+          # docs/specs/glossary/ holds one generated page per term and an
+          # index, rendered from the ontology. The check regenerates every
+          # page and compares the bytes, so a hand edit is caught. The script
+          # hands over to `rune spec glossary --check` when the installed rune
+          # writes the directory and compares the same bytes itself otherwise.
           - id: glossary-current
-            name: glossary matches the ontology
+            name: glossary pages match the ontology
             entry: python3 scripts/fallback/generate-glossary --check
             language: system
             pass_filenames: false
-            files: ^(ontology/rune\.ttl|docs/specs/glossary\.md)$
+            files: ^(ontology/rune\.ttl|docs/specs/glossary/)
 
 
           - id: openspec-validate
@@ -290,6 +323,69 @@ repos:
             language: system
             pass_filenames: false
             files: ^(routines/scripts/|tests/test_exposure_scan\.py$)
+
+          # The repository is an Open Knowledge Format bundle (CORE-0020). The
+          # type key is optional and may come from the nearest directory
+          # schema; the baseline in tests/baselines/okf.txt is empty and only
+          # shrinks. A missing root index is a warning until the generator
+          # that writes it lands.
+          - id: check-okf
+            name: repository is an Open Knowledge Format bundle
+            entry: python3 scripts/check-okf --baseline tests/baselines/okf.txt
+            language: system
+            pass_filenames: false
+            always_run: true
+
+          # Catch-All Directories Drain: an item in an inbox, temp, or
+          # downloads directory is stale after sixty days from its first
+          # commit and an error after sixty-seven. An unsorted archive inside
+          # the queue never ages.
+          - id: check-stale-queue
+            name: queue directories drain
+            entry: python3 scripts/check-stale-queue
+            language: system
+            pass_filenames: false
+            always_run: true
+
+          # Every requirement of the foundation capabilities has a coverage
+          # row that names a real check or an open gap; every check script and
+          # Core Vale rule has fixtures; a binary file carries a description.
+          - id: check-coverage
+            name: coverage table lists every foundation requirement
+            entry: python3 scripts/check-coverage
+            language: system
+            pass_filenames: false
+            always_run: true
+
+          - id: check-fixtures
+            name: every check has fixtures or a test
+            entry: python3 scripts/check-fixtures --baseline tests/baselines/fixtures.txt
+            language: system
+            pass_filenames: false
+            always_run: true
+
+          - id: check-binary-assets
+            name: binary assets carry a description
+            entry: python3 scripts/check-binary-assets
+            language: system
+            pass_filenames: false
+            always_run: true
+
+          - id: check-scripts-tests
+            name: check scripts and Core rules pass their fixtures
+            entry: sh -c 'REQUIRE_GATES="${REQUIRE_GATES:-}" python3 -m unittest tests.test_check_scripts -q'
+            language: system
+            pass_filenames: false
+            files: ^(scripts/check-|tests/|\.vale/|\.vale\.ini)
+
+          # A proposal follows OpenSpec's template, and the schema beside the
+          # changes states it. Archived changes are history and are not checked.
+          - id: mdschema-proposals
+            name: change proposals match the directory schema
+            entry: sh -c 'if command -v mdschema >/dev/null 2>&1; then for proposal in docs/changes/*/proposal.md; do mdschema check "$proposal" --schema docs/changes/.mdschema >/dev/null 2>&1 || { mdschema check "$proposal" --schema docs/changes/.mdschema; exit 1; }; done; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and mdschema is absent"; exit 1; fi'
+            language: system
+            pass_filenames: false
+            files: ^docs/changes/[^/]+/proposal\.md$|^docs/changes/\.mdschema$
 
           # Each added record field has a bare name and an x-rune- long
           # form. A record uses one form, and no other x- prefix is valid.

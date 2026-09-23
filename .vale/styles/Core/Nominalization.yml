@@ -1,0 +1,17 @@
+# ceremony-matches-the-task (requirement Verbs Name Actions): a heading,
+# a step, or a name for an action uses a verb, never a noun made from one.
+# Write `accepting a specification`, never `specification acceptance`.
+# Heading and list scope: a step and a title name actions; prose that
+# mentions the phrase is not a step. The pattern is a deck noun followed by
+# a process noun, plurals included. A bare process noun as a record title,
+# "Module Validation", names a thing and passes. Warning level until the
+# seven hits in other changes are rewritten; the coverage row says so.
+extends: existence
+message: "'%s' names an action as a noun. Use the verb: accepting a specification, exploring a decision (ceremony-matches-the-task)."
+level: warning
+scope:
+  - heading
+  - list
+ignorecase: true
+tokens:
+  - '\b(?:specifications?|specs?|decisions?|changes?|records?|proposals?|requirements?|scenarios?|proofs?|ideas?|runes?|instructions?|artifacts?|skills?|agents?|rules?|hooks?|adrs?|pull requests?)\s+(?:acceptances?|explorations?|validations?|verifications?|creations?|generations?|reviews?|approvals?|submissions?|adoptions?|archivals?|intakes?|extractions?|resolutions?)\b'

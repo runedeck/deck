@@ -1,0 +1,10 @@
+# Plain-language rule (readback 2026-10-17): one idea per sentence, short
+# enough to say in one breath. The deck's Simplified Technical English rule
+# caps a description at 25 words, so the count starts there. Sentence
+# scope keeps YAML front matter out and skips code.
+extends: occurrence
+message: "This sentence has more than 25 words. Split it, one idea per sentence."
+level: suggestion
+scope: sentence
+max: 25
+token: '\b\w+\b'

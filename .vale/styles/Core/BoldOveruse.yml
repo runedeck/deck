@@ -1,7 +1,9 @@
 # Deslop (rule): bold on every key term is a machine tell. Two bold runs
-# in one paragraph are a skimming aid; the third is decoration. A script,
-# because Vale strips the markers before any scope but raw, and raw is the
-# whole file, so an occurrence rule cannot count per paragraph.
+# in one paragraph are a skimming aid; the third is decoration. A bold
+# lead word that opens a list item is the skimmable form and never
+# counts, so a list of bold-led items passes however long it is. A
+# script, because Vale strips the markers before any scope but raw, and
+# raw is the whole file, so an occurrence rule cannot count per paragraph.
 extends: script
 message: "More than two bold runs in one paragraph. Keep bold for what a reader skims for (rule Deslop)."
 level: suggestion
@@ -12,8 +14,18 @@ script: |
   offset := 0
   for para in text.split(scope, "\n\n") {
     runs := text.re_find(`\*\*[^*\n]+\*\*`, para, -1)
-    if runs != undefined && len(runs) > 2 {
-      for run in runs[2:] {
+    counted := []
+    if runs != undefined {
+      for run in runs {
+        begin := run[0].begin
+        line_start := text.last_index(para[:begin], "\n") + 1
+        if !text.re_match(`^\s*(?:[-*+]|\d+[.)])\s+$`, para[line_start:begin]) {
+          counted = append(counted, run)
+        }
+      }
+    }
+    if len(counted) > 2 {
+      for run in counted[2:] {
         matches = append(matches, {begin: offset + run[0].begin, end: offset + run[0].end})
       }
     }

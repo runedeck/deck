@@ -1,0 +1,21 @@
+# Plain-language rule (readback 2026-10-17): state the tension plainly,
+# name the tradeoff instead of hedging. Deslop.Hedging already reports
+# perhaps, arguably, somewhat, "it seems that", and the first-person
+# hedges, so this rule carries only the words that list lacks. Sentence
+# scope keeps YAML front matter out.
+extends: existence
+message: "'%s' hedges. State the claim, give the number, or name the tradeoff."
+level: suggestion
+scope: sentence
+ignorecase: true
+tokens:
+  - '\bfairly\b'
+  - '\bquite\b'
+  - '\bbasically\b'
+  - '\bessentially\b'
+  - '\bkind of\b'
+  - '\bsort of\b'
+  - '\bit seems\b(?!\s+(?:that|like)\b)'
+  - '\bit appears\b'
+  - '\bgenerally\b'
+  - '\bin general\b'

@@ -42,6 +42,11 @@ jobs:
             - name: Test exposure detector
               run: python3 -m unittest discover -s tests -p 'test_exposure_scan.py' -v
 
+            - name: Test the foundation checks and Core Vale rules against their fixtures
+              env:
+                  REQUIRE_GATES: "1"
+              run: python3 -m unittest tests.test_check_scripts -v
+
             - name: Install JJ for push gate tests
               env:
                   JJ_VERSION: "0.45.1"

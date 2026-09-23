@@ -1,0 +1,20 @@
+# Plain-language rule (readback 2026-10-17): three or more nouns in a row
+# is usually where an arcane name hides, "config file path". The leading
+# negated token anchors the stack, so a longer stack reports once. Common
+# nouns only, as the tagger reads them: a proper name such as Claude Code
+# is not a stack, and "deployment manifest directory" escapes because the
+# tagger reads "manifest" as something other than a noun. ai-tells.NounString
+# draws the same line at four nouns and is off in .vale.ini, so one stack
+# reports once.
+extends: sequence
+message: "Three nouns in a row: '%[2]s %[3]s %[4]s'. Say how they relate, or rename the thing in plain words."
+level: suggestion
+tokens:
+  - negate: true
+    tag: ^NNS?$
+  - pattern: '\S+'
+    tag: ^NNS?$
+  - pattern: '\S+'
+    tag: ^NNS?$
+  - pattern: '\S+'
+    tag: ^NNS?$

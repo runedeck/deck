@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+"""Check that the coverage table lists every foundation requirement with a
+real check or a missed requirement (lint-enforced-foundation-requirements, Analysis Tool Coverage).
+
+    scripts/check-coverage            the plain-text-first-principles change
+    scripts/check-coverage <change>   another change name, or a directory path for a fixture
+
+The table is the one under `## Coverage table` in the change's design.md,
+one row per requirement: `| capability | requirement | check or missed requirement |`.
+Fenced blocks are skipped on both sides. A row's third cell MUST start with
+`missed requirement` or name a check that exists: a `scripts/check-*` file, a hook id
+from .pre-commit-config.yaml, a `Core.<Rule>` Vale rule file, or a tool the
+hook configuration invokes. A requirement with no row, a row that names no
+stated requirement, and a row naming no real check all fail.
+"""
+import pathlib
+import re
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+REQUIREMENT = re.compile(r"^### Requirement: (.+?)\s*$")
+ROW = re.compile(r"^\|\s*([a-z0-9-]+)\s*\|\s*(.+?)\s*\|\s*(.*?)\s*\|\s*$")
+TOOLS = ("rune validate", "rune spec validate", "rune spec doctor", "mdschema", "rumdl", "lychee", "vale", "shellcheck", "ruff", "openspec validate", "rudof")
+
+
+def unfenced(text):
+    fenced = False
+    for line in text.splitlines():
+        if line.startswith("```"):
+            fenced = not fenced
+            continue
+        if not fenced:
+            yield line
+
+
+def requirements(change):
+    found = set()
+    for spec in sorted((change / "specs").glob("*/spec.md")):
+        removed = False
+        for line in unfenced(spec.read_text()):
+            if line.startswith("## "):
+                removed = "REMOVED" in line
+            match = REQUIREMENT.match(line)
+            if match and not removed:
+                found.add((spec.parent.name, match.group(1)))
+    return found
+
+
+def rows(change):
+    design = change / "design.md"
+    if not design.is_file():
+        return None
+    table, inside = {}, False
+    for line in unfenced(design.read_text()):
+        if line.startswith("## "):
+            inside = line.strip().lower() == "## coverage table"
+            continue
+        match = ROW.match(line) if inside else None
+        if match and match.group(1) != "Capability" and not set(match.group(1)) <= set("-"):
+            table.setdefault((match.group(1), match.group(2)), match.group(3))
+    return table
+
+
+def names_a_check(cell, root):
+    if cell.lower().startswith(("missed requirement", "open gap")):
+        return True
+    hooks = (root / ".pre-commit-config.yaml").read_text() if (root / ".pre-commit-config.yaml").is_file() else ""
+    for script in re.findall(r"scripts/check-[a-z-]+", cell):
+        if (root / script).is_file() or f"{script}" in hooks:
+            return True
+    for rule in re.findall(r"Core\.([A-Za-z]+)", cell):
+        if (root / ".vale" / "styles" / "Core" / f"{rule}.yml").is_file():
+            return True
+    for hook in re.findall(r"`([a-z][a-z0-9-]+)` hook", cell):
+        if f"- id: {hook}\n" in hooks:
+            return True
+    return any(tool in cell and tool.split()[0] in hooks for tool in TOOLS)
+
+
+def check(change, root=ROOT):
+    stated = requirements(change)
+    table = rows(change)
+    if table is None:
+        return [f"{change.name}: no design.md holds the coverage table"]
+    errors = [f"{change.name}: no coverage row for {cap} / {req}" for cap, req in sorted(stated - set(table))]
+    errors += [f"{change.name}: coverage row for {cap} / {req} names no stated requirement" for cap, req in sorted(set(table) - stated)]
+    for (cap, req), what in sorted(table.items()):
+        if not names_a_check(what, root):
+            errors.append(f"{change.name}: coverage row for {cap} / {req} names no check and no open gap: {what!r}")
+    return errors
+
+
+def main():
+    name = sys.argv[1] if len(sys.argv) > 1 else "plain-text-first-principles"
+    change = pathlib.Path(name).resolve() if pathlib.Path(name).is_dir() else ROOT / "docs" / "changes" / name
+    root = change.parents[2] if (change.parents[2] / ".pre-commit-config.yaml").is_file() else ROOT
+    errors = check(change, root)
+    for line in errors:
+        print(line)
+    print(f"coverage: {len(errors)} findings")
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
