@@ -1,6 +1,6 @@
 ## 1. Establish the Obsidian module
 
-- [x] 1.1 Add the Obsidian module metadata and skill entry using current Deck conventions. Verify module and skill validation passes without installation.
+- [x] 1.1 Add the Obsidian module metadata and skill entry using the repository's current conventions. Verify the validator accepts the module and the skill without installation.
 - [x] 1.2 Define organization triggers and the discovery, proposal, application, and validation phases. Verify review cases distinguish planning requests from authorized changes.
 
 ## 2. Implement placement and relationship guidance
@@ -21,7 +21,7 @@
 ## 4. Validate and present the implementation
 
 - [x] 4.1 Run adversarial workflow review across all specification scenarios. Record outcomes and correct cases that favor folders or graph density at the other's expense.
-- [x] 4.2 Validate affected module files and references with current Deck checks. Present the exact implementation diff and evidence for review, with installation and Atlas migration listed separately.
+- [x] 4.2 Validate affected module files and references with the repository's current checks. Present the exact implementation diff and evidence for review, with installation and Atlas migration listed separately.
 
 ## 5. Evidence
 

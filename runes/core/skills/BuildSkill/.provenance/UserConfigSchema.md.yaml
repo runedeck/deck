@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BuildSkill/UserConfigSchema.md
     digest:
-      sha256: d0681d827e3aa3b8da65c64e7a81ef4d4f28d2eb35b17783c797f8a960b77831
+      sha256: 5c25c0ad41252ad9ee03f3ffd9ee5ef3bc621df02447def7c81f85574b2d4e9f
   predicate:
     buildDefinition:
       buildType: adopt/v1

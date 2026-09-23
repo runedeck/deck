@@ -26,7 +26,7 @@ change: writing-and-conduct-rules
 
 ## Context and Problem Statement
 
-The owner runs a set of short rules in every session: how to cite, how much to say, how to draw, how to name a scenario, how to scope one action. The deployed copies were the only complete source. The deck could not rebuild them on a fresh machine.
+The owner runs a set of short rules in every session: how to cite, how much to say, how to draw, how to name a scenario, how to scope one action. The deployed copies were the only complete source. The repository could not rebuild them on a fresh machine.
 
 A review proposed to drop the rule against em-dashes, because a Vale rule already fails on them.
 

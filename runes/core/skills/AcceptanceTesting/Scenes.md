@@ -1,6 +1,6 @@
 # Scenes
 
-A scene is one specification scenario made executable. The driver script gives five words, and a scene uses only these.
+A scene is one specification scenario made executable. The grammar script, `scripts/fallback/prove.sh` in the repository, gives five words, and a scene uses only these. The script is the fallback runner: `rune proof` replaces it once scenes are console fences in the proof's README.
 
 ## Grammar
 

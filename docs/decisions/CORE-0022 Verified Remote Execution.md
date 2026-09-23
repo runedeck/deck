@@ -20,7 +20,7 @@ consulted: []
 informed: []
 upstream:
     - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0011%20Verified%20Remote%20Execution.md"
-change: adopt-modular-architecture
+change: one-domain-one-plugin
 ---
 
 # Verified Remote Execution

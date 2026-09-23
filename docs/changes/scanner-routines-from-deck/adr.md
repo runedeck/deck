@@ -1,6 +1,6 @@
 ---
 title: "Scanner routines run a deterministic detector from the deck"
-description: "A scanner routine runs versioned detection code taken from the deck object store, takes its findings, ids, and status as printed, and reports finding status apart from scan health. The GitHub Exposure routine is retired."
+description: "A scanner routine runs versioned detection code taken from the repository's object store, takes its findings, ids, and status as printed, and reports finding status apart from scan health. The GitHub Exposure routine is retired."
 type: adr
 category: architecture
 tags:
@@ -24,7 +24,7 @@ upstream:
     - "scanner-routines-from-deck#finding-identity-hides-the-value"
     - "scanner-routines-from-deck#finding-status-is-separate-from-scan-health"
     - "scanner-routines-from-deck#acknowledgement-binds-to-a-commit"
-    - "scanner-routines-from-deck#scanner-routines-run-the-detector-from-the-deck-object-store"
+    - "scanner-routines-from-deck#scanner-routines-run-the-detector-from-the-repository-object-store"
     - "scanner-routines-from-deck#stub-reads-the-ref-in-policy-ref"
     - "scanner-routines-from-deck#github-exposure-routine-is-retired"
 change: scanner-routines-from-deck
@@ -39,15 +39,15 @@ Three scanner routines ran daily on the provider with full prompts that asked a 
 ## Considered Options
 
 1. Keep the prompts and ask the model to be consistent. Identical evidence still produces different ids and classifications, because no instruction makes a model deterministic.
-2. Move the prompts to deck files under the routine stub model, and keep detection in the model. The prompt gains review and history, and the status still varies.
-3. Option 2 plus a deterministic, versioned detector in the deck that the run takes from the object store. The detector decides findings, ids, and status. The model reviews, adds located items, and writes the report.
+2. Move the prompts to repository files under the routine stub model, and keep detection in the model. The prompt gains review and history, and the status still varies.
+3. Option 2 plus a deterministic, versioned detector in the repository that the run takes from the object store. The detector decides findings, ids, and status. The model reviews, adds located items, and writes the report.
 4. Option 3 with a pinned detector digest in the stub, and a runner that removes the GitHub write tools an attached source adds.
 
 ## Decision Outcome
 
 Option 3, with option 4 deferred.
 
-- A scanner routine MUST take every finding, id, count, finding status, and scan health from `routines/scripts/exposure_scan.py`, taken from the deck `FETCH_HEAD` after an `ls-tree` mode check, and MUST NOT change them.
+- A scanner routine MUST take every finding, id, count, finding status, and scan health from `routines/scripts/exposure_scan.py`, taken from the repository's `FETCH_HEAD` after an `ls-tree` mode check, and MUST NOT change them.
 - A finding MUST carry its rule name and the SHA-256 of the value, with the first ten hex digits as its id. The value MUST NOT leave the detector: a matching path segment and the context line are redacted in the detector. An acknowledgement MUST be an item of `.auditignore.yaml` at the root of the scanned branch, with the rule name, the digest, the commit, and an optional expiry date: an occurrence is known only when its object is reachable from the acknowledged commit, and the same value in any other object is new. Known means acknowledged, not fixed.
 - The run MUST write the detector blob to a directory outside every checkout, check the object id of the copy against the fetched tree, and run the copy with `python3 -I`, so a tracked module cannot shadow the standard library. The provider's command classifier refused the blob piped into the interpreter twice on 2026-10-14 after a week of daily passes, and accepted the checked copy, so the pipe form is out. The run MUST NOT read repository content by another means.
 - Finding status and scan health MUST be separate values. The Dotfiles Scanner MUST fetch the whole history of the branch, and a scanned history that stops at a shallow boundary MUST make health INCOMPLETE.
@@ -59,12 +59,12 @@ Option 3, with option 4 deferred.
 
 - [+] The same repository state yields the same ids and the same status on every run, and an acknowledgement suppresses a repeat alarm without hiding a replacement secret in the same file or the same secret in a new file.
 - [-] The owner must re-acknowledge after each change that touches an acknowledged object, because the acknowledgement binds to the objects reachable from one commit.
-- [+] A rule change is a deck pull request with tests, and the rules version in every report says which rules ran.
+- [+] A rule change is a pull request in this repository with tests, and the rules version in every report says which rules ran.
 - [+] The owner gets a path, a line, a commit, and a blob id for each finding in the session, and a notification whose first line says whether to act.
 - [-] Each run downloads the whole history of the scanned branch, so a repository with a long history makes the run slower.
 - [-] The rules are regular expressions with placeholder filters. They miss a secret with no known format and flag some fixtures, and the model's review items are the only cover for personal data the rules cannot see.
-- [-] The digest of a value is public in `.auditignore.yaml` with the repository. An attacker with a candidate value can confirm it against the file, which names only values the history of that repository already holds. The digests never enter the deck, and the stub stays private for SENSITIVE_DOMAINS.
+- [-] The digest of a value is public in `.auditignore.yaml` with the repository. An attacker with a candidate value can confirm it against the file, which names only values the history of that repository already holds. The digests never enter this repository, and the stub stays private for SENSITIVE_DOMAINS.
 - [-] The standard library has no YAML parser, so the detector parses the one shape of `.auditignore.yaml` with its own code. A file outside that shape stops the run, and no other YAML feature is accepted.
 - [-] The detector sits on disk between the copy and the run, and the object id check is the only guard in that gap, so the scratch directory stays outside every checkout.
 - [-] The stub still trusts `main` at run time, and an attached source adds GitHub write tools that the prompt alone forbids. Pinning and a runner that removes those tools are deferred.
-- [-] Two conventions coexist until the ConfigureScanners overlap is resolved: the deck routine file and the older template under `runes/security/`.
+- [-] Two conventions coexist until the ConfigureScanners overlap is resolved: the repository's routine file and the older template under `runes/security/`.

@@ -20,7 +20,7 @@ responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
 consulted: []
 informed: []
-change: measure-context-economy
+change: economy-measure-context-efficiency
 ---
 
 # No Performance Personas

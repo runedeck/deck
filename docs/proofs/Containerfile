@@ -1,0 +1,47 @@
+# The proof recorder image. Proofs record inside this container so asciinema
+# gets a real pty and every run uses the same linters at the same versions.
+# Debian slim, never Alpine: musl is not glibc, and a native dependency fails
+# or rebuilds or runs slower without saying so. Pinned by digest.
+#
+# Build (host, outside the command sandbox):
+#   container build -t runedeck/proof:1 -f docs/proofs/Containerfile docs/proofs
+# The linux rune binary comes from a builder run first; see docs/proofs/README.md.
+FROM debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251
+
+ARG ASCIINEMA=3.2.1
+ARG AGG=1.9.0
+ARG RUMDL=0.2.77
+ARG LYCHEE=0.24.2
+ARG VALE=3.22.0
+ARG MDSCHEMA=0.15.4
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        bash ca-certificates curl git jq python3 ripgrep shellcheck fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN set -eu; arch="$(uname -m)"; \
+    curl -fsSL -o /usr/local/bin/asciinema \
+        "https://github.com/asciinema/asciinema/releases/download/v${ASCIINEMA}/asciinema-${arch}-unknown-linux-gnu" \
+    && chmod +x /usr/local/bin/asciinema; \
+    curl -fsSL -o /usr/local/bin/agg \
+        "https://github.com/asciinema/agg/releases/download/v${AGG}/agg-${arch}-unknown-linux-gnu" \
+    && chmod +x /usr/local/bin/agg; \
+    curl -fsSL "https://github.com/rvben/rumdl/releases/download/v${RUMDL}/rumdl-v${RUMDL}-${arch}-unknown-linux-gnu.tar.gz" \
+        | tar -xz -C /usr/local/bin rumdl; \
+    curl -fsSL "https://github.com/lycheeverse/lychee/releases/download/lychee-v${LYCHEE}/lychee-${arch}-unknown-linux-gnu.tar.gz" \
+        | tar -xz -C /usr/local/bin --strip-components=1 "lychee-${arch}-unknown-linux-gnu/lychee"; \
+    valearch="$([ "$arch" = aarch64 ] && echo arm64 || echo 64-bit)"; \
+    curl -fsSL "https://github.com/errata-ai/vale/releases/download/v${VALE}/vale_${VALE}_Linux_${valearch}.tar.gz" \
+        | tar -xz -C /usr/local/bin vale; \
+    mdarch="$([ "$arch" = aarch64 ] && echo arm64 || echo amd64)"; \
+    curl -fsSL "https://github.com/jackchuka/mdschema/releases/download/v${MDSCHEMA}/mdschema_${MDSCHEMA}_linux_${mdarch}.tar.gz" \
+        | tar -xz -C /usr/local/bin mdschema; \
+    chmod +x /usr/local/bin/rumdl /usr/local/bin/lychee /usr/local/bin/vale /usr/local/bin/mdschema
+
+# The rune binary built for linux by the builder run.
+COPY rune /usr/local/bin/rune
+
+ENV TERM=xterm-256color LANG=C.UTF-8
+WORKDIR /work
+CMD ["bash"]

@@ -22,9 +22,9 @@ A routine that runs code takes it from the same `FETCH_HEAD`. After the same `ls
 
 ## Scanner inputs
 
-The Dotfiles Scanner and Online Mentions files take instance values that never enter the deck: the values live in the stub, and the private binding in the consumer carries them.
+The Dotfiles Scanner and Online Mentions files take instance values that never enter the repository: the values live in the stub, and the private binding in the consumer carries them.
 
-- SENSITIVE_DOMAINS: domain suffixes whose every hostname is an ALERT, such as an employer's internal domain. The deck carries no instance value, and a test fixture uses `corp.example`.
+- SENSITIVE_DOMAINS: domain suffixes whose every hostname is an ALERT, such as an employer's internal domain. The repository carries no instance value, and a test fixture uses `corp.example`.
 - KNOWN_FINDINGS: for Online Mentions, the canonical URLs from earlier reports. Known means acknowledged by the owner, not resolved.
 - BRANCH: the branch of the scanned repository, `main` by default.
 - IDENTITY_NAMES, PUBLIC_HANDLES, OFFICIAL_URLS, QUERY_ANCHORS: the approved identity signals that attribute a page to the owner. A name alone attributes nothing.

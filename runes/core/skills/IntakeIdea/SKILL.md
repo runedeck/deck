@@ -46,9 +46,10 @@ Stop when the answers state every requirement and its scenarios. Do not fill a g
 3. Use a Git worktree in a Git-only repository.
 4. Run the sized scaffold from the isolated workspace.
 5. Fill the proposal: why, what changes, capabilities, impact. Keep the sharpened intent as the first line of Why.
-6. Write delta requirements with MUST and MUST NOT, one scenario per requirement minimum.
-7. Record open questions as tasks, not as vague prose.
-8. Set the record's `upstream` to what the idea came from: the link to the drawing or the transcript, or nothing for a bare prompt.
+6. Run `rune spec glossary` and read the terms before you write. A requirement uses an existing term in italics with its tag, or the change adds the term to `ontology/rune.ttl` first.
+7. Write delta requirements with MUST and MUST NOT, one scenario per requirement minimum.
+8. Record open questions as tasks, not as vague prose.
+9. Set the record's `upstream` to what the idea came from: the link to the drawing or the transcript, or nothing for a bare prompt.
 
 ### Step 5: Review the MUST statements and the scenarios with the owner
 
@@ -56,7 +57,7 @@ Before the change counts as proposed, hand the delta specification to the owner 
 
 ### Step 6: Hand off to the pipeline
 
-1. Run the local gates: `mdschema check` on new documents and `rune validate`.
+1. Run the local checks: `mdschema check` on new documents and `rune validate`.
 2. Commit with the proper model identity through the VersionControl flow.
 3. Use the gated `jj push` in a Jujutsu-colocated repository.
 4. Use the normal Git commit and push flow in a Git-only repository.

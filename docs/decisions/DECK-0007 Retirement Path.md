@@ -21,7 +21,7 @@ accountable: ["@N4M3Z"]
 consulted: []
 informed: []
 upstream: []
-change: artifact-lifecycle-architecture
+change: lifecycle-stages-and-evidence
 ---
 
 # Retirement Path

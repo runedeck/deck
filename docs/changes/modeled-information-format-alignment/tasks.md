@@ -1,7 +1,7 @@
 ## 1. Implementation
 
 - [x] 1.1 Survey the organization and record the assessment in the design
-- [ ] 1.2 Map the deck ontology terms to the MIF ontology corpus and record a verdict per term
+- [ ] 1.2 Map the repository's ontology terms to the MIF ontology corpus and record a verdict per term
 - [ ] 1.3 Trial the MIF memory profile as the advisory-memory instance for pushback, with a recorded verdict
 - [ ] 1.4 Evaluate the mif-docs ADR skill against the planned deck ADR skill, and adopt or diverge with reasons
 - [ ] 1.5 Study the attested marketplace patterns and record the findings for rune distribution

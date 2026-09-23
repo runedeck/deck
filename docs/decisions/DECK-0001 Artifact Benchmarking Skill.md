@@ -15,7 +15,7 @@ accountable: []
 consulted: []
 informed: []
 upstream: []
-change: benchmark-all-artifacts
+change: benchmark-instructions-per-model
 ---
 
 # Artifact Benchmarking Skill

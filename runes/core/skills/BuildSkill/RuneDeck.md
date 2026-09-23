@@ -14,7 +14,7 @@ Casts name a selection of runes for a consumer to install together. A new skill 
 
 ## What validation expects
 
-The validators enforce the heading convention. The deck applies the length limits during review. The `.mdschema` beside each `skills/` directory checks the section shell. Its diagnostics call this check `stable shell identity`. Rune warns when a `SKILL.md` body exceeds 100 lines, excluding frontmatter. Deck review treats 150 lines as the limit. Markdown companions must stay under 150 lines.
+The validators enforce the heading convention. The repository applies the length limits during review. The `.mdschema` beside each `skills/` directory checks the section shell. Its diagnostics call this check `stable shell identity`. Rune warns when a `SKILL.md` body exceeds 100 lines, excluding frontmatter. Repository review treats 150 lines as the limit. Markdown companions must stay under 150 lines.
 
 ## Validation
 

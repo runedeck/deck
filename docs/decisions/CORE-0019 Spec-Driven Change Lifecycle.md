@@ -21,7 +21,7 @@ consulted: ["claude-fable-5-1@claude", "gpt-6-astra@codex"]
 informed: []
 upstream:
     - "https://github.com/Fission-AI/OpenSpec"
-change: spec-change-lifecycle
+change: lifecycle-of-a-change
 ---
 
 # Spec-Driven Change Lifecycle

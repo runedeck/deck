@@ -10,7 +10,7 @@ updated: 2026-08-13
 author: "Martin Zeman"
 project: "deck"
 related: []
-change: adopt-session-state
+change: record-provenance-for-adoptions
 responsible: []
 accountable: []
 consulted: []

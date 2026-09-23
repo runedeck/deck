@@ -1,6 +1,6 @@
 ---
 title: "Quality job builds the pinned rune"
-description: "The deck's quality job installs rune from the cli at a pinned commit, outside the tree, so the real-graph hook runs under REQUIRE_GATES."
+description: "The repository's quality job installs rune from the cli at a pinned commit, outside the tree, so the real-graph hook runs under REQUIRE_GATES."
 type: adr
 category: infrastructure
 tags:
@@ -46,4 +46,4 @@ The job MUST keep these rules:
 ## Consequences
 
 - One more slow step in the quality job, a few minutes without a cache. The timeout rises to 30 minutes.
-- The pin moves by hand. A deck change that needs a newer `rune graph export` bumps it in the same change.
+- The pin moves by hand. A change in this repository that needs a newer `rune graph export` bumps it in the same change.

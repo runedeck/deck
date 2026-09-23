@@ -20,7 +20,7 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5@claude"]
 informed: []
 upstream: []
-change: skeleton-template-copier
+change: use-single-repository-skeleton
 ---
 
 # Consumer Ceremony Synchronization

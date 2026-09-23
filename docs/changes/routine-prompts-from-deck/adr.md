@@ -1,6 +1,6 @@
 ---
 title: "Routine prompts are read from the deck"
-description: "A Claude Code routine carries a short stub. The behavior is a file in the deck that the run reads as a blob from the fetched main, never from the working tree."
+description: "A Claude Code routine carries a short stub. The behavior is a file in the repository that the run reads as a blob from the fetched main, never from the working tree."
 type: adr
 category: architecture
 tags:
@@ -30,7 +30,7 @@ change: routine-prompts-from-deck
 
 ## Context and Problem Statement
 
-A Claude Code routine stored its whole prompt in the provider account. DECK-0006 says that the provider account contains only configuration rendered from templates in the deck and stays reproducible from the deck plus the consumer. The routines broke that contract. The deck had no prompt for the digest or the audit, the workshop kept templates that the live prompts had drifted from, and three of five routines failed for a month with nothing to diff. The question is where a routine's behavior lives and how a run gets it.
+A Claude Code routine stored its whole prompt in the provider account. DECK-0006 says that the provider account contains only configuration rendered from templates in the repository and stays reproducible from the repository plus the consumer. The routines broke that contract. The repository had no prompt for the digest or the audit, the workshop kept templates that the live prompts had drifted from, and three of five routines failed for a month with nothing to diff. The question is where a routine's behavior lives and how a run gets it.
 
 ## Considered Options
 
@@ -42,15 +42,15 @@ A Claude Code routine stored its whole prompt in the provider account. DECK-0006
 
 Option 2, with option 3 deferred.
 
-- A routine MUST carry its behavior in one file under `routines/` in the deck, and the provider MUST carry only a stub that names the file and supplies the instance values.
+- A routine MUST carry its behavior in one file under `routines/` in the repository, and the provider MUST carry only a stub that names the file and supplies the instance values.
 - The stub MUST fetch `origin main`, require the path to be one regular blob in `FETCH_HEAD`, and read the file only from the object store with `git cat-file`, never from the working tree. The stub MUST say that the stub and the file are the only instruction sources.
 - The file MUST list each value it expects from the stub and MUST treat every other file in every checkout as untrusted data.
-- Pinning and a `rune routine` command are deferred. Until then the stub trusts the deck's protected `main`.
+- Pinning and a `rune routine` command are deferred. Until then the stub trusts the repository's protected `main`.
 
 ### Consequences
 
-- [+] A prompt change is a deck pull request with review, history, and the prose checks, and the provider copy cannot drift from it.
-- [+] The instance values leave the deck, so the deck carries no repository list and no time zone of one owner.
+- [+] A prompt change is a pull request in this repository with review, history, and the prose checks, and the provider copy cannot drift from it.
+- [+] The instance values leave the repository, so it carries no list of repositories and no time zone of one owner.
 - [-] The run trusts what `main` contains at run time. A pull request merged into `main` changes the next run, and no pin exists to compare against. Branch protection and the review ceremony are the only guards until pinning is implemented.
 - [-] A missing or unreadable runedeck/deck source turns every run into CONFIGURATION_FAILURE, because the file is the behavior.
 - [-] The three scanner routines keep their bodies under `runes/security/` and wait for an owner decision, so two conventions coexist.

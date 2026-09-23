@@ -4,8 +4,8 @@ An idea can arrive as a link to a drawing in the owner's Obsidian vault. The dra
 
 ## Read the drawing
 
-1. Take the link as given: `obsidian://open?vault=Atlas&file=Library%2FCanvas%2FMarkdown%20First`. The `vault` and `file` values name the source. A `vault.martinzeman.net` URL names the same file once the vault is published.
-2. Read the file through the Obsidian CLI, never by path on disk: `obsidian vault=Atlas read path="Library/Canvas/Markdown First.md"`. The CLI answers only when Obsidian runs, which is the owner's signal that the vault is live.
+1. Take the link as given: `obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins`. The `vault` and `file` values name the source. A `vault.martinzeman.net` URL names the same file once the vault is published.
+2. Read the file through the Obsidian CLI, never by path on disk: `obsidian vault=Atlas read path="Library/Canvas/Plain Text Wins.md"`. The CLI answers only when Obsidian runs, which is the owner's signal that the vault is live.
 3. The `## Text Elements` section lists every text in the drawing, in the order it was written. Read it first. It is the whole content when the drawing is cards and labels.
 4. Connections and frames are in the drawing JSON, which the plugin stores compressed. Run `obsidian vault=Atlas command id=obsidian-excalidraw-plugin:decompress-current-excalidraw-file` with the file open, or read the `.svg` the plugin writes beside the file for the text and positions. An arrow's `startBinding` and `endBinding` name the elements it joins.
 
@@ -25,7 +25,7 @@ A drawing with no arrows is a list. Ask the owner which card is the intent befor
 ## What the change keeps
 
 1. The record's `upstream` lists the `obsidian://` link first. The record's origin is the drawing.
-2. `scripts/sync-idea "<link>"` writes the snapshot `docs/ideas/<name>.md` and its sidecar `docs/ideas/.provenance/<name>.md.yaml`, which records the link and the sha256 of the bytes the CLI returned. The repository is then complete without the vault, and `scripts/sync-idea --check` says when the vault moved on.
+2. `scripts/sync-idea "<link>"` writes the snapshot `docs/ideas/<name>.svg`, the drawing's exported SVG, and its sidecar `docs/ideas/.provenance/<name>.svg.yaml`, which records the link, the sha256 of the SVG, and the sha256 of the note's bytes. The repository is then complete without the vault, and `scripts/sync-idea --check` says when the vault moved on.
 3. Do not edit the snapshot. Edit the drawing in Obsidian and run the sync again.
 4. Do not write on the drawing's markdown side. The owner keeps that side empty, and the frontmatter is the plugin's.
 

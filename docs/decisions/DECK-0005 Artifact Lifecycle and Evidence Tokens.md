@@ -21,7 +21,7 @@ accountable: ["@N4M3Z"]
 consulted: []
 informed: []
 upstream: []
-change: artifact-lifecycle-architecture
+change: lifecycle-stages-and-evidence
 ---
 
 # Artifact Lifecycle and Evidence Tokens
@@ -50,6 +50,6 @@ Option 3. The lifecycle is Capture, Author, Prove, Measure, Review, Ship, Operat
 ### Consequences
 
 - [+] Existing tools become stage instances, not the definition. A replacement tool moves no contract.
-- [+] The gap register in the artifact-lifecycle-architecture change lists every hop that is manual today. Each is now a named defect, not background noise.
+- [+] The gap register in the lifecycle-stages-and-evidence change lists every hop that is manual today. Each is now a named defect, not background noise.
 - [+] Future gates (a rule without a verdict, an adoption without a sealed record) have a specification to cite.
 - [+] The token model gives retirement a clean rule: remove the artifact, keep the tokens.

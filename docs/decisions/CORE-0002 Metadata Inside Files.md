@@ -21,7 +21,7 @@ informed: []
 upstream:
     - "obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins"
     - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0002%20Metadata%20Inside%20Files.md"
-change: core-foundation-principles
+change: plain-text-first-principles
 ---
 
 # Metadata Inside Files

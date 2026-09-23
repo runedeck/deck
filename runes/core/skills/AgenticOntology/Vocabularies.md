@@ -9,7 +9,7 @@ The search order before minting a term, from DECK-0010: reuse an established ter
 - **Dublin Core terms** (`dcterms:`), for generic metadata: `dcterms:identifier`, `dcterms:title`, `dcterms:relation`, `dcterms:creator`.
 - **schema.org** (`schema:`), for a document or a procedure: `schema:CreativeWork`, `schema:HowTo`.
 - **SHACL** (`sh:`), for a constraint: every shape in `shapes.ttl`, never a constraint in `rune.ttl`.
-- **in-toto and SLSA**, for a supply-chain attestation: the `.provenance/` sidecars. A `rune:Proof` is the deck-side twin of an in-toto attestation, not a replacement.
+- **in-toto and SLSA**, for a supply-chain attestation: the `.provenance/` sidecars. A `rune:Proof` is the repository's twin of an in-toto attestation, not a replacement.
 - **OWL and RDFS** (`owl:`, `rdfs:`), for a class definition or a deprecation: `rdfs:subClassOf`, `rdfs:label`, `rdfs:comment`, `owl:deprecated`.
 
 ## Rules of reuse
@@ -19,6 +19,6 @@ The search order before minting a term, from DECK-0010: reuse an established ter
 - OWL and RDFS describe under the open-world assumption and never reject data. SHACL validates under the closed-world assumption and is the only gate.
 - The product namespace is `https://runedeck.dev/ns#`. Entities live under `https://runedeck.dev/id/`. A namespace is permanent.
 
-## Where the deck already reuses
+## Where the repository already reuses
 
 `rune:Rune` is a `prov:Entity` and a `schema:CreativeWork`. `rune:Skill` is a `schema:HowTo`. `rune:Provider` is a `prov:Agent`. `rune:Verdict` and `rune:Proof` are `prov:Entity`. `rune:Stage` and `rune:ProofKind` are `skos:Concept`. A decision record is a `prov:Entity` and a `schema:CreativeWork`, minted because no established vocabulary covers architecture decision records.

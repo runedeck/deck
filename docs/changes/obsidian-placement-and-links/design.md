@@ -27,7 +27,7 @@ Observed examples:
 The audit also found a working `Entire` resource linked to the `AI Stack` project through `keywords`.
 Its companion `Entire Guide` appears through `related`.
 This example shows that an existing keywords field can contain a project relationship.
-These examples establish useful property conventions, not a universal schema for every vault.
+These examples establish useful property conventions. They are not a universal schema for every vault.
 
 ## Goals / Non-Goals
 
@@ -52,7 +52,7 @@ These examples establish useful property conventions, not a universal schema for
 ### 1. Use a shared Obsidian module with a bounded organization workflow
 
 Implement an Obsidian skill entry and supporting organization guidance under `runes/obsidian/`.
-Follow the Deck module and skill conventions current at implementation time.
+Follow the repository's module and skill conventions current at implementation time.
 Add module metadata, defaults, documentation, and review cases as required by those conventions.
 
 Art will refer to the shared workflow for placement, link identity, and Obsidian validation.
@@ -123,7 +123,7 @@ An alias that recreates the same ambiguity is not a repair.
 
 For the Euthia review case, preserve the reviewed Index topic as the proposed shared topic.
 Give the local manual hub a distinct role or integrate its useful content through a reviewed migration.
-This is a proposed identity decision, not authorization to merge live notes.
+This is a proposed identity decision. It does not authorize a merge of live notes.
 
 Alternative considered: accept all resolved links as valid.
 A link can resolve successfully to the wrong same-named note.
@@ -167,7 +167,7 @@ Validate property readback and affected view behavior after cleanup.
 
 ## Migration Plan
 
-1. Implement and validate the reusable module in Deck without deployment.
+1. Implement and validate the reusable module in the repository without deployment.
 2. Connect Art to the shared organization workflow while preserving its specialized responsibilities.
 3. Evaluate disposable examples for folder placement, duplicate topics, direct links, note roles, and application failures.
 4. Present the module change and validation evidence for review before any installation.

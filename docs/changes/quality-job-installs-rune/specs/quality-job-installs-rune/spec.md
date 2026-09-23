@@ -12,4 +12,4 @@ The quality job MUST install the `rune` binary that the real-graph hook runs, bu
 #### Scenario: Pin is a branch name
 
 - **WHEN** a change sets the cli revision to a branch name instead of a full commit id
-- **THEN** review refuses the change, because the build would move without a deck change
+- **THEN** review refuses the change, because the build would move without a change in this repository

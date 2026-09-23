@@ -1,0 +1,603 @@
+
+── plain-text-wins · 3 scenes ──────────────────────────────────────────────────────────────────────
+
+┌───────────────────────────────┐
+│ 1/41 · External store appears │
+└───────────────────────────────┘
+unproven  judgment scene, recorded beside this proof
+Judgment scene: a model reviews the fixture in the judgment proof beside this one. This scene points at it.
+❯ rg -c 'External store appears' docs/proofs/core-foundation-principles-judgment/record.sh
+1
+✓ matches /^[1-9]/
+
+┌─────────────────────────────────────┐
+│ 2/41 · Binary asset enters the deck │
+└─────────────────────────────────────┘
+check  scripts/check-binary-assets
+A PNG with no description beside it fails; the same PNG with logo.png.md passes.
+❯ python3 scripts/check-binary-assets tests/fixtures/binary-assets/invalid
+binary: logo.png has no description beside it
+binary assets: 1 findings
+✓ matches /binary: logo.png has no description beside it/
+❯ python3 scripts/check-binary-assets tests/fixtures/binary-assets/valid
+binary assets: 0 findings
+✓ matches /binary assets: 0 findings/
+
+┌────────────────────────────────────────────┐
+│ 3/41 · Derived form drifts from its source │
+└────────────────────────────────────────────┘
+unproven  scripts/check-provenance sees the seal, no regeneration check
+Unproven. The seal on the idea snapshot reports a changed derived form, one byte is enough. No check regenerates the form from its source and compares, and the coverage table says so.
+❯ cd drift && python3 scripts/check-provenance 'docs/ideas/.provenance/Plain Text Wins.svg.yaml'
+stale subject digest: docs/ideas/.provenance/Plain Text Wins.svg.yaml
+run: python3 scripts/check-provenance --fix <file>...
+✓ matches /stale subject digest/
+❯ rg 'Lossless Derived Forms' docs/changes/core-foundation-principles/design.md
+| plain-text-wins | Lossless Derived Forms | open gap: `scripts/check-provenance` reports a changed derived form against its seal, and no check regenerates one from its source |
+✓ matches /open gap/
+
+── markdown-first-authoring · 7 scenes ─────────────────────────────────────────────────────────────
+
+┌──────────────────────────────────────────────┐
+│ 4/41 · Instruction arrives in another format │
+└──────────────────────────────────────────────┘
+unproven  rune validate accepts it
+Unproven. A domain holds Thing.txt and a Thing.md without frontmatter. rune validate ignores the first and accepts the second, so nothing rejects a non-Markdown instruction today. The coverage table says so.
+❯ rune validate --source fmt
+
+ validation
+   ✓ core/module.yaml
+   ✓ core/defaults.yaml
+   ✓ core/README.md
+   ✓ core/LICENSE
+   ✓ core/rules/Thing.md
+   ✓ core/trailing whitespace
+
+ ✓ 6 checked  ⚡ 0 warnings  ✗ 0 errors
+✓ matches /Thing.md/
+❯ rg 'Markdown System Language' docs/changes/core-foundation-principles/design.md
+| markdown-first-authoring | Markdown System Language | the `rune validate` artifact checks, with the open gap that a non-Markdown instruction file is ignored, not rejected (cli) |
+✓ matches /open gap/
+
+┌────────────────────────────────────┐
+│ 5/41 · Provenance evidence arrives │
+└────────────────────────────────────┘
+check  scripts/check-provenance
+The adopted idea snapshot has its seal in a sidecar beside it, the seal verifies, and no record or idea in the deck carries a digest in its frontmatter.
+❯ ls docs/ideas docs/ideas/.provenance
+/work/docs/ideas:
+Plain Text Wins.svg
+
+/work/docs/ideas/.provenance:
+Plain Text Wins.svg.yaml
+✓ matches /Plain Text Wins.svg.yaml/
+❯ python3 scripts/check-provenance 'docs/ideas/.provenance/Plain Text Wins.svg.yaml'; echo "exit $?"
+exit 0
+✓ matches /^exit 0$/
+❯ rg -l '^(sha256|digest|fingerprint):' docs/decisions docs/ideas || echo 'no digest in any frontmatter'
+no digest in any frontmatter
+✓ matches /no digest in any frontmatter/
+
+┌─────────────────────────────────────────────────┐
+│ 6/41 · Derived index disagrees with frontmatter │
+└─────────────────────────────────────────────────┘
+check  rune graph export
+The graph is a derived index. A scratch deck exports it, then the record's frontmatter title changes: the stored export disagrees, and a regeneration follows the frontmatter.
+❯ rune graph export --source idx > idx/graph.ttl && rg 'dcterms:title' idx/graph.ttl
+    dcterms:title "Title A" ;
+✓ matches /Title A/
+❯ rg '^title:' 'idx/docs/decisions/IDX-0001 Title A.md'; rg 'dcterms:title' idx/graph.ttl
+title: Title B
+    dcterms:title "Title A" ;
+✓ matches /title: Title B/
+✓ matches /Title A/
+❯ rune graph export --source idx | rg 'dcterms:title'
+    dcterms:title "Title B" ;
+✓ matches /Title B/
+
+┌─────────────────────────────────────────┐
+│ 7/41 · Nested object enters frontmatter │
+└─────────────────────────────────────────┘
+check  mdschema
+A record with a nested object under tags fails the schema.
+❯ mdschema check nested/record.md --schema docs/decisions/.mdschema
+/tmp/core-foundation-principles.CRm9UJ/nested/record.md
+  ✗ 1:1 [frontmatter] Frontmatter field 'tags' should be an array
+
+✗ Found 1 violation(s) in 1 file(s)
+✓ matches /tags|array|type/
+
+┌──────────────────────────────────┐
+│ 8/41 · Numbered citation appears │
+└──────────────────────────────────┘
+check  vale · Core.Citations
+A bare number as a citation carries no meaning at the point of use. The Core style says so.
+❯ vale --no-global --config .vale.ini --output=line cite.md
+cite.md:3:24:Core.Citations:Cite with a named reference link, not a number (CORE-0009).
+✓ matches /Core.Citations/
+
+┌─────────────────────────────────────────────────────┐
+│ 9/41 · Specification uses a term the ontology lacks │
+└─────────────────────────────────────────────────────┘
+unproven  rune spec validate names the glossary
+Unproven. A delta sets *nonsense* in italics. rune spec validate names the term and asks for a glossary entry, not the ontology file, and the coverage table says so.
+❯ rune spec validate --source term
+error[delta-term-undefined]: docs/changes/x/specs/some-thing-here/spec.md:5: defined term 'nonsense' needs a glossary; create docs/specs/glossary.md with `- **nonsense**: <definition>`
+error[change-name-short]: docs/changes/x/specs/some-thing-here/spec.md: change 'x' has 1 words; a change id needs at least 3 hyphen-separated words
+✓ matches /defined term 'nonsense'/
+❯ rg 'Defined Terms Cite the Ontology' docs/changes/core-foundation-principles/design.md
+| markdown-first-authoring | Defined Terms Cite the Ontology | `rune spec validate` names an undefined term and asks for a glossary entry, with the open gap that it does not name `ontology/rune.ttl` (cli), `scripts/fallback/check-terms` for a reference tag that names a term the ontology lacks, and rumdl MD052 and MD053 for undefined and unused tags |
+✓ matches /open gap/
+
+┌────────────────────────────────────────────┐
+│ 10/41 · Reference tag names a missing term │
+└────────────────────────────────────────────┘
+check  scripts/fallback/check-terms
+The tag [NONSENSE] resolves to an IRI the ontology does not declare. The term check names the file and the tag.
+❯ python3 scripts/fallback/check-terms term
+docs/changes/x/specs/some-thing-here/spec.md: [NONSENSE] names https://runedeck.ai/ns#Nonsense, which is not in ontology/rune.ttl
+✓ matches /spec.md: \[NONSENSE\] names https://runedeck.ai/ns#Nonsense, which is not in ontology/rune.ttl/
+
+── linked-markdown-notes · 3 scenes ────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────┐
+│ 11/41 · Wikilink enters a deck file │
+└─────────────────────────────────────┘
+check  vale · Core.DeckLinks
+❯ vale --no-global --config tests/fixtures/vale/.vale.ini --output=line tests/fixtures/vale/invalid/deck-links.md
+/work/tests/fixtures/vale/invalid/deck-links.md:3:5:Core.DeckLinks:'[[CORE-0001 Markdown as System Language]]' is a wikilink or a harness path reference. Use a relative Markdown link (linked-markdown-notes).
+/work/tests/fixtures/vale/invalid/deck-links.md:4:6:Core.DeckLinks:'@docs/decisions/CORE-0002.md' is a wikilink or a harness path reference. Use a relative Markdown link (linked-markdown-notes).
+/work/tests/fixtures/vale/invalid/deck-links.md:5:18:Core.DeckLinks:'@AGENTS.md' is a wikilink or a harness path reference. Use a relative Markdown link (linked-markdown-notes).
+✓ matches /Core.DeckLinks.*\[\[CORE-0001/
+
+┌───────────────────────────────────────────┐
+│ 12/41 · Harness reference enters a record │
+└───────────────────────────────────────────┘
+check  vale · Core.DeckLinks
+❯ vale --no-global --config tests/fixtures/vale/.vale.ini --output=line tests/fixtures/vale/invalid/deck-links.md
+/work/tests/fixtures/vale/invalid/deck-links.md:3:5:Core.DeckLinks:'[[CORE-0001 Markdown as System Language]]' is a wikilink or a harness path reference. Use a relative Markdown link (linked-markdown-notes).
+/work/tests/fixtures/vale/invalid/deck-links.md:4:6:Core.DeckLinks:'@docs/decisions/CORE-0002.md' is a wikilink or a harness path reference. Use a relative Markdown link (linked-markdown-notes).
+/work/tests/fixtures/vale/invalid/deck-links.md:5:18:Core.DeckLinks:'@AGENTS.md' is a wikilink or a harness path reference. Use a relative Markdown link (linked-markdown-notes).
+✓ matches /Core.DeckLinks.*@docs/decisions/CORE-0002.md/
+❯ vale --no-global --config tests/fixtures/vale/.vale.ini --output=line tests/fixtures/vale/valid/deck-links.md; echo "exit $?"
+exit 0
+✓ matches /^exit 0$/
+
+┌───────────────────────────┐
+│ 13/41 · Link target moves │
+└───────────────────────────┘
+check  lychee --offline
+A link whose target was renamed fails the offline link check.
+❯ lychee --offline --include-fragments --no-progress links
+Issues found in 1 input. Find details below.
+
+[links/a.md]:
+[ERROR] file:///tmp/core-foundation-principles.CRm9UJ/links/b-old.md#top (at 3:5) | File not found. Check if file exists and path is correct
+
+🔍 1 Total (in 0s) 🔗 1 Unique ✅ 0 OK 🚫 1 Error
+✓ matches /ERROR|Errors/
+
+── open-knowledge-format · 4 scenes ────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────┐
+│ 14/41 · File without a type appears │
+└─────────────────────────────────────┘
+check  scripts/check-okf
+❯ python3 scripts/check-okf tests/fixtures/okf/invalid
+type: docs/record.md has no non-empty type
+id: docs/record.md carries id 'something-else', the path identifier is 'docs/record'
+reserved: index.md carries a frontmatter block with keys ['title']
+reserved: log.md carries a frontmatter block with keys ['title']
+type: runes/core/rules/Rule.md has no non-empty metadata.type
+version: the bundle root index.md does not declare okf_version: "0.2"
+okf: 6 findings
+✓ matches /type: docs/record.md has no non-empty type/
+✓ matches /type: runes/core/rules/Rule.md has no non-empty metadata.type/
+
+┌────────────────────────────────┐
+│ 15/41 · Identifier key appears │
+└────────────────────────────────┘
+check  scripts/check-okf
+❯ python3 scripts/check-okf tests/fixtures/okf/invalid
+type: docs/record.md has no non-empty type
+id: docs/record.md carries id 'something-else', the path identifier is 'docs/record'
+reserved: index.md carries a frontmatter block with keys ['title']
+reserved: log.md carries a frontmatter block with keys ['title']
+type: runes/core/rules/Rule.md has no non-empty metadata.type
+version: the bundle root index.md does not declare okf_version: "0.2"
+okf: 6 findings
+✓ matches /id: docs/record.md carries id 'something-else'/
+
+┌─────────────────────────────────────────┐
+│ 16/41 · Reserved name holds frontmatter │
+└─────────────────────────────────────────┘
+check  scripts/check-okf
+❯ python3 scripts/check-okf tests/fixtures/okf/invalid
+type: docs/record.md has no non-empty type
+id: docs/record.md carries id 'something-else', the path identifier is 'docs/record'
+reserved: index.md carries a frontmatter block with keys ['title']
+reserved: log.md carries a frontmatter block with keys ['title']
+type: runes/core/rules/Rule.md has no non-empty metadata.type
+version: the bundle root index.md does not declare okf_version: "0.2"
+okf: 6 findings
+✓ matches /reserved: log.md carries a frontmatter block with keys \['title'\]/
+
+┌───────────────────────────────────────┐
+│ 17/41 · Version declaration is absent │
+└───────────────────────────────────────┘
+check  scripts/check-okf
+❯ python3 scripts/check-okf tests/fixtures/okf/invalid
+type: docs/record.md has no non-empty type
+id: docs/record.md carries id 'something-else', the path identifier is 'docs/record'
+reserved: index.md carries a frontmatter block with keys ['title']
+reserved: log.md carries a frontmatter block with keys ['title']
+type: runes/core/rules/Rule.md has no non-empty metadata.type
+version: the bundle root index.md does not declare okf_version: "0.2"
+okf: 6 findings
+✓ matches /version: the bundle root index.md does not declare okf_version/
+❯ python3 scripts/check-okf tests/fixtures/okf/valid
+okf: 0 findings
+✓ matches /okf: 0 findings/
+
+── directories-direct-routing · 2 scenes ───────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────┐
+│ 18/41 · Content goes into a catch-all directory │
+└─────────────────────────────────────────────────┘
+unproven  judgment scene, recorded beside this proof
+Judgment scene: a model reviews the fixture in the judgment proof beside this one.
+❯ rg -c 'catch-all directory' docs/proofs/core-foundation-principles-judgment/record.sh
+1
+✓ matches /^[1-9]/
+
+┌─────────────────────────────────┐
+│ 19/41 · Item stays in the queue │
+└─────────────────────────────────┘
+unproven  no check reads a catch-all at session end
+Unproven: no check reads a catch-all directory at session end. The coverage table says so.
+❯ rg 'Catch-All Directories Drain' docs/changes/core-foundation-principles/design.md
+| directories-direct-routing | Catch-All Directories Drain | open gap: no check reads a queue at session end |
+✓ matches /open gap/
+
+── instruction-environment-variables · 4 scenes ────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────┐
+│ 20/41 · Instruction embeds a configurable value │
+└─────────────────────────────────────────────────┘
+check  vale · Core.UserValue
+❯ vale --no-global --config tests/fixtures/vale/.vale.ini --output=line tests/fixtures/vale/invalid/user-value.md
+/work/tests/fixtures/vale/invalid/user-value.md:3:18:Core.UserValue:'/Users/martin' is a user-specific path. Write the value as $NAME (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/user-value.md:4:16:Core.UserValue:'/home/martin' is a user-specific path. Write the value as $NAME (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/user-value.md:5:18:Core.UserValue:'C:\Users\martin' is a user-specific path. Write the value as $NAME (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/user-value.md:6:8:Core.UserValue:'~/Developer' is a user-specific path. Write the value as $NAME (instruction-environment-variables).
+✓ matches /Core.UserValue.*/Users/martin/
+
+┌─────────────────────────────┐
+│ 21/41 · Braced form appears │
+└─────────────────────────────┘
+check  vale · Core.BracedVariable
+❯ vale --no-global --config tests/fixtures/vale/.vale.ini --output=line tests/fixtures/vale/invalid/braced-variable.md
+/work/tests/fixtures/vale/invalid/braced-variable.md:3:8:Core.BracedVariable:'${DECK_ROOT}' is a braced variable. Write it as $NAME (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/braced-variable.md:4:19:Core.BracedVariable:'${HOME:-/tmp}' is a braced variable. Write it as $NAME (instruction-environment-variables).
+✓ matches /Core.BracedVariable.*\$\{DECK_ROOT\}/
+
+┌─────────────────────────────────────────────────────────┐
+│ 22/41 · Instruction names a variable and never reads it │
+└─────────────────────────────────────────────────────────┘
+unproven  no check reads the variable use
+Unproven: no check finds a named variable that no step reads. The coverage table says so.
+❯ rg 'The Shell Resolves the Variable' docs/changes/core-foundation-principles/design.md
+| instruction-environment-variables | The Shell Resolves the Variable | open gap: no check finds a named variable that no step reads |
+✓ matches /open gap/
+
+┌────────────────────────────────────────────────────┐
+│ 23/41 · Harness placeholder enters a shared source │
+└────────────────────────────────────────────────────┘
+check  vale · Core.HarnessPlaceholder
+❯ vale --no-global --config tests/fixtures/vale/.vale.ini --output=line tests/fixtures/vale/invalid/harness-placeholder.md
+/work/tests/fixtures/vale/invalid/harness-placeholder.md:3:19:Core.BracedVariable:'${CLAUDE_PROJECT_DIR}' is a braced variable. Write it as $NAME (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/harness-placeholder.md:3:19:Core.HarnessPlaceholder:'${CLAUDE_PROJECT_DIR}' is a placeholder one harness expands. Move the line to that harness's companion (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/harness-placeholder.md:4:6:Core.HarnessPlaceholder:'$ARGUMENTS' is a placeholder one harness expands. Move the line to that harness's companion (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/harness-placeholder.md:4:44:Core.HarnessPlaceholder:'$1' is a placeholder one harness expands. Move the line to that harness's companion (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/harness-placeholder.md:5:12:Core.HarnessPlaceholder:'$CLAUDE_SESSION_ID' is a placeholder one harness expands. Move the line to that harness's companion (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/harness-placeholder.md:6:9:Core.BracedVariable:'${extensionPath}' is a braced variable. Write it as $NAME (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/harness-placeholder.md:6:9:Core.HarnessPlaceholder:'${extensionPath}' is a placeholder one harness expands. Move the line to that harness's companion (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/harness-placeholder.md:6:32:Core.BracedVariable:'${workspacePath}' is a braced variable. Write it as $NAME (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/harness-placeholder.md:6:32:Core.HarnessPlaceholder:'${workspacePath}' is a placeholder one harness expands. Move the line to that harness's companion (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/harness-placeholder.md:6:55:Core.HarnessPlaceholder:'{{args}}' is a placeholder one harness expands. Move the line to that harness's companion (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/harness-placeholder.md:7:11:Core.HarnessPlaceholder:'{env:API_KEY2}' is a placeholder one harness expands. Move the line to that harness's companion (instruction-environment-variables).
+/work/tests/fixtures/vale/invalid/harness-placeholder.md:7:30:Core.HarnessPlaceholder:'{file:./notes.md}' is a placeholder one harness expands. Move the line to that harness's companion (instruction-environment-variables).
+✓ matches /Core.HarnessPlaceholder.*\$\{CLAUDE_PROJECT_DIR\}/
+The same line inside a harness companion directory is where it belongs: the deck configuration exempts it there.
+❯ cd mirror && vale --no-global --output=line runes/core/skills/S/SKILL.md | rg -c HarnessPlaceholder
+9
+✓ matches /^[1-9]/
+❯ cd mirror && vale --no-global --output=line runes/core/skills/S/claude/SKILL.md | rg -c HarnessPlaceholder || echo 'exempt in the companion'
+exempt in the companion
+✓ matches /exempt in the companion/
+
+── harness-independent-authoring · 8 scenes ────────────────────────────────────────────────────────
+
+┌───────────────────────────────────────────────────┐
+│ 24/41 · Second source appears for one instruction │
+└───────────────────────────────────────────────────┘
+unproven  rune validate reports no duplicate
+Unproven. A rule and a skill share the name thing in one domain. rune validate passes both and reports no duplicate, and the coverage table says so.
+❯ rune validate --source dup
+
+ validation
+   ✓ core/module.yaml
+   ✓ core/defaults.yaml
+   ✓ core/README.md
+   ✓ core/LICENSE
+   ✓ core/rules/thing.md
+   ✓ core/skills/thing/SKILL.md
+   ✓ core/trailing whitespace
+
+ ✓ 7 checked  ⚡ 0 warnings  ✗ 0 errors
+✓ matches /rules/thing.md/
+✓ matches /skills/thing/SKILL.md/
+❯ rg 'Reusable Across Harnesses and Models' docs/changes/core-foundation-principles/design.md
+| harness-independent-authoring | Reusable Across Harnesses and Models | open gap: `rune validate` does not report a rule and a skill that share one name (cli), and `rune doctor --verify` for the deployment drift |
+✓ matches /open gap/
+
+┌─────────────────────────────────────┐
+│ 25/41 · Assembly writes an instance │
+└─────────────────────────────────────┘
+run  rune install on a scratch deck
+The consumer installs the skill and the rule. The manifest holds each instance's fingerprint, and the sidecar names its source.
+❯ rune install --source roster/app
+
+ ✓ claude
+   rules 1  skills 1
+   ● thing
+   ● Neat
+ ✓ codex
+   rules 1  skills 1
+   ● thing
+   ● Neat
+
+ ● 4 deployed
+✓ matches /deployed/
+❯ rg -A2 '^  thing:' roster/app/.claude/.manifest
+  thing:
+    SKILL.md:
+      fingerprint: 2a86246cb9eafbd8a8fe5f89da0cd81aec82ea1bd1b8f09d59e85472bb6613ec
+✓ matches /fingerprint: [0-9a-f]{64}/
+❯ rg 'uri: skills/thing/SKILL.md' roster/app/.claude/skills/thing/.provenance/SKILL.md.yaml
+      - uri: skills/thing/SKILL.md
+✓ matches /uri: skills/thing/SKILL.md/
+
+┌─────────────────────────────────────────┐
+│ 26/41 · Harness needs different wording │
+└─────────────────────────────────────────┘
+run  rune install on a scratch deck
+The Claude companion's sentence reaches the Claude instance and no other.
+❯ rg -c 'Claude only' roster/app/.claude/skills/thing/SKILL.md
+1
+✓ matches /^1$/
+❯ rg -c 'Claude only' roster/app/build/codex/skills/thing/SKILL.md || echo 'not in the codex instance'
+not in the codex instance
+✓ matches /not in the codex instance/
+
+┌──────────────────────────────────────────┐
+│ 27/41 · Deployed copy is edited in place │
+└──────────────────────────────────────────┘
+run  rune doctor --verify, rune install --force
+A line appended to the deployed copy is drift: the doctor reports it, and a forced install restores the instance from the source.
+❯ rune doctor --target roster/app/.claude --verify
+ roster/app/.claude (claude)
+   ok 1 · modified 1 · missing 0 · orphan 0
+   ⚡ modified skills/thing/SKILL.md (Rune left this file unchanged.)
+✓ matches /modified 1/
+❯ rune install --source roster/app --force
+
+ ✓ claude
+   skills 1
+   ● thing
+ ✓ codex
+
+ ● 1 deployed  ○ 3 skipped
+✓ matches /deployed/
+❯ rg -c 'Edited in place' roster/app/.claude/skills/thing/SKILL.md || echo 'restored from the source'
+restored from the source
+✓ matches /restored from the source/
+
+┌─────────────────────────────────────────────────────────┐
+│ 28/41 · Instruction depends on one harness's hook event │
+└─────────────────────────────────────────────────────────┘
+unproven  no hook rendering yet, cli #69
+Unproven: a hook rune is not rendered into a harness's hook configuration yet (cli #69), so the scene has nothing to assemble.
+❯ rg -c 'hook' roster/deck/runes/core/module.yaml || echo 'no hook rendering yet'
+no hook rendering yet
+✓ matches /no hook rendering yet/
+
+┌───────────────────────────────────┐
+│ 29/41 · Layout rule has no linter │
+└───────────────────────────────────┘
+unproven  Agent Skills validator, open gap
+The Agent Skills validator is the one layout check that does not exist, and the coverage table lists it as an open gap.
+❯ rg 'Layout Is Enforced' docs/changes/core-foundation-principles/design.md
+| harness-independent-authoring | Layout Is Enforced | `rune validate`, mdschema, and the deployment manifest, with the Agent Skills validator as an open gap for the `agentskills` assembly |
+✓ matches /open gap/
+
+┌───────────────────────────┐
+│ 30/41 · New harness joins │
+└───────────────────────────┘
+run  rune install with gemini added
+Gemini joins the roster. The sources do not change, and the new target fills from the same instructions.
+❯ rune install --source roster/app
+
+ ✓ claude
+ ✓ codex
+ ✓ gemini
+   rules 1  skills 1
+   ● thing
+   ● Neat
+
+ ● 2 deployed  ○ 4 skipped
+✓ matches /deployed/
+❯ rg --files roster/app/.gemini | rg SKILL.md
+roster/app/.gemini/skills/thing/SKILL.md
+✓ matches /roster/app/.gemini/.*thing/SKILL.md/
+❯ digest roster/deck/runes
+132d304f494362d4
+✓ matches /^132d304f494362d4$/
+
+┌───────────────────────────────────┐
+│ 31/41 · Harness lacks a mechanism │
+└───────────────────────────────────┘
+run  rune install, rune validate
+Codex has no Read tool, the mechanism the Claude wording names. The source still assembles for codex and the deck validates, and that wording sits only in the Claude file.
+❯ rune install --source roster/app
+
+ ✓ claude
+ ✓ codex
+ ✓ gemini
+
+ ○ 6 skipped
+✓ matches /codex/
+❯ rune validate --source roster/deck
+
+ validation
+   ✓ core/module.yaml
+   ✓ core/defaults.yaml
+   ✓ core/README.md
+   ✓ core/LICENSE
+   ✓ core/rules/Neat.md
+   ⚡ core/skills/thing/SKILL.md — skills/thing/SKILL.md: description has no trigger phrasing (e.g. 'USE WHEN …'); the model cannot tell when to invoke this skill (Warning)
+   ⚡ core/skills/thing/claude/SKILL.md — skills/thing/claude/SKILL.md: description has no trigger phrasing (e.g. 'USE WHEN …'); the model cannot tell when to invoke this skill (Warning)
+   ✓ core/trailing whitespace
+
+ ✓ 8 checked  ⚡ 2 warnings  ✗ 0 errors
+✓ matches /0 errors/
+❯ rg -l 'Read tool' roster/deck/runes roster/app/build
+roster/app/build/claude/skills/thing/SKILL.md
+roster/deck/runes/core/skills/thing/claude/SKILL.md
+✓ matches /roster/deck/runes/core/skills/thing/claude/SKILL.md/
+✓ matches /roster/app/build/claude/skills/thing/SKILL.md/
+❯ rg -c 'Read tool' roster/app/build/codex/skills/thing/SKILL.md || echo 'codex assembles from the source alone'
+codex assembles from the source alone
+✓ matches /codex assembles from the source alone/
+
+── minimal-complexity-possible · 5 scenes ──────────────────────────────────────────────────────────
+
+┌──────────────────────────────────────────────┐
+│ 32/41 · Small fix arrives with full ceremony │
+└──────────────────────────────────────────────┘
+unproven  judgment scene, recorded beside this proof
+Judgment scene: a model reviews the fixture in the judgment proof beside this one.
+❯ rg -c 'Small fix arrives with full ceremony' docs/proofs/core-foundation-principles-judgment/record.sh
+1
+✓ matches /^[1-9]/
+
+┌───────────────────────────────────┐
+│ 33/41 · Comment restates the code │
+└───────────────────────────────────┘
+unproven  judgment scene, recorded beside this proof
+Judgment scene: a model reviews the fixture in the judgment proof beside this one.
+❯ rg -c 'Comment restates the code' docs/proofs/core-foundation-principles-judgment/record.sh
+1
+✓ matches /^[1-9]/
+
+┌───────────────────────────────────────┐
+│ 34/41 · Fact appears in a second file │
+└───────────────────────────────────────┘
+unproven  judgment scene, recorded beside this proof
+Judgment scene: a model reviews the fixture in the judgment proof beside this one.
+❯ rg -c 'Fact appears in a second file' docs/proofs/core-foundation-principles-judgment/record.sh
+1
+✓ matches /^[1-9]/
+
+┌──────────────────────────────────────┐
+│ 35/41 · Filler enters an instruction │
+└──────────────────────────────────────┘
+check  vale · STE and Deslop
+A sentence that states no fact, constraint, or action: the prose linter reports it.
+❯ vale --no-global --config .vale.ini --output=line filler.md
+filler.md:3:1:Deslop.SlopVocab:'It is important to note' is an AI-slop tell. Cut it or say the thing plainly.
+filler.md:3:1:STE.FillerPhrases:Delete the filler 'It is important to note'.
+filler.md:3:40:Deslop.HedgeCascade:Hedge cascade: 'may'. Use one qualifier, not two: may potentially.
+filler.md:3:40:ai-tells.StackedHedges:AI stacked hedge: 'may potentially'. Drop one hedge, or give a number instead.
+filler.md:3:84:Deslop.Substitutions:Use 'strong' instead of 'robust'.
+filler.md:3:84:ai-tells.OverusedVocabulary:AI vocabulary: 'robust'. Replace with a more specific or common word.
+filler.md:3:84:STE.Marketing:'robust' is marketing language. State the fact.
+filler.md:3:95:Deslop.SlopVocab:'seamless' is an AI-slop tell. Cut it or say the thing plainly.
+filler.md:3:95:STE.Marketing:'seamless' is marketing language. State the fact.
+filler.md:3:95:ai-tells.AIAdjectiveNounPairs:AI adjective-noun pair: 'seamless way'. Use concrete description instead.
+✓ matches /Deslop|STE\./
+
+┌─────────────────────────────────────────┐
+│ 36/41 · Nominalization enters a heading │
+└─────────────────────────────────────────┘
+check  vale · Core.Nominalization
+❯ vale --no-global --config tests/fixtures/vale/.vale.ini --output=line tests/fixtures/vale/invalid/nominalization.md
+/work/tests/fixtures/vale/invalid/nominalization.md:1:3:Core.Nominalization:'Specification acceptance' names an action as a noun. Use the verb: accepting a specification, exploring a decision (minimal-complexity-possible).
+/work/tests/fixtures/vale/invalid/nominalization.md:3:4:Core.Nominalization:'Decision exploration' names an action as a noun. Use the verb: accepting a specification, exploring a decision (minimal-complexity-possible).
+/work/tests/fixtures/vale/invalid/nominalization.md:5:3:Core.Nominalization:'Rune validation' names an action as a noun. Use the verb: accepting a specification, exploring a decision (minimal-complexity-possible).
+/work/tests/fixtures/vale/invalid/nominalization.md:6:3:Core.Nominalization:'Spec reviews' names an action as a noun. Use the verb: accepting a specification, exploring a decision (minimal-complexity-possible).
+✓ matches /Core.Nominalization.*Specification acceptance/
+
+── lint-enforced-foundations · 5 scenes ────────────────────────────────────────────────────────────
+
+┌───────────────────────────────────────────┐
+│ 37/41 · Foundation requirement has no row │
+└───────────────────────────────────────────┘
+check  scripts/check-coverage
+❯ python3 scripts/check-coverage tests/fixtures/coverage/invalid
+invalid: no coverage row for one-two-three / Thing Is Checked
+invalid: coverage row for one-two-three / Other Thing names no stated requirement
+invalid: coverage row for one-two-three / Other Thing names no check and no open gap: 'scripts/check-other'
+coverage: 3 findings
+✓ matches /no coverage row for one-two-three / Thing Is Checked/
+
+┌─────────────────────────┐
+│ 38/41 · Open gap closes │
+└─────────────────────────┘
+check  the coverage table and the linter file
+Verbs Name Actions had an open gap this morning. Its row now names the linter, and the linter exists.
+❯ rg 'Verbs Name Actions' docs/changes/core-foundation-principles/design.md
+| minimal-complexity-possible | Verbs Name Actions | the Core.Nominalization Vale rule on headings and steps, warning-first until seven hits in other changes are rewritten |
+✓ matches /Core.Nominalization/
+❯ ls .vale/styles/Core/Nominalization.yml
+/work/.vale/styles/Core/Nominalization.yml
+✓ matches /Nominalization.yml/
+
+┌────────────────────────────────────────┐
+│ 39/41 · Checker lands without fixtures │
+└────────────────────────────────────────┘
+check  scripts/check-fixtures
+The fixture check names the checker. In the deck, the six checkers still without fixtures sit in the baseline, and the coverage table lists them as an open gap.
+❯ python3 scripts/check-fixtures tests/fixtures/fixtures/invalid
+scripts/check-thing: no tests/fixtures/thing/{valid,invalid} with files and no test that names it
+fixtures: 1 findings
+✓ matches /scripts/check-thing: no tests/fixtures/thing/
+❯ rg 'Checker Has Fixtures' docs/changes/core-foundation-principles/design.md
+| lint-enforced-foundations | Checker Has Fixtures | `scripts/check-fixtures` against `tests/baselines/fixtures.txt`, and the open gap that the six scripts in the baseline still lack fixtures |
+✓ matches /open gap/
+
+┌──────────────────────────┐
+│ 40/41 · Rule is weakened │
+└──────────────────────────┘
+check  tests/test_check_scripts.py
+Delete the version rule from a copy of check-okf: the invalid fixture stops reporting it, and the fixture test fails.
+❯ python3 weak-check-okf tests/fixtures/okf/invalid | rg -c '^version:' || echo 'version rule gone'
+version rule gone
+✓ matches /version rule gone/
+❯ RUNE_CHECK_OKF=weak-check-okf python3 -m unittest tests.test_check_scripts.FixtureVerdicts.test_okf_names_every_rule
+----------------------------------------------------------------------
+Ran 1 test in 0.016s
+
+FAILED (failures=1)
+✓ matches /FAILED/
+
+┌──────────────────────────────────────────┐
+│ 41/41 · Record is accepted without proof │
+└──────────────────────────────────────────┘
+unproven  no check reads the proves edge
+Unproven: the record shape check reads no proof edge yet. The graph carries the edge since the exporter change; the check is task 1.5 of the proof plan.
+❯ rg 'Record Cites Its Proofs' docs/changes/core-foundation-principles/design.md
+| lint-enforced-foundations | Record Cites Its Proofs | open gap: the graph has the `proves` edge and no check reads it against a record's status yet |
+✓ matches /open gap/
+
+41 scenes, 71 expectations, 0 failed

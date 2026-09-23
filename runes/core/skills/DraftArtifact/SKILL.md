@@ -44,7 +44,7 @@ When the draft earned its place, run:
 rune promote <name> --domain <domain> --change <three-word-id>
 ```
 
-The change id needs at least three lowercase hyphenated words. Promote copies the rune into `runes/<domain>/`, creates `docs/changes/<id>/` with a proposal that names the rune, then removes every provider copy and the `.drafts` entries. Continue in the deck with BuildSkill for the rune body, and with the change's `proposal.md`, `tasks.md`, and `adr.md` for the record.
+The change id needs at least three lowercase hyphenated words. Promote copies the rune into `runes/<domain>/`, creates `docs/changes/<id>/` with a proposal that names the rune, then removes every provider copy and the `.drafts` entries. Continue in the repository with BuildSkill for the rune body, and with the change's `proposal.md`, `tasks.md`, and `adr.md` for the record.
 
 When the draft did not earn its place, run `rune draft --drop <name>`.
 

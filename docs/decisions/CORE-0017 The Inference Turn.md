@@ -19,7 +19,7 @@ accountable: ["@N4M3Z"]
 consulted: []
 informed: []
 upstream: []
-change: measure-context-economy
+change: economy-measure-context-efficiency
 ---
 
 # The Inference Turn

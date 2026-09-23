@@ -20,7 +20,7 @@ accountable: ["@N4M3Z"]
 consulted: []
 informed: []
 upstream: []
-change: agentic-first-pipelines
+change: agentic-first-pipeline-rules
 ---
 
 # Declared Constraints over Proposed Changes

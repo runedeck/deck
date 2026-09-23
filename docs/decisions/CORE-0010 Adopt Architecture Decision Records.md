@@ -17,7 +17,7 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5-1@claude"]
 informed: []
 upstream: []
-change: architecture-decision-records
+change: keep-architecture-decision-records
 ---
 
 # Adopt Architecture Decision Records

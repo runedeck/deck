@@ -8,7 +8,7 @@ decisions: ["Quality job builds the pinned rune"]
 
 ## Why
 
-The `ontology-graph` hook (declared-world-model, 2026-09-20) runs `rune graph export` and fails under `REQUIRE_GATES` when `rune` is absent. The quality job installs rudof and openspec through `scripts/install-tools.local` and never installs `rune`, so every push to `main` since `a0e89ea7` shows a red `quality` check while the hook passes locally.
+The `ontology-graph` hook (ontology-keeps-agents-honest, 2026-09-20) runs `rune graph export` and fails under `REQUIRE_GATES` when `rune` is absent. The quality job installs rudof and openspec through `scripts/install-tools.local` and never installs `rune`, so every push to `main` since `a0e89ea7` shows a red `quality` check while the hook passes locally.
 
 ## What Changes
 
@@ -24,4 +24,4 @@ The `ontology-graph` hook (declared-world-model, 2026-09-20) runs `rune graph ex
 ## Impact
 
 - `.github/workflows/quality.yaml` only. The contract job keeps its own pin and its in-tree candidate build.
-- The pin moves by hand when the deck needs a newer cli. A stale pin fails loud: the hook's export format is checked by the shapes.
+- The pin moves by hand when the repository needs a newer cli. A stale pin fails loud: the hook's export format is checked by the shapes.

@@ -1,6 +1,6 @@
 ---
 type: routine
-description: "Daily exposure scan of one public repository: a deterministic detector taken from the deck object store finds secrets, private hosts, and personal data in every reachable object, and the model reviews and reports."
+description: "Daily exposure scan of one public repository: a deterministic detector taken from the repository's object store finds secrets, private hosts, and personal data in every reachable object, and the model reviews and reports."
 ---
 
 # Dotfiles Scanner

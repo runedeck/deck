@@ -19,8 +19,8 @@ informed: []
 upstream:
     - "obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins"
     - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0020%20Directories%20Direct.md"
-    - "directories-direct-routing#directories-direct"
-change: core-foundation-principles
+    - "directories-direct-the-tools#directories-direct"
+change: plain-text-first-principles
 ---
 
 # Directories Direct

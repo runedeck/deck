@@ -1,0 +1,62 @@
+# A change proposal follows OpenSpec's proposal template: Why, What Changes,
+# Capabilities with its New and Modified subsections, Impact. OpenSpec's own
+# validator enforces only Why and What Changes; the template carries the rest.
+# rune reads `### New Capabilities` for each canonical spec's Purpose at
+# archive, so the subsection is worth writing, and this schema allows a
+# proposal without it. Glossary and Sources are the deck's tail sections.
+frontmatter:
+    fields:
+        - name: status
+          type: string
+        - name: decisions
+          type: array
+          optional: true
+        - name: adr
+          type: string
+          optional: true
+
+heading_rules:
+    no_skip_levels: true
+    max_depth: 3
+
+structure:
+    - heading:
+          pattern: "^# .+"
+          regex: true
+      allow_additional: true
+      children:
+          - heading:
+                pattern: "## Why"
+            allow_additional: true
+            word_count:
+                min: 10
+          - heading:
+                pattern: "## What Changes"
+            allow_additional: true
+            word_count:
+                min: 5
+          - heading:
+                pattern: "## Capabilities"
+            allow_additional: true
+            children:
+                - heading:
+                      pattern: "### New Capabilities"
+                  optional: true
+                  lists:
+                      - min: 1
+                - heading:
+                      pattern: "### Modified Capabilities"
+                  optional: true
+                  allow_additional: true
+          - heading:
+                pattern: "## Impact"
+            optional: true
+            allow_additional: true
+          - heading:
+                pattern: "## Glossary"
+            optional: true
+            allow_additional: true
+          - heading:
+                pattern: "## Sources"
+            optional: true
+            allow_additional: true

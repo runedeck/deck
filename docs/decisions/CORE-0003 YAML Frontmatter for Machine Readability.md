@@ -10,7 +10,7 @@ tags:
     - yaml
 status: accepted
 created: 2026-03-30
-updated: 2026-03-30
+updated: 2026-10-18
 author: "@N4M3Z"
 project: deck
 related:
@@ -23,7 +23,7 @@ informed: []
 upstream:
     - "obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins"
     - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0003%20YAML%20Frontmatter%20for%20Machine%20Readability.md"
-change: core-foundation-principles
+change: plain-text-first-principles
 ---
 
 # YAML Frontmatter for Machine Readability
@@ -54,9 +54,9 @@ The ecosystem has settled on it as the metadata layer for Markdown:
 
 ## Decision Outcome
 
-Option 3. A Markdown file with metadata MUST keep it as YAML between `---` lines at the top of the file. A rule is a bare instruction body and may have none. Frontmatter holds the machine-readable metadata, the body holds the instruction for people and models, and the same file works in a git repository, an [Obsidian][OBS] vault, and a model's context without conversion.
-Frontmatter MUST be flat: scalar values and lists of scalars, no nested objects, because [Obsidian][OBS]'s Properties panel does not render nested objects.
-This decision comes before the MADR template choice because frontmatter is the mechanism, and Structured MADR is the schema for which fields a decision record has.
+Option 3. A Markdown file with metadata MUST keep it as YAML between `---` lines at the top of the file. A rule is a bare instruction body and may have none. Frontmatter holds the machine-readable metadata, and the body holds the instruction for people and models. The same file works in a git repository, an [Obsidian][OBS] vault, and a model's context without conversion.
+Frontmatter is YAML and MAY nest. The [Obsidian][OBS] vault is only the viewer and search tool. A Properties panel that cannot show a nested value does not limit the file.
+This decision comes before the MADR template choice. Frontmatter is the mechanism, and Structured MADR is the schema for which fields a decision record has.
 
 ### Consequences
 
@@ -64,6 +64,11 @@ This decision comes before the MADR template choice because frontmatter is the m
 - [+] The dominant convention, so no migration and no custom tooling
 - [+] Metadata moves with the file
 - [-] Authors maintain frontmatter beside prose. Stale metadata is the risk, and CI validation plus the Properties panel keep it low.
+- [-] The Properties panel does not show a nested value. A reader opens the file to see it.
+
+## More Information
+
+- Amended on 2026-10-18: the flatness rule is dropped, because the vault stopped being the editor. Frontmatter MAY nest.
 
 [CC]: https://claude.ai/code
 [CC-DOCS]: https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview

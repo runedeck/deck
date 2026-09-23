@@ -21,9 +21,9 @@ consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
 upstream:
     - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0010%20Unified%20Module%20Validation.md"
-    - "adopt-modular-architecture#one-checker-per-concern"
-    - "adopt-modular-architecture#one-validation-path"
-change: adopt-modular-architecture
+    - "one-domain-one-plugin#one-checker-per-concern"
+    - "one-domain-one-plugin#one-validation-path"
+change: one-domain-one-plugin
 ---
 
 # Unified Module Validation

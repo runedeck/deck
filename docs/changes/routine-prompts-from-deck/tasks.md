@@ -13,7 +13,7 @@ type: tasks
 - [x] 1.5 Record the decision in `adr.md`
 - [x] 1.6 The notification format in all four routine files: a result-first headline, grouped bullets, one next step, health only when degraded
 - [x] 1.7 The Repository Digest and the Weekly Ceremony Audit end with the notification text as the final message
-- [x] 1.8 Every routine sends the final message text as the notification, and the Weekly Ceremony Audit deepens the deck and skeleton checkouts before it classifies a difference
+- [x] 1.8 Every routine sends the final message text as the notification, and the Weekly Ceremony Audit deepens the repository and skeleton checkouts before it classifies a difference
 
 ## 2. Deployment
 
@@ -29,5 +29,5 @@ type: tasks
 ## 4. Deferred by owner decision
 
 - [ ] 4.1 Pin the file by digest or signed tag
-- [ ] 4.2 `rune routine`: render and verify a stub from the deck file and the consumer values
+- [ ] 4.2 `rune routine`: render and verify a stub from the repository file and the consumer values
 - [ ] 4.3 The three scanner routines under `runes/security/`: Dotfiles Scanner, GitHub Exposure, and Online Mentions

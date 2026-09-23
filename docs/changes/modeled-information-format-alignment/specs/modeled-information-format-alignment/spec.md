@@ -2,7 +2,7 @@
 
 ### Requirement: Vocabulary reuse before a new term
 
-The deck ontology MUST map a new term to the MIF ontology corpus before minting one. A minted term MUST record the reason no corpus term fits.
+The repository's ontology MUST map a new term to the MIF ontology corpus before minting one. A minted term MUST record the reason no corpus term fits.
 
 #### Scenario: Change mints a term the corpus already defines
 
@@ -11,7 +11,7 @@ The deck ontology MUST map a new term to the MIF ontology corpus before minting 
 
 ### Requirement: Scoped adoption with a verdict
 
-A MIF component MUST enter through the adoption review with provenance and a maturity note. Deck machinery MUST NOT depend on a pre-1.0 implementation.
+A MIF component MUST enter through the adoption review with provenance and a maturity note. Repository machinery MUST NOT depend on a pre-1.0 implementation.
 
 #### Scenario: Pre-1.0 dependency is proposed
 

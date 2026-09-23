@@ -19,7 +19,7 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5-1@claude"]
 informed: []
 upstream: []
-change: cast-player-in-proofs
+change: playable-proof-recordings-page
 ---
 
 # A proof plays as a cast where a person reads it
@@ -50,4 +50,4 @@ The skill MUST keep these rules:
 
 ## More Information
 
-- Recorded proofs `docs/proofs/cast-player-in-proofs/` (pause and scene label under node) and `docs/proofs/proof-page-handover/` (the page generator on a five-scene cast), 2026-09-21.
+- Recorded proofs `docs/proofs/playable-proof-recordings-page/` (pause and scene label under node) and `docs/proofs/convenient-proof-page-viewer/` (the page generator on a five-scene cast), 2026-09-21.

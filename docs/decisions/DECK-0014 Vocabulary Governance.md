@@ -20,7 +20,7 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5-1@claude"]
 informed: []
 upstream: []
-change: agentic-ontology-stack
+change: terms-enter-ontology-first
 ---
 
 # Vocabulary Governance

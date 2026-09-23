@@ -19,8 +19,8 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
 upstream:
-    - "markdown-first-authoring#reference-citations"
-change: core-foundation-principles
+    - "markdown-with-yaml-frontmatter#reference-citations"
+change: plain-text-first-principles
 ---
 
 # Reference Citations

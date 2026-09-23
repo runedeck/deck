@@ -122,7 +122,7 @@ The detector MUST read `.auditignore.yaml` from the root tree of the scanned com
 - **WHEN** an item of `.auditignore.yaml` names a commit the clone does not contain
 - **THEN** the health is `INCOMPLETE`, the commit is listed, and the finding is new
 
-### Requirement: Scanner routines run the detector from the deck object store
+### Requirement: Scanner routines run the detector from the repository object store
 
 The Dotfiles Scanner MUST write the detector into a scratch directory that is not a checkout as the blob of `routines/scripts/exposure_scan.py` in the fetched runedeck/deck tree, read through Git objects after the tree lists it as one regular file. The run MUST require the object id of the copy to equal the listed blob id before it runs, MUST run only that copy with the interpreter in isolated mode, and MUST NOT pipe the blob into the interpreter or run the working-tree copy.
 
@@ -227,7 +227,7 @@ A canonical URL MUST keep the query parameters that select the resource and drop
 
 ### Requirement: GitHub Exposure routine is retired
 
-The deck MUST carry no GitHub Exposure routine file, and `routines/README.md` MUST record the retirement and its reason.
+The repository MUST carry no GitHub Exposure routine file, and `routines/README.md` MUST record the retirement and its reason.
 
 #### Scenario: Owner looks for the account-wide scan
 

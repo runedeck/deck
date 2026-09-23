@@ -23,10 +23,10 @@ informed: []
 upstream:
     - "obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins"
     - "https://stephango.com/file-over-app"
-    - "plain-text-wins#plain-text-representation"
-    - "markdown-first-authoring#metadata-inside-files"
-    - "harness-independent-authoring#reusable-across-harnesses-and-models"
-change: core-foundation-principles
+    - "plain-text-is-futureproof#plain-text-representation"
+    - "markdown-with-yaml-frontmatter#metadata-inside-files"
+    - "instructions-stay-vendor-neutral#reusable-across-harnesses-and-models"
+change: plain-text-first-principles
 ---
 
 # File over App

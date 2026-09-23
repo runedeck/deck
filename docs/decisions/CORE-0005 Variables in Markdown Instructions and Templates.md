@@ -22,10 +22,10 @@ informed: []
 upstream:
     - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0022%20Variables%20in%20Markdown%20Instructions%20and%20Templates.md"
     - "https://github.com/N4M3Z/forge-core/blob/main/rules/PlaintextTemplateVariables.md"
-    - "instruction-environment-variables#variables-are-name"
-    - "instruction-environment-variables#harness-placeholders-stay-in-the-harness-file"
+    - "user-values-and-variables#variables-are-name"
+    - "user-values-and-variables#canon-stays-vendor-neutral"
     - "obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins"
-change: core-foundation-principles
+change: plain-text-first-principles
 ---
 
 # Variables in Markdown Instructions and Templates

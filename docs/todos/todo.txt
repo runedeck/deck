@@ -4,4 +4,4 @@
 2026-08-27 Document jj absorb in the VersionControl skill on its next adoption refresh, because it routes working-copy edits into the commits that touched those lines +adoption
 2026-08-27 Make hooks first-class rune artifacts: a rune:Hook kind with per-provider assembly, so rune install renders dcg and lint hook wiring for claude, codex, opencode, and pi +guardrails
 2026-08-27 Check taplo in a real terminal (taplo check ~/.config/dcg/config.toml): it panics in the sandbox on every file, so decide taplo or a replacement before wiring the TOML prek hook +gates
-2026-08-27 Fix case-sensitive requirement matching in `rune spec archive`. Title Case deltas duplicate sentence-case canonical requirements in adoption-session-state. +archive
+2026-08-27 Fix case-sensitive requirement matching in `rune spec archive`. Title Case deltas duplicate sentence-case canonical requirements in record-provenance-for-adoptions. +archive

@@ -1,6 +1,6 @@
 ---
 name: AgenticOntology
-description: "Govern the deck's vocabulary: admit a term into the declared world, name an artifact from its lifecycle stage, audit the corpus for synonyms and overloaded words, and retire a term through deprecation. USE WHEN a new concept needs a name, a skill or class needs a name, two words mean one thing, one word means two things, a term enters a spec or decision record, or the ontology or its shapes change. NOT FOR validating instance data in CI (the shapes hook does that), authoring runes (BuildSkill), or prose style (SimplifiedTechnicalEnglish)."
+description: "Govern the repository's vocabulary: admit a term into the declared world, name an artifact from its lifecycle stage, audit the corpus for synonyms and overloaded words, and retire a term through deprecation. USE WHEN a new concept needs a name, a skill or class needs a name, two words mean one thing, one word means two things, a term enters a spec or decision record, or the ontology or its shapes change. NOT FOR validating instance data in CI (the shapes hook does that), authoring runes (BuildSkill), or prose style (SimplifiedTechnicalEnglish)."
 compatibility: "Requires rudof for shape validation and rg for the corpus audit."
 metadata:
     version: 0.1.0
@@ -8,7 +8,7 @@ metadata:
 
 # AgenticOntology
 
-The deck declares what exists once, in `ontology/rune.ttl`, and every other artifact uses those names. This skill keeps that true: a term enters the ontology before it enters prose, an artifact takes its name from the stage it serves, and a word that drifts gets merged or retired. [Lifecycle.md](Lifecycle.md) holds the stage table, [SemanticDensity.md](SemanticDensity.md) the measure the audit reports, and [Vocabularies.md](Vocabularies.md) which established vocabulary to reuse.
+The repository declares what exists once, in `ontology/rune.ttl`, and every other artifact uses those names. This skill keeps that true: a term enters the ontology before it enters prose, an artifact takes its name from the stage it serves, and a word that drifts gets merged or retired. [Lifecycle.md](Lifecycle.md) holds the stage table, [SemanticDensity.md](SemanticDensity.md) the measure the audit reports, and [Vocabularies.md](Vocabularies.md) which established vocabulary to reuse.
 
 ## Constraints
 

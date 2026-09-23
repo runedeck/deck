@@ -19,7 +19,7 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5-1@claude"]
 informed: []
 upstream: []
-change: enforce-local-checks
+change: all-checks-before-push
 ---
 
 # Local Checks Before Publication

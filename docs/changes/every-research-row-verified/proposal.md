@@ -1,0 +1,29 @@
+---
+adr: docs/changes/every-research-row-verified/adr.md
+status: proposed
+decisions: ["Research in parallel tracks with cross-model verification"]
+---
+
+# Research in parallel tracks with cross-model verification
+
+## Why
+
+Multi-track research was one of four fan-out shapes. One skill splits a question into tracks, gathers sourced rows per track, and verifies each row with a different model against its cited page.
+
+## What Changes
+
+- The ResearchGrid skill at `runes/development/skills/ResearchGrid/`, rewritten from its forge origin for frontier models.
+- Deploys only where a workflow tool exists (`targets: [claude, agentskills]`) and stops with one sentence elsewhere.
+
+## Capabilities
+
+- every-research-row-verified (new)
+
+## Impact
+
+- `runes/development/skills/ResearchGrid/` (new).
+
+## Risks
+
+- A workflow skill reaches a harness with no workflow tool. Guard: `targets`, plus a first line in the body that stops and says so. Task 3.4 verifies the filter.
+- The verifier shares a model with the gatherer. Guard: both models required and unequal, else the run stops.

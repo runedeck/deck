@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BuildSkill/CliToolIntegration.md
     digest:
-      sha256: fca1da80a3da598e84e4763ef711e26123aac0a4cc70a43a6c594c9cecebe7d2
+      sha256: 19b98fa667efc50142d29915361dbd8ad10957bd1a457fe1f283b10af5fc631c
   predicate:
     buildDefinition:
       buildType: adopt/v1

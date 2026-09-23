@@ -1,0 +1,62 @@
+
+── plain-text-wins · 1 scene ───────────────────────────────────────────────────────────────────────
+
+┌──────────────────────────────┐
+│ 1/5 · External store appears │
+└──────────────────────────────┘
+judgment  claude-opus-5-5 · rune run --clean
+A change makes a database the place records are read from. The requirement says the store derives from the plain-text source.
+❯ rune run claude --model claude-opus-5-5 --clean --repo store --prompt-file brief.md
+[ISSUE] Keep the Markdown records under docs/decisions/ as the authoritative UTF-8 plain-text source, and have records.db only derive from them as an index, not replace them.
+model: claude-opus-5-5
+✓ [ISSUE], and the fix keeps the plain-text source authoritative
+✓ the reply came from claude-opus-5-5
+
+── directories-direct-routing · 1 scene ────────────────────────────────────────────────────────────
+
+┌───────────────────────────────────────────────┐
+│ 2/5 · Content goes into a catch-all directory │
+└───────────────────────────────────────────────┘
+judgment  claude-opus-5-5 · rune run --clean
+A change adds misc/ with two notes. Nothing routes on that name.
+❯ rune run claude --model claude-opus-5-5 --clean --repo catchall --prompt-file brief.md
+[ISSUE] Rename or remove the catch-all `misc/` directory, since no tool acts on its name. Move `ideas.md` and `scratch.md` into a directory that a tool acts on, such as a `docs/changes/` path that the validators process.
+model: claude-opus-5-5
+✓ [ISSUE], and the fix names the catch-all
+✓ the reply came from claude-opus-5-5
+
+── minimal-complexity-possible · 3 scenes ──────────────────────────────────────────────────────────
+
+┌────────────────────────────────────────────┐
+│ 3/5 · Small fix arrives with full ceremony │
+└────────────────────────────────────────────┘
+judgment  claude-opus-5-5 · rune run --clean
+A change directory holds a one-word typo fix and no requirement.
+❯ rune run claude --model claude-opus-5-5 --clean --repo ceremony --prompt-file brief.md
+[ISSUE] Remove this change directory and put the README.md typo fix ("teh deck" → "the deck") in a plain commit, because the fix changes no requirement and doesn't need a proposal.
+model: claude-opus-5-5
+✓ [ISSUE], and the fix is a plain commit without the directory
+✓ the reply came from claude-opus-5-5
+
+┌─────────────────────────────────┐
+│ 4/5 · Comment restates the code │
+└─────────────────────────────────┘
+judgment  claude-opus-5-5 · rune run --clean
+❯ rune run claude --model claude-opus-5-5 --clean --repo comment --prompt-file brief.md
+[ISSUE] Remove the comment `# add up the items and return the total` from tally.py because it only repeats what `return sum(items)` already says.
+model: claude-opus-5-5
+✓ [ISSUE], and the fix removes the comment
+✓ the reply came from claude-opus-5-5
+
+┌─────────────────────────────────────┐
+│ 5/5 · Fact appears in a second file │
+└─────────────────────────────────────┘
+judgment  claude-opus-5-5 · rune run --clean
+A new file restates a sentence that signing.md already makes. The requirement says one home and a link.
+❯ rune run claude --model claude-opus-5-5 --clean --repo twice --prompt-file brief.md
+[ISSUE] In push.md, replace the copied sentence "The owner signs every commit before push with the key in KEYS." with a link to signing.md (for example, "Commits are signed as described in [Signing](signing.md). Then the push runs the gates.").
+model: claude-opus-5-5
+✓ [ISSUE], and the fix is a link to the one home
+✓ the reply came from claude-opus-5-5
+
+5 scenes, 10 expectations, 0 failed

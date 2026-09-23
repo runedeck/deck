@@ -14,7 +14,7 @@ accountable: ["@N4M3Z"]
 consulted: ["gpt-6-astra@codex"]
 informed: []
 upstream: []
-change: portable-skill-authoring
+change: skills-portable-across-harnesses
 ---
 
 # Keep shared skill procedures independent of harness syntax

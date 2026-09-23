@@ -19,8 +19,8 @@ consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
 upstream:
     - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0009%20YAML%20Configuration%20Files.md"
-    - "adopt-modular-architecture#configuration-defaults"
-change: adopt-modular-architecture
+    - "one-domain-one-plugin#configuration-defaults"
+change: one-domain-one-plugin
 ---
 
 # YAML Configuration Files

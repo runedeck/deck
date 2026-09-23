@@ -36,5 +36,5 @@ type: tasks
 
 - [ ] 4.1 The overlap between `runes/security/skills/ConfigureScanners/templates/claude/PublicRepositoryExposure.md` and `routines/DotfilesScanner.md`: retire the template or make it render the stub
 - [ ] 4.2 A pre-commit or CI rule in the dotfiles repository that runs the detector, so a hostname leak fails before the daily scan sees it
-- [x] 4.3 Test `git fetch --unshallow` once on the platform clone under a time budget before any routine relies on it: the Weekly Ceremony Audit run of 2026-10-05 deepened the deck clone from 50 to 378 commits in under ten seconds, and the clone was no longer shallow
-- [ ] 4.4 Pin the deck ref by digest or signed tag, and `rune routine` to render a stub from the file and the consumer values
+- [x] 4.3 Test `git fetch --unshallow` once on the platform clone under a time budget before any routine relies on it: the Weekly Ceremony Audit run of 2026-10-05 deepened the repository clone from 50 to 378 commits in under ten seconds, and the clone was no longer shallow
+- [ ] 4.4 Pin the repository ref by digest or signed tag, and `rune routine` to render a stub from the file and the consumer values

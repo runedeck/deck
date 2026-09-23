@@ -20,7 +20,7 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5-1@claude"]
 informed: []
 upstream: []
-change: prove-each-scenario
+change: record-proof-per-scenario
 ---
 
 # Behavior Proof per Change
@@ -43,7 +43,7 @@ DECK-0013 made the check stages the proof that a candidate is clean. A clean can
 
 ## Decision Outcome
 
-Chosen option: AcceptanceTesting, with the mandate in the `prove-each-scenario` delta.
+Chosen option: AcceptanceTesting, with the mandate in the `record-proof-per-scenario` delta.
 
 A change with user-visible behavior carries one scene per scenario of its delta specification. Each scene runs the WHEN steps against the built candidate and asserts each THEN with `expect`. The driver exits nonzero on a miss and `asciinema rec --return` carries that out, so the recording itself fails. The GIF lives under `docs/proofs/<change>/`, the pull request's Testing section embeds it with the commit id, and the proof record carries the scenario list, the exit status, and the transcript digest. A scenario without a scene is listed as unproven.
 

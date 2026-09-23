@@ -19,14 +19,14 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5-1@claude"]
 informed: []
 upstream: []
-change: ["architecture-decision-records", "enforce-record-shape"]
+change: ["keep-architecture-decision-records", "decision-records-match-template"]
 ---
 
 # ADR Template Choice
 
 ## Context and Problem Statement
 
-[CORE-0010](CORE-0010 Adopt Architecture Decision Records.md) adopts records and leaves the template open. Several formats exist: the original Nygard record, MADR, Y-Statements, and structured MADR. The template must be short enough for a small decision and complete enough for a large one. Its frontmatter must be checked by a machine.
+[CORE-0010](CORE-0010%20Adopt%20Architecture%20Decision%20Records.md) adopts records and leaves the template open. Several formats exist: the original Nygard record, MADR, Y-Statements, and structured MADR. The template must be short enough for a small decision and complete enough for a large one. Its frontmatter must be checked by a machine.
 
 ## Decision Drivers
 
@@ -43,7 +43,7 @@ change: ["architecture-decision-records", "enforce-record-shape"]
 
 ## Decision Outcome
 
-Option 4. A record MUST have these sections in order: Context and Problem Statement, Considered Options, and Decision Outcome, with Consequences as a subsection of Decision Outcome. Decision Drivers and More Information are optional. The `docs/decisions/.mdschema` file MUST validate the frontmatter fields and the heading order. [CORE-0012](CORE-0012 MADR Frontmatter Extensions.md) states the added fields.
+Option 4. A record MUST have these sections in order: Context and Problem Statement, Considered Options, and Decision Outcome, with Consequences as a subsection of Decision Outcome. Decision Drivers and More Information are optional. The `docs/decisions/.mdschema` file MUST validate the frontmatter fields and the heading order. [CORE-0012](CORE-0012%20MADR%20Frontmatter%20Extensions.md) states the added fields.
 
 ### Consequences
 
@@ -55,7 +55,7 @@ Option 4. A record MUST have these sections in order: Context and Problem Statem
 
 - [Structured MADR][SMADR]
 - [MADR Template Primer][PRIMER]
-- 2026-09-22: the outcome listed Consequences as a fourth top-level section. The runeADR template puts it under Decision Outcome, and 31 records had followed the wrong sentence. The enforce-record-shape change corrected the sentence and the records.
+- 2026-09-22: the outcome listed Consequences as a fourth top-level section. The runeADR template puts it under Decision Outcome, and 31 records had followed the wrong sentence. The decision-records-match-template change corrected the sentence and the records.
 
 [SMADR]: https://github.com/zircote/structured-madr "structured-madr, schema and validator"
 [PRIMER]: https://www.ozimmer.ch/practices/2022/11/22/MADRTemplatePrimer.html "Olaf Zimmermann, MADR Template Primer, 2022"

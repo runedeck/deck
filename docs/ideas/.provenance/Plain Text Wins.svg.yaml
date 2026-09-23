@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: docs/ideas/Plain Text Wins.svg
     digest:
-      sha256: 4049364bfec20ac8f72a4b3b87bdd92df3773355a4290b63305c0bd4c09fd77d
+      sha256: d38ab71346ee7d5f4137de8c0a47aa6a372f1e28564b804f3afabfd926fd6451
   predicate:
     buildDefinition:
       buildType: idea-snapshot/v1
@@ -17,9 +17,9 @@ provenance:
       - name: upstream
         uri: obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins
         digest:
-          sha256: e1e8bda1298568eeefff1db5b52da0ab2ead335250a55fa66fa30cd97a907db5
+          sha256: 4e6285f772612ac1a2e847f3fb32968c74613d3c7a0d72b5cfa1c9812a24f495
     runDetails:
       builder:
         id: scripts/sync-idea
       metadata:
-        startedOn: 2026-09-23T23:48:57.575225+00:00
+        startedOn: 2026-10-18T02:36:29.753463+00:00

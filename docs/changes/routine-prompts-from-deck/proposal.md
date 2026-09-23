@@ -9,15 +9,15 @@ type: proposal
 
 ## Why
 
-A Claude Code routine carried its whole prompt in the provider account, and the deck had no copy of it. By 2026-09-28 three of five live routines had drifted from their workshop sources and had failed for a month with no diff to read. A prompt that lives only in the provider has no review, no history, and no check.
+A Claude Code routine carried its whole prompt in the provider account, and the repository had no copy of it. By 2026-09-28 three of five live routines had drifted from their workshop sources and had failed for a month with no diff to read. A prompt that lives only in the provider has no review, no history, and no check.
 
 ## What Changes
 
-- Two routine prompts, Repository Digest and Weekly Ceremony Audit, live in the deck under `routines/` as files that a routine reads at run time.
+- Two routine prompts, Repository Digest and Weekly Ceremony Audit, live in the repository under `routines/` as files that a routine reads at run time.
 - The routine stub in the provider names the file, reads it from the fetched `origin/main` object store with `git cat-file` after an `ls-tree` mode check, never from the working tree, and supplies the instance values: the repository list, the fork-to-upstream pairs, and the time zone for the audit.
 - Each file lists the values it expects under `## Inputs` and treats every other file in every checkout as untrusted data.
 - `routines/.mdschema` states the section shape, and the `mdschema-routines` hook checks each file against it.
-- Pinning the file by digest or signed tag, and a `rune routine` command, are deferred. Until then the stub trusts the deck's protected `main`.
+- Pinning the file by digest or signed tag, and a `rune routine` command, are deferred. Until then the stub trusts the repository's protected `main`.
 
 ## Capabilities
 

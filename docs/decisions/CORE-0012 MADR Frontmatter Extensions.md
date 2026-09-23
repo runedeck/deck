@@ -20,14 +20,14 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5-1@claude"]
 informed: []
 upstream: []
-change: architecture-decision-records
+change: keep-architecture-decision-records
 ---
 
 # MADR Frontmatter Extensions
 
 ## Context and Problem Statement
 
-[CORE-0011](CORE-0011 ADR Template Choice.md) adopts structured MADR. Its frontmatter does not say who approves a decision, where an adapted decision came from, or which change delivered it. Structured MADR permits added fields when they carry an `x-` prefix, and a strict validator rejects an added field without one.
+[CORE-0011](CORE-0011%20ADR%20Template%20Choice.md) adopts structured MADR. Its frontmatter does not say who approves a decision, where an adapted decision came from, or which change delivered it. Structured MADR permits added fields when they carry an `x-` prefix, and a strict validator rejects an added field without one.
 
 ## Considered Options
 

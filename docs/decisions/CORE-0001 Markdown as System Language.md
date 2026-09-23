@@ -20,14 +20,13 @@ upstream:
     - "obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins"
     - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0001%20Markdown%20as%20System%20Language.md"
     - "https://github.com/N4M3Z/forge-core/blob/main/rules/MarkdownFirst.md"
-    - "plain-text-wins#plain-text-representation"
-    - "markdown-first-authoring#markdown-system-language"
-    - "markdown-first-authoring#metadata-inside-files"
-    - "markdown-first-authoring#flat-frontmatter"
-    - "harness-independent-authoring#reusable-across-harnesses-and-models"
-    - "harness-independent-authoring#portable-instructions"
-    - "lint-enforced-foundations#checker-coverage"
-change: core-foundation-principles
+    - "plain-text-is-futureproof#plain-text-representation"
+    - "markdown-with-yaml-frontmatter#markdown-system-language"
+    - "markdown-with-yaml-frontmatter#metadata-inside-files"
+    - "instructions-stay-vendor-neutral#reusable-across-harnesses-and-models"
+    - "instructions-stay-vendor-neutral#reusable-across-harnesses-and-models"
+    - "lint-enforced-foundation-requirements#analysis-tool-coverage"
+change: plain-text-first-principles
 ---
 
 # Markdown as System Language
