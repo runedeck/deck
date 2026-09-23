@@ -20,8 +20,11 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
 upstream:
-    - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0008%20Variables%20in%20Markdown%20Instructions%20and%20Templates.md"
+    - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0022%20Variables%20in%20Markdown%20Instructions%20and%20Templates.md"
     - "https://github.com/N4M3Z/forge-core/blob/main/rules/PlaintextTemplateVariables.md"
+    - "instruction-environment-variables#variables-are-name"
+    - "instruction-environment-variables#harness-placeholders-stay-in-the-harness-file"
+    - "obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins"
 change: core-foundation-principles
 ---
 
@@ -29,47 +32,42 @@ change: core-foundation-principles
 
 ## Context and Problem Statement
 
-Markdown instructions (skills, agents, rules) reference configurable values: file paths, directory locations, tool names, feature flags. Templates need placeholder values filled at creation time. Shell tools must resolve both, and AI must read both.
-
-Three placeholder patterns had emerged organically: inline descriptions ("Title, a short noun phrase"), `{{VARIABLE}}` ([Obsidian Templater][TEMPLATER] syntax), and `{VARIABLE}` (the Structured MADR convention). None of these is shell-resolvable.
+Skills, agents, and rules refer to configurable values: paths, directory locations, tool names, feature flags. Templates need placeholders filled at creation time. Shell tools resolve both, and a model reads both.
+Three placeholder patterns had grown on their own: inline descriptions ("Title, a short noun phrase"), `{{VARIABLE}}` from [Obsidian Templater][TEMPLATER], and `{VARIABLE}` from Structured MADR. A shell resolves none of them.
 
 ## Decision Drivers
 
-- Hardcoded paths break across environments
-- Shell commands and AI prose need the same values from the same source
-- Templates must be instantiable with `envsubst`, with no custom parsers
-- Placeholder names must be self-documenting
-- Obsidian Templater keeps its own `{{VARIABLE}}` pattern, so coexistence is required
+- A hardcoded path breaks on the next machine
+- Shell commands and prose need the same value from the same source
+- A template instantiates with `envsubst` and no custom parser
+- A placeholder name explains itself
+- Obsidian Templater keeps its own `{{VARIABLE}}`, so the two have to coexist
 
 ## Considered Options
 
-1. **`{{VARIABLE}}`**: Obsidian Templater syntax. Works inside Obsidian but shell tools cannot resolve it. Collides with Templater when files open in the vault.
-2. **`{VARIABLE}`**: the Structured MADR convention. Not standard shell syntax, requires custom string replacement.
-3. **`${VARIABLE}` with `%%` comments**: standard shell parameter expansion, resolvable by `envsubst`. Obsidian `%%` comments give inline documentation hidden in preview mode.
+1. `{{VARIABLE}}`, the Templater syntax. Works inside Obsidian, unreadable to a shell, and collides with Templater when the file opens in the vault.
+2. `{VARIABLE}`, the Structured MADR convention. Not shell syntax, so it needs custom string replacement.
+3. `${VARIABLE}` with `%%` comments: standard shell parameter expansion that `envsubst` resolves, with Obsidian `%%` comments as inline documentation hidden in preview.
 
 ## Decision Outcome
 
-Two complementary patterns for two contexts:
-
-**Runtime instructions**: skills and rules reference `$VARIABLE` environment variables by name. The AI reads the variable name and resolves it from the environment. Shell commands use the `$VAR` syntax directly. No build step, no placeholder replacement: configuration resolves at runtime.
-
-**Templates**: plaintext templates use `${VARIABLE}` placeholders, instantiable with `envsubst < template.md > output.md`. Variable names are UPPER_SNAKE_CASE and self-documenting. End-of-line `%%` comments describe what each variable holds, with enum choices separated by `|`:
+Option 3, as two patterns for two contexts.
+An instruction MUST refer to a configurable value as `$VARIABLE`. The model reads the name and resolves it from the environment when it runs a shell command, with no build step and no placeholder replacement.
+A plain-text template MUST use `${VARIABLE}` placeholders that `envsubst < template.md > output.md` resolves. Names are UPPER_SNAKE_CASE, and an end-of-line `%%` comment says what each variable holds, with enum choices separated by `|`:
 
 ```markdown
 status: ${STATUS}                          %% proposed | accepted | deprecated | superseded %%
 - ${POSITIVE}                          %% positive outcome, what improves %%
 ```
 
-Obsidian Templater templates continue to use `{{VARIABLE}}`. The two patterns never mix within a single file.
-
-An instruction MUST name a configurable value as `$VARIABLE`. A plain-text template MUST use `${VARIABLE}` placeholders that `envsubst` resolves. The two patterns MUST NOT mix in one file with the Templater `{{VARIABLE}}` pattern.
+Obsidian Templater templates keep `{{VARIABLE}}`. The two patterns MUST NOT mix in one file.
 
 ### Consequences
 
-- [+] Shell commands and AI instructions share the same configuration mechanism
-- [+] Templates are instantiable with `envsubst`, with zero custom tooling
-- [+] `%%` comments are invisible in Obsidian preview and visible in source: guidance without noise
-- [-] The environment must hold the values before the instruction is useful, so a config loading layer is required
-- [-] Two patterns coexist (`${VAR}` and `{{VAR}}`), mitigated by the rule that they never mix in one file
+- [+] Shell commands and instructions share one configuration mechanism
+- [+] Templates instantiate with `envsubst` and nothing else
+- [+] `%%` comments are invisible in Obsidian preview and visible in source
+- [-] The environment has to hold the values before the instruction is useful, so a configuration loading layer is required
+- [-] `${VAR}` and `{{VAR}}` coexist, kept apart by the rule that they never mix in one file
 
 [TEMPLATER]: https://silentvoid13.github.io/Templater/

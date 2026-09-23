@@ -17,14 +17,14 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
 upstream:
-    - "obsidian://open?vault=Atlas&file=Library%2FCanvas%2FMarkdown%20First"
+    - "obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins"
     - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0001%20Markdown%20as%20System%20Language.md"
     - "https://github.com/N4M3Z/forge-core/blob/main/rules/MarkdownFirst.md"
     - "plain-text-wins#plain-text-representation"
     - "markdown-first-authoring#markdown-system-language"
     - "markdown-first-authoring#metadata-inside-files"
     - "markdown-first-authoring#flat-frontmatter"
-    - "harness-independent-authoring#author-once"
+    - "harness-independent-authoring#reusable-across-harnesses-and-models"
     - "harness-independent-authoring#portable-instructions"
     - "lint-enforced-foundations#checker-coverage"
 change: core-foundation-principles
@@ -34,36 +34,34 @@ change: core-foundation-principles
 
 ## Context and Problem Statement
 
-The system needs one universal format for skills, agents, rules, documentation, journal templates, and configuration. Humans must read it comfortably, AI tools across providers must consume it, and authors must not need special tooling.
-
-The format must also integrate with PKM tools where content comes first, in particular [Obsidian][OBS]. Obsidian adopted YAML frontmatter in [2020][OBS-FM] and adds `[[wikilinks]]`.
+One format has to serve skills, agents, rules, records, templates, and configuration. A person reads it in an editor, a model reads it through any harness, and an author edits it without special tooling.
+The format also has to work in a note-taking tool where content comes first, above all [Obsidian][OBS]. Obsidian adopted YAML frontmatter in [2020][OBS-FM] and adds `[[wikilinks]]` on top.
 
 ## Decision Drivers
 
-- Multi-provider portability: no vendor lock-in to one AI tool's plugin format
-- Zero runtime dependencies: any tool that reads files can consume the content
+- No lock-in to one AI tool's plugin format
+- No runtime dependency: any tool that reads files can read the content
 - Authors iterate by editing prose, not by debugging code
-- Content must work in Obsidian vaults, GitHub rendering, and AI tool contexts at the same time
+- The same file works in an Obsidian vault, on GitHub, and in a model's context
 
 ## Considered Options
 
-1. **Code templates**: executable scripts with placeholder substitution. Each provider and artifact type needs a runtime.
-2. **JSON or YAML definitions**: structured data with typed fields. Machine-readable but hard to author and review.
-3. **Markdown with YAML frontmatter**: prose body for instructions, frontmatter for metadata, validated by mdschema.
+1. Code templates: executable scripts with placeholder substitution. Each provider and each kind of file needs its own runtime.
+2. JSON or YAML definitions: structured data with typed fields. A machine reads it well, and a person authors and reviews it badly.
+3. Markdown with YAML frontmatter: a prose body for the instruction, frontmatter for the metadata, validated by mdschema.
 
 ## Decision Outcome
 
-Chosen option: **Markdown with YAML frontmatter**. Everything is markdown: skills, agents, rules, decision records, journal templates, and documentation. YAML frontmatter carries machine-readable metadata, and the body stays free-form instruction or content. The same file works in a git repository, an Obsidian vault, and an AI tool's context window.
-
-Every skill, agent, rule, decision record, and document MUST be a Markdown file. A file that carries metadata MUST carry it as YAML frontmatter ([CORE-0003](CORE-0003 YAML Frontmatter for Machine Readability.md)).
+Option 3. Everything is Markdown: skills, agents, rules, decision records, templates, and documentation. YAML frontmatter holds the machine-readable metadata, and the body is free-form instruction or content. The same file works in a git repository, an Obsidian vault, and a model's context window.
+Every skill, agent, rule, decision record, and document MUST be a Markdown file. A file with metadata MUST keep it as YAML frontmatter ([CORE-0003](CORE-0003%20YAML%20Frontmatter%20for%20Machine%20Readability.md)).
 
 ### Consequences
 
-- [+] Zero dependencies: any AI tool that reads files can consume the content
-- [+] Authors iterate by editing prose, not by debugging code or schemas
-- [+] The same files render in Obsidian, GitHub, and AI tool contexts without conversion
-- [-] Nothing checks content logic at compile time. Structural checks rely on mdschema, and semantic correctness requires review.
-- [-] Free-form markdown checks nothing by itself, so the system needs many linters and validation tools ([CORE-0007](CORE-0007 Unified Module Validation.md))
+- [+] No dependency: any AI tool that reads files can read the content
+- [+] Authors iterate by editing prose
+- [+] The same files render in Obsidian, on GitHub, and in a model's context without conversion
+- [-] Nothing checks content logic at compile time. mdschema checks structure, and review checks meaning.
+- [-] Free-form Markdown checks nothing on its own, so the system needs linters and validators ([CORE-0021](CORE-0021%20Unified%20Module%20Validation.md))
 
 [OBS]: https://obsidian.md/
 [OBS-FM]: https://obsidian.md/changelog/2020-08-21-desktop-v0.8.5/

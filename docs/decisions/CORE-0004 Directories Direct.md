@@ -17,7 +17,9 @@ accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
 upstream:
-    - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0006%20Directories%20Direct.md"
+    - "obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins"
+    - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0020%20Directories%20Direct.md"
+    - "directories-direct-routing#directories-direct"
 change: core-foundation-principles
 ---
 
@@ -25,28 +27,24 @@ change: core-foundation-principles
 
 ## Context and Problem Statement
 
-Directory names are the primary navigation mechanism for both humans and AI tools. In an assembly pipeline where directory names drive variant resolution, provider targeting, and model selection, every directory name is a routing decision with functional consequences. A directory named `claude/` immediately tells you "this content is for Claude." A directory named `misc/` tells you nothing.
+Directory names are how people and models find things. In an assembly pipeline they also decide what happens to the files, which harness gets them, and which variant applies. A directory named `claude/` says that its content is for Claude. A directory named `misc/` says nothing.
 
 ## Considered Options
 
-1. **Categorization-first**: group by type (`config/`, `docs/`, `scripts/`). Familiar, but it tells you what something is, not where it goes or what it does.
-2. **Function-first**: name by routing purpose (`claude/`, `user/`, `rules/`). Every name is a decision with functional consequences.
+1. Group by type: `config/`, `docs/`, `scripts/`. Familiar, and it says what a thing is rather than where it goes or what a tool does with it.
+2. Name by function: `claude/`, `user/`, `rules/`. Every name is a decision a tool acts on.
 
 ## Decision Outcome
 
-Directories are navigation, not categorization. Every directory name is a routing decision. It tells the user and the AI where to find things and where new things belong.
+Option 2. A directory name MUST tell a tool what to do with the files inside it. A directory that only groups by type, such as `misc/`, MUST NOT be added.
 
-Principles:
-
-- Optimize for discoverability over categorization: "where would someone look for it?"
-- A well-named directory removes the need for documentation about where each thing goes
-- Directory names in qualifier paths (`claude/`, `opus-4-6/`, `user/`) have functional consequences. A typo silently disables content.
-- Use `directories`, not `folders`, in docs, commit messages, and conversation
-
-A directory name MUST state a routing purpose. A directory that groups by type alone, such as `misc/`, MUST NOT be added.
+- Optimize for where someone would look, not for taxonomy
+- A well-named directory replaces a document about where things go
+- A name in a qualifier path (`claude/`, `codex/`, `user/`) is configuration, so a typo silently disables the content
+- Say `directory`, not `folder`, in docs, commit messages, and conversation
 
 ### Consequences
 
-- [+] The directory tree is self-documenting
-- [+] No separate "where to put things" guide
-- [+] Qualifier directories double as routing labels: naming is configuration
+- [+] The tree documents itself
+- [+] No separate guide about where to put things
+- [+] A qualifier directory name is configuration that a tool acts on

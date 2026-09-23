@@ -13,15 +13,17 @@ updated: 2026-04-17
 author: "@N4M3Z"
 project: deck
 related:
-    - "CORE-0008 Verified Remote Execution"
-    - "CORE-0018 Fixture-Based Canary Testing"
+    - "CORE-0022 Verified Remote Execution"
+    - "CORE-0007 Fixture-Based Canary Testing"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
 upstream:
     - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0010%20Unified%20Module%20Validation.md"
-change: core-foundation-principles
+    - "adopt-modular-architecture#one-checker-per-concern"
+    - "adopt-modular-architecture#one-validation-path"
+change: adopt-modular-architecture
 ---
 
 # Unified Module Validation
@@ -45,7 +47,7 @@ A check that exists in one place and not in another gives a false pass. When CI,
 
 Option 2. `.pre-commit-config.yaml` MUST be the only list of checks. The commit hook, the push hook, `make validate`, and the CI `quality` job MUST each run that list through prek.
 
-A guarded hook skips when its tool is absent, so a fresh clone stays usable. CI MUST set `REQUIRE_GATES=1`, which turns an absent tool into a failure. A session that reports a stage as clean MUST have every tool present ([DECK-0013](DECK-0013 Local Checks Before Publication.md)).
+A guarded hook skips when its tool is absent, so a fresh clone stays usable. CI MUST set `REQUIRE_GATES=1`, which turns an absent tool into a failure. A session that reports a stage as clean MUST have every tool present ([DECK-0013](DECK-0013%20Local%20Checks%20Before%20Publication.md)).
 
 The deck keeps one checker for each concern: rumdl for Markdown structure, Vale for prose style, typos for spelling, lychee for links, gitleaks for secrets, actionlint and zizmor for workflows, mdschema for document frames, shellcheck for shell, ruff for Python, and rudof for the declared graph. A tool MUST be a single binary that works offline on the commit path. A tool change MUST arrive through a decision record.
 

@@ -1,99 +1,49 @@
 ## ADDED Requirements
 
-### Requirement: Checker Coverage
+### Requirement: Analysis Tool Coverage
 
-The checker map MUST name, for every requirement in the plain-text-wins, markdown-first-authoring, and harness-independent-authoring capabilities, the enforcing check (mdschema, `rune validate`, a commit hook, or a Vale style) or the declared gap. A gap closes with a checker that starts as a warning with a declared baseline.
+The *coverage* [COVERAGE] MUST bind every requirement of every foundation capability to the check that enforces it, or to an *missed requirement* [MISSED-REQUIREMENT].
+An enforcing check is one run of an *analysis tool* [ANALYSISTOOL] from the shared hook configuration. A new tool starts at warning level with a recorded *analysis baseline* [ANALYSISBASELINE].
 
-#### Scenario: Foundation requirement has no checker
+#### Scenario: Foundation requirement has no row
 
-- **WHEN** the checker map lists a requirement with neither an enforcing check nor a declared gap
-- **THEN** verification fails until the map names one
+- **WHEN** a foundation capability gains a requirement and the coverage table has no row for it
+- **THEN** verification fails until a row states the check or the missed requirement
 
-#### Scenario: Plain Text Representation has its checker
+#### Scenario: Missed requirement gains a check
 
-- **WHEN** the checker map reaches Plain Text Representation
-- **THEN** it names the declared gap, because representability stays a review judgment
+- **WHEN** an analysis tool arrives for a requirement whose row states a missed requirement
+- **THEN** the row switches to the tool, and the tool reports at warning level until its baseline is empty
 
-#### Scenario: Lossless Derived Forms has its checker
+### Requirement: Analysis Tool Has Fixtures
 
-- **WHEN** the checker map reaches Lossless Derived Forms
-- **THEN** it names the declared gap until a regeneration drift check exists
+Every analysis tool the deck depends on MUST have one *fixture* [FIXTURE] it accepts and one it rejects, with the expected result asserted. A change to an *analysis rule* [ANALYSISRULE] that alters the asserted result fails the test.
+Where fixtures are files, the directory names `valid/` and `invalid/` state the assertion.
 
-#### Scenario: Markdown System Language has its checker
+#### Scenario: Analysis tool arrives without fixtures
 
-- **WHEN** the checker map reaches Markdown System Language
-- **THEN** it names the `rune validate` artifact checks
+- **WHEN** an analysis tool is added under `scripts/` without a passing and a failing fixture
+- **THEN** the coverage table lists the tool as a missed requirement until the fixtures exist
 
-#### Scenario: Metadata Inside Files has its checker
+#### Scenario: Analysis rule is weakened
 
-- **WHEN** the checker map reaches Metadata Inside Files
-- **THEN** it names the declared gap, because no mechanical check detects an external metadata index
+- **WHEN** an analysis rule a tool enforced is removed
+- **THEN** the failing fixture passes, and the fixture test fails
 
-#### Scenario: Flat Frontmatter has its checker
+### Requirement: Record Cites Its Proofs
 
-- **WHEN** the checker map reaches Flat Frontmatter
-- **THEN** it names the mdschema frontmatter checks and the declared gap for nested-value detection
+An accepted decision record MUST list the *proofs* [PROOF] of the scenarios under the requirements it points at. A record whose scenarios have no proof MUST stay proposed.
+The `prove-each-scenario` capability says how a proof is recorded and replayed. This requirement only asks that the record cites it.
 
-#### Scenario: Directories Direct has its checker
+#### Scenario: Record is accepted without proof
 
-- **WHEN** the checker map reaches Directories Direct
-- **THEN** it names the terminology Vale style for the term and the declared gap for routing judgment
+- **WHEN** a record's status changes to accepted and one scenario under a requirement it points at has no proof
+- **THEN** the check refuses the status and lists the scenarios without a proof
 
-#### Scenario: Runtime Variables has its checker
-
-- **WHEN** the checker map reaches Runtime Variables
-- **THEN** it names the declared gap, because no check detects a hardcoded configurable value
-
-#### Scenario: Template Placeholders has its checker
-
-- **WHEN** the checker map reaches Template Placeholders
-- **THEN** it names the declared gap, because no check parses placeholder syntax yet
-
-#### Scenario: Configuration Defaults has its checker
-
-- **WHEN** the checker map reaches Configuration Defaults
-- **THEN** it names the `rune validate` module defaults check
-
-#### Scenario: One Checker Per Concern has its checker
-
-- **WHEN** the checker map reaches One Checker Per Concern
-- **THEN** it names the shared lint configuration as the roster of record
-
-#### Scenario: Reference Citations has its checker
-
-- **WHEN** the checker map reaches Reference Citations
-- **THEN** it names the citations Vale style, which starts as a warning
-
-#### Scenario: One Validation Path has its checker
-
-- **WHEN** the checker map reaches One Validation Path
-- **THEN** it names the declared gap, because nothing diffs the CI steps against the shared configuration
-
-#### Scenario: Author Once has its checker
-
-- **WHEN** the checker map reaches Author Once
-- **THEN** it names the declared gap, because authoring location stays a review judgment
-
-#### Scenario: Assembled Instances has its checker
-
-- **WHEN** the checker map reaches Assembled Instances
-- **THEN** it names the deployment manifest fingerprints and `rune drift`
-
-#### Scenario: Portable Instructions has its checker
-
-- **WHEN** the checker map reaches Portable Instructions
-- **THEN** it names the declared gap, because portability review stays human judgment
-
-### Requirement: External links are checked on a schedule
-
-A scheduled workflow MUST fetch every external URL in the documents and the runes one time each week. The commit path MUST stay offline, so it checks only local links and fragments. The workflow MUST install its tool through the shared installer, so that one pinned version and one archive digest serve every path.
-
-#### Scenario: External page disappears
-
-- **WHEN** a cited page returns an error on the weekly run
-- **THEN** the Links workflow fails and names the file and the URL
-
-#### Scenario: Commit path has no network
-
-- **WHEN** a commit adds a link to an external page
-- **THEN** the commit stage checks its form only, and the weekly run checks that it resolves
+[COVERAGE]: https://runedeck.ai/ns#Coverage
+[PROOF]: https://runedeck.ai/ns#Proof
+[MISSED-REQUIREMENT]: https://runedeck.ai/ns#MissedRequirement
+[ANALYSISTOOL]: https://runedeck.ai/ns#AnalysisTool
+[ANALYSISRULE]: https://runedeck.ai/ns#AnalysisRule
+[ANALYSISBASELINE]: https://runedeck.ai/ns#AnalysisBaseline
+[FIXTURE]: https://runedeck.ai/ns#Fixture

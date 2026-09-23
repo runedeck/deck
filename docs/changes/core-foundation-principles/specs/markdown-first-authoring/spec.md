@@ -2,110 +2,90 @@
 
 ### Requirement: Markdown System Language
 
-Every instruction artifact MUST be in Markdown, optionally with YAML frontmatter. Markdown is the chosen representation of plain text. The same format serves a git or jj repository, a PKM vault, and an LLM harness.
+Every instruction MUST be Markdown with YAML frontmatter, in the dialect the deck accepts: GitHub Flavored Markdown [GFM] plus one YAML frontmatter block, as rumdl checks it. Wikilinks, callouts, and raw HTML blocks are outside the dialect.
+Markdown is our plain text format of choice, because it is an LLM-native format and one file serves a git or jj repository, a note-taking vault such as Obsidian, and an LLM harness.
 
-#### Scenario: Artifact arrives in another format
+#### Scenario: Instruction arrives in another format
 
-- **WHEN** a change adds an instruction artifact that is not Markdown
-- **THEN** validation rejects the artifact and suggests a transformation
+- **WHEN** an instruction is added in a format other than Markdown
+- **THEN** validation rejects the file and suggests a transformation
+
+#### Scenario: Markup outside the dialect appears
+
+- **WHEN** an instruction holds a wikilink, a callout, or a raw HTML block
+- **THEN** the check reports the construct
 
 ### Requirement: Metadata Inside Files
 
-Metadata MUST live in the frontmatter of the file it describes, with one recorded exception: sealed provenance evidence lives in `.provenance/` sidecars, and its details arrive in a later change. Frontmatter stays the authoritative source, and other stores MAY derive from it.
+Metadata MUST sit in the frontmatter of the file it describes. The one exception is sealed provenance evidence, which goes into `.provenance/` sidecars because a seal cannot be part of the content it attests.
+Frontmatter is the authoritative source. Other stores MAY derive from it.
+A deployment manifest records the fingerprints of assembled instances. It describes outputs rather than authored files, so it counts as a derived store.
 
 #### Scenario: Provenance evidence arrives
 
 - **WHEN** an adoption produces provenance evidence for an artifact
-- **THEN** the evidence is sealed in a sidecar beside the artifact, never in its frontmatter
+- **THEN** the evidence is sealed in a sidecar beside the artifact, not in its frontmatter
 
 #### Scenario: Derived index disagrees with frontmatter
 
-- **WHEN** a derived store and an artifact's frontmatter state different values for one field
-- **THEN** frontmatter wins and the store regenerates
+- **WHEN** a derived store and an artifact's frontmatter disagree on one field
+- **THEN** frontmatter wins, and the store regenerates
 
 ### Requirement: Flat Frontmatter
 
-Frontmatter MUST stay flat: scalar values and lists of scalars, never nested objects. Obsidian's Properties panel does not render nested objects.
+Frontmatter MUST be flat: scalar values and lists of scalars, no nested objects.
+Obsidian's Properties panel does not render nested objects. The one tolerated exception is the Agent Skills `metadata` map in an instruction, which that specification requires.
 
 #### Scenario: Nested object enters frontmatter
 
-- **WHEN** a changed file carries a nested object in frontmatter
+- **WHEN** a file has a nested object in its frontmatter
 - **THEN** the schema check reports the field
-
-### Requirement: Directories Direct
-
-A directory name MUST state routing, never categorization. A qualifier directory name is configuration, and a typo silently disables its content. The term is `directory`, never `folder`, in docs, commit messages, and conversation.
-
-#### Scenario: Content goes into a catch-all directory
-
-- **WHEN** a change adds a directory whose name states no routing decision
-- **THEN** review renames the directory or relocates the content
-
-### Requirement: Runtime Variables
-
-A runtime instruction MUST reference configuration by `$NAME` environment variables.
-
-#### Scenario: Instruction embeds a configurable value
-
-- **WHEN** a changed instruction hardcodes a value the configuration owns
-- **THEN** review replaces the value with its `$NAME` reference
-
-### Requirement: Template Placeholders
-
-A template MUST use `${NAME}` placeholders with end-of-line `%%` comments, instantiable with `envsubst`.
-
-#### Scenario: Template invents placeholder syntax
-
-- **WHEN** a changed template uses a placeholder form other than `${NAME}`
-- **THEN** review converts the template to the convention
-
-### Requirement: Configuration Defaults
-
-A module MUST include `defaults.yaml` with the full schema and working defaults. User overrides live in a gitignored `config.yaml` merged recursively. The config loading exports the merged result as environment variables.
-
-#### Scenario: Module requires user configuration to start
-
-- **WHEN** a module fails without a user `config.yaml`
-- **THEN** validation reports the missing default
-
-#### Scenario: Override merges over defaults
-
-- **WHEN** a user `config.yaml` sets one field
-- **THEN** the merged configuration carries that value and every other committed default
-
-#### Scenario: Merged configuration exports
-
-- **WHEN** the configuration loads
-- **THEN** the merged result exports as environment variables, so instructions reference it by `$NAME`
-
-### Requirement: One Checker Per Concern
-
-Every validation concern MUST have one chosen checker, recorded in the checker map. A new concern or a tool change arrives through a decision record.
-
-#### Scenario: Concern has no chosen checker
-
-- **WHEN** a change adds a validation concern no chosen checker covers
-- **THEN** the checker map records the gap and a decision record picks the tool
-
-### Requirement: One Validation Path
-
-Every check MUST run through one shared configuration locally and in CI. A check that exists only in CI is a violation. An environment without the runner falls back to the committed hook path with the same checks.
-
-#### Scenario: CI-only check appears
-
-- **WHEN** a workflow adds a check absent from the shared configuration
-- **THEN** review moves the check into the shared configuration
-
-#### Scenario: Runner is absent
-
-- **WHEN** an environment lacks the runner
-- **THEN** the committed hook path runs the same checker roster, and a roster difference is a violation
 
 ### Requirement: Reference Citations
 
-A document MUST cite an external source with a reference-style link: a named tag inline and one link definition at the end of the file. A numbered citation carries no meaning at the point of use.
+A citation of an external source MUST be a reference-style link: a named tag inline, and one link definition at the end of the file.
+A bare number tells the reader nothing at the point of use.
 
 #### Scenario: Numbered citation appears
 
-- **WHEN** a changed document cites a source with a bare number
-- **THEN** review converts the citation to a named reference link
+- **WHEN** a document cites a source with a bare number
+- **THEN** review converts the citation into a named reference link
+
+### Requirement: Defined Terms Cite the Ontology
+
+A term that a document defines MUST be set in italics at first use and cited with a reference tag, `*target* [TARGET]`. The tag's definition at the end of the file gives the term's IRI in the ontology.
+Later uses in the same file are plain text.
+
+#### Scenario: Term appears without its tag
+
+- **WHEN** a document sets a term in italics at first use and the tag beside it is missing or names another IRI
+- **THEN** validation reports the term and the file
+
+### Requirement: The Ontology Defines Every Term
+
+The ontology MUST be the only definition of a term.
+Before writing, the author reads the glossary. A requirement uses an existing term, or the author adds the term to the ontology first.
+An italic term in a specification, a record, or a proposal with no ontology entry MUST fail validation.
+
+#### Scenario: Specification uses a term the ontology lacks
+
+- **WHEN** a specification sets a term in italics and `ontology/rune.ttl` has no term with that label
+- **THEN** validation reports the term and the ontology file, and the author adds the term there first
+
+#### Scenario: Reference tag names a missing term
+
+- **WHEN** a reference definition under the ontology namespace uses a local name the ontology does not declare
+- **THEN** validation fails and reports the file and the tag
+
+### Requirement: Glossary Renders From The Ontology
+
+The glossary MUST be a *render* [RENDER] of the ontology: a check regenerates it and compares the bytes with the committed file. A hand edit to the glossary is drift.
+The glossary gives a reader every term's definition one hop from its tag, and the ontology stays the only source.
+
+#### Scenario: Glossary drifts from the ontology
+
+- **WHEN** a term's line in the glossary differs from a fresh rendering of the ontology
+- **THEN** the check reports the term, and the ontology is what counts
+
+[GFM]: https://github.github.com/gfm/
+[RENDER]: https://runedeck.ai/ns#Render

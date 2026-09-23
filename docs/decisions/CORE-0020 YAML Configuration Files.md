@@ -19,14 +19,15 @@ consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
 upstream:
     - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0009%20YAML%20Configuration%20Files.md"
-change: core-foundation-principles
+    - "adopt-modular-architecture#configuration-defaults"
+change: adopt-modular-architecture
 ---
 
 # YAML Configuration Files
 
 ## Context and Problem Statement
 
-ENV vars in markdown instructions ([CORE-0005](CORE-0005 Variables in Markdown Instructions and Templates.md)) need a source. Each module has configurable values (paths, feature flags, skill rosters) that differ between default and user-specific setups. The configuration system must support committed defaults, user overrides, and ENV var export without requiring users to manage shell profiles.
+ENV vars in markdown instructions ([CORE-0005](CORE-0005%20Variables%20in%20Markdown%20Instructions%20and%20Templates.md)) need a source. Each module has configurable values (paths, feature flags, skill rosters) that differ between default and user-specific setups. The configuration system must support committed defaults, user overrides, and ENV var export without requiring users to manage shell profiles.
 
 ## Decision Drivers
 

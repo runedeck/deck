@@ -1,0 +1,25 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: docs/ideas/Plain Text Wins.svg
+    digest:
+      sha256: 4049364bfec20ac8f72a4b3b87bdd92df3773355a4290b63305c0bd4c09fd77d
+  predicate:
+    buildDefinition:
+      buildType: idea-snapshot/v1
+      externalParameters:
+        upstream_url: obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins
+        transforms_applied:
+        - obsidian read
+        - read the exported SVG beside the note
+      resolvedDependencies:
+      - name: upstream
+        uri: obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins
+        digest:
+          sha256: e1e8bda1298568eeefff1db5b52da0ab2ead335250a55fa66fa30cd97a907db5
+    runDetails:
+      builder:
+        id: scripts/sync-idea
+      metadata:
+        startedOn: 2026-09-23T23:48:57.575225+00:00

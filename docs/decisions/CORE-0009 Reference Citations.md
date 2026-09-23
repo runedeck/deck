@@ -18,7 +18,8 @@ responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
 consulted: ["claude-fable-5@claude", "gpt-5.6-sol@codex"]
 informed: []
-upstream: []
+upstream:
+    - "markdown-first-authoring#reference-citations"
 change: core-foundation-principles
 ---
 
@@ -26,30 +27,28 @@ change: core-foundation-principles
 
 ## Context and Problem Statement
 
-Decision records and change proposals cite external sources: standards, blog posts, tool documentation. The first proposals used numbered citations with a numbered Sources list. A bare number carries no meaning at the point of use, and one insertion renumbers every later reference.
+Decision records and change proposals cite standards, blog posts, and tool documentation. The first proposals used numbered citations with a numbered Sources list. A bare number says nothing where it is used, and one insertion renumbers every later reference.
 
 ## Decision Drivers
 
-- A citation must be readable at the point of use, without a jump to the list
-- Insertion or removal of a source must not renumber the rest
-- The syntax must be plain markdown that GitHub and Obsidian render
-- One convention must serve decision records, proposals, and specifications
+- A citation is readable where it is used, without a jump to the list
+- Adding or removing a source renumbers nothing
+- Plain Markdown that GitHub and Obsidian render
+- One convention for decision records, proposals, and specifications
 
 ## Considered Options
 
-1. **Numbered citations**: `[1]` markers with a numbered Sources list. Compact, but a number says nothing and insertion renumbers everything.
-2. **Inline URLs**: the full URL at each use. Readable nowhere, duplicated everywhere.
-3. **Reference-style links**: `[Obsidian Properties][OBS-PROPS]` inline with one `[OBS-PROPS]: url` definition at the file end. Named at the point of use, defined once.
+1. Numbered citations: `[1]` markers with a numbered Sources list. Compact, and a number says nothing, and an insertion renumbers everything.
+2. Inline URLs: the full URL at each use. Readable nowhere, duplicated everywhere.
+3. Reference-style links: `[Obsidian Properties][OBS-PROPS]` inline with one `[OBS-PROPS]: url` definition at the end of the file. Named where it is used, defined once.
 
 ## Decision Outcome
 
-Chosen option: **reference-style links**. A document cites a source with a named tag inline and one link definition at the end of the file. Tags are short and uppercase. A change proposal keeps a Sources section that lists each source once with the same tags.
-
-A document MUST cite an external source with a reference-style link: a short uppercase tag inline and one link definition at the end of the file.
+Option 3. A document MUST cite an external source with a reference-style link: a short uppercase tag inline and one link definition at the end of the file. A change proposal keeps a Sources section that lists each source once with the same tags.
 
 ### Consequences
 
 - [+] A citation names its source where it is used
-- [+] Sources add and retire without renumbering
-- [+] Plain markdown: GitHub, Obsidian, and lychee all understand it
-- [-] Tags must stay unique within a file, and review checks this until a checker exists
+- [+] Sources come and go without renumbering
+- [+] Plain Markdown: GitHub, Obsidian, and lychee all read it
+- [-] Tags have to stay unique within a file, and review checks that until a checker exists

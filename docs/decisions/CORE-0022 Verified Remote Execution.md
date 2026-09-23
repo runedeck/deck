@@ -13,14 +13,14 @@ updated: 2026-04-02
 author: "@N4M3Z"
 project: deck
 related:
-    - "CORE-0007 Unified Module Validation"
+    - "CORE-0021 Unified Module Validation"
 responsible: ["@N4M3Z"]
 accountable: ["@N4M3Z"]
 consulted: []
 informed: []
 upstream:
     - "https://github.com/N4M3Z/forge-core/blob/main/docs/decisions/CORE-0011%20Verified%20Remote%20Execution.md"
-change: core-foundation-principles
+change: adopt-modular-architecture
 ---
 
 # Verified Remote Execution
