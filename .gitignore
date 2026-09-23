@@ -57,3 +57,9 @@ config.yaml
 docs/config.yaml
 codebook.toml
 .specstory/
+
+# The linux rune binary the proof image copies in, built by a container run.
+docs/proofs/rune
+
+# The v3 cast asciinema 3 records before the v2 conversion the players read.
+docs/proofs/*/proof.v3.cast

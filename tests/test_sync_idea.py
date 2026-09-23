@@ -29,10 +29,11 @@ class ParseLinkTests(unittest.TestCase):
             SYNC.parse_link("obsidian://open?vault=Atlas")
 
     def test_sidecar_records_link_and_digest(self):
-        text = SYNC.sidecar_text("Markdown First.md", "obsidian://open?vault=Atlas&file=Library/Canvas/Markdown%20First", "ab" * 32)
+        text = SYNC.sidecar_text("Markdown First.svg", "obsidian://open?vault=Atlas&file=Library/Canvas/Markdown%20First", "ab" * 32, "cd" * 32)
         self.assertEqual(SYNC.field(text, "upstream_url"), "obsidian://open?vault=Atlas&file=Library/Canvas/Markdown%20First")
         self.assertEqual(SYNC.field(text, "sha256"), "ab" * 32)
-        self.assertIn("name: docs/ideas/Markdown First.md", text)
+        self.assertEqual(SYNC.field(text, "sha256", after="resolvedDependencies"), "cd" * 32)
+        self.assertIn("name: docs/ideas/Markdown First.svg", text)
 
 
 if __name__ == "__main__":

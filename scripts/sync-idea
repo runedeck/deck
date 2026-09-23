@@ -2,15 +2,17 @@
 """Snapshot an idea, a drawing or a transcript, from the owner's Obsidian vault into docs/ideas/, and
 check that a snapshot still matches its source.
 
-    scripts/sync-idea "obsidian://open?vault=Atlas&file=Library/Canvas/Markdown%20First"
+    scripts/sync-idea "obsidian://open?vault=Atlas&file=Library%2FCanvas%2FPlain%20Text%20Wins"
     scripts/sync-idea --check              every snapshot against its vault source
     scripts/sync-idea --check <snapshot>   one snapshot
 
-The source of truth is the vault. The snapshot is a copy read through the
-Obsidian CLI, and its provenance sidecar under docs/ideas/.provenance/
-records the obsidian:// link and the sha256 of the bytes the CLI returned.
-`--check` reads the source again and reports a digest that moved. The
-snapshot itself is covered by scripts/check-provenance like any sidecar.
+The source of truth is the vault note. The snapshot is the SVG the
+Excalidraw plugin exports beside it, read through the Obsidian CLI, so a
+person sees the drawing on GitHub and a tool reads its texts. The
+provenance sidecar under docs/ideas/.provenance/ records the obsidian://
+link, the sha256 of the SVG (the subject, checked by
+scripts/check-provenance), and the sha256 of the note's bytes (the
+upstream). `--check` reads the note again and reports a digest that moved.
 Both modes skip when the `obsidian` CLI is absent, and fail instead when
 REQUIRE_GATES is set.
 """
@@ -48,12 +50,13 @@ def parse_link(link):
 def read_source(vault, file):
     """The bytes the Obsidian CLI returns for one vault file."""
     run = subprocess.run(["obsidian", f"vault={vault}", "read", f"path={file}"], capture_output=True, check=False)
-    if run.returncode != 0:
-        raise RuntimeError(run.stderr.decode(errors="replace").strip() or f"obsidian read failed for {file}")
+    if run.returncode != 0 or run.stdout.startswith(b"Error:") or not run.stdout.strip():
+        message = (run.stderr or run.stdout).decode(errors="replace").strip()
+        raise RuntimeError(message or f"obsidian read failed for {file}")
     return run.stdout
 
 
-def sidecar_text(name, link, digest):
+def sidecar_text(name, link, digest, upstream):
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
     return (
         "provenance:\n"
@@ -70,11 +73,12 @@ def sidecar_text(name, link, digest):
         f"        upstream_url: {link}\n"
         "        transforms_applied:\n"
         "        - obsidian read\n"
+        "        - read the exported SVG beside the note\n"
         "      resolvedDependencies:\n"
         "      - name: upstream\n"
         f"        uri: {link}\n"
         "        digest:\n"
-        f"          sha256: {digest}\n"
+        f"          sha256: {upstream}\n"
         "    runDetails:\n"
         "      builder:\n"
         "        id: scripts/sync-idea\n"
@@ -83,21 +87,23 @@ def sidecar_text(name, link, digest):
     )
 
 
-def field(text, key):
-    match = re.search(rf"^\s*{key}: (.+)$", text, re.M)
+def field(text, key, after=""):
+    start = text.index(after) if after and after in text else 0
+    match = re.search(rf"^\s*{key}: (.+)$", text[start:], re.MULTILINE)
     return match.group(1).strip() if match else ""
 
 
 def snapshot(link):
     vault, file = parse_link(link)
     data = read_source(vault, file)
-    name = pathlib.PurePosixPath(file).name
+    svg = read_source(vault, file[: -len(".md")] + ".svg")
+    name = pathlib.PurePosixPath(file).with_suffix(".svg").name
     SNAPSHOTS.mkdir(parents=True, exist_ok=True)
     SIDECARS.mkdir(exist_ok=True)
-    (SNAPSHOTS / name).write_bytes(data)
-    digest = hashlib.sha256(data).hexdigest()
-    (SIDECARS / (name + ".yaml")).write_text(sidecar_text(name, link, digest))
-    print(f"docs/ideas/{name}  {digest[:12]}  from {link}")
+    (SNAPSHOTS / name).write_bytes(svg)
+    digest, upstream = hashlib.sha256(svg).hexdigest(), hashlib.sha256(data).hexdigest()
+    (SIDECARS / (name + ".yaml")).write_text(sidecar_text(name, link, digest, upstream))
+    print(f"docs/ideas/{name}  {digest[:12]}  from {link} ({upstream[:12]})")
 
 
 def check(paths):
@@ -109,7 +115,7 @@ def check(paths):
             drift += 1
             continue
         text = sidecar.read_text()
-        link, recorded = field(text, "upstream_url"), field(text, "sha256")
+        link, recorded = field(text, "upstream_url"), field(text, "sha256", after="resolvedDependencies")
         try:
             vault, file = parse_link(link)
             current = hashlib.sha256(read_source(vault, file)).hexdigest()
