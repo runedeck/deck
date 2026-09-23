@@ -1,0 +1,174 @@
+#!/usr/bin/env python3
+"""Repair the term findings the validator reports: add draft terms, and
+migrate legacy citations to term links.
+
+    scripts/fallback/fix-terms              both fixes over the repository
+    scripts/fallback/fix-terms --terms      add a draft entry to ontology/rune.ttl for every term link
+                                            that resolves to no term, and write its page
+    scripts/fallback/fix-terms --links      rewrite the legacy `*term* [TAG]` form to `*[term][TAG]*` at
+                                            the first use and `[term][TAG]` after it, and point every
+                                            `[TAG]: https://runedeck.ai/ns#Term` definition at the term's page
+    scripts/fallback/fix-terms [...] DIR    fix another root, never through rune
+
+A validator only reports. This is the separate fix step, like a linter's
+fix mode, that an author runs or a hook runs before check-terms, so a
+ghost term costs the author nothing: write the link, and the fixer adds
+`rune:<Name> a rdfs:Class ; rdfs:label "<text>" ; rune:status "draft" .`
+with the local name as the link text in UpperCamelCase. The validator
+warns on the draft while the change is active, and the archiver refuses
+the change until someone defines the term.
+
+Idempotent: a second run changes nothing. It hands over to `rune spec fix`
+when the installed rune has it (cli change ontology-term-references). It
+never deletes a file.
+"""
+import os
+import pathlib
+import shutil
+import subprocess
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import termlib
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
+FLAGS = {"--terms", "--links"}
+
+
+def splice(text, edits):
+    """Apply (start, end, replacement) edits computed on a blanked copy of
+    text, which has the same offsets."""
+    out, last = [], 0
+    for start, end, replacement in sorted(edits):
+        out.append(text[last:start])
+        out.append(replacement)
+        last = end
+    out.append(text[last:])
+    return "".join(out)
+
+
+def redefine(root, path, text, tag, page_name):
+    """The text with the definition of tag pointing at the page."""
+    blanked = termlib.blank_code(text)
+    edits = [
+        (m.start(), m.end(), f"[{tag}]: {termlib.relative_link(path, root, page_name)}")
+        for m in termlib.DEFINITION.finditer(blanked) if m.group(1) == tag
+    ]
+    return splice(text, edits)
+
+
+def fix_links(root, index):
+    """Convert the legacy form in every file whose definitions point at the
+    ontology namespace. Returns the files changed and the notes."""
+    changed, notes = [], []
+    for path in termlib.markdown_files(root):
+        raw = path.read_text()
+        blanked = termlib.blank_code(raw)
+        legacy = {tag: target[len(termlib.NS):] for tag, target in termlib.DEFINITION.findall(blanked) if target.startswith(termlib.NS)}
+        if not legacy:
+            continue
+        rel = path.relative_to(root)
+        # Terms already linked in the new form keep their first use.
+        seen = {legacy.get(m.group(3), index.by_tag.get(m.group(3))) for m in termlib.REF_LINK.finditer(blanked)}
+        edits = []
+        for m in termlib.LEGACY.finditer(blanked):
+            label, tag = m.groups()
+            name = legacy.get(tag)
+            if name not in index.file_of:
+                continue
+            link = f"[{label}][{tag}]"
+            edits.append((m.start(), m.end(), link if name in seen else f"*{link}*"))
+            seen.add(name)
+        text = splice(raw, edits)
+        for tag, name in legacy.items():
+            if name in index.file_of:
+                text = redefine(root, path, text, tag, index.file_of[name])
+            else:
+                notes.append(f"{rel}: [{tag}] names {termlib.NS}{name}, which is not a labeled term; left as it is")
+        if text != raw:
+            path.write_text(text)
+            changed.append(rel)
+    return changed, notes
+
+
+def ghosts(root, index):
+    """(path, tag, label) for every term link whose page is absent and whose
+    tag names no term. A page with an unknown IRI is stale, not a ghost, and
+    generate-glossary reports it."""
+    found = []
+    for path in termlib.markdown_files(root):
+        blanked = termlib.blank_code(path.read_text())
+        for tag, target in termlib.DEFINITION.findall(blanked):
+            res = termlib.resolve(root, path, tag, target, index)
+            if res.form != "link" or res.name is not None or res.page.is_file():
+                continue
+            use = next((m for m in termlib.REF_LINK.finditer(blanked) if m.group(3) == tag), None)
+            found.append((path, tag, use.group(2) if use else tag.lower()))
+    return found
+
+
+def fix_terms(root, index):
+    """Add a draft term for every ghost, write its page, and point each
+    definition at that page. Returns the local names added."""
+    found = ghosts(root, index)
+    if not found:
+        return []
+    ontology = root / termlib.ONTOLOGY
+    text = ontology.read_text()
+    drafts = {}
+    for _, _, label in found:
+        drafts.setdefault(termlib.camel(label), label)
+    blocks = [f'rune:{name} a rdfs:Class ;\n    rdfs:label "{label}" ;\n    rune:status "draft" .\n' for name, label in sorted(drafts.items())]
+    head = text.rstrip("\n") + "\n"
+    if termlib.DRAFT_SECTION not in text:
+        head += "\n" + termlib.DRAFT_SECTION
+    ontology.write_text(head + "\n" + "\n".join(blocks))
+    index = termlib.load(root)
+    termlib.write_pages(root, index)
+    for path, tag, label in found:
+        page_name = index.file_of[termlib.camel(label)]
+        text = path.read_text()
+        fixed = redefine(root, path, text, tag, page_name)
+        if fixed != text:
+            path.write_text(fixed)
+    return sorted(drafts)
+
+
+def rune_has_fix():
+    rune = shutil.which("rune")
+    return bool(rune) and subprocess.run([rune, "spec", "fix", "-h"], capture_output=True, check=False).returncode == 0
+
+
+def main():
+    args = sys.argv[1:]
+    flags = {arg for arg in args if arg.startswith("--")}
+    roots = [arg for arg in args if not arg.startswith("--")]
+    if flags - FLAGS or len(roots) > 1:
+        print(__doc__.strip().splitlines()[0])
+        print(f"usage: fix-terms [--terms] [--links] [DIR]; unknown: {' '.join(sorted(flags - FLAGS) + roots[1:])}")
+        return 2
+    if roots:
+        root = pathlib.Path(roots[0]).resolve()
+    else:
+        if rune_has_fix():
+            os.chdir(ROOT)
+            os.execvp("rune", ["rune", "spec", "fix", *sorted(flags)])
+        root = ROOT
+    index = termlib.load(root)
+    if not flags or "--links" in flags:
+        changed, notes = fix_links(root, index)
+        for rel in changed:
+            print(f"links: rewrote {rel}")
+        for note in notes:
+            print(f"links: {note}")
+        print(f"links: {len(changed)} files rewritten")
+    if not flags or "--terms" in flags:
+        added = fix_terms(root, index)
+        for name in added:
+            print(f"terms: added draft rune:{name}")
+        print(f"terms: {len(added)} draft terms added")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

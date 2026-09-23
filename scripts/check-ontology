@@ -3,9 +3,10 @@
 exactly the findings the smoke fixture seeds, and the real graph has no
 Violation.
 
+    scripts/check-ontology                  smoke, then graph
     scripts/check-ontology smoke            compare findings with ontology/smoke/expected.tsv
     scripts/check-ontology smoke --update   rewrite expected.tsv from the current findings
-    scripts/check-ontology graph            export the deck and fail on any Violation
+    scripts/check-ontology graph            export the repository and fail on any Violation
 
 The expected file lists one finding per line as
 `severity<TAB>focus node<TAB>path<TAB>constraint<TAB>message`, so a
@@ -139,12 +140,15 @@ def graph():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("command", choices=["smoke", "graph"])
+    parser.add_argument("command", nargs="?", choices=["smoke", "graph"], help="omit it to run both")
     parser.add_argument("--update", action="store_true", help="smoke only: rewrite expected.tsv")
     args = parser.parse_args()
-    if args.command == "smoke":
-        return smoke(args.update) if tools_present("rudof") else 0
-    return graph() if tools_present("rudof", "rune") else 0
+    status = 0
+    if args.command in (None, "smoke"):
+        status = smoke(args.update) if tools_present("rudof") else 0
+    if args.command in (None, "graph"):
+        status = max(status, graph() if tools_present("rudof", "rune") else 0)
+    return status
 
 
 if __name__ == "__main__":

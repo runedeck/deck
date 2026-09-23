@@ -1,112 +1,135 @@
 #!/usr/bin/env python3
-"""Check that every ontology reference in the docs resolves and that every
-defined term is cited.
+"""Check every term link in the repository against the ontology.
 
-A specification, record, or rune sets a term in italics at its first use
-and cites it, `*target* [TARGET]`, with a reference definition at the
-end of the file, `[TARGET]: https://runedeck.ai/ns#Target`. This check
-reads the content the glossary check cannot:
+    scripts/fallback/check-terms         check the repository, through rune when it has the link model
+    scripts/fallback/check-terms DIR     check another root against its own ontology, never through rune
 
-- every reference definition under the ontology namespace names a term
-  that exists in ontology/rune.ttl;
-- every italic term that is an ontology label carries a reference tag
-  at its first use, and that tag resolves to the term's IRI.
+A defined term is a reference link to its generated glossary page:
+`*[analysis tool][ANALYSISTOOL]*` at the first use in a file,
+`[analysis tool][ANALYSISTOOL]` after it, and
+`[ANALYSISTOOL]: ../../specs/glossary/analysis-tool.md` at the end of the
+file. Plain italics are emphasis and are not checked. The findings carry
+the meaning of rune's spec-term-* and delta-term-* diagnostics:
+
+- term-undefined (error): the link resolves to no ontology entry.
+- term-draft (warning): the term carries `rune:status "draft"`; the archiver refuses the change.
+- term-first-use (error): the first use in a file is not emphasized, or a later use is.
+- term-page (error): the page is missing, or its bytes differ from the render.
+- term-legacy (warning): the old `*term* [TAG]` form with an ontology IRI definition; run scripts/fallback/fix-terms --links.
 
 rumdl checks the rest: MD052 reports an undefined tag and MD053 an unused
-definition. `rune validate` and `rune spec validate` run the same check
-from the ontology (cli 1b0c99f9); this script is the fallback for a
-machine without rune, and the check-terms hook runs it only then.
+definition. Without a directory argument the script hands over to
+`rune spec validate` and `rune validate` when the installed rune has the
+link model (probe: `rune spec fix` exists), so the two never disagree.
 """
 import json
 import pathlib
-import re
 import shutil
 import subprocess
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import termlib
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
-ONTOLOGY = ROOT / "ontology" / "rune.ttl"
-NS = "https://runedeck.ai/ns#"
-TERM = re.compile(r"^rune:(\w+) a (rdfs:Class|rdf:Property|skos:Concept)\b(.*?)\s\.\s*$", re.M | re.S)
-LABEL = re.compile(r'rdfs:label "([^"]+)"')
-DEFINITION = re.compile(r"^\[([A-Z][A-Z0-9-]*)\]:\s*(\S+)", re.M)
-ITALIC = re.compile(r"(?:^|[^*\w])\*([^*\n]+?)\*(?:\s*\[([A-Z][A-Z0-9-]*)\])?")
-CODE_SPAN = re.compile(r"`[^`\n]*`")
-ROOTS = ("docs/specs", "docs/changes", "docs/decisions", "runes")
+FIX = "scripts/fallback/fix-terms"
+GENERATE = "scripts/fallback/generate-glossary"
 
 
-def ontology(root=ROOT):
-    """Local name by lowercase label, and the set of local names."""
-    text = (root / "ontology" / "rune.ttl").read_text()
-    by_label, names = {}, set()
-    # A class and a property may share a label (`Change` and `change`). An
-    # italic term in prose names the concept, so a class or concept wins.
-    for match in TERM.finditer(text):
-        name, kind = match.group(1), match.group(2)
-        names.add(name)
-        label = LABEL.search(match.group(3))
-        if label and (kind != "rdf:Property" or label.group(1).lower() not in by_label):
-            by_label[label.group(1).lower()] = name
-    return by_label, names
+def check_file(root, path, index, rendered):
+    raw = path.read_text(errors="replace")
+    text = termlib.blank_code(raw)
+    rel = path.relative_to(root)
+    found = []
+
+    def report(offset, severity, name, message):
+        found.append(termlib.Finding(rel, termlib.line_of(text, offset), severity, name, message))
+
+    resolved = {}
+    for match in termlib.DEFINITION.finditer(text):
+        tag, target = match.group(1), match.group(2)
+        res = termlib.resolve(root, path, tag, target, index)
+        if res.form is None:
+            continue
+        resolved[tag] = res
+        if res.name is None:
+            report(match.start(), "error", "term-undefined", f"[{tag}] resolves to no ontology term; define it in ontology/rune.ttl or run {FIX} --terms for a draft")
+            continue
+        term = index.by_name[res.name]
+        page_name = index.file_of[res.name]
+        if res.form == "legacy":
+            new = termlib.relative_link(path, root, page_name)
+            report(match.start(), "warning", "term-legacy", f"[{tag}] points at the ontology IRI; write `[{tag}]: {new}` and mark the term as `*[{term.label}][{tag}]*`, or run {FIX} --links")
+        elif not res.page.is_file():
+            report(match.start(), "error", "term-page", f"{termlib.GLOSSARY / page_name} is missing; run {GENERATE}")
+        elif res.page.name != page_name:
+            report(match.start(), "error", "term-page", f"{res.page.relative_to(root)} is not the page the ontology renders for '{term.label}' ({page_name}); run {GENERATE} and point [{tag}] at it")
+        elif res.page.read_text() != rendered[page_name]:
+            report(match.start(), "error", "term-page", f"{termlib.GLOSSARY / page_name} differs from the ontology; run {GENERATE}")
+        if term.status == "draft":
+            report(match.start(), "warning", "term-draft", f"[{tag}] links the draft term '{term.label}'; define it in ontology/rune.ttl before archive")
+
+    seen = set()
+    for match in termlib.REF_LINK.finditer(text):
+        opened, label, tag, closed = match.groups()
+        res = resolved.get(tag)
+        if res is None or res.name is None:
+            continue
+        emphasized = opened == "*" and closed == "*"
+        if res.name not in seen:
+            seen.add(res.name)
+            if not emphasized:
+                report(match.start(), "error", "term-first-use", f"first use of [{label}][{tag}] is not emphasized; write `*[{label}][{tag}]*`")
+        elif emphasized:
+            report(match.start(), "error", "term-first-use", f"later use of [{label}][{tag}] is emphasized; write `[{label}][{tag}]`")
+    return found
 
 
-def files(root=ROOT):
-    for top in ROOTS:
-        base = root / top
-        if base.is_dir():
-            for path in sorted(base.rglob("*.md")):
-                if "archive" in path.parts or ".provenance" in path.parts or "build" in path.parts:
-                    continue
-                yield path
+def check(root):
+    root = pathlib.Path(root).resolve()
+    index = termlib.load(root)
+    rendered = index.render()
+    found = []
+    for path in termlib.markdown_files(root):
+        found.extend(check_file(root, path, index, rendered))
+    return found
 
 
-def check(root=ROOT):
-    by_label, names = ontology(root)
-    errors = []
-    for path in files(root):
-        text = CODE_SPAN.sub("", path.read_text())
-        rel = path.relative_to(root)
-        definitions = {tag: target for tag, target in DEFINITION.findall(text)}
-        for tag, target in definitions.items():
-            if target.startswith(NS) and target[len(NS):] not in names:
-                errors.append(f"{rel}: [{tag}] names {target}, which is not in ontology/rune.ttl")
-        seen = set()
-        for match in ITALIC.finditer(text):
-            term, tag = match.group(1).strip().lower(), match.group(2)
-            singular = term[:-1] if term.endswith("s") and term[:-1] in by_label else term
-            name = by_label.get(singular)
-            if name is None or name in seen:
-                continue
-            seen.add(name)
-            if tag is None:
-                errors.append(f"{rel}: first use of *{term}* has no reference tag; write `*{term}* [{name.upper()}]`")
-            elif definitions.get(tag) != NS + name:
-                errors.append(f"{rel}: [{tag}] must be defined as `[{tag}]: {NS}{name}`")
-    return errors
+def rune_has_link_model():
+    rune = shutil.which("rune")
+    return bool(rune) and subprocess.run([rune, "spec", "fix", "-h"], capture_output=True, check=False).returncode == 0
 
 
 def rune_findings():
-    """The same check from rune, when the binary is present: term findings only,
-    so this script and rune never disagree."""
-    spec = subprocess.run(["rune", "spec", "validate", "--json"], capture_output=True, text=True)
-    deck = subprocess.run(["rune", "validate", "--json"], capture_output=True, text=True)
+    """The same check from rune: every term finding with its severity, so
+    this script and rune never disagree and a draft term stays visible
+    while a change is active. The hook fails on an error only."""
+    spec = subprocess.run(["rune", "spec", "validate", "--json"], capture_output=True, text=True, check=False)
+    repo = subprocess.run(["rune", "validate", "--json"], capture_output=True, text=True, check=False)
     found = []
     for item in json.loads(spec.stdout or "[]"):
-        if "term" in item["code"] and item["severity"] == "error":
-            found.append(f"{item['path']}:{item['line'] or 0}: {item['code']}: {item['message']}")
-    found.extend(line for line in json.loads(deck.stdout or "{}").get("errors", []) if "term" in line)
+        if "term" in item["code"]:
+            found.append((item["severity"], f"{item['severity']}[{item['code']}]: {item['path']}:{item['line'] or 0}: {item['message']}"))
+    report = json.loads(repo.stdout or "{}")
+    for severity in ("error", "warning"):
+        found.extend((severity, line) for line in report.get(severity + "s", []) if "term" in line)
     return found
 
 
 def main():
-    """With a directory argument, check that tree against its own ontology
-    and never delegate to rune; without one, check the deck."""
     if sys.argv[1:]:
-        errors = check(pathlib.Path(sys.argv[1]).resolve())
+        found = check(sys.argv[1])
+    elif rune_has_link_model():
+        lines = rune_findings()
+        for _severity, line in lines:
+            print(line)
+        return 1 if any(severity == "error" for severity, _line in lines) else 0
     else:
-        errors = rune_findings() if shutil.which("rune") else check()
-    for line in errors:
-        print(line)
+        found = check(ROOT)
+    for f in found:
+        print(f"{f.severity}[{f.name}]: {f.path}:{f.line}: {f.message}")
+    errors = sum(1 for f in found if f.severity == "error")
+    print(f"terms: {len(found)} findings, {errors} errors")
     return 1 if errors else 0
 
 

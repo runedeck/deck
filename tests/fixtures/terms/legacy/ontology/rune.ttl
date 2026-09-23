@@ -1,0 +1,28 @@
+@prefix rune:    <https://runedeck.ai/ns#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+
+# The valid world. The fixer appends a draft section to a copy of this file.
+
+rune:AnalysisTool a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "analysis tool" ;
+    rdfs:comment "A program that examines artifacts to detect problems without executing them." .
+
+rune:Change a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "change" ;
+    rdfs:comment "One spec-driven change under docs/changes/, active or archived." .
+
+rune:change a rdf:Property ;
+    rdfs:domain rune:DecisionRecord ;
+    rdfs:label "change" ;
+    rdfs:comment "On a record: the change that produced it." .
+
+rune:principles a skos:ConceptScheme .
+
+rune:OccamsRazor a skos:Concept ; skos:inScheme rune:principles ;
+    rdfs:label "Occam's razor" ;
+    rdfs:comment "Of two instructions that pass the same check, the shorter one wins." .

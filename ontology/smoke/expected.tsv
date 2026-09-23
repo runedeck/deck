@@ -4,6 +4,7 @@ Violation	DECK-0002	sourcePath	MaxCount	Two source files claim one record identi
 Violation	DECK-0002	title	MaxCount	Two records share one identifier.
 Violation	DECK-0021	replaces	Class	A supersedes entry names a decision record that does not exist.
 Violation	DECK-0099	relation	Class	A related entry names a decision record that does not exist.
+Violation	OddThing	status	In	A term carries a status other than draft.
 Violation	core-0002	identifier	Pattern	A decision record carries exactly one FAMILY-NNNN identifier, such as DECK-0001 or CORE-0001.
 Warning	DECK-0002	status	MinCount	A record carries one status: proposed, accepted, deprecated, or superseded.
 Warning	DECK-0020	status	HasValue	A record that a successor replaces does not say status superseded.
@@ -11,6 +12,8 @@ Warning	DECK-0021	-	Or	OR not satisfied
 Warning	DECK-0021	status	HasValue	A record that a successor replaces does not say status superseded.
 Warning	DECK-0099	status	MinCount	A record carries one status: proposed, accepted, deprecated, or superseded.
 Warning	DECK-4243	status	HasValue	A record that a successor replaces does not say status superseded.
+Warning	GhostThing	status	MaxCount	A term carries a draft status: the fixer added it and nobody has defined it yet. Define it before archive.
+Warning	OddThing	status	MaxCount	A term carries a draft status: the fixer added it and nobody has defined it yet. Define it before archive.
 Warning	UseEfficientCLI	verdict	MinCount	A rule carries no bench verdict pointer. Run BenchArtifact and record the verdict.
 Warning	core-0002	status	MinCount	A record carries one status: proposed, accepted, deprecated, or superseded.
 Warning	proof-failed	exitStatus	HasValue	A proof carries no exit status, or one that is not zero.

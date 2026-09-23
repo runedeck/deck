@@ -1,6 +1,9 @@
 @prefix rune:    <https://runedeck.ai/ns#> .
 @prefix sh:      <http://www.w3.org/ns/shacl#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
 
 # The permitted world (DECK-0010). SHACL validates under the closed-world
@@ -102,6 +105,32 @@ rune:SupersededShape a sh:NodeShape ;
         sh:hasValue "superseded" ;
         sh:severity sh:Warning ;
         sh:message "A record that a successor replaces does not say status superseded." ;
+    ] .
+
+# Axiom term-draft-is-declared-debt (2026-10-17): a term may carry one
+# status, and the only value is draft, which the fixer writes for a link
+# nobody has defined yet. The validator warns while the change is active.
+# The archiver refuses the change. A term is a class, a property, or a
+# concept, so the shape targets those three kinds and never a record,
+# whose label an exporter may one day emit beside its status. The term
+# pages render from the ontology, which the graph export does not carry,
+# so this shape fires on the smoke fixture and on any graph that includes
+# the terms.
+rune:TermShape a sh:NodeShape ;
+    sh:targetClass rdfs:Class, rdf:Property, skos:Concept ;
+    # A status on a term means a draft: declared debt, so a Warning.
+    sh:property [
+        sh:path rune:status ;
+        sh:maxCount 0 ;
+        sh:severity sh:Warning ;
+        sh:message "A term carries a draft status: the fixer added it and nobody has defined it yet. Define it before archive." ;
+    ] ;
+    # Any other value is a malformed term, not a draft.
+    sh:property [
+        sh:path rune:status ;
+        sh:in ( "draft" ) ;
+        sh:severity sh:Violation ;
+        sh:message "A term carries a status other than draft." ;
     ] .
 
 # Axiom rule-carries-verdict: a rule links to bench evidence, because a

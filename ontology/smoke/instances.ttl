@@ -1,6 +1,7 @@
 @prefix rune:    <https://runedeck.ai/ns#> .
 @prefix id:      <https://runedeck.ai/id/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
 
 # Smoke-test instance graph for the shapes gate. Every node below
 # carries a seeded defect except the first. expected.tsv beside this
@@ -8,10 +9,13 @@
 #   scripts/check-ontology smoke            compare
 #   scripts/check-ontology smoke --update   accept a reviewed change
 
-# A conforming record.
+# A conforming record. It carries a label beside its status, the way an
+# exporter may one day emit it, and the term shape must not fire on it:
+# a record is not a term.
 id:DECK-0010 a rune:DecisionRecord ;
     dcterms:identifier "DECK-0010" ;
     dcterms:title "Declared World in RDF" ;
+    rdfs:label "Declared World in RDF" ;
     rune:status "accepted" .
 
 # The duplicate: one IRI, two titles, two source files, and a
@@ -94,3 +98,19 @@ id:DECK-0021 a rune:DecisionRecord ;
     dcterms:identifier "core-0002" ;
     dcterms:title "Lowercase family" ;
     rune:sourcePath "docs/decisions/core-0002 Lowercase family.md" .
+
+# Terms (2026-10-17): a defined term carries no status and passes. A draft
+# term the fixer added carries status draft: one Warning. A term with a
+# status outside the set is malformed: the Warning for carrying a status
+# and one Violation for the value.
+rune:GhostThing a rdfs:Class ;
+    rdfs:label "ghost thing" ;
+    rune:status "draft" .
+
+rune:SettledThing a rdfs:Class ;
+    rdfs:label "settled thing" ;
+    rdfs:comment "A defined term carries no status." .
+
+rune:OddThing a rdfs:Class ;
+    rdfs:label "odd thing" ;
+    rune:status "accepted" .

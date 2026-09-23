@@ -11,10 +11,15 @@
 @prefix pav:     <http://purl.org/pav/> .
 @prefix doap:    <http://usefulinc.com/ns/doap#> .
 
-# The declared world of the deck (DECK-0010).
+# The declared world of the repository (DECK-0010).
 # This file names the kinds that exist. It reuses established vocabularies
 # and mints a term only where no established term fits. Agents propose
 # instance data. The shapes in shapes.ttl decide what is permitted.
+#
+# People read this file through its generated glossary pages under
+# docs/specs/glossary/, one page per labeled term. Edit this file, never
+# the pages. A term with `rune:status "draft"` is one the fixer added for a
+# link nobody has defined yet. The archiver refuses a change that links to it.
 #
 # This file describes. It does not validate. OWL and RDFS operate under
 # the open-world assumption, so they infer and never reject.
@@ -30,35 +35,89 @@
 # The umbrella
 #################################################################
 
-# Any file the system tracks. in-toto and SLSA use the same noun for the
-# subject of an attestation, which is what the sidecars seal.
+# Any file the system tracks: a set of bytes with a URI. in-toto and SLSA
+# use the same noun for the subject of an attestation, which is what the
+# provenance records seal.
 rune:Artifact a rdfs:Class ;
     rdfs:subClassOf prov:Entity ;
     rdfs:label "artifact" ;
-    rdfs:comment "Any file the system tracks: an instruction, a record, a specification, or a companion." .
+    rdfs:comment "A set of bytes with a URI that the system tracks: an instruction, a record, a specification, or a companion." .
 
-# One form an artifact's content takes. HTTP uses the same noun for the
-# several forms one resource can take (RFC 9110 section 3.2).
+#################################################################
+# State and basis
+#################################################################
+
+# The physics framing (voice review, 2026-10-17): the state is what every
+# form is taken from, a basis is the form it is seen in, and a projection
+# keeps one component and drops the rest. The state is a concept. The
+# state file is the thing on disk that holds it.
+rune:SourceState a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "source state" ;
+    rdfs:comment "The concept every representation and projection is taken from. For a rune it is the superposition of the canon and its basis parameters, which assembly projects into one harness." .
+
+# The file a person or model edits. "Source" alone read as source code,
+# so the file carries the state's name.
+rune:StateFile a rdfs:Class ;
+    rdfs:subClassOf rune:Artifact ;
+    rdfs:label "state file" ;
+    rdfs:comment "The file on disk that holds the source state, the one a person or model edits. Every representation and projection of the state is generated from it, never the other way round." .
+
+rune:holdsState a rdf:Property ;
+    rdfs:domain rune:StateFile ;
+    rdfs:range rune:SourceState .
+
+# A basis is the form a representation takes. HTML is the basis of a
+# rendered page, a harness is the basis of an assembled instance, and the
+# Obsidian vault is one more basis that shows the state its own way.
+rune:Basis a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "basis" ;
+    rdfs:comment "The form a representation takes, such as HTML for a render or a harness for an assembled instance." .
+
+rune:inBasis a rdf:Property ;
+    rdfs:domain rune:Representation ;
+    rdfs:range rune:Basis .
+
+# One form a source state takes. HTTP uses the same noun for the several
+# forms one resource can take (RFC 9110 section 3.2). Representation,
+# render, projection, and instance are one state seen in different bases.
+# Projection is the lossy kind, and an instance is the projection onto
+# one harness.
 rune:Representation a rdfs:Class ;
     rdfs:subClassOf prov:Entity ;
     rdfs:label "representation" ;
-    rdfs:comment "One form an artifact's content takes. The plain-text representation is the authoritative one, and every other representation derives from it." .
+    rdfs:comment "The source state expressed in one basis. The plain-text representation is the authoritative one, and every other representation derives from it." .
 
-# A representation a command in the repository makes from the plain text,
+# A representation a command in the repository makes from the state file,
 # with nothing lost: a GIF from a cast, a Vale style from its JSON, the
-# glossary from this file. A tool the repository does not carry cannot
-# make a render.
+# glossary pages from this file. A tool the repository does not carry
+# cannot make a render.
 rune:Render a rdfs:Class ;
     rdfs:subClassOf rune:Representation ;
     rdfs:label "render" ;
-    rdfs:comment "A committed representation that a command the repository carries produces from a plain-text source and that regenerates from it byte for byte." .
+    rdfs:comment "A committed representation in another basis with nothing lost. A command the repository carries produces it from the state file and regenerates it byte for byte." .
 
-# A representation that drops information: a search index, an SVG export
-# of a drawing that lives outside the repository. Never a source.
+# A representation that drops information, like a projection operator
+# that keeps one component of a state: a search index, an SVG export of a
+# drawing that lives outside the repository, an instance assembled for
+# one harness. Never authoritative.
 rune:Projection a rdfs:Class ;
     rdfs:subClassOf rune:Representation ;
     rdfs:label "projection" ;
-    rdfs:comment "A representation that drops information from its source. A search index stays uncommitted, and a snapshot of a source outside the repository is committed only with a provenance sidecar that names its upstream." .
+    rdfs:comment "A representation that drops information from its source state and is never authoritative. A search index stays uncommitted, and a snapshot of a state outside the repository is committed only with a provenance record that names its upstream." .
+
+# An instance is the state seen in one harness's basis: the file assembly
+# writes into a target, fingerprinted in the deployment manifest and
+# sealed by its provenance record. Assembly projects the superposition of
+# canon and basis parameters onto one harness and drops the parameters of
+# every other harness, so an instance is a projection (voice review,
+# 2026-10-17: "assembly projects out one harness") and is never
+# authoritative. The state file is.
+rune:Instance a rdfs:Class ;
+    rdfs:subClassOf rune:Projection ;
+    rdfs:label "instance" ;
+    rdfs:comment "The source state projected onto one harness's basis: the file assembly writes into a target for one harness and model. The deployment manifest fingerprints it and its provenance record seals it. One concrete realization of its rune, never authoritative." .
 
 # What a harness loads to steer a model. Anthropic uses the same noun for
 # CLAUDE.md and rules, and calls the loader the harness and the thing
@@ -114,20 +173,43 @@ rune:Routine a rdfs:Class ;
 # Parts of a rune
 #################################################################
 
-# The harness-neutral entrypoint document of an artifact.
+# The vendor-neutral entrypoint document of a rune. "Harness-neutral"
+# until 2026-10-17. The owner chose the stronger everyday word.
 rune:Canon a rdfs:Class ;
     rdfs:subClassOf prov:Entity ;
     rdfs:label "canon" ;
-    rdfs:comment "The harness-neutral entrypoint document of a rune: SKILL.md for a skill, the rule file for a rule." .
+    rdfs:comment "The vendor-neutral entrypoint document of a rune: SKILL.md for a skill, the rule file for a rule." .
 
-# Harness metadata split from the canon. Invariant for a later shape:
-# a sidecar never duplicates a canon field.
+# The umbrella for two kinds of file beside a canon: the basis parameters
+# that go into assembly, and the provenance record that comes out of it.
+# Invariant for a later shape: a sidecar never duplicates a canon field.
 rune:Sidecar a rdfs:Class ;
     rdfs:subClassOf prov:Entity ;
     rdfs:label "sidecar" ;
-    rdfs:comment "A file beside a rune that holds what the canon does not: harness metadata, or sealed provenance under .provenance/. A sidecar never repeats a canon field." .
+    rdfs:comment "A file beside a canon that holds one of two things: the basis parameters assembly reads for one harness, or the provenance record assembly seals. A sidecar never repeats a canon field." .
 
-# A reference document that a canon cites with an @ reference.
+# Fields only one harness reads, such as Claude Code's argument hint and
+# allowed tools. They do not describe the state file, so they are not
+# metadata of it. They tell assembly how to build that harness's instance,
+# so they are parameters. "Harness metadata" until 2026-10-17.
+rune:BasisParameters a rdfs:Class ;
+    rdfs:subClassOf rune:Sidecar ;
+    rdfs:label "basis parameters" ;
+    rdfs:comment "Input to assembly for one harness: the fields only that harness reads, kept beside the canon so the canon stays vendor-neutral. Not metadata of the state file." .
+
+# What assembly seals for a deployed instance: an in-toto statement with
+# the subject digest, the upstream state and its digest, the parameters
+# and transforms applied, and the builder. The deployment manifest holds
+# the fingerprint. The record holds the provenance. `rune:Provenance`
+# until 2026-10-17.
+rune:ProvenanceRecord a rdfs:Class ;
+    rdfs:subClassOf rune:Sidecar ;
+    rdfs:label "provenance record" ;
+    rdfs:comment "The sealed output of assembly, kept under .provenance/ as an in-toto statement. It says which source state, which basis parameters, which transforms, and which builder produced an instance, with the digest of each." .
+
+# A reference document a canon routes to, by a relative Markdown link or
+# an include. The at-sign reference left shared instructions on
+# 2026-10-17.
 rune:Companion a rdfs:Class ;
     rdfs:subClassOf prov:Entity, schema:CreativeWork ;
     rdfs:label "companion" ;
@@ -151,9 +233,21 @@ rune:hasCanon a rdf:Property ;
     rdfs:domain rune:Rune ;
     rdfs:range rune:Canon .
 
+# The basis parameters belong to the rune and the provenance record to
+# the instance, so the umbrella property states no domain: under RDFS a
+# domain here would make every instance a rune through its record.
 rune:hasSidecar a rdf:Property ;
-    rdfs:domain rune:Rune ;
     rdfs:range rune:Sidecar .
+
+rune:hasBasisParameters a rdf:Property ;
+    rdfs:subPropertyOf rune:hasSidecar ;
+    rdfs:domain rune:Rune ;
+    rdfs:range rune:BasisParameters .
+
+rune:hasProvenanceRecord a rdf:Property ;
+    rdfs:subPropertyOf rune:hasSidecar ;
+    rdfs:domain rune:Instance ;
+    rdfs:range rune:ProvenanceRecord .
 
 rune:hasCompanion a rdf:Property ;
     rdfs:domain rune:Rune ;
@@ -209,10 +303,11 @@ rune:Model a rdfs:Class ;
     rdfs:label "model" ;
     rdfs:comment "The language model a harness runs." .
 
+# The activity. The assembler role below is the agent associated with it.
 rune:Assembly a rdfs:Class ;
     rdfs:subClassOf prov:Activity ;
     rdfs:label "assembly" ;
-    rdfs:comment "The activity that resolves one canonical rune, its companions, and its variants into one instance for each harness and model, and records provenance." .
+    rdfs:comment "The activity that resolves one canonical rune, its basis parameters, its companions, and its variants into one instance for each harness and model. It seals the provenance record." .
 
 rune:Target a rdfs:Class ;
     rdfs:subClassOf prov:Entity ;
@@ -222,6 +317,36 @@ rune:Target a rdfs:Class ;
 rune:targets a rdf:Property ;
     rdfs:domain rune:Rune ;
     rdfs:range rune:Target .
+
+#################################################################
+# Repository and deck
+#################################################################
+
+# "Deck" was used for the container until 2026-10-17. The repository is
+# the container: the git repository, which is also the Open Knowledge
+# Format bundle. A deck is a set of instructions deployed together, and
+# one repository can hold several decks.
+rune:Repository a rdfs:Class ;
+    rdfs:subClassOf prov:Collection ;
+    rdfs:label "repository" ;
+    rdfs:comment "The container: the git repository, and the Open Knowledge Format bundle, that holds the decks, the specifications, the records, and the ontology. One repository can hold several decks." .
+
+# A deck is defined by its directory, which its manifest marks. The
+# manifest lists the contents, so a missing instruction is detected.
+rune:Deck a rdfs:Class ;
+    rdfs:subClassOf prov:Collection ;
+    rdfs:label "deck" ;
+    rdfs:comment "A set of skills, agents, and rules deployed together for one context, defined by its directory and marked by its manifest. The manifest lists the contents, so a missing one is detected." .
+
+rune:inRepository a rdf:Property ;
+    rdfs:subPropertyOf dcterms:isPartOf ;
+    rdfs:domain rune:Deck ;
+    rdfs:range rune:Repository .
+
+rune:inDeck a rdf:Property ;
+    rdfs:subPropertyOf dcterms:isPartOf ;
+    rdfs:domain rune:Instruction ;
+    rdfs:range rune:Deck .
 
 #################################################################
 # Evidence, provenance, integrity
@@ -240,20 +365,11 @@ rune:verdict a rdf:Property ;
     rdfs:range rune:Verdict ;
     rdfs:comment "Links a rule to the bench verdict that justifies it." .
 
-# Prove-stage evidence (DECK-0014): a candidate commit passed one check,
-# with the commit, the check configuration, the validators, and the exit
-# status. The twin of rune:Verdict, which is measure-stage evidence.
-# What the sidecar seals for a deployed instance: an in-toto statement
-# with the subject digest, the upstream source and its digest, the
-# transforms applied, and the builder. The manifest holds the fingerprint;
-# the sidecar holds the provenance.
-# An instance is what assembly writes into a target for one harness: the
-# deployed copy of an instruction, fingerprinted in the manifest and
-# sealed in the sidecar.
-rune:Instance a rdfs:Class ;
-    rdfs:subClassOf prov:Entity ;
-    rdfs:label "instance" ;
-    rdfs:comment "One concrete realization of a kind, as the file assembly writes into a target for one harness is an instance of its rune." .
+# Prove-stage evidence (DECK-0014) lives in rune:Proof below: a candidate
+# commit passed one check, with the commit, the check configuration, the
+# validators, and the exit status. The twin of rune:Verdict, which is
+# measure-stage evidence. The instance and the provenance record moved
+# to the state and rune sections above.
 
 # Static analysis vocabulary from OASIS SARIF 2.1.0 section 1.2, the
 # interchange format the tools emit: a tool examines artifacts without
@@ -268,7 +384,7 @@ rune:AnalysisTool a rdfs:Class ;
     rdfs:label "analysis tool" ;
     rdfs:comment "A program that examines artifacts to detect problems without executing them: a linter, a validator, a shape checker, or a check script." .
 
-# Two kinds of analysis tool the deck names in prose, on the depth
+# Two kinds of analysis tool the repository names in prose, on the depth
 # scale the field uses: a linter matches rule patterns file by file
 # (rumdl, Vale, typos, ruff), a validator decides validity against a
 # grammar or a schema and says nothing about style (rune validate,
@@ -278,16 +394,18 @@ rune:Linter a rdfs:Class ;
     rdfs:label "linter" ;
     rdfs:comment "An analysis tool that matches rule patterns against a file, one file at a time, and reports style and convention violations." .
 
+# The validator is also the first tool role (see Tool roles below): a
+# specification names it, never the program that fills it.
 rune:Validator a rdfs:Class ;
-    rdfs:subClassOf rune:AnalysisTool ;
+    rdfs:subClassOf rune:AnalysisTool, rune:ToolRole ;
     rdfs:label "validator" ;
-    rdfs:comment "An analysis tool that decides whether an artifact is valid against a grammar, a schema, or a set of shapes, and reports nothing about style." .
+    rdfs:comment "The role that reads artifacts and reports findings, and never edits. As an analysis tool it decides whether an artifact is valid against a grammar, a schema, or a set of shapes. It says nothing about style." .
 
 rune:AnalysisRule a rdfs:Class ;
     rdfs:subClassOf prov:Entity ;
     rdfs:seeAlso <https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html> ;
     rdfs:label "analysis rule" ;
-    rdfs:comment "One criterion for correctness that an analysis tool verifies, a general one or a convention of this deck." .
+    rdfs:comment "One criterion for correctness that an analysis tool verifies, a general one or a convention of this repository." .
 
 rune:AnalysisResult a rdfs:Class ;
     rdfs:subClassOf prov:Entity ;
@@ -306,11 +424,6 @@ rune:Fixture a rdfs:Class ;
     rdfs:label "fixture" ;
     rdfs:comment "An input a test runs against, with the result the test asserts for it." .
 
-rune:Provenance a rdfs:Class ;
-    rdfs:subClassOf prov:Entity ;
-    rdfs:label "provenance" ;
-    rdfs:comment "The sealed statement of where an instance came from: its source and digest, the transforms applied, and the builder, kept in the sidecar as an in-toto statement." .
-
 # The general notion. A proof says a candidate commit shows what a
 # scenario states; the attestation below is the kind we record, and the
 # repository's checks passing on the commit is the other kind, data on
@@ -328,6 +441,15 @@ rune:Attestation a rdfs:Class ;
     rdfs:seeAlso <https://github.com/in-toto/attestation/blob/main/spec/README.md> ;
     rdfs:label "attestation" ;
     rdfs:comment "A proof recorded as a run of a change's scenarios against one commit, with what the transcript shows for each, bound by the transcript digest." .
+
+# The review bot's record of one pull request: every review thread with its
+# disposition, the commit it reviewed, a generation counter, the verdict,
+# and the coverage. The merge seal reads it. Published as a check run
+# named "ledger" on the head; the check run keeps that name.
+rune:ReviewScorecard a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "review scorecard" ;
+    rdfs:comment "The review bot's record of one pull request: each review thread with its disposition, the commit it reviewed, a generation counter, the verdict, and the coverage. The signer admits a merge only when the scorecard names the head and its verdict is clean." .
 
 # The candidate commit a proof covers, an entity IRI under /id/. A
 # candidate is proven when a proof with exit status zero exists for its
@@ -506,7 +628,7 @@ rune:decisionRecord a rdf:Property ;
 # The change a decision record came out of. A change directory is an
 # entity, not an activity, so this is a derivation and not a generation
 # (adversarial review, 2026-09-23). The record is the subject, the
-# change the object: `CORE-0011 rune:change id:architecture-decision-records`.
+# change the object: `CORE-0011 rune:change id:keep-architecture-decision-records`.
 rune:change a rdf:Property ;
     rdfs:subPropertyOf prov:wasDerivedFrom ;
     rdfs:domain rune:DecisionRecord ;
@@ -531,12 +653,16 @@ rune:archived a rdf:Property ;
     rdfs:comment "On a proposal: the date the archive step accepted the change, which is the acceptance date of every record it produced." .
 
 # The asserted status of a record. The frontmatter is the authority and
-# a shape only catches a disagreement with the file's location.
+# a shape only catches a disagreement with the file's location. A term in
+# this file may also carry it, with the one value "draft": the fixer added
+# the term for a link nobody has defined yet, the validator warns while
+# the change is active, and the archiver refuses the change. The domain
+# is therefore stated with schema:domainIncludes, which does not infer.
 rune:status a rdf:Property ;
-    rdfs:domain rune:Artifact ;
+    schema:domainIncludes rune:Artifact, rdfs:Class, rdf:Property, skos:Concept ;
     rdfs:range xsd:string ;
     rdfs:label "status" ;
-    rdfs:comment "On a record or a proposal: its asserted lifecycle status. The frontmatter is the authority, and a shape only catches a disagreement with the file's location." .
+    rdfs:comment "On a record or a proposal: its asserted lifecycle status. On an ontology term: draft, when the fixer added it and nobody has defined it yet. The frontmatter is the authority, and a shape only catches a disagreement with the file's location." .
 
 # Derivation reuses PROV-O directly: prov:wasDerivedFrom,
 # prov:wasGeneratedBy, prov:wasAttributedTo. No minted class exists.
@@ -563,7 +689,7 @@ rune:deployedDigest a rdf:Property ;
 #################################################################
 
 # A decision record. No established vocabulary covers architecture
-# decision records, so the deck mints this term and anchors it to
+# decision records, so the repository mints this term and anchors it to
 # established superclasses.
 rune:DecisionRecord a rdfs:Class ;
     rdfs:subClassOf prov:Entity, schema:CreativeWork ;
@@ -586,7 +712,7 @@ rune:StructuredArchitectureDecisionRecord a rdfs:Class ;
     rdfs:subClassOf rune:MarkdownArchitectureDecisionRecord ;
     rdfs:seeAlso <https://github.com/runedeck/adr> ;
     rdfs:label "structured architecture decision record" ;
-    rdfs:comment "A markdown architecture decision record with YAML frontmatter for status, dates, RACI, and provenance: the runeADR format the deck's records under docs/decisions/ use." .
+    rdfs:comment "A markdown architecture decision record with YAML frontmatter for status, dates, RACI, and provenance: the runeADR format the repository's records under docs/decisions/ use." .
 
 #################################################################
 # Lifecycle stages
@@ -620,7 +746,7 @@ rune:merge          a rune:Stage ; skos:inScheme rune:stages ; skos:prefLabel "m
 # Enforcement
 #################################################################
 
-# The lint-enforced-foundations capability binds every foundation
+# The lint-enforced-foundation-requirements capability binds every foundation
 # requirement to a check or names the gap.
 rune:Coverage a rdfs:Class ;
     rdfs:subClassOf prov:Entity ;
@@ -631,6 +757,73 @@ rune:MissedRequirement a rdfs:Class ;
     rdfs:subClassOf prov:Entity ;
     rdfs:label "missed requirement" ;
     rdfs:comment "A requirement no analysis tool checks yet, listed in the coverage as such." .
+
+#################################################################
+# Tool roles
+#################################################################
+
+# A specification says what happens and who does it, never which command
+# or flag does it (voice review, 2026-10-17). The actors are roles, each a
+# term here. Commands get renamed while behavior stays, and the
+# foundations are a philosophy for treating instructions as artifacts,
+# not a manual for one tool. CORE-0023 records that rune fills every role
+# and lists the capabilities each role requires. The validator above is
+# the first role.
+rune:ToolRole a rdfs:Class ;
+    rdfs:subClassOf prov:Agent ;
+    rdfs:label "tool role" ;
+    rdfs:comment "One part of the work a specification names instead of a program: validator, assembler, generator, deployer, fixer, signer, archiver, importer, or proof runner. A decision record says which program fills each role." .
+
+rune:Assembler a rdfs:Class ;
+    rdfs:subClassOf rune:ToolRole, prov:SoftwareAgent ;
+    rdfs:label "assembler" ;
+    rdfs:comment "The role that turns a canon and its sidecars into one instance per harness and model, and seals the provenance record." .
+
+rune:Generator a rdfs:Class ;
+    rdfs:subClassOf rune:ToolRole, prov:SoftwareAgent ;
+    rdfs:label "generator" ;
+    rdfs:comment "The role that writes derived files from their source: indexes, glossary pages, the changelog. A derived file regenerates on demand, or it does not exist." .
+
+rune:Deployer a rdfs:Class ;
+    rdfs:subClassOf rune:ToolRole, prov:SoftwareAgent ;
+    rdfs:label "deployer" ;
+    rdfs:comment "The role that copies instances into harness trees and records the deployment manifest." .
+
+# Like a linter's fix mode: the validator reports, the fixer edits. A
+# commit hook may run the fixer before the validator, so authors rarely
+# notice the step.
+rune:Fixer a rdfs:Class ;
+    rdfs:subClassOf rune:ToolRole, prov:SoftwareAgent ;
+    rdfs:label "fixer" ;
+    rdfs:comment "The role that edits artifacts to repair a reported finding, as a separate step the author invokes or a hook runs before the validator. It adds a draft term for a link the ontology lacks." .
+
+# The owner acts here, through a key touch. The program only presents
+# what is signed. So the role is an agent, not a software agent.
+rune:Signer a rdfs:Class ;
+    rdfs:subClassOf rune:ToolRole ;
+    rdfs:label "signer" ;
+    rdfs:comment "The owner's signing step that binds a head to the owner's key." .
+
+rune:Archiver a rdfs:Class ;
+    rdfs:subClassOf rune:ToolRole, prov:SoftwareAgent ;
+    rdfs:label "archiver" ;
+    rdfs:comment "The role that moves an accepted change into the canonical specifications and refuses what is not ready. A change that links to a draft term is not ready." .
+
+# The adoption review's actor (AdoptArtifact): it brings an upstream
+# artifact in and writes what the review decided, and it edits nothing
+# the validator would otherwise report.
+rune:Importer a rdfs:Class ;
+    rdfs:subClassOf rune:ToolRole, prov:SoftwareAgent ;
+    rdfs:label "importer" ;
+    rdfs:comment "The role that fetches an artifact from upstream, places it in the repository, records the review verdicts, and seals the adoption sidecar." .
+
+# The proof's actor (DECK-0014): a proof is the real app recorded scene
+# by scene, and this role plays the scenes and keeps the transcript
+# bound to the fence that scripted them.
+rune:ProofRunner a rdfs:Class ;
+    rdfs:subClassOf rune:ToolRole, prov:SoftwareAgent ;
+    rdfs:label "proof runner" ;
+    rdfs:comment "The role that runs every scene of a proof from its fence and binds the transcript to it." .
 
 #################################################################
 # Hook dispatch
@@ -704,7 +897,7 @@ rune:type a rdf:Property ;
     rdfs:domain rune:Artifact ;
     rdfs:range xsd:string ;
     rdfs:label "type" ;
-    rdfs:comment "On every artifact: its kind as the directory states it: skill, rule, agent, hook, routine, adr, or proof. A shape holds the list, so the key and the directory never disagree." .
+    rdfs:comment "On an artifact, optional: its kind, skill, rule, agent, hook, routine, adr, or proof. The structure schema of the nearest directory supplies it when the file states none, and an explicit key overrides. A shape holds the list of kinds, so a key outside it is a finding." .
 
 rune:tags a rdf:Property ;
     rdfs:subPropertyOf dcterms:subject ;
@@ -754,7 +947,7 @@ rune:project a rdf:Property ;
     rdfs:domain rune:Artifact ;
     rdfs:range doap:Project ;
     rdfs:label "project" ;
-    rdfs:comment "On a record: the project it belongs to, a DOAP project such as the deck." .
+    rdfs:comment "On a record: the project it belongs to, a DOAP project such as this repository." .
 
 rune:responsible a rdf:Property ;
     rdfs:domain rune:DecisionRecord ;
@@ -785,6 +978,20 @@ rune:name a rdf:Property ;
     rdfs:seeAlso <https://agentskills.io/specification> ;
     rdfs:label "name" ;
     rdfs:comment "On a rune canon: its name, which the Agent Skills specification requires beside description." .
+
+#################################################################
+# Statements
+#################################################################
+
+# Why three parts: two things alone say nothing, and once the edge is
+# named, any graph breaks down into a pile of these labeled edges. This
+# file is written as triples in Turtle. The shapes validate them and
+# queries ask them questions. The owner asked for the sentence itself
+# (voice review, 2026-10-17): a triple is the simplest statement of a fact.
+rune:Triple a rdfs:Class ;
+    rdfs:subClassOf rdf:Statement ;
+    rdfs:label "triple" ;
+    rdfs:comment "The smallest statement of a fact: a subject, a relation, and an object. Every graph breaks down into triples, and this ontology is written as them." .
 
 #################################################################
 # Principles
