@@ -25,6 +25,7 @@ rune install
 | `deck.yaml` | deck marker (`schema: 1`) |
 | `runes/<domain>/` | one domain of runes: `skills/`, `agents/`, `rules/`, `hooks/` |
 | `casts/*.yaml` | named selections across domains |
+| `routines/` | the behavior of each Claude Code routine, one file each, read at run time by a stub in the provider |
 
 ## License
 

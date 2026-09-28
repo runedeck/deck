@@ -246,6 +246,17 @@ repos:
             pass_filenames: false
             files: ^docs/decisions/
 
+          # A routine file is what a Claude Code routine reads at run time,
+          # and the schema beside the files states the section sequence.
+          # A routine file sits directly under routines/, so a nested
+          # Markdown file is rejected. The README is not a routine.
+          - id: mdschema-routines
+            name: routine files match the directory schema
+            entry: sh -c 'nested=$(find routines -mindepth 2 -name "*.md") || { echo "find failed under routines/"; exit 1; }; [ -z "$nested" ] || { echo "a routine file sits directly under routines/, not nested ($nested)"; exit 1; }; if command -v mdschema >/dev/null 2>&1; then files=$(find routines -mindepth 1 -maxdepth 1 -name "*.md" ! -name README.md) || { echo "find failed under routines/"; exit 1; }; set -f; IFS=$(printf "\nx"); IFS=${IFS%x}; for routine in $files; do case "$routine" in *[!A-Za-z0-9._/-]*) echo "a routine file name uses only A-Za-z0-9._- ($routine)"; exit 1;; esac; mdschema check "$routine" --schema routines/.mdschema >/dev/null 2>&1 || { mdschema check "$routine" --schema routines/.mdschema; exit 1; }; done; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and mdschema is absent"; exit 1; fi'
+            language: system
+            pass_filenames: false
+            files: ^routines/
+
           # Each added record field has a bare name and an x-rune- long
           # form. A record uses one form, and no other x- prefix is valid.
           - id: check-decision-fields
