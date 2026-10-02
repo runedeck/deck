@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- Add the Dotfiles Scanner and Online Mentions routines with a deterministic detector the run streams from the deck, and retire GitHub Exposure (scanner-routines-from-deck).
 - Add `routines/`: the Repository Digest and Weekly Ceremony Audit prompts as deck files a Claude Code routine reads at `main`, with the instance values in the provider stub (routine-prompts-from-deck).
 - Add the PreferTrash rule in core: delete with `trash`, the FreeDesktop-layout script every repository and the dotfiles ship, never with `rm`; recovery is a move back from `~/.local/share/Trash`.
 - Add the DetachedJob skill in development: start a long command in its own session so no tool timeout, terminal close, or session exit stops it, then wait for its exit code and read its log.

@@ -257,6 +257,16 @@ repos:
             pass_filenames: false
             files: ^routines/
 
+          # The exposure detector is code a routine streams from the deck
+          # object store. Its rules and its status are proved by fixtures
+          # in a temporary repository before a change to it reaches a commit.
+          - id: exposure-scan-tests
+            name: exposure detector tests
+            entry: python3 -m unittest discover -s tests -p test_exposure_scan.py
+            language: system
+            pass_filenames: false
+            files: ^(routines/scripts/|tests/test_exposure_scan\.py$)
+
           # Each added record field has a bare name and an x-rune- long
           # form. A record uses one form, and no other x- prefix is valid.
           - id: check-decision-fields

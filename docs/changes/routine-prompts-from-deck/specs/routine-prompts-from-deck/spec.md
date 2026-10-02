@@ -20,7 +20,7 @@ A routine prompt in the provider MUST be a stub that names one file under `routi
 
 ### Requirement: Stub reads the file from the fetched main
 
-The stub MUST fetch `origin main` and require `git ls-tree FETCH_HEAD -- routines/<File>.md` to print exactly one entry with mode 100644 and type blob. The stub MUST read the file only as the output of `git cat-file blob FETCH_HEAD:routines/<File>.md` and MUST NOT point the run at the working-tree file in any sentence. Every bootstrap Git command MUST run with `--no-replace-objects`, so a replacement ref cannot swap the blob. The stub MUST report CONFIGURATION_FAILURE and stop when a command fails, the path is absent, or the mode or type differs. The check sits in the stub, because a check inside the file could be edited away with the file.
+The stub MUST fetch `origin <POLICY_REF>`, a stub value with the default `main`, and require `git ls-tree FETCH_HEAD -- routines/<File>.md` to print exactly one entry with mode 100644 and type blob. The stub MUST read the file only as the output of `git cat-file blob FETCH_HEAD:routines/<File>.md` and MUST NOT point the run at the working-tree file. Every bootstrap Git command MUST run with `--no-replace-objects`, so a replacement ref cannot swap the blob. The stub MUST report CONFIGURATION_FAILURE and stop when a command fails, the path is absent, or the mode or type differs. The check is in the stub, because a check inside the file could be edited away.
 
 #### Scenario: Fetched main lacks the file and an untracked copy exists
 

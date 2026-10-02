@@ -39,6 +39,9 @@ jobs:
             - name: Test provenance digests
               run: python3 -m unittest discover -s scripts -p 'test_check_provenance.py' -v
 
+            - name: Test exposure detector
+              run: python3 -m unittest discover -s tests -p 'test_exposure_scan.py' -v
+
             - name: Install JJ for push gate tests
               env:
                   JJ_VERSION: "0.45.1"
