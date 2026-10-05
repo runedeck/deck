@@ -60,7 +60,7 @@ Option 3, with option 4 deferred.
 - [+] The same repository state yields the same ids and the same status on every run, and an acknowledgement suppresses a repeat alarm without hiding a replacement secret in the same file or the same secret in a new file.
 - [-] The owner must re-acknowledge after each change that touches an acknowledged object, because the acknowledgement binds to the objects reachable from one commit.
 - [+] A rule change is a deck pull request with tests, and the rules version in every report says which rules ran.
-- [+] The owner gets a path, a line, a commit, and a blob id for each finding, and a push of three lines.
+- [+] The owner gets a path, a line, a commit, and a blob id for each finding in the session, and a notification whose first line says whether to act.
 - [-] The rules are regular expressions with placeholder filters. They miss a secret with no known format and flag some fixtures, and the model's review items are the only cover for personal data the rules cannot see.
 - [-] A finding id is a plain digest prefix. An attacker with the private stub and a candidate value can confirm the value, so the stub stays private and the ids never enter the deck.
 - [-] The stub still trusts `main` at run time, and an attached source adds GitHub write tools that the prompt alone forbids. Pinning and a runner that removes those tools are deferred.

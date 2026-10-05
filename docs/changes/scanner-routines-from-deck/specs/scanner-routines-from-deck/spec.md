@@ -100,12 +100,17 @@ The stub MUST fetch `origin <POLICY_REF>`, where POLICY_REF is a stub value whos
 
 ### Requirement: Reports separate the push from the session
 
-A scanner MUST send a notification of at most three lines: the finding status with the health, the new and known counts, and the most urgent action, with a finding id and no value, path, URL, name, handle, or query. The session report MUST carry one table with id, new or known, rule or classification, location, and action, with every value redacted and a path or URL segment redacted only when it is itself sensitive.
+A scanner notification MUST NOT contain a value, a finding id, a hash, a commit, or the owner's handle. The Dotfiles Scanner MAY give a path as the detector printed it. Online Mentions MUST give counts only and MUST NOT name a person, site, organization, repository, or URL. The session report MUST carry one table with id, new or known, rule or classification, location, and action, with every value redacted and a path or URL segment redacted only when it is itself sensitive.
 
 #### Scenario: Path contains a sensitive value
 
 - **WHEN** a finding's path contains a hostname under a sensitive domain
-- **THEN** the table row shows `[REDACTED PATH]` with the blob id, and the notification shows the finding id only
+- **THEN** the table row and the notification show the path with that segment as `[REDACTED]`, and the table row keeps the blob id
+
+#### Scenario: Detector reports new findings
+
+- **WHEN** the detector reports a new sensitive-domain finding and a new email finding
+- **THEN** the notification opens with `2 new exposures need action`, gives one bullet for each label with its places, files, and first location, and ends with one next step
 
 ### Requirement: Online Mentions attributes by identity signal
 

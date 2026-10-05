@@ -89,19 +89,36 @@ A known occurrence does not raise the finding status. Shallow history, a binary 
 
 ## Notification
 
-Send one final notification of at most three lines. No table, no value, no path, no URL. Use this structure:
+The notification goes to the owner's phone and email, and the phone shows only the first line. Write plain text: no Markdown emphasis, no code fence, no emoji, no status code such as ALERT or COMPLETE, no finding id, no hash, no commit, no owner handle, and never a matched value. A path appears as the detector printed it, with its sensitive segments already redacted. At most 12 lines.
 
 ~~~text
-<finding status> <health> Dotfiles scan: <owner/name> at <short commit>
-New: <new count> (<secret> secret, <host> host, <personal> personal). Known: <known count>. Model items: <count>.
-Action: <the most urgent action with its finding id, or none>.
+<headline>
+
+- <label>: <places> places in <files> files[ and <n> commit messages]
+  first at <path>:<line>
+- Still open from earlier: <known count> findings
+- <count> more findings in the session
+
+Next step: <action>
+Health: <generic limitation>
 ~~~
 
-Name the finding id, never the matched value. When the detector did not run, the second line names the failing check and the third line the repair.
+The headline is at most 80 characters. Use the first that applies:
+
+- The detector did not run: `Dotfiles scan failed: <generic reason>`.
+- Health is INCOMPLETE: `Dotfiles scan incomplete: <new count> new findings so far`.
+- ALERT: `<new count> new exposures need action`.
+- REVIEW: `<new count> new findings need review`.
+- Only known findings: `No new exposures, <known count> known findings still open`.
+- Otherwise: `No exposures found`.
+
+Write one bullet for each label with a new finding, highest severity first: private key, access token, password in a URL, password or secret in a file, sensitive domain, internal hostname, email address, phone number. These labels name the rules SEC-PRIVATE-KEY, SEC-TOKEN, SEC-URL-AUTH, SEC-ASSIGNMENT, HOST-SENSITIVE-DOMAIN, HOST-PRIVATE-TLD, PII-EMAIL, and PII-PHONE. Count places and distinct files over the label's new locations, and give the first location. For a location in a commit, write `first in a commit message`. Show at most three label bullets, then the known bullet, then the overflow bullet. Omit a bullet with nothing to say.
+
+The next step gives the action for the most severe new label and points to the session for the rest. A secret is revoked and rotated before anything else. A hostname or domain moves out of tracked files into private configuration, and a history rewrite is decided after that. Personal data is removed or confirmed as meant to be public. Write `None.` only when no finding is open. The health line appears only when health is not COMPLETE, and shallow history is not a reason to show it.
 
 ## Final checks
 
 - Confirm that the only fetch was the one of the startup checks, and that every write went to the fetch metadata of that checkout or to the scratch directory.
 - Confirm that the finding status, the health, and every count in the report equal the values in `scan.json`.
-- Confirm that no message, file, or tool call carries a complete secret or sensitive personal value, and that the notification has no path and no value.
+- Confirm that no message, file, or tool call carries a complete secret or sensitive personal value, and that the notification carries no value, id, hash, commit, or owner handle.
 - Confirm that every model item has a location.

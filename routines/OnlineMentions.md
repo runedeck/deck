@@ -90,17 +90,35 @@ Health is `COMPLETE` when every planned query ran and every selected source was 
 
 ## Notification
 
-Send one final notification of at most three lines. No table, no name, no handle, no query, no URL, no value. Use this structure:
+The notification goes to the owner's phone and email, and the phone shows only the first line. Write plain text with counts only: no Markdown emphasis, no code fence, no emoji, no status code such as ALERT or COMPLETE, and no name of a person, site, organization, or repository, no handle, URL, query, or quoted text. Source details stay in the session. At most 10 lines.
 
 ~~~text
-<finding status> <health> Online mentions: <completed>/<planned> queries, <inspected>/<selected> sources
-New: <new count> (<alert> alert, <review> review). Known: <known count>. Blocked: <blocked count>.
-Action: <the most urgent action with a generic source label, or none>.
+<headline>
+
+- Need attention: <count> pages
+- Need review: <count> pages
+- About the owner, no concern: <count> pages
+- Checked <completed> of <planned> searches and <inspected> of <selected> pages, <blocked> blocked
+
+Next step: <action>
+Health: <generic limitation>
 ~~~
+
+The headline is at most 80 characters. Use the first that applies:
+
+- A startup check failed or no search ran: `Online search failed: <generic reason>`.
+- Health is INCOMPLETE: `Online search incomplete: <count> pages need attention so far`.
+- A new ALERT finding: `<count> pages about you need attention`.
+- Only new REVIEW findings: `<count> pages about you need review`.
+- Otherwise: `No concerning pages about you found`.
+
+Count pages, not findings or hosts. A known finding counts in its row with `(<count> known)` after the number. Omit a row whose count is zero, except the Checked row.
+
+The next step for a finding is to open the session and assess the flagged pages before acting on them. With no finding and a blocked page, write `None. The session lists the sites that blocked the search.`, else `None.`. The health line appears only when health is not COMPLETE.
 
 ## Final checks
 
 - Confirm from the request ledger that every request was an unauthenticated GET to a destination that passed the controls, and that no form, message, upload, write, or public change occurred.
 - Confirm that every finding in the report has identity evidence, and that the ledger and the report hold no URL of a page the run did not attribute.
-- Confirm that the counts in the notification equal the ledger.
+- Confirm that the counts in the notification equal the ledger, and that the notification names no person, site, organization, repository, handle, or URL.
 - Confirm that no message, file, or tool call carries a complete secret or sensitive personal value.

@@ -11,6 +11,7 @@ type: tasks
 - [x] 1.3 `routines/.mdschema` and the `mdschema-routines` prek hook
 - [x] 1.4 The `README.md` layout row and the CHANGELOG line
 - [x] 1.5 Record the decision in `adr.md`
+- [x] 1.6 The notification format in all four routine files: a result-first headline, grouped bullets, one next step, health only when degraded
 
 ## 2. Deployment
 

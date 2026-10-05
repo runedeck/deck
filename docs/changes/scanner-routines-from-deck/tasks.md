@@ -8,7 +8,7 @@ type: tasks
 
 - [x] 1.1 `routines/scripts/exposure_scan.py`: the detector with versioned rules, hashed finding ids, locations, known-finding matching, finding status, and scan health
 - [x] 1.2 `tests/test_exposure_scan.py`: fixtures in a temporary repository for every rule, the placeholders, deleted history, the working tree, a shallow clone, known findings, and a missing repository
-- [x] 1.3 `routines/DotfilesScanner.md`: the run streams the detector, keeps its status, adds located review items, and reports a three-line push plus the session table
+- [x] 1.3 `routines/DotfilesScanner.md`: the run streams the detector, keeps its status, adds located review items, and reports a grouped plain-text notification plus the session table
 - [x] 1.4 `routines/OnlineMentions.md`: weekly, identity-qualified plan, namesakes discarded, exclusions reviewed, status apart from health
 - [x] 1.5 `routines/README.md`: POLICY_REF in the stub contract, the streamed-code rule, the scanner inputs, GitHub Exposure retired
 - [x] 1.6 The `exposure-scan-tests` hook, the quality workflow step, and the CHANGELOG line
