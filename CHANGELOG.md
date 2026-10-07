@@ -93,6 +93,9 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Fixed
 
+- Fix the Dotfiles Scanner to fetch the whole branch history and report a scan that stops at a shallow boundary as incomplete (scanner-routines-from-deck).
+- Fix a Dotfiles notification bullet to point to the first file before a commit message (scanner-routines-from-deck).
+- Fix the Repository Digest and Weekly Ceremony Audit to end with the notification text only (routine-prompts-from-deck).
 - Fix the identity tests to expect the versioned display names the synced `author-identity.py` derives (`Claude Fable 5.2`, not `Claude`).
 - Fix the decision record shape to accept every uppercase family. It allowed DECK and RUNE only, so all nineteen CORE records failed on the real graph.
 - Add a hook that validates the real graph on every ontology, record, or rule commit.

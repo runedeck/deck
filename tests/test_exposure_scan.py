@@ -140,10 +140,13 @@ class Fixture:
         third = self.commit("Copy hosts, add the shell file")
         return first, second, third
 
-    def shallow_clone(self):
-        target = self.directory / "shallow"
-        self.git("clone", "-q", "--depth", "1", "file://" + str(self.repo), str(target), cwd=self.directory)
+    def clone(self, name, *options):
+        target = self.directory / name
+        self.git("clone", "-q", *options, "file://" + str(self.repo), str(target), cwd=self.directory)
         return target
+
+    def shallow_clone(self, name="shallow"):
+        return self.clone(name, "--depth", "1")
 
     def remove(self):
         shutil.rmtree(self.directory, ignore_errors=True)
@@ -363,15 +366,33 @@ class ExposureScanTests(unittest.TestCase):
         self.assertEqual(self.ids("SEC-TOKEN", report), self.ids("SEC-TOKEN"))
         self.assertEqual(report["health"], self.report["health"])
 
-    def test_shallow_clone_declares_its_boundary(self):
+    def test_shallow_clone_is_incomplete(self):
         shallow = self.fixture.shallow_clone()
         _, report, _ = run_detector(shallow)
         self.assertTrue(report["health"]["shallow"])
         self.assertEqual(report["health"]["commits"], 1)
         self.assertEqual(report["health"]["shallow_boundary"], [self.third])
-        self.assertEqual(report["health"]["status"], "COMPLETE")
+        self.assertEqual(report["health"]["status"], "INCOMPLETE")
         token = next(f for f in self.findings("SEC-TOKEN", report) if f["id"] == self.expected_id("SEC-TOKEN", FAKE_TOKEN))
         self.assertEqual([location["path"] for location in token["locations"]], ["zshrc"])
+
+    def test_unshallowed_clone_is_complete(self):
+        clone = self.fixture.shallow_clone("unshallowed")
+        self.fixture.git("fetch", "-q", "--unshallow", "origin", "main", cwd=clone)
+        _, report, _ = run_detector(clone)
+        self.assertFalse(report["health"]["shallow"])
+        self.assertEqual(report["health"]["commits"], 3)
+        self.assertEqual(report["health"]["status"], "COMPLETE")
+
+    def test_shallow_side_branch_leaves_the_scan_complete(self):
+        clone = self.fixture.clone("side")
+        side = self.fixture.git("commit-tree", self.third + "^{tree}", "-p", self.third, "-m", "side", cwd=clone)
+        (clone / ".git" / "shallow").write_text(side + "\n", encoding="utf-8")
+        self.assertEqual(self.fixture.git("rev-parse", "--is-shallow-repository", cwd=clone), "true")
+        _, report, _ = run_detector(clone)
+        self.assertFalse(report["health"]["shallow"])
+        self.assertEqual(report["health"]["shallow_boundary"], [])
+        self.assertEqual(report["health"]["status"], "COMPLETE")
 
     def test_missing_repository_is_a_configuration_failure(self):
         code, report, _ = run_detector(self.fixture.directory / "absent")

@@ -33,7 +33,8 @@ Do not use account memory, personalization, saved preferences, prior chats, or p
 ## Startup checks
 
 Confirm that the checkout `/home/user/<name>` exists for REPOSITORY.
-Run `git --no-replace-objects -C /home/user/<name> fetch origin <BRANCH>` and record the commit that `git --no-replace-objects -C /home/user/<name> rev-parse FETCH_HEAD` prints.
+When `git --no-replace-objects -C /home/user/<name> rev-parse --is-shallow-repository` prints `true`, run `git --no-replace-objects -C /home/user/<name> fetch --unshallow origin <BRANCH>`. Otherwise run `git --no-replace-objects -C /home/user/<name> fetch origin <BRANCH>`.
+Record the commit that `git --no-replace-objects -C /home/user/<name> rev-parse FETCH_HEAD` prints.
 Require `git --no-replace-objects -C /home/user/deck ls-tree FETCH_HEAD -- routines/scripts/exposure_scan.py` to print exactly one entry with mode 100644 and type blob.
 Record the runedeck/deck commit that `git --no-replace-objects -C /home/user/deck rev-parse FETCH_HEAD` prints.
 Confirm that `python3 --version` prints a version of 3.11 or later.
@@ -42,13 +43,13 @@ Report CONFIGURATION_FAILURE and stop when a check fails.
 
 ## Scope
 
-Scan the fetched BRANCH of REPOSITORY and the history the clone contains. The platform clone is shallow, so the history is bounded: the detector records the shallow boundary as a declared scope limit. Remote ref completeness is not claimed. A blob larger than 4 MiB and a binary blob are declared limits that the detector counts. The rules are regular expressions with placeholder filters, and the model review covers what they cannot see.
+Scan the fetched BRANCH of REPOSITORY and its whole history. The platform clone is shallow, and the startup fetch removes its boundary. When the history of BRANCH still stops at a boundary, the detector reports health INCOMPLETE. Remote ref completeness is not claimed. A blob larger than 4 MiB and a binary blob are declared limits that the detector counts. The rules are regular expressions with placeholder filters, and the model review covers what they cannot see.
 
 ## Permitted operations
 
 The stub's bootstrap commands (`git fetch`, `git ls-tree`, and `git cat-file` on the runedeck/deck checkout) run before this file and are not operations of this file.
 
-- The one `git fetch origin <BRANCH>` of the startup checks on the REPOSITORY checkout.
+- The one `git fetch` of the startup checks on the REPOSITORY checkout, with `--unshallow` when the clone is shallow.
 - The detector command of the procedure, which streams `routines/scripts/exposure_scan.py` from the runedeck/deck object store into `python3 -I -` and reads REPOSITORY through Git objects only.
 - Read and Write in the scratch directory for the two input files, the detector output, and the report draft.
 
@@ -83,9 +84,9 @@ Report two values and keep them separate.
 
 Finding status is `status` from `scan.json`: `ALERT` when a new occurrence of a secret or of a sensitive-domain host exists, `REVIEW` when the only new occurrences are personal data or private-TLD hosts, `NO_NEW_FINDINGS` otherwise. Write `NOT_RUN` when the detector did not run.
 
-Health is `health.status` from `scan.json`: `COMPLETE` when every reachable object was read and every acknowledgement resolved, `INCOMPLETE` when the detector counted an unreadable object, an acknowledged commit absent from the clone, or a malformed KNOWN_FINDINGS entry. Write `CONFIGURATION_FAILURE` when a startup check failed, a required stub value was absent or malformed, the detector exited 2, or the run required a prohibited operation.
+Health is `health.status` from `scan.json`: `COMPLETE` when every reachable object was read and every acknowledgement resolved, `INCOMPLETE` when the detector counted an unreadable object, an acknowledged commit absent from the clone, a malformed KNOWN_FINDINGS entry, or a history that stops at a shallow boundary. Write `CONFIGURATION_FAILURE` when a startup check failed, a required stub value was absent or malformed, the detector exited 2, or the run required a prohibited operation.
 
-A known occurrence does not raise the finding status. Shallow history, a binary blob, and an oversize blob are limits, not INCOMPLETE.
+A known occurrence does not raise the finding status. A binary blob and an oversize blob are declared limits and do not make health INCOMPLETE.
 
 ## Notification
 
@@ -112,9 +113,9 @@ The headline is at most 80 characters. Use the first that applies:
 - Only known findings: `No new exposures, <known count> known findings still open`.
 - Otherwise: `No exposures found`.
 
-Write one bullet for each label with a new finding, highest severity first: private key, access token, password in a URL, password or secret in a file, sensitive domain, internal hostname, email address, phone number. These labels name the rules SEC-PRIVATE-KEY, SEC-TOKEN, SEC-URL-AUTH, SEC-ASSIGNMENT, HOST-SENSITIVE-DOMAIN, HOST-PRIVATE-TLD, PII-EMAIL, and PII-PHONE. Count places and distinct files over the label's new locations, and give the first location. For a location in a commit, write `first in a commit message`. Show at most three label bullets, then the known bullet, then the overflow bullet. Omit a bullet with nothing to say.
+Write one bullet for each label with a new finding, highest severity first: private key, access token, password in a URL, password or secret in a file, sensitive domain, internal hostname, email address, phone number. These labels name the rules SEC-PRIVATE-KEY, SEC-TOKEN, SEC-URL-AUTH, SEC-ASSIGNMENT, HOST-SENSITIVE-DOMAIN, HOST-PRIVATE-TLD, PII-EMAIL, and PII-PHONE. Count places and distinct files over the label's new locations, and give the first location in a file, in the order the detector printed. Write `first in a commit message` only when every new location of the label is in a commit message. Show at most three label bullets, then the known bullet, then the overflow bullet. Omit a bullet with nothing to say.
 
-The next step gives the action for the most severe new label and points to the session for the rest. A secret is revoked and rotated before anything else. A hostname or domain moves out of tracked files into private configuration, and a history rewrite is decided after that. Personal data is removed or confirmed as meant to be public. Write `None.` only when no finding is open. The health line appears only when health is not COMPLETE, and shallow history is not a reason to show it.
+The next step gives the action for the most severe new label and points to the session for the rest. A secret is revoked and rotated before anything else. A hostname or domain moves out of tracked files into private configuration, and a history rewrite is decided after that. Personal data is removed or confirmed as meant to be public. Write `None.` only when no finding is open. The health line appears only when health is not COMPLETE.
 
 ## Final checks
 

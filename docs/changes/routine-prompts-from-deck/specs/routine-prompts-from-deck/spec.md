@@ -79,6 +79,15 @@ A routine MUST end with one plain-text notification of at most 12 lines. Its fir
 - **WHEN** a required repository is not readable
 - **THEN** the first line states that the routine failed and why in generic words, so the phone push alone shows the failure
 
+### Requirement: Run ends with the notification text
+
+The final message of a routine run MUST be the notification text and nothing else. A session summary MUST come in an earlier message.
+
+#### Scenario: Digest reads a private repository
+
+- **WHEN** the digest reads a private repository and sends its notification
+- **THEN** the final message of the run equals the notification text, and neither names the private repository
+
 ### Requirement: Routine files match the directory schema
 
 Every Markdown file under `routines/` other than the README MUST sit directly under `routines/` and MUST match `routines/.mdschema`: frontmatter with `type: routine`, one H1, and the section sequence the schema states. A routine file name MUST use only the characters `A-Za-z0-9._-`, because `mdschema` expands a glob character in a path argument. The `mdschema-routines` hook MUST check every such file before a commit, MUST reject a Markdown file in a subdirectory of `routines/`, and MUST reject a file name with another character.

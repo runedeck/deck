@@ -61,6 +61,7 @@ Report CONFIGURATION_FAILURE and stop when a required repository is not accessib
     - For a ceremony change, add: skeleton consumers update through `copier update`.
 4. For each pair in FORK_UPSTREAMS, compare the fork default branch with the upstream default branch. Report new upstream commits and releases in the window with a one-line summary.
 5. Record completed repositories and pairs against expected.
+6. Finish with the notification. The final message is the notification and nothing else.
 
 ## Status
 

@@ -67,6 +67,7 @@ Do not use a credential beyond the GitHub access the routine has.
 2. Check label consistency in each repository in REPOSITORIES: the spec waiver label name that `attestations.yaml` greps must exist in the repository label list, and the name must match across repositories. Record each mismatch.
 3. Check provenance freshness in the deck: for each file under `runes/` with a `.provenance/<name>.yaml` sidecar, compare the recorded subject sha256 with the file's current hash. Record expected and completed sidecar counts and each mismatch.
 4. Post one comment, dated in TIME_ZONE, on the standing issue: the drift table, the label findings, the provenance mismatches, and a one-line verdict. Keep the comment under 40 lines.
+5. Finish with the notification. The final message is the notification and nothing else.
 
 ## Status
 

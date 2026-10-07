@@ -18,8 +18,9 @@ Finding status is separate from scan health. Status is ALERT when a new
 occurrence of a secret or of a sensitive-domain host exists, REVIEW when the
 only new occurrences are personal data or private-TLD hosts, and
 NO_NEW_FINDINGS otherwise. Health reports what the walk covered and what it
-could not read, and is INCOMPLETE when an object was unreadable or an
-acknowledged commit is absent from the clone.
+could not read, and is INCOMPLETE when an object was unreadable, an
+acknowledged commit is absent from the clone, or the history of the ref
+stops at a shallow boundary.
 
 Run it as ``python3 -I - <args>`` from a directory that is not a checkout,
 so no tracked module shadows the standard library. Usage:
@@ -615,16 +616,25 @@ class Scan:
     def run(self) -> str:
         repository = self.repository
         commit = repository.run("rev-parse", "--verify", f"{self.ref}^{{commit}}").strip()
-        shallow = repository.run("rev-parse", "--is-shallow-repository").strip() == "true"
-        self.health["shallow"] = shallow
         commits = repository.run("rev-list", commit).split()
         self.health["commits"] = len(commits)
-        if shallow:
-            self.health["shallow_boundary"] = repository.run("rev-list", "--max-parents=0", commit).split()
+        # A root of the walk whose object names a parent is a shallow graft: the
+        # history of this ref stops there. A shallow side branch does not count.
+        roots = repository.run("rev-list", "--max-parents=0", commit).split()
+        boundary = [oid for oid in roots if self.names_parent(oid)]
+        self.health["shallow"] = bool(boundary)
+        self.health["shallow_boundary"] = boundary
         for oid in commits:
             self.scan_commit(oid)
         self.resolve_acknowledgements()
         return commit
+
+    def names_parent(self, oid: str) -> bool:
+        read = self.repository.read_object(oid)
+        if read is None or read[0] != "commit":
+            return False
+        header = read[1].decode("utf-8", "replace").split("\n\n", 1)[0]
+        return any(line.startswith("parent ") for line in header.splitlines())
 
     def resolve_acknowledgements(self):
         reachable: dict[str, set[str] | None] = {}
@@ -678,7 +688,12 @@ class Scan:
         new_total = sum(new_counts.values())
         status = "ALERT" if alert else "REVIEW" if new_total else "NO_NEW_FINDINGS"
         health = dict(self.health)
-        incomplete = health["unreadable_objects"] or health["missing_acknowledged_commits"] or health["malformed_known_entries"]
+        incomplete = (
+            health["unreadable_objects"]
+            or health["missing_acknowledged_commits"]
+            or health["malformed_known_entries"]
+            or health["shallow"]
+        )
         health["status"] = "INCOMPLETE" if incomplete else "COMPLETE"
         acknowledged_ids = {entry.finding for entry in self.known}
         return {

@@ -39,17 +39,31 @@ A finding id MUST be the rule code plus the first ten hexadecimal digits of the 
 
 ### Requirement: Finding status is separate from scan health
 
-The detector MUST report the finding status as `ALERT` when a new occurrence of a secret or of a sensitive-domain host exists, `REVIEW` when the only new occurrences are personal data or private-TLD hosts, and `NO_NEW_FINDINGS` otherwise. The detector MUST report health apart from status: commit and blob counts, the shallow boundary, binary and oversize blobs, unreadable objects, and acknowledged commits absent from the clone. A shallow clone MUST be a declared limit, and health MUST be `INCOMPLETE` only for an unreadable object, an absent acknowledged commit, or a malformed entry.
-
-#### Scenario: Clone is shallow
-
-- **WHEN** the repository is a depth-one clone
-- **THEN** the health reports `shallow` as true and the boundary commit, and the health status is `COMPLETE`
+The detector MUST report the finding status as `ALERT` when a new occurrence of a secret or of a sensitive-domain host exists, `REVIEW` when the only new occurrences are personal data or private-TLD hosts, and `NO_NEW_FINDINGS` otherwise. The detector MUST report health apart from status: commit and blob counts, the shallow boundary of the scanned ref, binary and oversize blobs, unreadable objects, and acknowledged commits absent from the clone. Health MUST be `INCOMPLETE` for an unreadable object, an absent acknowledged commit, or a malformed entry.
 
 #### Scenario: Sensitive domain appears in a known file
 
 - **WHEN** a hostname under a SENSITIVE_DOMAINS suffix appears in an object that no acknowledgement covers
 - **THEN** the status is `ALERT`, whether or not other findings in the same file are known
+
+### Requirement: Scan covers the whole history of the branch
+
+The Dotfiles Scanner MUST fetch with `--unshallow` when the clone is shallow, so the detector sees the whole history of the branch. Health MUST be `INCOMPLETE` when the history of the scanned ref stops at a shallow boundary. A shallow boundary on another branch MUST NOT change the health.
+
+#### Scenario: Clone is shallow
+
+- **WHEN** the repository is a depth-one clone
+- **THEN** the health reports `shallow` as true and the boundary commit, and the health status is `INCOMPLETE`
+
+#### Scenario: Startup fetch removes the boundary
+
+- **WHEN** the depth-one clone is fetched with `--unshallow` before the detector runs
+- **THEN** the health reports `shallow` as false, counts every commit of the branch, and the health status is `COMPLETE`
+
+#### Scenario: Another branch is shallow
+
+- **WHEN** the scanned ref has its whole history and a commit on another branch is a shallow graft
+- **THEN** the health reports `shallow` as false and an empty boundary, and the health status is `COMPLETE`
 
 ### Requirement: Acknowledgement binds to a commit
 
@@ -111,6 +125,11 @@ A scanner notification MUST NOT contain a value, a finding id, a hash, a commit,
 
 - **WHEN** the detector reports a new sensitive-domain finding and a new email finding
 - **THEN** the notification opens with `2 new exposures need action`, gives one bullet for each label with its places, files, and first location, and ends with one next step
+
+#### Scenario: Label appears in a commit message and in a file
+
+- **WHEN** a label's new locations are one commit message and two files
+- **THEN** its bullet counts the commit message among its places and gives the first file location
 
 ### Requirement: Online Mentions attributes by identity signal
 

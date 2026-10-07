@@ -13,6 +13,7 @@ type: tasks
 - [x] 1.5 `routines/README.md`: POLICY_REF in the stub contract, the streamed-code rule, the scanner inputs, GitHub Exposure retired
 - [x] 1.6 The `exposure-scan-tests` hook, the quality workflow step, and the CHANGELOG line
 - [x] 1.7 Record the decision in `adr.md`
+- [x] 1.8 Whole history: the `--unshallow` startup fetch, health INCOMPLETE at a shallow boundary of the scanned ref only, and the first file location in each notification bullet
 
 ## 2. Deployment
 
@@ -32,5 +33,5 @@ type: tasks
 
 - [ ] 4.1 The overlap between `runes/security/skills/ConfigureScanners/templates/claude/PublicRepositoryExposure.md` and `routines/DotfilesScanner.md`: retire the template or make it render the stub
 - [ ] 4.2 A pre-commit or CI rule in the dotfiles repository that runs the detector, so a hostname leak fails before the daily scan sees it
-- [ ] 4.3 Test `git fetch --unshallow` once by hand on the platform clone under a time budget before any routine relies on it
+- [x] 4.3 Test `git fetch --unshallow` once on the platform clone under a time budget before any routine relies on it: the Weekly Ceremony Audit run of 2026-10-05 deepened the deck clone from 50 to 378 commits in under ten seconds, and the clone was no longer shallow
 - [ ] 4.4 Pin the deck ref by digest or signed tag, and `rune routine` to render a stub from the file and the consumer values

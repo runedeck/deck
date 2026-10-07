@@ -12,6 +12,7 @@ type: tasks
 - [x] 1.4 The `README.md` layout row and the CHANGELOG line
 - [x] 1.5 Record the decision in `adr.md`
 - [x] 1.6 The notification format in all four routine files: a result-first headline, grouped bullets, one next step, health only when degraded
+- [x] 1.7 The Repository Digest and the Weekly Ceremony Audit end with the notification text as the final message
 
 ## 2. Deployment
 
