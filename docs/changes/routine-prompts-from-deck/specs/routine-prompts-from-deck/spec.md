@@ -81,12 +81,17 @@ A routine MUST end with one plain-text notification of at most 12 lines. Its fir
 
 ### Requirement: Run ends with the notification text
 
-The final message of a routine run MUST be the notification text and nothing else. A session summary MUST come in an earlier message.
+The final message of a routine run MUST be the notification text and nothing else. A session summary MUST come in an earlier message. The text the run sends with the notification tool MUST be the same string as the final message, and its first line MUST be one of the routine's listed headlines with the counts filled in.
 
 #### Scenario: Digest reads a private repository
 
 - **WHEN** the digest reads a private repository and sends its notification
 - **THEN** the final message of the run equals the notification text, and neither names the private repository
+
+#### Scenario: Run sends the notification
+
+- **WHEN** the run sends the notification and writes its final message
+- **THEN** the sent text and the final message are the same string, and the first line is a listed headline with the counts filled in
 
 ### Requirement: Routine files match the directory schema
 

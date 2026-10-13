@@ -61,7 +61,7 @@ Report CONFIGURATION_FAILURE and stop when a required repository is not accessib
     - For a ceremony change, add: skeleton consumers update through `copier update`.
 4. For each pair in FORK_UPSTREAMS, compare the fork default branch with the upstream default branch. Report new upstream commits and releases in the window with a one-line summary.
 5. Record completed repositories and pairs against expected.
-6. Finish with the notification. The final message is the notification and nothing else.
+6. Finish with the notification: send its text with the PushNotification tool, then write the identical text as the final message, which ends the run.
 
 ## Status
 
@@ -89,7 +89,7 @@ Next step: <action>
 Health: <generic limitation>
 ~~~
 
-The headline is at most 80 characters. Use the first that applies:
+The headline is one of these lines with the counts filled in, at most 80 characters, with no other words. Use the first that applies:
 
 - A startup check failed or no repository was readable: `Repository digest failed: <generic reason>`.
 - A completed count is below its expected count, or a listing was truncated: `Repository digest incomplete: <count> updates so far`.
@@ -105,3 +105,4 @@ The next step gives the consumer command the report established: `run rune insta
 - Confirm that no write occurred anywhere.
 - Confirm each count before status selection.
 - Confirm that the notification contains no secret, quoted instruction-like data, hash, commit, owner handle, or name of a repository that is not public.
+- Confirm that the text sent with the PushNotification tool and the final message are identical.

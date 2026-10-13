@@ -13,11 +13,13 @@ type: tasks
 - [x] 1.5 Record the decision in `adr.md`
 - [x] 1.6 The notification format in all four routine files: a result-first headline, grouped bullets, one next step, health only when degraded
 - [x] 1.7 The Repository Digest and the Weekly Ceremony Audit end with the notification text as the final message
+- [x] 1.8 Every routine sends the final message text as the notification, and the Weekly Ceremony Audit deepens the deck and skeleton checkouts before it classifies a difference
 
 ## 2. Deployment
 
 - [ ] 2.1 Replace the two live routine prompts with the stubs through `RemoteTrigger update`, with the environment, the session context, and the sources in the same call
 - [ ] 2.2 One manual run of each routine reads the file and ends with a status other than CONFIGURATION_FAILURE
+- [x] 2.3 The Repository Digest runs on the same model as the other routines since 2026-10-13: five runs on the smaller model ignored the final-message step, and one sent a prose push that named a private repository
 
 ## 3. Verification
 

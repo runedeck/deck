@@ -78,7 +78,7 @@ Destination controls, before each request: require HTTPS and a DNS host name, re
 5. Compute the canonical URL of each finding: scheme, lowercase host, path, and the query parameters that select the resource, without the fragment and without a tracking parameter such as `utm_*`, `fbclid`, `gclid`, or `ref`. The finding is known when its canonical URL is in KNOWN_FINDINGS and the page shows the same kind of content, and new otherwise. Record the publication date when the page states one, else `undated`.
 6. Stop the plan and report INCOMPLETE when 30 minutes elapse or a query fails. Blocked and rejected sources are limits, not INCOMPLETE.
 7. Write the session report as a message before the final message. Open with metadata: the date in TIME_ZONE, planned and completed queries, selected, inspected, excluded, blocked, rejected, and duplicate sources. Then one table with the columns canonical URL, new or known, classification, published date or undated, identity evidence, action. Redact a value always and a URL segment when it contains a sensitive value. Then Limits: the blocked hosts with their counts and the count of rejected sources, never the URL of a page the run did not attribute.
-8. Finish with the notification. The final message is the notification and nothing else.
+8. Finish with the notification: send its text with the PushNotification tool, then write the identical text as the final message, which ends the run.
 
 ## Status
 
@@ -104,7 +104,7 @@ Next step: <action>
 Health: <generic limitation>
 ~~~
 
-The headline is at most 80 characters. Use the first that applies:
+The headline is one of these lines with the counts filled in, at most 80 characters, with no other words. Use the first that applies:
 
 - A startup check failed or no search ran: `Online search failed: <generic reason>`.
 - Health is INCOMPLETE: `Online search incomplete: <count> pages need attention so far`.
@@ -122,3 +122,4 @@ The next step for a finding is to open the session and assess the flagged pages 
 - Confirm that every finding in the report has identity evidence, and that the ledger and the report hold no URL of a page the run did not attribute.
 - Confirm that the counts in the notification equal the ledger, and that the notification names no person, site, organization, repository, handle, or URL.
 - Confirm that no message, file, or tool call carries a complete secret or sensitive personal value.
+- Confirm that the text sent with the PushNotification tool and the final message are identical.

@@ -76,7 +76,7 @@ Pass every Git command `--no-replace-objects`. The detector is the only reader o
 4. For each finding with a new location, write one action: rotate and purge for a secret, remove from history and from the current tree for a host, remove or confirm public for personal data. For a known finding, repeat the open action in one short phrase.
 5. You may add review items for personal data the rules cannot see, such as a home address, birth data, or a government identifier, that a context line shows. Give each item the id `MODEL-<n>`, the location of that context line, and an action. Model items never change the detector status.
 6. Write the session report as a message before the final message. Open with metadata: REPOSITORY, BRANCH, the scanned commit, the runedeck/deck commit, `rules_version`, the date in TIME_ZONE, and the health counts: commits, blobs, scanned, binary, oversize, unreadable, shallow boundary, missing acknowledged commits, malformed known entries. Then one table with the columns id, new or known, rule, path, line, commit, action, one row for each location of a new finding and one row for each known finding. The detector redacts a path segment that matches a rule, so print the path as given. Then the model items, then `stale_known` as ids the detector no longer sees, then Limits.
-7. Finish with the notification. The final message is the notification and nothing else.
+7. Finish with the notification: send its text with the PushNotification tool, then write the identical text as the final message, which ends the run.
 
 ## Status
 
@@ -104,7 +104,7 @@ Next step: <action>
 Health: <generic limitation>
 ~~~
 
-The headline is at most 80 characters. Use the first that applies:
+The headline is one of these lines with the counts filled in, at most 80 characters, with no other words. Use the first that applies:
 
 - The detector did not run: `Dotfiles scan failed: <generic reason>`.
 - Health is INCOMPLETE: `Dotfiles scan incomplete: <new count> new findings so far`.
@@ -123,3 +123,4 @@ The next step gives the action for the most severe new label and points to the s
 - Confirm that the finding status, the health, and every count in the report equal the values in `scan.json`.
 - Confirm that no message, file, or tool call carries a complete secret or sensitive personal value, and that the notification carries no value, id, hash, commit, or owner handle.
 - Confirm that every model item has a location.
+- Confirm that the text sent with the PushNotification tool and the final message are identical.
