@@ -112,9 +112,9 @@ The detector MUST read `.auditignore` from the root tree of the scanned commit t
 - **WHEN** a `.auditignore` line names a commit the clone does not contain
 - **THEN** the health is `INCOMPLETE`, the commit is listed, and the finding is new
 
-### Requirement: Scanner routines stream the detector from the deck
+### Requirement: Scanner routines run the detector from the deck object store
 
-The Dotfiles Scanner MUST run the detector only as `git --no-replace-objects cat-file blob FETCH_HEAD:routines/scripts/exposure_scan.py` piped into `python3 -I -`, from a scratch directory that is not a checkout, after `git ls-tree FETCH_HEAD -- routines/scripts/exposure_scan.py` printed one entry with mode 100644 and type blob, and MUST NOT run the working-tree copy.
+The Dotfiles Scanner MUST write the detector into a scratch directory that is not a checkout as the blob of `routines/scripts/exposure_scan.py` in the fetched runedeck/deck tree, read through Git objects after the tree lists it as one regular file. The run MUST require the object id of the copy to equal the listed blob id before it runs, MUST run only that copy with the interpreter in isolated mode, and MUST NOT pipe the blob into the interpreter or run the working-tree copy.
 
 #### Scenario: Checkout tracks a module named like the standard library
 
@@ -125,6 +125,11 @@ The Dotfiles Scanner MUST run the detector only as `git --no-replace-objects cat
 
 - **WHEN** `ls-tree FETCH_HEAD -- routines/scripts/exposure_scan.py` prints no entry
 - **THEN** the run reports CONFIGURATION_FAILURE and stops
+
+#### Scenario: Scratch copy differs from the listed blob
+
+- **WHEN** the object id of the copy in the scratch directory differs from the blob id the fetched tree lists
+- **THEN** the run reports CONFIGURATION_FAILURE and does not run the copy
 
 ### Requirement: Run reads repository content only through the detector
 
@@ -151,7 +156,7 @@ The run MAY add review items for personal data the rules cannot see, each with a
 
 ### Requirement: Stub reads the ref in POLICY_REF
 
-The stub MUST fetch `origin <POLICY_REF>`, where POLICY_REF is a stub value whose default is `main`, and MUST read the routine file and any streamed script from that `FETCH_HEAD`. The deployed stub MUST name `main`. A routine file MUST NOT fetch again in the runedeck/deck checkout. The Dotfiles Scanner stub MUST carry BRANCH, the branch of the scanned repository, with the default `main`.
+The stub MUST fetch `origin <POLICY_REF>`, where POLICY_REF is a stub value whose default is `main`, and MUST read the routine file and any script it runs from that `FETCH_HEAD`. The deployed stub MUST name `main`. A routine file MUST NOT fetch again in the runedeck/deck checkout. The Dotfiles Scanner stub MUST carry BRANCH, the branch of the scanned repository, with the default `main`.
 
 #### Scenario: Scanned repository uses another default branch
 

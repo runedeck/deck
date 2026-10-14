@@ -6,7 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
-- Add the Dotfiles Scanner and Online Mentions routines with a deterministic detector the run streams from the deck, and retire GitHub Exposure (scanner-routines-from-deck).
+- Add the Dotfiles Scanner and Online Mentions routines with a deterministic detector the run takes from the deck object store, and retire GitHub Exposure (scanner-routines-from-deck).
 - Add `routines/`: the Repository Digest and Weekly Ceremony Audit prompts as deck files a Claude Code routine reads at `main`, with the instance values in the provider stub (routine-prompts-from-deck).
 - Add the PreferTrash rule in core: delete with `trash`, the FreeDesktop-layout script every repository and the dotfiles ship, never with `rm`; recovery is a move back from `~/.local/share/Trash`.
 - Add the DetachedJob skill in development: start a long command in its own session so no tool timeout, terminal close, or session exit stops it, then wait for its exit code and read its log.
@@ -64,7 +64,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
-- Change the Dotfiles Scanner to read acknowledgements from `.auditignore` at the root of the scanned branch, one `<id> <commit>` line with an optional expiry date (scanner-routines-from-deck).
+- Change the Dotfiles Scanner to read acknowledgements from `.auditignore` at the scanned commit and to run the detector from a checked copy in the scratch directory (scanner-routines-from-deck).
 - Routine notifications open with the result and whether to act, group details in bullets, end with one next step, and show health only when degraded (routine-prompts-from-deck).
 - Fix the guarded push: the root checkout is refused by workspace identity (the old template test passed a dirty root), and a head that does not descend from the remote bookmark is refused.
 - RemoteWrites: a remote pull request or branch write is offered, not refused: the session lists the commands and asks "Do you want me to do this on your behalf?" A yes covers them once.
