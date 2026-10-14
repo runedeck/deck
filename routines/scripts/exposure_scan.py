@@ -10,9 +10,14 @@ a finding id is the rule code plus the first ten hex digits of the SHA-256
 of the value, a path segment that matches a rule is redacted, and the
 context of a location is the line with every match replaced.
 
-A finding is acknowledged per commit: a KNOWN_FINDINGS entry is ``<id>
-<commit>`` and an occurrence is known only when its object is reachable
-from that commit. The same value in any other object is a new occurrence.
+A finding is acknowledged per commit. The detector reads ``.auditignore``
+from the root tree of the scanned commit, through Git objects like every
+other blob. A line is ``<id> <commit> [exp:YYYY-MM-DD]`` and a ``#`` starts
+a comment. An occurrence is known only when its object is reachable from
+that commit, and the same value in any other object is a new occurrence. A
+line whose date has passed no longer acknowledges and is listed under
+``expired_known``. An absent file is an empty list. A ``.auditignore`` that
+is not a regular file is a configuration failure.
 
 Finding status is separate from scan health. Status is ALERT when a new
 occurrence of a secret or of a sensitive-domain host exists, REVIEW when the
@@ -28,11 +33,14 @@ so no tracked module shadows the standard library. Usage:
     python3 -I exposure_scan.py --repo <checkout> [--ref FETCH_HEAD]
         [--sensitive-domains-file F | --sensitive-domains a.example,b.example]
         [--known-findings-file F | --known-findings "ID COMMIT,ID COMMIT"]
+        [--acknowledgement-path .auditignore]
 
 ``SENSITIVE_DOMAINS_FILE``, ``KNOWN_FINDINGS_FILE``, ``SENSITIVE_DOMAINS``,
 and ``KNOWN_FINDINGS`` are read from the environment when the flags are
-absent. A file has one entry per line. Exit code 0 means the scan ran, 2
-means it could not (health CONFIGURATION_FAILURE).
+absent. A file has one entry per line, and its entries join the lines of the
+in-repository file. An empty ``--acknowledgement-path`` skips that file.
+Exit code 0 means the scan ran, 2 means it could not (health
+CONFIGURATION_FAILURE).
 """
 
 from __future__ import annotations
@@ -45,9 +53,11 @@ import re
 import subprocess
 import sys
 from dataclasses import dataclass, field
+from datetime import UTC, date, datetime
 
 RULES_VERSION = "2"
-SCHEMA = 2
+SCHEMA = 3
+ACKNOWLEDGEMENT_PATH = ".auditignore"
 MAX_BLOB_BYTES = 4 * 1024 * 1024
 BINARY_PROBE_BYTES = 8192
 MAX_LOCATIONS = 100
@@ -473,26 +483,60 @@ def is_binary(body: bytes) -> bool:
 class Acknowledgement:
     finding: str
     commit: str
+    expires: date | None = None
 
 
-def parse_known(entries: list[str]) -> tuple[list[Acknowledgement], list[str]]:
-    """Parse `<id> <commit>` or `<id>@<commit>` entries; return (valid, malformed)."""
-    valid, malformed = [], []
+@dataclass
+class Acknowledgements:
+    valid: list[Acknowledgement] = field(default_factory=list)
+    malformed: list[str] = field(default_factory=list)
+    expired: list[Acknowledgement] = field(default_factory=list)
+
+    def extend(self, other: Acknowledgements):
+        self.valid.extend(other.valid)
+        self.malformed.extend(other.malformed)
+        self.expired.extend(other.expired)
+
+
+def parse_known(entries: list[str], today: date | None = None) -> Acknowledgements:
+    """Parse `<id> <commit> [exp:YYYY-MM-DD]` lines; `#` starts a comment.
+
+    `<id>@<commit>` is accepted for the command line. A line whose date is
+    before today is expired and acknowledges nothing.
+    """
+    today = today or datetime.now(UTC).date()
+    parsed = Acknowledgements()
     for entry in entries:
-        parts = entry.replace("@", " ").split()
+        line = entry.split("#", 1)[0].strip()
+        if not line:
+            continue
+        parts = line.replace("@", " ", 1).split()
+        expires = None
+        if len(parts) == 3 and parts[2].startswith("exp:"):
+            try:
+                expires = date.fromisoformat(parts[2][4:])
+            except ValueError:
+                parsed.malformed.append(line)
+                continue
+            parts = parts[:2]
         if len(parts) == 2 and re.fullmatch(r"[A-Z-]+-[0-9a-f]{10}", parts[0]) and re.fullmatch(r"[0-9a-fA-F]{7,40}", parts[1]):
-            valid.append(Acknowledgement(parts[0], parts[1].lower()))
+            acknowledgement = Acknowledgement(parts[0], parts[1].lower(), expires)
+            if expires is not None and expires < today:
+                parsed.expired.append(acknowledgement)
+            else:
+                parsed.valid.append(acknowledgement)
         else:
-            malformed.append(entry)
-    return valid, malformed
+            parsed.malformed.append(line)
+    return parsed
 
 
 class Scan:
-    def __init__(self, repository: Repository, ref: str, sensitive_domains: list[str], known: list[Acknowledgement], malformed: list[str]):
+    def __init__(self, repository: Repository, ref: str, sensitive_domains: list[str], known: Acknowledgements, acknowledgement_path: str = ACKNOWLEDGEMENT_PATH):
         self.repository = repository
         self.ref = ref
         self.sensitive_domains = sorted({domain.strip().lower().lstrip(".") for domain in sensitive_domains if domain.strip()})
-        self.known = known
+        self.acknowledgements = known
+        self.acknowledgement_path = acknowledgement_path
         self.findings: dict[str, Finding] = {}
         self.blob_matches: dict[str, list[Match] | None] = {}
         self.blob_lines: dict[str, list[str]] = {}
@@ -514,7 +558,8 @@ class Scan:
             "shallow_boundary": [],
             "locations_capped": 0,
             "missing_acknowledged_commits": [],
-            "malformed_known_entries": malformed,
+            "malformed_known_entries": known.malformed,
+            "acknowledgement_file": None,
         }
 
     # -- findings -----------------------------------------------------------
@@ -624,10 +669,28 @@ class Scan:
         boundary = [oid for oid in roots if self.names_parent(oid)]
         self.health["shallow"] = bool(boundary)
         self.health["shallow_boundary"] = boundary
+        self.load_acknowledgement_file(commit)
         for oid in commits:
             self.scan_commit(oid)
         self.resolve_acknowledgements()
         return commit
+
+    def load_acknowledgement_file(self, commit: str):
+        """Read the acknowledgement file from the root tree of the scanned commit."""
+        path = self.acknowledgement_path
+        if not path:
+            return
+        entry = self.repository.run("ls-tree", commit, "--", path).strip()
+        if not entry:
+            return
+        mode, kind, oid = entry.split("\t", 1)[0].split()
+        if mode not in ("100644", "100755") or kind != "blob":
+            raise GitError(f"{path} at the scanned commit is not a regular file (mode {mode}, type {kind})")
+        read = self.repository.read_object(oid)
+        if read is None or read[0] != "blob":
+            raise GitError(f"{path} at the scanned commit could not be read")
+        self.health["acknowledgement_file"] = path
+        self.acknowledgements.extend(parse_known(read[1].decode("utf-8", "replace").splitlines()))
 
     def names_parent(self, oid: str) -> bool:
         read = self.repository.read_object(oid)
@@ -638,7 +701,7 @@ class Scan:
 
     def resolve_acknowledgements(self):
         reachable: dict[str, set[str] | None] = {}
-        for entry in self.known:
+        for entry in self.acknowledgements.valid:
             if entry.commit not in reachable:
                 try:
                     full = self.repository.run("rev-parse", "--verify", f"{entry.commit}^{{commit}}").strip()
@@ -695,7 +758,7 @@ class Scan:
             or health["shallow"]
         )
         health["status"] = "INCOMPLETE" if incomplete else "COMPLETE"
-        acknowledged_ids = {entry.finding for entry in self.known}
+        acknowledged_ids = {entry.finding for entry in self.acknowledgements.valid}
         return {
             "schema": SCHEMA,
             "rules_version": RULES_VERSION,
@@ -705,6 +768,7 @@ class Scan:
             "health": health,
             "counts": {"new": new_total, "known": known_count, "new_by_category": new_counts},
             "stale_known": sorted(acknowledged_ids - set(self.findings)),
+            "expired_known": sorted({entry.finding for entry in self.acknowledgements.expired} - acknowledged_ids),
             "findings": findings,
         }
 
@@ -730,6 +794,11 @@ def parse_arguments(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--known-findings-file", default=os.environ.get("KNOWN_FINDINGS_FILE"))
     parser.add_argument("--sensitive-domains", default=os.environ.get("SENSITIVE_DOMAINS", ""))
     parser.add_argument("--known-findings", default=os.environ.get("KNOWN_FINDINGS", ""))
+    parser.add_argument(
+        "--acknowledgement-path",
+        default=ACKNOWLEDGEMENT_PATH,
+        help=f"path of the acknowledgement file in the scanned tree (default {ACKNOWLEDGEMENT_PATH}; empty skips it)",
+    )
     return parser.parse_args(argv)
 
 
@@ -750,8 +819,8 @@ def main(argv: list[str] | None = None) -> int:
         # Domain lists do not support "domain,domain" spelling in the stub,
         # but the inline form accepts commas for the command line.
         domains = [item for value in read_list(arguments.sensitive_domains_file, arguments.sensitive_domains) for item in value.split()]
-        known, malformed = parse_known(read_list(arguments.known_findings_file, arguments.known_findings))
-        scan = Scan(repository, arguments.ref, domains, known, malformed)
+        known = parse_known(read_list(arguments.known_findings_file, arguments.known_findings))
+        scan = Scan(repository, arguments.ref, domains, known, arguments.acknowledgement_path)
         commit = scan.run()
         report = scan.report(commit)
     except Exception as error:  # noqa: BLE001 - any failure is a configuration failure, never a traceback

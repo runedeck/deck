@@ -67,12 +67,31 @@ The Dotfiles Scanner MUST fetch with `--unshallow` when the clone is shallow, so
 
 ### Requirement: Acknowledgement binds to a commit
 
-A KNOWN_FINDINGS entry MUST be `<finding id> <commit>`, and an occurrence MUST be known only when its object is reachable from that commit. An occurrence in any other object MUST be new and MUST raise the status by its rule. A known occurrence MUST NOT raise the status.
+An acknowledgement MUST be a line `<finding id> <commit>` with an optional `exp:YYYY-MM-DD`, and a `#` MUST start a comment. An occurrence MUST be known only when its object is reachable from that commit and the line is within its date. Any other occurrence MUST be new and MUST raise the status by its rule. A known occurrence MUST NOT raise the status.
 
-#### Scenario: Every finding is acknowledged at the scanned commit
+#### Scenario: Every finding is acknowledged in the scanned tree
 
-- **WHEN** KNOWN_FINDINGS lists every finding id with the scanned commit
+- **WHEN** `.auditignore` at the scanned commit lists every finding id with the commit of the earlier report
 - **THEN** the status is `NO_NEW_FINDINGS`, the known count equals the finding count, and the health is unchanged
+
+#### Scenario: Acknowledgement passes its date
+
+- **WHEN** a line carries an `exp:` date before the day of the run
+- **THEN** the finding is new, its id is listed under `expired_known`, and the health is unchanged
+
+### Requirement: Acknowledgement file is read from the scanned tree
+
+The detector MUST read `.auditignore` from the root tree of the scanned commit through Git objects, MUST treat an absent file as an empty list, and MUST report CONFIGURATION_FAILURE when the path is not a regular file.
+
+#### Scenario: Acknowledgement file is absent
+
+- **WHEN** the scanned commit has no `.auditignore`
+- **THEN** the detector runs with no acknowledgement and reports the file as absent in the health
+
+#### Scenario: Acknowledgement file is a symbolic link
+
+- **WHEN** `.auditignore` at the scanned commit is a symbolic link
+- **THEN** the detector exits 2 with health `CONFIGURATION_FAILURE` and names the path in the error
 
 #### Scenario: Acknowledged value appears in a new file
 
@@ -81,12 +100,12 @@ A KNOWN_FINDINGS entry MUST be `<finding id> <commit>`, and an occurrence MUST b
 
 #### Scenario: Acknowledged commit is absent from the clone
 
-- **WHEN** a KNOWN_FINDINGS entry names a commit the clone does not contain
+- **WHEN** a `.auditignore` line names a commit the clone does not contain
 - **THEN** the health is `INCOMPLETE`, the commit is listed, and the finding is new
 
 ### Requirement: Scanner routines stream the detector from the deck
 
-The Dotfiles Scanner MUST run the detector only as `git --no-replace-objects cat-file blob FETCH_HEAD:routines/scripts/exposure_scan.py` piped into `python3 -I -`, from a scratch directory that is not a checkout, after `git ls-tree FETCH_HEAD -- routines/scripts/exposure_scan.py` printed one entry with mode 100644 and type blob, and MUST NOT run the working-tree copy. The run MUST pass SENSITIVE_DOMAINS and KNOWN_FINDINGS as files, never as command arguments, and MUST NOT read repository content by any other means than the detector output. The run MAY add review items for personal data the rules cannot see, each with a path, a line, a commit, and a blob id, and such an item MUST NOT change the detector status.
+The Dotfiles Scanner MUST run the detector only as `git --no-replace-objects cat-file blob FETCH_HEAD:routines/scripts/exposure_scan.py` piped into `python3 -I -`, from a scratch directory that is not a checkout, after `git ls-tree FETCH_HEAD -- routines/scripts/exposure_scan.py` printed one entry with mode 100644 and type blob, and MUST NOT run the working-tree copy. The run MUST pass SENSITIVE_DOMAINS as a file, never as a command argument, and MUST NOT read repository content by any other means than the detector output. The run MAY add review items for personal data the rules cannot see, each with a path, a line, a commit, and a blob id, and such an item MUST NOT change the detector status.
 
 #### Scenario: Checkout tracks a module named like the standard library
 

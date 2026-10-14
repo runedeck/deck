@@ -329,6 +329,63 @@ class ExposureScanTests(unittest.TestCase):
         _, report, _ = run_detector(self.fixture.repo, environment={"KNOWN_FINDINGS_FILE": str(path)})
         self.assertEqual(report["status"], "NO_NEW_FINDINGS")
 
+    def acknowledged_clone(self, name, lines):
+        clone = self.fixture.clone(name)
+        (clone / ".auditignore").write_text("\n".join(lines) + "\n", encoding="utf-8")
+        self.fixture.git("add", ".auditignore", cwd=clone)
+        self.fixture.git("commit", "-q", "-m", "Acknowledge the findings", cwd=clone)
+        return clone
+
+    def test_absent_auditignore_is_an_empty_list(self):
+        self.assertIsNone(self.report["health"]["acknowledgement_file"])
+        self.assertEqual(self.report["expired_known"], [])
+
+    def test_auditignore_at_the_scanned_commit_acknowledges(self):
+        lines = ["# acknowledged after the first report", "", *(line + "  # still open" for line in self.acknowledge(self.third))]
+        clone = self.acknowledged_clone("acknowledged", lines)
+        _, report, _ = run_detector(clone)
+        self.assertEqual(report["status"], "NO_NEW_FINDINGS")
+        self.assertEqual(report["health"]["status"], "COMPLETE")
+        self.assertEqual(report["health"]["acknowledgement_file"], ".auditignore")
+        self.assertEqual(report["health"]["commits"], 4)
+        self.assertEqual(report["health"]["malformed_known_entries"], [])
+        self.assertEqual(report["counts"]["known"], len(self.report["findings"]))
+
+    def test_expired_acknowledgement_is_new_again(self):
+        token_id = self.expected_id("SEC-TOKEN", FAKE_TOKEN)
+        lines = [
+            f"{token_id} {self.third} exp:2000-01-01",
+            *(line + " exp:2999-12-31" for line in self.acknowledge(self.third) if not line.startswith(token_id)),
+        ]
+        clone = self.acknowledged_clone("expired", lines)
+        _, report, _ = run_detector(clone)
+        self.assertEqual(report["status"], "ALERT")
+        self.assertEqual(report["counts"]["new"], 1)
+        self.assertEqual(report["expired_known"], [token_id])
+        self.assertEqual(report["health"]["status"], "COMPLETE")
+
+    def test_malformed_expiry_is_a_malformed_entry(self):
+        entry = f"{self.expected_id('SEC-TOKEN', FAKE_TOKEN)} {self.third} exp:soon"
+        _, report, _ = run_detector(self.fixture.repo, "--known-findings", entry)
+        self.assertEqual(report["health"]["malformed_known_entries"], [entry])
+        self.assertEqual(report["health"]["status"], "INCOMPLETE")
+
+    def test_auditignore_that_is_not_a_file_is_a_configuration_failure(self):
+        clone = self.fixture.clone("linked")
+        os.symlink("hosts.txt", clone / ".auditignore")
+        self.fixture.git("add", ".auditignore", cwd=clone)
+        self.fixture.git("commit", "-q", "-m", "Link the acknowledgement file", cwd=clone)
+        code, report, _ = run_detector(clone)
+        self.assertEqual(code, 2)
+        self.assertEqual(report["health"]["status"], "CONFIGURATION_FAILURE")
+        self.assertIn(".auditignore", report["health"]["error"])
+
+    def test_auditignore_is_skipped_on_request(self):
+        clone = self.acknowledged_clone("skipped", self.acknowledge(self.third))
+        _, report, _ = run_detector(clone, "--acknowledgement-path", "")
+        self.assertEqual(report["status"], "ALERT")
+        self.assertIsNone(report["health"]["acknowledgement_file"])
+
     def test_sensitive_domain_is_an_alert(self):
         path = self.fixture.directory / "domains.txt"
         path.write_text(SENSITIVE_DOMAIN + "\n", encoding="utf-8")

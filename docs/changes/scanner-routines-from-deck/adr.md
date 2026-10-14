@@ -48,7 +48,7 @@ Three scanner routines ran daily on the provider with full prompts that asked a 
 Option 3, with option 4 deferred.
 
 - A scanner routine MUST take every finding, id, count, finding status, and scan health from `routines/scripts/exposure_scan.py`, streamed from the deck `FETCH_HEAD` after an `ls-tree` mode check, and MUST NOT change them.
-- A finding id MUST be the rule code plus ten hex digits of the SHA-256 of the value. The value MUST NOT leave the detector: a matching path segment and the context line are redacted in the detector. KNOWN_FINDINGS in the private stub MUST be `<id> <commit>` pairs: an occurrence is known only when its object is reachable from the acknowledged commit, and the same value in any other object is new. Known means acknowledged, not fixed.
+- A finding id MUST be the rule code plus ten hex digits of the SHA-256 of the value. The value MUST NOT leave the detector: a matching path segment and the context line are redacted in the detector. An acknowledgement MUST be an `<id> <commit>` line in `.auditignore` at the root of the scanned branch, with an optional expiry date: an occurrence is known only when its object is reachable from the acknowledged commit, and the same value in any other object is new. Known means acknowledged, not fixed.
 - The run MUST stream the detector into `python3 -I -` from a directory outside every checkout, so a tracked module cannot shadow the standard library, and MUST NOT read repository content by another means.
 - Finding status and scan health MUST be separate values. The Dotfiles Scanner MUST fetch the whole history of the branch, and a scanned history that stops at a shallow boundary MUST make health INCOMPLETE.
 - The stub MUST fetch the ref in POLICY_REF, default `main`, so the owner can test a branch before merge.
@@ -63,6 +63,6 @@ Option 3, with option 4 deferred.
 - [+] The owner gets a path, a line, a commit, and a blob id for each finding in the session, and a notification whose first line says whether to act.
 - [-] Each run downloads the whole history of the scanned branch, so a repository with a long history makes the run slower.
 - [-] The rules are regular expressions with placeholder filters. They miss a secret with no known format and flag some fixtures, and the model's review items are the only cover for personal data the rules cannot see.
-- [-] A finding id is a plain digest prefix. An attacker with the private stub and a candidate value can confirm the value, so the stub stays private and the ids never enter the deck.
+- [-] A finding id is a plain digest prefix, and `.auditignore` publishes it with the repository. An attacker with a candidate value can confirm it against the file, which names only values the history of that repository already holds. The ids never enter the deck, and the stub stays private for SENSITIVE_DOMAINS.
 - [-] The stub still trusts `main` at run time, and an attached source adds GitHub write tools that the prompt alone forbids. Pinning and a runner that removes those tools are deferred.
 - [-] Two conventions coexist until the ConfigureScanners overlap is resolved: the deck routine file and the older template under `runes/security/`.

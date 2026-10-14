@@ -14,12 +14,13 @@ type: tasks
 - [x] 1.6 The `exposure-scan-tests` hook, the quality workflow step, and the CHANGELOG line
 - [x] 1.7 Record the decision in `adr.md`
 - [x] 1.8 Whole history: the `--unshallow` startup fetch, health INCOMPLETE at a shallow boundary of the scanned ref only, and the first file location in each notification bullet
+- [x] 1.9 `.auditignore` at the root of the scanned branch replaces the KNOWN_FINDINGS stub value: the detector reads it from the scanned commit, a line takes an optional `exp:` date and a comment, and the report lists `expired_known` and the lines to commit for the new findings
 
 ## 2. Deployment
 
 - [ ] 2.1 Replace the two live scanner prompts with the stubs through `RemoteTrigger update`, with the environment, the session context, the sources, and the stub values in the same call
 - [ ] 2.2 Disable the live GitHub Exposure routine
-- [ ] 2.3 One manual run of each routine ends with a health other than CONFIGURATION_FAILURE, and the owner copies the first report's ids into KNOWN_FINDINGS
+- [ ] 2.3 One manual run of each routine ends with a health other than CONFIGURATION_FAILURE, and the owner commits the first report's lines to `.auditignore`
 
 ## 3. Verification
 

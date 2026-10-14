@@ -12,7 +12,7 @@ The stub in the provider stays under 20 lines before its list values. It names t
 
 ## Value forms
 
-A value name is upper case, as in the BuildTask placeholders, and the file names it in prose. A list value has one bullet for each item and `- None.` for an empty optional list. A repository is `owner/name`. A fork pair is `fork <- upstream`. A time zone is one IANA name. A ref is a branch name. A domain suffix is a bare domain such as `corp.example`. An acknowledgement is `<RULE>-<10 hex> <commit>`. An exclusion is `host: reason`.
+A value name is upper case, as in the BuildTask placeholders, and the file names it in prose. A list value has one bullet for each item and `- None.` for an empty optional list. A repository is `owner/name`. A fork pair is `fork <- upstream`. A time zone is one IANA name. A ref is a branch name. A domain suffix is a bare domain such as `corp.example`. An acknowledgement is `<RULE>-<10 hex> <commit>`, with an optional `exp:YYYY-MM-DD`. An exclusion is `host: reason`.
 
 ## Trust
 
@@ -25,11 +25,13 @@ A routine that runs code streams it from the same `FETCH_HEAD`: `git cat-file bl
 The Dotfiles Scanner and Online Mentions files take instance values that never enter the deck: the values live in the stub, and the private binding in the consumer carries them.
 
 - SENSITIVE_DOMAINS: domain suffixes whose every hostname is an ALERT, such as an employer's internal domain. The deck carries no instance value, and a test fixture uses `corp.example`.
-- KNOWN_FINDINGS: for the Dotfiles Scanner, one `<finding id> <commit>` for each line, the id from an earlier report and the scanned commit of that report. For Online Mentions, the canonical URLs from earlier reports. Known means acknowledged by the owner, not fixed: a known secret keeps its rotation action, and a known host keeps its removal action. The owner copies ids from the session report into the stub between runs. A finding id is `<RULE>-<first 10 hex of SHA-256 of the matched value>`, so the stub contains no value. An occurrence is known only when its object is reachable from the acknowledged commit. The same value in a new file, in an edited file, or in a later commit message is a new occurrence and raises the status again, and a replacement secret in a known file is a new id.
+- KNOWN_FINDINGS: for Online Mentions, the canonical URLs from earlier reports. Known means acknowledged by the owner, not resolved.
 - BRANCH: the branch of the scanned repository, `main` by default.
 - IDENTITY_NAMES, PUBLIC_HANDLES, OFFICIAL_URLS, QUERY_ANCHORS: the approved identity signals that attribute a page to the owner. A name alone attributes nothing.
 - APPROVED_FACTS: facts the owner publishes. Their republication is not a finding.
 - EXCLUSIONS: hosts that always block an unauthenticated request, with a reason, reviewed by the owner. An excluded source is not a failure, and the run never adds one.
+
+The Dotfiles Scanner takes its acknowledgements from `.auditignore` at the root of the scanned branch. The detector reads the file from the scanned commit through Git objects, like every other blob. A line is `<finding id> <commit>`, the id from an earlier report and the scanned commit of that report, with an optional `exp:YYYY-MM-DD` after which the line acknowledges nothing, and a `#` starts a comment. Known means acknowledged by the owner: a known secret keeps its rotation action, and a known host keeps its removal action. The session report ends with the lines for the new findings, and the owner commits them to acknowledge. A finding id is `<RULE>-<first 10 hex of SHA-256 of the matched value>`, so the file holds no value and can sit in a public repository. An occurrence is known only when its object is reachable from the acknowledged commit. The same value in a new file, in an edited file, or in a later commit message is a new occurrence and raises the status again, and a replacement secret in a known file is a new id. An absent file is an empty list, and a `.auditignore` that is not a regular file stops the run with CONFIGURATION_FAILURE.
 
 ## Shape
 
