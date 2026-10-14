@@ -44,23 +44,26 @@ The pass MUST obtain effective requirements from repository policy, applicable b
 It MUST compare each requirement with evidence for the current head and the policy's required review scope.
 Absent required evidence MUST remain unsatisfied.
 An unreadable requirement source MUST produce an unknown state with its cause.
-The pass MUST distinguish substantive review, skipped review, provider failure, and an approved override.
-An optional review MUST remain optional unless the user or repository makes it required.
 
 #### Scenario: A check listing omits a required check
 
 - **WHEN** policy requires a check that does not appear in the check listing
 - **THEN** the pass identifies that missing check and reports the PR as not merge-ready
 
-#### Scenario: An optional provider reports a skipped review
-
-- **WHEN** an optional provider reports success without performing a review
-- **THEN** the pass records the skip without treating it as approval or inventing a mandatory review requirement
-
 #### Scenario: The head changes during readiness assessment
 
 - **WHEN** a final remote read differs from the assessed head
 - **THEN** the pass discards the stale readiness result and reconciles ownership before further work
+
+### Requirement: Review evidence is classified
+
+The pass MUST distinguish substantive review, skipped review, provider failure, and an approved override.
+An optional review MUST remain optional unless the user or repository makes it required.
+
+#### Scenario: An optional provider reports a skipped review
+
+- **WHEN** an optional provider reports success without performing a review
+- **THEN** the pass records the skip without treating it as approval or inventing a mandatory review requirement
 
 ### Requirement: Main movement preserves conflict-free heads
 

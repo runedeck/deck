@@ -44,7 +44,6 @@ The workflow MUST assess relationships as part of each note's placement, creatio
 It MUST propose links supported by the note's subject, work context, membership, cited sources, or actual dependencies.
 It MUST reuse existing topic, project, resource, collection, and item identities where they fit.
 It MUST NOT create links solely from shared folder placement or a goal of increasing graph density.
-It MUST use existing property meanings instead of introducing a mandatory hierarchy field.
 
 #### Scenario: A miniature guide uses an existing paint
 
@@ -57,6 +56,16 @@ It MUST use existing property meanings instead of introducing a mandatory hierar
 - **WHEN** the content establishes that a note belongs to an existing topic while its home is selected
 - **THEN** the same organization plan includes the topic relationship and the physical destination
 - **AND** graph integration is not deferred to a separate indiscriminate linking pass
+
+### Requirement: Existing property meanings express hierarchy
+
+The workflow MUST use existing property meanings instead of introducing a mandatory hierarchy field.
+
+#### Scenario: Placement implies a parent
+
+- **WHEN** a note's placement implies a parent topic or project
+- **THEN** the plan expresses that relationship through an existing property meaning
+- **AND** no mandatory hierarchy field is added to the vault's conventions
 
 ### Requirement: Verify note identity and resolved destinations
 
@@ -104,8 +113,7 @@ It MUST NOT retag records or add unrelated links merely to force them into a vie
 An organization proposal MUST identify affected notes, destinations, role changes, relationship changes, and expected view membership.
 When applied with authorization, it MUST preserve content, provenance, source assets, and dated work logs.
 It MUST preserve existing references through supported link updates or unambiguous aliases where appropriate.
-It MUST follow the target vault's review and logging standards and retain enough scoped evidence to reverse its own changes.
-Reversal MUST preserve intervening user edits.
+It MUST follow the target vault's review and logging standards.
 
 #### Scenario: A mixed hub becomes a project and a resource
 
@@ -120,6 +128,17 @@ Reversal MUST preserve intervening user edits.
 - **THEN** preflight records the expected parent and sibling paths and checks the plugin's current behavior
 - **AND** validation compares those paths immediately after the operation, regardless of the CLI exit status
 - **AND** any unplanned parent or sibling move stops dependent operations until the paths are reconciled without automatic global settings changes
+
+### Requirement: Applied changes stay reversible
+
+An applied organization change MUST retain enough scoped evidence to reverse its own changes.
+Reversal MUST preserve intervening user edits.
+
+#### Scenario: Owner reverses a reorganization after later edits
+
+- **WHEN** the owner reverses an applied reorganization after editing some of the moved notes
+- **THEN** the reversal uses the retained evidence to restore the earlier homes and links
+- **AND** the later edits to those notes are preserved
 
 ### Requirement: Clean metadata without losing meaning or view dependencies
 

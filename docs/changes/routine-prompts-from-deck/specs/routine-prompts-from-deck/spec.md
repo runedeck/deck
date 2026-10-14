@@ -20,7 +20,16 @@ A routine prompt in the provider MUST be a stub that names one file under `routi
 
 ### Requirement: Stub reads the file from the fetched main
 
-The stub MUST fetch `origin <POLICY_REF>`, a stub value with the default `main`, and require `git ls-tree FETCH_HEAD -- routines/<File>.md` to print exactly one entry with mode 100644 and type blob. The stub MUST read the file only as the output of `git cat-file blob FETCH_HEAD:routines/<File>.md` and MUST NOT point the run at the working-tree file. Every bootstrap Git command MUST run with `--no-replace-objects`, so a replacement ref cannot swap the blob. The stub MUST report CONFIGURATION_FAILURE and stop when a command fails, the path is absent, or the mode or type differs. The check is in the stub, because a check inside the file could be edited away.
+The stub MUST fetch `origin <POLICY_REF>`, a stub value with the default `main`, and require `git ls-tree FETCH_HEAD -- routines/<File>.md` to print exactly one entry with mode 100644 and type blob. The stub MUST read the file only as the output of `git cat-file blob FETCH_HEAD:routines/<File>.md` and MUST NOT point the run at the working-tree file.
+
+#### Scenario: Working-tree file is edited
+
+- **WHEN** the working-tree file differs from the blob at `FETCH_HEAD`
+- **THEN** the run follows the blob from `cat-file` and never the working-tree file
+
+### Requirement: Stub stops on a failed file check
+
+The stub MUST report CONFIGURATION_FAILURE and stop when a command fails, the path is absent, or the mode or type differs. The check is in the stub, because a check inside the file could be edited away.
 
 #### Scenario: Fetched main lacks the file and an untracked copy exists
 
@@ -32,10 +41,9 @@ The stub MUST fetch `origin <POLICY_REF>`, a stub value with the default `main`,
 - **WHEN** `ls-tree FETCH_HEAD -- routines/<File>.md` prints mode 120000
 - **THEN** the run reports CONFIGURATION_FAILURE and stops before it reads the file
 
-#### Scenario: Working-tree file is edited
+### Requirement: Bootstrap commands ignore replacement refs
 
-- **WHEN** the working-tree file differs from the blob at `FETCH_HEAD`
-- **THEN** the run follows the blob from `cat-file` and never the working-tree file
+Every bootstrap Git command MUST run with `--no-replace-objects`, so a replacement ref cannot swap the blob.
 
 #### Scenario: Replacement ref points at another blob
 
@@ -67,7 +75,7 @@ A routine file MUST state under `## Authority` that the stub and the file are th
 
 ### Requirement: Notification leads with the result
 
-A routine MUST end with one plain-text notification of at most 12 lines. Its first line, at most 80 characters, MUST state the result and whether the owner must act, and MUST state a failure or an incomplete run when one occurred. The notification MUST group details under short bullets, MUST end with one next step, and MUST show scan health only when it is degraded. It MUST NOT contain an internal status code, a hash, a commit, or the owner's handle, and MUST name a repository only without its owner and only when the repository is public.
+A routine MUST end with one plain-text notification of at most 12 lines. Its first line, at most 80 characters, MUST state the result and whether the owner must act, and MUST state a failure or an incomplete run when one occurred. The notification MUST group details under short bullets, MUST end with one next step, and MUST show scan health only when it is degraded.
 
 #### Scenario: Quiet day
 
@@ -78,6 +86,15 @@ A routine MUST end with one plain-text notification of at most 12 lines. Its fir
 
 - **WHEN** a required repository is not readable
 - **THEN** the first line states that the routine failed and why in generic words, so the phone push alone shows the failure
+
+### Requirement: Notification omits internal detail
+
+The notification MUST NOT contain an internal status code, a hash, a commit, or the owner's handle, and MUST name a repository only without its owner and only when the repository is public.
+
+#### Scenario: Private repository has an update
+
+- **WHEN** the digest finds an update in a private repository
+- **THEN** the notification describes the update without the repository name, and includes no commit, hash, status code, or owner handle
 
 ### Requirement: Run ends with the notification text
 
@@ -95,7 +112,7 @@ The final message of a routine run MUST be the notification text and nothing els
 
 ### Requirement: Routine files match the directory schema
 
-Every Markdown file under `routines/` other than the README MUST sit directly under `routines/` and MUST match `routines/.mdschema`: frontmatter with `type: routine`, one H1, and the section sequence the schema states. A routine file name MUST use only the characters `A-Za-z0-9._-`, because `mdschema` expands a glob character in a path argument. The `mdschema-routines` hook MUST check every such file before a commit, MUST reject a Markdown file in a subdirectory of `routines/`, and MUST reject a file name with another character.
+Every Markdown file under `routines/` other than the README MUST sit directly under `routines/` and MUST match `routines/.mdschema`: frontmatter with `type: routine`, one H1, and the section sequence the schema states. The `mdschema-routines` hook MUST check every such file before a commit and MUST reject a Markdown file in a subdirectory of `routines/`.
 
 #### Scenario: Routine file lacks the Authority section
 
@@ -106,6 +123,10 @@ Every Markdown file under `routines/` other than the README MUST sit directly un
 
 - **WHEN** a Markdown file exists at `routines/<dir>/<name>.md`
 - **THEN** the hook fails, names the file, and blocks the commit
+
+### Requirement: Routine file names use a limited character set
+
+A routine file name MUST use only the characters `A-Za-z0-9._-`, because `mdschema` expands a glob character in a path argument. The `mdschema-routines` hook MUST reject a file name with another character.
 
 #### Scenario: Routine file name has a glob character
 

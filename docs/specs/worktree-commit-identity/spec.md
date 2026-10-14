@@ -38,8 +38,6 @@ Within one harness, an exact model ID MUST take precedence over its canonical al
 Context normalization MUST remove `[1m]` before this comparison.
 Multiple matching harnesses MUST require an explicit harness.
 A new model MUST supply an approved harness.
-A colocated repository MUST create a Jujutsu workspace.
-The target MUST report the resolved author name and address.
 
 #### Scenario: New model has an approved harness
 
@@ -60,3 +58,13 @@ The target MUST report the resolved author name and address.
 
 - **WHEN** two author entries have the same model ID and harness
 - **THEN** resolution rejects the ambiguous identity
+
+### Requirement: Workspace creation reports the identity
+
+A colocated repository MUST create a Jujutsu workspace.
+The target MUST report the resolved author name and address.
+
+#### Scenario: Repository is colocated
+
+- **WHEN** the identity resolves in a colocated repository
+- **THEN** the target creates a Jujutsu workspace and reports the resolved author name and address

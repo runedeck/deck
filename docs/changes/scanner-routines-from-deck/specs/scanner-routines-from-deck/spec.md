@@ -39,12 +39,21 @@ A finding id MUST be the rule code plus the first ten hexadecimal digits of the 
 
 ### Requirement: Finding status is separate from scan health
 
-The detector MUST report the finding status as `ALERT` when a new occurrence of a secret or of a sensitive-domain host exists, `REVIEW` when the only new occurrences are personal data or private-TLD hosts, and `NO_NEW_FINDINGS` otherwise. The detector MUST report health apart from status: commit and blob counts, the shallow boundary of the scanned ref, binary and oversize blobs, unreadable objects, and acknowledged commits absent from the clone. Health MUST be `INCOMPLETE` for an unreadable object, an absent acknowledged commit, or a malformed entry.
+The detector MUST report the finding status as `ALERT` when a new occurrence of a secret or of a sensitive-domain host exists, `REVIEW` when the only new occurrences are personal data or private-TLD hosts, and `NO_NEW_FINDINGS` otherwise.
 
 #### Scenario: Sensitive domain appears in a known file
 
 - **WHEN** a hostname under a SENSITIVE_DOMAINS suffix appears in an object that no acknowledgement covers
 - **THEN** the status is `ALERT`, whether or not other findings in the same file are known
+
+### Requirement: Scan health is reported apart from status
+
+The detector MUST report health apart from status: commit and blob counts, the shallow boundary of the scanned ref, binary and oversize blobs, unreadable objects, and acknowledged commits absent from the clone. Health MUST be `INCOMPLETE` for an unreadable object, an absent acknowledged commit, or a malformed entry.
+
+#### Scenario: Acknowledgement line is malformed
+
+- **WHEN** a `.auditignore` line carries an expiry that is not a date
+- **THEN** the health is `INCOMPLETE` and lists that line as malformed, and the status comes from the findings alone
 
 ### Requirement: Scan covers the whole history of the branch
 
@@ -105,7 +114,7 @@ The detector MUST read `.auditignore` from the root tree of the scanned commit t
 
 ### Requirement: Scanner routines stream the detector from the deck
 
-The Dotfiles Scanner MUST run the detector only as `git --no-replace-objects cat-file blob FETCH_HEAD:routines/scripts/exposure_scan.py` piped into `python3 -I -`, from a scratch directory that is not a checkout, after `git ls-tree FETCH_HEAD -- routines/scripts/exposure_scan.py` printed one entry with mode 100644 and type blob, and MUST NOT run the working-tree copy. The run MUST pass SENSITIVE_DOMAINS as a file, never as a command argument, and MUST NOT read repository content by any other means than the detector output. The run MAY add review items for personal data the rules cannot see, each with a path, a line, a commit, and a blob id, and such an item MUST NOT change the detector status.
+The Dotfiles Scanner MUST run the detector only as `git --no-replace-objects cat-file blob FETCH_HEAD:routines/scripts/exposure_scan.py` piped into `python3 -I -`, from a scratch directory that is not a checkout, after `git ls-tree FETCH_HEAD -- routines/scripts/exposure_scan.py` printed one entry with mode 100644 and type blob, and MUST NOT run the working-tree copy.
 
 #### Scenario: Checkout tracks a module named like the standard library
 
@@ -116,6 +125,29 @@ The Dotfiles Scanner MUST run the detector only as `git --no-replace-objects cat
 
 - **WHEN** `ls-tree FETCH_HEAD -- routines/scripts/exposure_scan.py` prints no entry
 - **THEN** the run reports CONFIGURATION_FAILURE and stops
+
+### Requirement: Run reads repository content only through the detector
+
+The run MUST pass SENSITIVE_DOMAINS as a file, never as a command argument, and MUST NOT read repository content by any other means than the detector output.
+
+#### Scenario: Run starts the detector
+
+- **WHEN** the run starts the detector
+- **THEN** the sensitive domains reach it through a file, and no command line names a domain
+
+#### Scenario: Run composes the session report
+
+- **WHEN** the run composes the session report
+- **THEN** every path, line, commit, and blob id comes from the detector output, and the run opens no file of the scanned checkout
+
+### Requirement: Review items for personal data the rules cannot see
+
+The run MAY add review items for personal data the rules cannot see, each with a path, a line, a commit, and a blob id, and such an item MUST NOT change the detector status.
+
+#### Scenario: Run adds a review item
+
+- **WHEN** the run notes personal data that no rule detects
+- **THEN** the item carries a path, a line, a commit, and a blob id, and the status stays as the detector reported it
 
 ### Requirement: Stub reads the ref in POLICY_REF
 

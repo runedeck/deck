@@ -13,10 +13,6 @@ It does not prove which model executed.
 The check MUST accept exact author entries and formatted model identities under approved harness domains.
 A formatted identity MUST use `Display Name (model-id) <model-id@domain>`.
 The display and address model IDs MUST match after context normalization.
-IDs MUST use lowercase ASCII alphanumeric segments separated by dots or hyphens.
-Domains MUST use exact `<harness>.noreply.nexus.local` addresses.
-The harness MUST use lowercase ASCII alphanumeric segments separated by hyphens.
-Identities MUST contain printable text without surrounding whitespace.
 Human authors MUST remain exact policy entries.
 
 #### Scenario: Future version uses an existing harness
@@ -29,20 +25,35 @@ Human authors MUST remain exact policy entries.
 - **WHEN** the model IDs differ or the domain has an unapproved suffix
 - **THEN** the check rejects the identity and identifies its commit
 
+### Requirement: Identity segment format
+
+IDs MUST use lowercase ASCII alphanumeric segments separated by dots or hyphens.
+Domains MUST use exact `<harness>.noreply.nexus.local` addresses.
+The harness MUST use lowercase ASCII alphanumeric segments separated by hyphens.
+Identities MUST contain printable text without surrounding whitespace.
+
+#### Scenario: Identity carries an unsupported character
+
+- **WHEN** a model ID or harness contains an uppercase letter, an unsupported separator, or surrounding whitespace
+- **THEN** the check rejects the identity and identifies its commit
+
 ### Requirement: Trusted policy
 
 CI MUST execute the checker, helper, and policy from the pull request base SHA.
 It MUST read the head only as commit metadata.
 Local validation MUST read `origin/main:authors.yaml` unless the caller supplies an explicit trusted policy file.
-The check MUST inspect every commit from the merge base to the supplied head.
-For an orphan branch, it MUST inspect every commit reachable from the supplied head.
-Target selection MUST prefer `--to-ref`, `PRE_COMMIT_TO_REF`, `GITLEAKS_PUSH_TO_REF`, then `HEAD`.
 It MUST fail when policy or history cannot be read.
 
 #### Scenario: Head attempts to authorize itself
 
 - **WHEN** the head changes the checker or adds an unapproved domain
 - **THEN** the trusted base inputs continue to determine the result
+
+### Requirement: Inspected history and target selection
+
+The check MUST inspect every commit from the merge base to the supplied head.
+For an orphan branch, it MUST inspect every commit reachable from the supplied head.
+Target selection MUST prefer `--to-ref`, `PRE_COMMIT_TO_REF`, `GITLEAKS_PUSH_TO_REF`, then `HEAD`.
 
 #### Scenario: Outgoing orphan differs from the working copy
 
@@ -83,9 +94,6 @@ The check MUST accept exact `trailers:` entries only as contributor trailers.
 Trailer entries MUST NOT grant author or harness permission.
 The check MUST reject an author repeated as a contributor.
 Comparison MUST use the normalized model ID and harness domain independently of display wording.
-Normalization MUST remove an explicit trailing `[1m]` annotation.
-It MUST map `claude-fable-51m` to `claude-fable-5` and `claude-opus-51m` to `claude-opus-5`.
-Other IDs ending in `1m` MUST retain their identity.
 
 #### Scenario: Trailer alias attempts authorship
 
@@ -96,3 +104,14 @@ Other IDs ending in `1m` MUST retain their identity.
 
 - **WHEN** a trailer shares the author's normalized model ID and harness domain
 - **THEN** validation rejects the repeated author
+
+### Requirement: Context annotation normalization
+
+Normalization MUST remove an explicit trailing `[1m]` annotation.
+It MUST map `claude-fable-51m` to `claude-fable-5` and `claude-opus-51m` to `claude-opus-5`.
+Other IDs ending in `1m` MUST retain their identity.
+
+#### Scenario: Identity carries a context annotation
+
+- **WHEN** an identity ends in `[1m]` or uses `claude-opus-51m`
+- **THEN** normalization compares it as `claude-opus-5`, and an unrelated ID that ends in `1m` keeps its identity

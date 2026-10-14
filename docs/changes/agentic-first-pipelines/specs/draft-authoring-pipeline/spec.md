@@ -4,12 +4,6 @@
 
 A drafted change MUST use Simplified Technical English and the repository's markdown schemas. The draft MUST define each term of art on first use or link the definition.
 
-The [IntakeIdea skill](../../../../../runes/core/skills/IntakeIdea/SKILL.md#step-2-size-the-blast-radius) defines the blast-radius classes. A decision-bearing draft uses its Decision class.
-
-The xlarge threshold is 1,000 added and deleted lines. Before push, the agent MUST calculate that total from the working-copy diff.
-
-After pull request creation, the [PR lint workflow](../../../../../.github/workflows/pr-lint.yaml) assigns `size:xlarge` at the same threshold.
-
 #### Scenario: A draft leaves the register
 
 - **WHEN** a drafted document violates the STE style or its mdschema
@@ -21,6 +15,19 @@ The [Deck provider list](../../../../../deck.yaml) defines the supported harness
 
 - **WHEN** a supported harness has no post-edit hook
 - **THEN** the agent runs the Markdown and schema checks from the [Declared World gate ladder](../../../declared-world-model/design.md#the-gate-ladder) before owner review
+
+### Requirement: Draft size is measured before push
+
+The [IntakeIdea skill](../../../../../runes/core/skills/IntakeIdea/SKILL.md#step-2-size-the-blast-radius) defines the blast-radius classes. A decision-bearing draft uses its Decision class.
+
+The xlarge threshold is 1,000 added and deleted lines. Before push, the agent MUST calculate that total from the working-copy diff.
+
+After pull request creation, the [PR lint workflow](../../../../../.github/workflows/pr-lint.yaml) assigns `size:xlarge` at the same threshold.
+
+#### Scenario: Working-copy diff reaches the xlarge threshold
+
+- **WHEN** the added and deleted lines of the working-copy diff reach the xlarge threshold before push
+- **THEN** the agent classifies the draft as xlarge, and the PR lint workflow assigns `size:xlarge` after pull request creation
 
 ### Requirement: Deterministic pass precedes review
 

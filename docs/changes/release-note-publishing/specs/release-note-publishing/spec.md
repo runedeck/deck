@@ -2,8 +2,6 @@
 
 ### Requirement: Release Interval
 
-The compiler MUST read the post-merge `merge_commit_sha` from the [GitHub pull request API](https://docs.github.com/en/rest/pulls/pulls#get-a-pull-request). This SHA is the target-branch incorporation commit.
-
 The compiler MUST select each merged pull request by its target-branch incorporation commit. The previous release commit MUST be the exclusive interval boundary.
 
 The target commit MUST be the inclusive interval boundary. Each selected incorporation commit MUST be reachable from the target commit.
@@ -13,6 +11,10 @@ The target commit MUST be the inclusive interval boundary. Each selected incorpo
 - **WHEN** a pull request incorporation commit is in the interval after the previous release commit through the target commit
 - **THEN** the compiler selects each eligible pull request once
 - **AND** the compiler excludes pull requests outside that commit interval
+
+### Requirement: Incorporation commit source
+
+The compiler MUST read the post-merge `merge_commit_sha` from the [GitHub pull request API](https://docs.github.com/en/rest/pulls/pulls#get-a-pull-request). This SHA is the target-branch incorporation commit.
 
 #### Scenario: A squash merge changes the commit identity
 
@@ -72,15 +74,24 @@ The owner MUST select the initial history cutover commit. The first draft MUST c
 
 The compiled notes MUST come first. The exact `CHANGELOG.md` body at the cutover commit MUST follow without reordered headings or entries.
 
-The draft metadata MUST record the cutover commit. The workflow MUST apply the owner-selected `CHANGELOG.md` state after it creates the draft.
-
-The selected state MUST delete the file or replace its full contents with one heading and one link to the repository Releases page.
+The draft metadata MUST record the cutover commit.
 
 #### Scenario: The first release migrates existing history
 
 - **WHEN** the repository has no earlier release boundary and the owner selects the cutover commit and file state
 - **THEN** the first draft contains compiled interval notes followed by the exact changelog body and cutover metadata
-- **AND** the workflow applies the selected file state
+
+### Requirement: Changelog file state after the first draft
+
+The workflow MUST apply the owner-selected `CHANGELOG.md` state after it creates the draft.
+
+The selected state MUST delete the file or replace its full contents with one heading and one link to the repository Releases page.
+
+#### Scenario: First draft is created
+
+- **WHEN** the workflow has created the first draft
+- **THEN** the workflow applies the selected file state
+- **AND** `CHANGELOG.md` is deleted or holds one heading and one link to the repository Releases page
 
 ### Requirement: Release automation owns the changelog
 
@@ -95,16 +106,18 @@ Release automation MUST be the only process that generates repository changelog 
 
 The changelog ownership gate MUST report each feature pull request that changes `CHANGELOG.md`. The gate MUST ship at warning severity.
 
+#### Scenario: An existing feature pull request changes the changelog
+
+- **WHEN** a baseline head changes `CHANGELOG.md` during the warning phase
+- **THEN** the gate reports the declared debt at warning severity
+
+### Requirement: Declared-debt baseline
+
 The gate MUST seed its declared-debt baseline once. Each entry MUST contain an open pull request number and its current head SHA.
 
 On each evaluation, the gate MUST refresh the SHA only for a seeded pull request that stays open and changes `CHANGELOG.md`.
 
 The gate MUST remove an entry when its pull request closes or stops changing `CHANGELOG.md`. It MUST NOT add or restore debt after seeding.
-
-#### Scenario: An existing feature pull request changes the changelog
-
-- **WHEN** a baseline head changes `CHANGELOG.md` during the warning phase
-- **THEN** the gate reports the declared debt at warning severity
 
 #### Scenario: A baseline pull request changes its head
 
