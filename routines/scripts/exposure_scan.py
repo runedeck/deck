@@ -6,18 +6,33 @@ never opens the working tree and never runs repository content. It applies
 versioned rules for secrets, private hosts, and personal data, groups the
 matches into findings by rule and matched value, and prints one JSON
 document on standard output. A matched value never appears in the output:
-a finding id is the rule code plus the first ten hex digits of the SHA-256
-of the value, a path segment that matches a rule is redacted, and the
-context of a location is the line with every match replaced.
+a finding carries its rule name and the SHA-256 of the value, its id is the
+rule name plus the first ten hex digits of that digest, a path segment that
+matches a rule is redacted, and the context of a location is the line with
+every match replaced.
 
-A finding is acknowledged per commit. The detector reads ``.auditignore``
-from the root tree of the scanned commit, through Git objects like every
-other blob. A line is ``<id> <commit> [exp:YYYY-MM-DD]`` and a ``#`` starts
-a comment. An occurrence is known only when its object is reachable from
-that commit, and the same value in any other object is a new occurrence. A
-line whose date has passed no longer acknowledges and is listed under
-``expired_known``. An absent file is an empty list. A ``.auditignore`` that
-is not a regular file is a configuration failure.
+A finding is acknowledged per commit. The detector reads
+``.auditignore.yaml`` from the root tree of the scanned commit, through Git
+objects like every other blob. The file has one key, ``acknowledged``, with
+a list of items::
+
+    acknowledged:
+      - rule: personal-email-address
+        sha256: <64 hex digits of the value>
+        commit: <the scanned commit of the report that listed it>
+        expires: 2027-01-01   # optional, the item acknowledges nothing after
+        reason: old address   # optional
+
+The detector parses that shape with its own code, since the standard
+library has no YAML parser: a ``#`` starts a comment, a value may be
+quoted, and nothing else of YAML is accepted. A file outside the shape is a
+configuration failure, and an item that cannot be used is listed as
+malformed. An occurrence is known only when its object is reachable from
+the item's commit, and the same value in any other object is a new
+occurrence. An item whose date has passed no longer acknowledges and is
+listed under ``expired_known``. An absent file is an empty list. The report
+ends with ``acknowledgement_yaml``, the items for every finding with a new
+location, ready to paste.
 
 Finding status is separate from scan health. Status is ALERT when a new
 occurrence of a secret or of a sensitive-domain host exists, REVIEW when the
@@ -32,15 +47,14 @@ so no tracked module shadows the standard library. Usage:
 
     python3 -I exposure_scan.py --repo <checkout> [--ref FETCH_HEAD]
         [--sensitive-domains-file F | --sensitive-domains a.example,b.example]
-        [--known-findings-file F | --known-findings "ID COMMIT,ID COMMIT"]
-        [--acknowledgement-path .auditignore]
+        [--known-findings-file F] [--acknowledgement-path .auditignore.yaml]
 
-``SENSITIVE_DOMAINS_FILE``, ``KNOWN_FINDINGS_FILE``, ``SENSITIVE_DOMAINS``,
-and ``KNOWN_FINDINGS`` are read from the environment when the flags are
-absent. A file has one entry per line, and its entries join the lines of the
-in-repository file. An empty ``--acknowledgement-path`` skips that file.
-Exit code 0 means the scan ran, 2 means it could not (health
-CONFIGURATION_FAILURE).
+``SENSITIVE_DOMAINS_FILE``, ``KNOWN_FINDINGS_FILE``, and
+``SENSITIVE_DOMAINS`` are read from the environment when the flags are
+absent. The known-findings file has the same shape as the in-repository
+file, and its items join that file's items. An empty
+``--acknowledgement-path`` skips the in-repository file. Exit code 0 means
+the scan ran, 2 means it could not (health CONFIGURATION_FAILURE).
 """
 
 from __future__ import annotations
@@ -55,16 +69,18 @@ import sys
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 
-RULES_VERSION = "2"
-SCHEMA = 3
-ACKNOWLEDGEMENT_PATH = ".auditignore"
+RULES_VERSION = "3"
+SCHEMA = 4
+ACKNOWLEDGEMENT_PATH = ".auditignore.yaml"
+ACKNOWLEDGEMENT_KEY = "acknowledged"
+ACKNOWLEDGEMENT_FIELDS = ("rule", "sha256", "commit", "expires", "reason")
 MAX_BLOB_BYTES = 4 * 1024 * 1024
 BINARY_PROBE_BYTES = 8192
 MAX_LOCATIONS = 100
 CONTEXT_CHARS = 100
 MIN_KEY_BODY = 40
 
-ALERT_RULES = frozenset({"HOST-SENSITIVE-DOMAIN"})
+ALERT_RULES = frozenset({"host-sensitive-domain"})
 ALERT_CATEGORIES = frozenset({"secret"})
 PRIVATE_TLDS = frozenset({"internal", "local", "lan", "corp", "intranet", "localdomain"})
 
@@ -154,7 +170,7 @@ class Rule:
 # Secret rules precede host rules, which precede personal rules. The order
 # decides which rule reports a value that two rules match (see suppressed).
 SEC_TOKEN = Rule(
-    "SEC-TOKEN",
+    "secret-api-token",
     "secret",
     re.compile(
         r"(?<![A-Za-z0-9_])(?:"
@@ -178,12 +194,12 @@ SEC_TOKEN = Rule(
     ),
 )
 SEC_URL_AUTH = Rule(
-    "SEC-URL-AUTH",
+    "secret-url-credential",
     "secret",
     re.compile(r"\b[a-z][a-z0-9+.-]*+://(?P<credential>(?P<user>[^\s/:@'\"]++):(?P<password>[^\s/@'\"]++))@[^\s'\"]++"),
 )
 SEC_ASSIGNMENT = Rule(
-    "SEC-ASSIGNMENT",
+    "secret-assigned-value",
     "secret",
     re.compile(
         r"(?i)(?<![.:/-])\b(?:password|passwd|pwd|secret|token|api[_-]?key|access[_-]?token|"
@@ -191,17 +207,17 @@ SEC_ASSIGNMENT = Rule(
         r"[A-Za-z0-9_]*+\s*+[:=]\s*+(?P<quote>[\"']?)(?P<credential>[^\s\"',;]{8,}+)"
     ),
 )
-SEC_PRIVATE_KEY = Rule("SEC-PRIVATE-KEY", "secret")
-HOST_SENSITIVE_DOMAIN = Rule("HOST-SENSITIVE-DOMAIN", "host", normalize=True)
-HOST_PRIVATE_TLD = Rule("HOST-PRIVATE-TLD", "host", normalize=True)
+SEC_PRIVATE_KEY = Rule("secret-private-key", "secret")
+HOST_SENSITIVE_DOMAIN = Rule("host-sensitive-domain", "host", normalize=True)
+HOST_PRIVATE_TLD = Rule("host-private-tld", "host", normalize=True)
 PII_EMAIL = Rule(
-    "PII-EMAIL",
+    "personal-email-address",
     "personal",
     re.compile(r"(?<![A-Za-z0-9._%+/-])([A-Za-z0-9._%+-]++@[A-Za-z0-9.-]+\.[A-Za-z]{2,})(?![A-Za-z0-9-])"),
     normalize=True,
 )
 PII_PHONE = Rule(
-    "PII-PHONE",
+    "personal-phone-number",
     "personal",
     re.compile(r"(?<![\w.+-])(\+\d{1,3}(?:[ .-]?\(?\d{1,4}\)?)(?:[ .-]?\d{2,4}){2,4}|\(\d{3}\) ?\d{3}-\d{4})(?![\w-])"),
 )
@@ -326,14 +342,20 @@ class Finding:
     id: str
     rule: str
     category: str
+    sha256: str
     locations: list[Location] = field(default_factory=list)
     location_count: int = 0
 
 
-def finding_id(rule: Rule, value: str) -> str:
+def value_digest(rule: Rule, value: str) -> str:
+    """The SHA-256 of the matched value, lowercased first for a rule that normalizes."""
     normalized = value.lower() if rule.normalize else value
-    digest = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
-    return f"{rule.code}-{digest[:10]}"
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+
+
+def finding_id(rule: Rule, value: str) -> str:
+    """The display id: the rule name plus the first ten hex digits of the digest."""
+    return f"{rule.code}-{value_digest(rule, value)[:10]}"
 
 
 def placeholder_assignment(value: str, quoted: bool) -> bool:
@@ -481,9 +503,15 @@ def is_binary(body: bytes) -> bool:
 
 @dataclass
 class Acknowledgement:
-    finding: str
+    rule: str
+    sha256: str
     commit: str
     expires: date | None = None
+    reason: str = ""
+
+    @property
+    def key(self) -> tuple[str, str]:
+        return self.rule, self.sha256
 
 
 @dataclass
@@ -498,36 +526,128 @@ class Acknowledgements:
         self.expired.extend(other.expired)
 
 
-def parse_known(entries: list[str], today: date | None = None) -> Acknowledgements:
-    """Parse `<id> <commit> [exp:YYYY-MM-DD]` lines; `#` starts a comment.
+def strip_comment(line: str) -> str:
+    """Drop a `#` comment that starts the line or follows a space, outside quotes."""
+    quote = None
+    for index, character in enumerate(line):
+        if quote:
+            if character == quote:
+                quote = None
+        elif character in "\"'":
+            quote = character
+        elif character == "#" and (index == 0 or line[index - 1] in " \t"):
+            return line[:index]
+    return line
 
-    `<id>@<commit>` is accepted for the command line. A line whose date is
-    before today is expired and acknowledges nothing.
+
+def split_pair(text: str, number: int) -> tuple[str, str]:
+    """Split `key: value`; the value may be empty."""
+    key, separator, value = text.partition(":")
+    if not separator or not re.fullmatch(r"[a-z][a-z0-9_]*", key) or (value and not value[0] in " \t"):
+        raise ValueError(f"{ACKNOWLEDGEMENT_PATH} line {number}: expected `key: value`")
+    return key, value.strip()
+
+
+def parse_acknowledgement_yaml(text: str, today: date | None = None) -> Acknowledgements:
+    """Parse the one YAML shape of `.auditignore.yaml` without a YAML library.
+
+    The document is a mapping with one key, `acknowledged`, whose value is a
+    list of mappings with plain or quoted scalar values. A document outside
+    that shape raises ValueError, which is a configuration failure. An item
+    that cannot be used is malformed and listed with its line number.
     """
     today = today or datetime.now(UTC).date()
-    parsed = Acknowledgements()
-    for entry in entries:
-        line = entry.split("#", 1)[0].strip()
-        if not line:
+    items: list[tuple[int, dict[str, str], list[str]]] = []
+    item_indent = None
+    key_column = None
+    seen_key = False
+    for number, raw in enumerate(text.splitlines(), start=1):
+        line = strip_comment(raw).rstrip()
+        content = line.strip()
+        if not content or content == "---":
             continue
-        parts = line.replace("@", " ", 1).split()
-        expires = None
-        if len(parts) == 3 and parts[2].startswith("exp:"):
-            try:
-                expires = date.fromisoformat(parts[2][4:])
-            except ValueError:
-                parsed.malformed.append(line)
-                continue
-            parts = parts[:2]
-        if len(parts) == 2 and re.fullmatch(r"[A-Z-]+-[0-9a-f]{10}", parts[0]) and re.fullmatch(r"[0-9a-fA-F]{7,40}", parts[1]):
-            acknowledgement = Acknowledgement(parts[0], parts[1].lower(), expires)
-            if expires is not None and expires < today:
-                parsed.expired.append(acknowledgement)
-            else:
-                parsed.valid.append(acknowledgement)
+        indent = len(line) - len(line.lstrip(" "))
+        if "\t" in line[:indent]:
+            raise ValueError(f"{ACKNOWLEDGEMENT_PATH} line {number}: a tab indents the line")
+        if indent == 0:
+            if content not in (f"{ACKNOWLEDGEMENT_KEY}:", f"{ACKNOWLEDGEMENT_KEY}: []"):
+                raise ValueError(f"{ACKNOWLEDGEMENT_PATH} line {number}: only the `{ACKNOWLEDGEMENT_KEY}` key is allowed at the top level")
+            if seen_key:
+                raise ValueError(f"{ACKNOWLEDGEMENT_PATH} line {number}: the `{ACKNOWLEDGEMENT_KEY}` key appears twice")
+            seen_key = True
+            continue
+        if not seen_key:
+            raise ValueError(f"{ACKNOWLEDGEMENT_PATH} line {number}: an indented line before the `{ACKNOWLEDGEMENT_KEY}` key")
+        if content.startswith("-") and (len(content) == 1 or content[1] in " \t"):
+            if item_indent is None:
+                item_indent = indent
+            if indent != item_indent:
+                raise ValueError(f"{ACKNOWLEDGEMENT_PATH} line {number}: a list item at another indentation")
+            rest = content[1:]
+            key_column = indent + 1 + (len(rest) - len(rest.lstrip(" \t")))
+            items.append((number, {}, []))
+            pair = rest.strip()
+            if not pair:
+                raise ValueError(f"{ACKNOWLEDGEMENT_PATH} line {number}: an empty list item")
         else:
-            parsed.malformed.append(line)
+            if not items or indent != key_column:
+                raise ValueError(f"{ACKNOWLEDGEMENT_PATH} line {number}: a line that is neither a list item nor one of its keys")
+            pair = content
+        key, value = split_pair(pair, number)
+        _, mapping, errors = items[-1]
+        if key in mapping:
+            errors.append(f"line {number}: the key `{key}` appears twice")
+        elif key not in ACKNOWLEDGEMENT_FIELDS:
+            errors.append(f"line {number}: unknown key `{key}`")
+        elif value[:1] in ("[", "{", "|", ">", "&", "*", "!"):
+            errors.append(f"line {number}: `{key}` is not a plain value")
+        else:
+            if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+                value = value[1:-1]
+            mapping[key] = value
+    parsed = Acknowledgements()
+    for number, mapping, errors in items:
+        errors.extend(acknowledgement_errors(mapping, number))
+        if errors:
+            parsed.malformed.extend(errors)
+            continue
+        expires = date.fromisoformat(mapping["expires"]) if mapping.get("expires") else None
+        acknowledgement = Acknowledgement(mapping["rule"], mapping["sha256"].lower(), mapping["commit"].lower(), expires, mapping.get("reason", ""))
+        if expires is not None and expires < today:
+            parsed.expired.append(acknowledgement)
+        else:
+            parsed.valid.append(acknowledgement)
     return parsed
+
+
+def acknowledgement_errors(mapping: dict[str, str], number: int) -> list[str]:
+    errors = []
+    for name in ("rule", "sha256", "commit"):
+        if not mapping.get(name):
+            errors.append(f"line {number}: `{name}` is missing")
+    if mapping.get("rule") and mapping["rule"] not in RULES_BY_CODE:
+        errors.append(f"line {number}: unknown rule `{mapping['rule']}`")
+    if mapping.get("sha256") and not re.fullmatch(r"[0-9a-fA-F]{64}", mapping["sha256"]):
+        errors.append(f"line {number}: `sha256` is not 64 hex digits")
+    if mapping.get("commit") and not re.fullmatch(r"[0-9a-fA-F]{7,40}", mapping["commit"]):
+        errors.append(f"line {number}: `commit` is not a commit id")
+    if mapping.get("expires"):
+        try:
+            date.fromisoformat(mapping["expires"])
+        except ValueError:
+            errors.append(f"line {number}: `expires` is not a YYYY-MM-DD date")
+    return errors
+
+
+def acknowledgement_yaml(findings: list[dict], commit: str) -> str:
+    """The items that acknowledge every finding with a new location at this commit."""
+    lines = []
+    for finding in findings:
+        if finding["new_locations"]:
+            lines += [f"  - rule: {finding['rule']}", f"    sha256: {finding['sha256']}", f"    commit: {commit}"]
+    if not lines:
+        return f"{ACKNOWLEDGEMENT_KEY}: []\n"
+    return "\n".join([f"{ACKNOWLEDGEMENT_KEY}:", *lines]) + "\n"
 
 
 class Scan:
@@ -537,14 +657,14 @@ class Scan:
         self.sensitive_domains = sorted({domain.strip().lower().lstrip(".") for domain in sensitive_domains if domain.strip()})
         self.acknowledgements = known
         self.acknowledgement_path = acknowledgement_path
-        self.findings: dict[str, Finding] = {}
+        self.findings: dict[tuple[str, str], Finding] = {}  # (rule, sha256) -> finding
         self.blob_matches: dict[str, list[Match] | None] = {}
         self.blob_lines: dict[str, list[str]] = {}
         self.tree_entries: dict[str, list[tuple[str, str, str]] | None] = {}
         self.seen_tree_paths: set[tuple[str, str]] = set()
         self.seen_blob_paths: set[tuple[str, str]] = set()
         self.seen_submodules: set[str] = set()
-        self.acknowledged: dict[str, set[str]] = {}  # finding id -> reachable objects of its ack commits
+        self.acknowledged: dict[tuple[str, str], set[str]] = {}  # (rule, sha256) -> reachable objects of its commits
         self.health = {
             "commits": 0,
             "blobs": 0,
@@ -567,11 +687,12 @@ class Scan:
     def record(self, matches: list[Match], lines: list[str], path: str, commit: str, oid: str):
         safe_path, _ = redact(path, self.sensitive_domains)
         for match in matches:
-            identifier = finding_id(match.rule, match.value)
-            finding = self.findings.get(identifier)
+            digest = value_digest(match.rule, match.value)
+            key = (match.rule.code, digest)
+            finding = self.findings.get(key)
             if finding is None:
-                finding = Finding(identifier, match.rule.code, match.rule.category)
-                self.findings[identifier] = finding
+                finding = Finding(f"{match.rule.code}-{digest[:10]}", match.rule.code, match.rule.category, digest)
+                self.findings[key] = finding
             finding.location_count += 1
             if len(finding.locations) >= MAX_LOCATIONS:
                 self.health["locations_capped"] += 1
@@ -690,7 +811,7 @@ class Scan:
         if read is None or read[0] != "blob":
             raise GitError(f"{path} at the scanned commit could not be read")
         self.health["acknowledgement_file"] = path
-        self.acknowledgements.extend(parse_known(read[1].decode("utf-8", "replace").splitlines()))
+        self.acknowledgements.extend(parse_acknowledgement_yaml(read[1].decode("utf-8", "replace")))
 
     def names_parent(self, oid: str) -> bool:
         read = self.repository.read_object(oid)
@@ -712,9 +833,9 @@ class Scan:
                     self.health["missing_acknowledged_commits"].append(entry.commit)
             objects = reachable[entry.commit]
             if objects is not None:
-                self.acknowledged.setdefault(entry.finding, set()).update(objects)
-        for finding in self.findings.values():
-            objects = self.acknowledged.get(finding.id, set())
+                self.acknowledged.setdefault(entry.key, set()).update(objects)
+        for key, finding in self.findings.items():
+            objects = self.acknowledged.get(key, set())
             for location in finding.locations:
                 location.state = "known" if location.blob in objects else "new"
 
@@ -741,6 +862,7 @@ class Scan:
                     "state": state,
                     "rule": finding.rule,
                     "category": finding.category,
+                    "sha256": finding.sha256,
                     "location_count": finding.location_count,
                     "new_locations": new_locations,
                     "known_locations": len(finding.locations) - new_locations,
@@ -758,7 +880,8 @@ class Scan:
             or health["shallow"]
         )
         health["status"] = "INCOMPLETE" if incomplete else "COMPLETE"
-        acknowledged_ids = {entry.finding for entry in self.acknowledgements.valid}
+        acknowledged_keys = {entry.key for entry in self.acknowledgements.valid}
+        expired_keys = {entry.key for entry in self.acknowledgements.expired} - acknowledged_keys
         return {
             "schema": SCHEMA,
             "rules_version": RULES_VERSION,
@@ -767,9 +890,10 @@ class Scan:
             "status": status,
             "health": health,
             "counts": {"new": new_total, "known": known_count, "new_by_category": new_counts},
-            "stale_known": sorted(acknowledged_ids - set(self.findings)),
-            "expired_known": sorted({entry.finding for entry in self.acknowledgements.expired} - acknowledged_ids),
+            "stale_known": [{"rule": rule, "sha256": digest} for rule, digest in sorted(acknowledged_keys - set(self.findings))],
+            "expired_known": [{"rule": rule, "sha256": digest} for rule, digest in sorted(expired_keys)],
             "findings": findings,
+            "acknowledgement_yaml": acknowledgement_yaml(findings, commit),
         }
 
 
@@ -791,9 +915,12 @@ def parse_arguments(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--repo", required=True, help="path of the Git checkout or bare repository")
     parser.add_argument("--ref", default="FETCH_HEAD", help="ref to scan (default FETCH_HEAD)")
     parser.add_argument("--sensitive-domains-file", default=os.environ.get("SENSITIVE_DOMAINS_FILE"))
-    parser.add_argument("--known-findings-file", default=os.environ.get("KNOWN_FINDINGS_FILE"))
+    parser.add_argument(
+        "--known-findings-file",
+        default=os.environ.get("KNOWN_FINDINGS_FILE"),
+        help=f"a file in the shape of {ACKNOWLEDGEMENT_PATH} whose items join the in-repository file",
+    )
     parser.add_argument("--sensitive-domains", default=os.environ.get("SENSITIVE_DOMAINS", ""))
-    parser.add_argument("--known-findings", default=os.environ.get("KNOWN_FINDINGS", ""))
     parser.add_argument(
         "--acknowledgement-path",
         default=ACKNOWLEDGEMENT_PATH,
@@ -819,7 +946,10 @@ def main(argv: list[str] | None = None) -> int:
         # Domain lists do not support "domain,domain" spelling in the stub,
         # but the inline form accepts commas for the command line.
         domains = [item for value in read_list(arguments.sensitive_domains_file, arguments.sensitive_domains) for item in value.split()]
-        known = parse_known(read_list(arguments.known_findings_file, arguments.known_findings))
+        known = Acknowledgements()
+        if arguments.known_findings_file:
+            with open(arguments.known_findings_file, encoding="utf-8") as handle:
+                known = parse_acknowledgement_yaml(handle.read())
         scan = Scan(repository, arguments.ref, domains, known, arguments.acknowledgement_path)
         commit = scan.run()
         report = scan.report(commit)

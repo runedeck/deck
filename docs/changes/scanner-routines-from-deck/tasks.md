@@ -16,6 +16,7 @@ type: tasks
 - [x] 1.8 Whole history: the `--unshallow` startup fetch, health INCOMPLETE at a shallow boundary of the scanned ref only, and the first file location in each notification bullet
 - [x] 1.9 `.auditignore` at the root of the scanned branch replaces the KNOWN_FINDINGS stub value: the detector reads it from the scanned commit, a line takes an optional `exp:` date and a comment, and the report lists `expired_known` and the lines to commit for the new findings
 - [x] 1.10 The run copies the detector blob into the scratch directory, checks its object id against the fetched tree, and runs the copy with `python3 -I`: the provider's command classifier refused the piped form twice on 2026-10-14 and accepted the copy
+- [x] 1.11 `.auditignore.yaml`: one `acknowledged` list of items with `rule`, `sha256`, `commit`, and the optional `expires` and `reason`, parsed by the detector's own code, with three-word rule names, the full digest on every finding, and `acknowledgement_yaml` in the report
 
 ## 2. Deployment
 

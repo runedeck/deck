@@ -20,7 +20,7 @@ The Dotfiles Scanner MUST obtain every finding, every finding id, every count, t
 
 ### Requirement: Finding identity hides the value
 
-A finding id MUST be the rule code plus the first ten hexadecimal digits of the SHA-256 of the matched value, and the matched value MUST NOT appear in the detector output. Matches with the same rule and value MUST form one finding with every location, one for each path of each object. The detector MUST redact a path segment that matches a rule and MUST give each location a context line in which every match is replaced.
+A finding MUST carry its rule name and the SHA-256 of the matched value, its id MUST be the rule name plus the first ten hexadecimal digits of that digest, and the matched value MUST NOT appear in the detector output. Matches with the same rule and value MUST form one finding with every location, one for each path of each object. The detector MUST redact a path segment that matches a rule and MUST give each location a context line in which every match is replaced.
 
 #### Scenario: Same host appears in several blobs
 
@@ -52,8 +52,8 @@ The detector MUST report health apart from status: commit and blob counts, the s
 
 #### Scenario: Acknowledgement line is malformed
 
-- **WHEN** a `.auditignore` line carries an expiry that is not a date
-- **THEN** the health is `INCOMPLETE` and lists that line as malformed, and the status comes from the findings alone
+- **WHEN** an item of `.auditignore.yaml` carries an expiry that is not a date
+- **THEN** the health is `INCOMPLETE` and lists that item as malformed with its line, and the status comes from the findings alone
 
 ### Requirement: Scan covers the whole history of the branch
 
@@ -76,31 +76,41 @@ The Dotfiles Scanner MUST fetch with `--unshallow` when the clone is shallow, so
 
 ### Requirement: Acknowledgement binds to a commit
 
-An acknowledgement MUST be a line `<finding id> <commit>` with an optional `exp:YYYY-MM-DD`, and a `#` MUST start a comment. An occurrence MUST be known only when its object is reachable from that commit and the line is within its date. Any other occurrence MUST be new and MUST raise the status by its rule. A known occurrence MUST NOT raise the status.
+An acknowledgement MUST be an item of the `acknowledged` list in `.auditignore.yaml` with the rule name, the SHA-256 of the value, and a commit, with an optional expiry date and an optional reason. An occurrence MUST be known only when its object is reachable from that commit and the item is within its date. Any other occurrence MUST be new and MUST raise the status by its rule. A known occurrence MUST NOT raise the status.
 
 #### Scenario: Every finding is acknowledged in the scanned tree
 
-- **WHEN** `.auditignore` at the scanned commit lists every finding id with the commit of the earlier report
+- **WHEN** `.auditignore.yaml` at the scanned commit lists the rule and digest of every finding with the commit of the earlier report
 - **THEN** the status is `NO_NEW_FINDINGS`, the known count equals the finding count, and the health is unchanged
 
 #### Scenario: Acknowledgement passes its date
 
-- **WHEN** a line carries an `exp:` date before the day of the run
-- **THEN** the finding is new, its id is listed under `expired_known`, and the health is unchanged
+- **WHEN** an item carries an `expires` date before the day of the run
+- **THEN** the finding is new, its rule and digest are listed under `expired_known`, and the health is unchanged
+
+#### Scenario: Report lists the items to add
+
+- **WHEN** the detector reports a finding with a new location
+- **THEN** its output ends with the `acknowledged` items for every such finding at the scanned commit, and a file made of them acknowledges them all
 
 ### Requirement: Acknowledgement file is read from the scanned tree
 
-The detector MUST read `.auditignore` from the root tree of the scanned commit through Git objects, MUST treat an absent file as an empty list, and MUST report CONFIGURATION_FAILURE when the path is not a regular file.
+The detector MUST read `.auditignore.yaml` from the root tree of the scanned commit through Git objects and MUST parse its one shape with its own code. It MUST treat an absent file as an empty list, MUST report CONFIGURATION_FAILURE when the path is not a regular file or the file is outside the shape, and MUST list an item it cannot use as malformed.
 
 #### Scenario: Acknowledgement file is absent
 
-- **WHEN** the scanned commit has no `.auditignore`
+- **WHEN** the scanned commit has no `.auditignore.yaml`
 - **THEN** the detector runs with no acknowledgement and reports the file as absent in the health
 
 #### Scenario: Acknowledgement file is a symbolic link
 
-- **WHEN** `.auditignore` at the scanned commit is a symbolic link
+- **WHEN** `.auditignore.yaml` at the scanned commit is a symbolic link
 - **THEN** the detector exits 2 with health `CONFIGURATION_FAILURE` and names the path in the error
+
+#### Scenario: Acknowledgement file has another top-level key
+
+- **WHEN** `.auditignore.yaml` at the scanned commit has a top-level key other than `acknowledged`
+- **THEN** the detector exits 2 with health `CONFIGURATION_FAILURE` and names the line in the error
 
 #### Scenario: Acknowledged value appears in a new file
 
@@ -109,7 +119,7 @@ The detector MUST read `.auditignore` from the root tree of the scanned commit t
 
 #### Scenario: Acknowledged commit is absent from the clone
 
-- **WHEN** a `.auditignore` line names a commit the clone does not contain
+- **WHEN** an item of `.auditignore.yaml` names a commit the clone does not contain
 - **THEN** the health is `INCOMPLETE`, the commit is listed, and the finding is new
 
 ### Requirement: Scanner routines run the detector from the deck object store

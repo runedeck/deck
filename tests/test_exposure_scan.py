@@ -154,7 +154,7 @@ class Fixture:
 
 def run_detector(repo, *arguments, environment=None):
     env = dict(os.environ)
-    for name in ("SENSITIVE_DOMAINS", "KNOWN_FINDINGS", "SENSITIVE_DOMAINS_FILE", "KNOWN_FINDINGS_FILE"):
+    for name in ("SENSITIVE_DOMAINS", "SENSITIVE_DOMAINS_FILE", "KNOWN_FINDINGS_FILE"):
         env.pop(name, None)
     env.update(environment or {})
     completed = subprocess.run(
@@ -190,12 +190,23 @@ class ExposureScanTests(unittest.TestCase):
     def expected_id(self, rule_code, value):
         return self.module.finding_id(self.module.RULES_BY_CODE[rule_code], value)
 
-    def acknowledge(self, commit, report=None, rules=None):
-        return [
-            f"{finding['id']} {commit}"
-            for finding in (report or self.report)["findings"]
-            if rules is None or finding["rule"] in rules
-        ]
+    def acknowledgement(self, commit, report=None, rules=None, expires=None, reason=None):
+        """The `.auditignore.yaml` text that acknowledges the findings of a report at one commit."""
+        lines = ["acknowledged:"]
+        for finding in (report or self.report)["findings"]:
+            if rules is not None and finding["rule"] not in rules:
+                continue
+            lines += [f"  - rule: {finding['rule']}", f"    sha256: {finding['sha256']}", f"    commit: {commit}"]
+            if expires:
+                lines.append(f"    expires: {expires}")
+            if reason:
+                lines.append(f"    reason: {reason}")
+        return "\n".join(lines) + "\n"
+
+    def known_file(self, name, text):
+        path = self.fixture.directory / name
+        path.write_text(text, encoding="utf-8")
+        return str(path)
 
     def test_scan_completes_with_alert(self):
         self.assertEqual(self.code, 0)
@@ -211,26 +222,26 @@ class ExposureScanTests(unittest.TestCase):
 
     def test_secret_rules_match_their_fixtures(self):
         self.assertEqual(
-            self.ids("SEC-TOKEN"),
-            {self.expected_id("SEC-TOKEN", FAKE_TOKEN), self.expected_id("SEC-TOKEN", FAKE_TOKEN_TWO)},
+            self.ids("secret-api-token"),
+            {self.expected_id("secret-api-token", FAKE_TOKEN), self.expected_id("secret-api-token", FAKE_TOKEN_TWO)},
         )
         self.assertEqual(
-            self.ids("SEC-URL-AUTH"),
-            {self.expected_id("SEC-URL-AUTH", FAKE_URL), self.expected_id("SEC-URL-AUTH", FAKE_URL_TWO)},
+            self.ids("secret-url-credential"),
+            {self.expected_id("secret-url-credential", FAKE_URL), self.expected_id("secret-url-credential", FAKE_URL_TWO)},
         )
         self.assertEqual(
-            self.ids("SEC-ASSIGNMENT"),
+            self.ids("secret-assigned-value"),
             {
-                self.expected_id("SEC-ASSIGNMENT", FAKE_ASSIGNMENT.split("= ")[1]),
-                self.expected_id("SEC-ASSIGNMENT", FAKE_WORDS),
-                self.expected_id("SEC-ASSIGNMENT", FAKE_QUOTED),
-                self.expected_id("SEC-ASSIGNMENT", FAKE_DOLLAR),
+                self.expected_id("secret-assigned-value", FAKE_ASSIGNMENT.split("= ")[1]),
+                self.expected_id("secret-assigned-value", FAKE_WORDS),
+                self.expected_id("secret-assigned-value", FAKE_QUOTED),
+                self.expected_id("secret-assigned-value", FAKE_DOLLAR),
             },
         )
-        self.assertEqual(len(self.ids("SEC-PRIVATE-KEY")), 1)
+        self.assertEqual(len(self.ids("secret-private-key")), 1)
 
     def test_unterminated_key_header_does_not_hide_a_later_key(self):
-        key = self.findings("SEC-PRIVATE-KEY")[0]
+        key = self.findings("secret-private-key")[0]
         self.assertEqual(
             {(location["path"], location["line"]) for location in key["locations"]},
             {("key.pem", 1), ("docs/mixed.txt", 3)},
@@ -238,35 +249,35 @@ class ExposureScanTests(unittest.TestCase):
         self.assertEqual(key["locations"][0]["context"], "[REDACTED PRIVATE KEY BLOCK]")
 
     def test_token_after_column_4096_is_found(self):
-        second = next(f for f in self.findings("SEC-TOKEN") if f["id"] == self.expected_id("SEC-TOKEN", FAKE_TOKEN_TWO))
+        second = next(f for f in self.findings("secret-api-token") if f["id"] == self.expected_id("secret-api-token", FAKE_TOKEN_TWO))
         self.assertEqual(second["locations"][0]["line"], 12)
 
     def test_token_beside_a_url_credential_is_its_own_finding(self):
-        token = next(f for f in self.findings("SEC-TOKEN") if f["id"] == self.expected_id("SEC-TOKEN", FAKE_TOKEN))
+        token = next(f for f in self.findings("secret-api-token") if f["id"] == self.expected_id("secret-api-token", FAKE_TOKEN))
         self.assertIn(13, {location["line"] for location in token["locations"]})
-        url = next(f for f in self.findings("SEC-URL-AUTH") if f["id"] == self.expected_id("SEC-URL-AUTH", FAKE_URL_TWO))
+        url = next(f for f in self.findings("secret-url-credential") if f["id"] == self.expected_id("secret-url-credential", FAKE_URL_TWO))
         self.assertEqual(url["locations"][0]["line"], 13)
 
     def test_placeholders_are_not_findings(self):
-        emails = self.ids("PII-EMAIL")
-        self.assertEqual(emails, {self.expected_id("PII-EMAIL", FAKE_EMAIL), self.expected_id("PII-EMAIL", FAKE_EMAIL_TWO)})
-        hosts = self.ids("HOST-PRIVATE-TLD")
+        emails = self.ids("personal-email-address")
+        self.assertEqual(emails, {self.expected_id("personal-email-address", FAKE_EMAIL), self.expected_id("personal-email-address", FAKE_EMAIL_TWO)})
+        hosts = self.ids("host-private-tld")
         self.assertEqual(
             hosts,
             {
-                self.expected_id("HOST-PRIVATE-TLD", "build.example.internal"),
-                self.expected_id("HOST-PRIVATE-TLD", "printer.local"),
+                self.expected_id("host-private-tld", "build.example.internal"),
+                self.expected_id("host-private-tld", "printer.local"),
             },
         )
-        self.assertEqual(self.ids("PII-PHONE"), {self.expected_id("PII-PHONE", FAKE_PHONE)})
+        self.assertEqual(self.ids("personal-phone-number"), {self.expected_id("personal-phone-number", FAKE_PHONE)})
 
     def test_commit_text_is_scanned(self):
-        finding = next(f for f in self.findings("PII-EMAIL") if f["id"] == self.expected_id("PII-EMAIL", FAKE_EMAIL_TWO))
+        finding = next(f for f in self.findings("personal-email-address") if f["id"] == self.expected_id("personal-email-address", FAKE_EMAIL_TWO))
         location = finding["locations"][0]
         self.assertEqual((location["path"], location["commit"], location["blob"]), ("(commit)", self.second, self.second))
 
     def test_deleted_history_keeps_its_location(self):
-        token = next(f for f in self.findings("SEC-TOKEN") if f["id"] == self.expected_id("SEC-TOKEN", FAKE_TOKEN))
+        token = next(f for f in self.findings("secret-api-token") if f["id"] == self.expected_id("secret-api-token", FAKE_TOKEN))
         self.assertEqual(token["state"], "new")
         self.assertEqual({location["path"] for location in token["locations"]}, {"config/app.env", "zshrc"})
         location = token["locations"][0]
@@ -275,7 +286,7 @@ class ExposureScanTests(unittest.TestCase):
         self.assertEqual(location["context"], "API_KEY=[REDACTED]")
 
     def test_same_blob_records_every_path(self):
-        host = next(f for f in self.findings("HOST-PRIVATE-TLD") if f["id"] == self.expected_id("HOST-PRIVATE-TLD", "printer.local"))
+        host = next(f for f in self.findings("host-private-tld") if f["id"] == self.expected_id("host-private-tld", "printer.local"))
         self.assertEqual({location["path"] for location in host["locations"]}, {"hosts.txt", "backup/hosts.txt"})
         self.assertEqual(host["location_count"], 2)
 
@@ -293,95 +304,120 @@ class ExposureScanTests(unittest.TestCase):
         self.assertEqual(self.raw, again)
 
     def test_acknowledged_at_head_is_quiet(self):
-        known = self.acknowledge(self.third) + ["SEC-TOKEN-0000000000 " + self.third]
-        _, quiet, _ = run_detector(self.fixture.repo, environment={"KNOWN_FINDINGS": "\n".join(known)})
+        stale = "  - rule: secret-api-token\n    sha256: " + "0" * 64 + f"\n    commit: {self.third}\n"
+        path = self.known_file("quiet.yaml", self.acknowledgement(self.third) + stale)
+        _, quiet, _ = run_detector(self.fixture.repo, environment={"KNOWN_FINDINGS_FILE": path})
         self.assertEqual(quiet["status"], "NO_NEW_FINDINGS")
         self.assertEqual(quiet["counts"], {"new": 0, "known": len(self.report["findings"]), "new_by_category": {"secret": 0, "host": 0, "personal": 0}})
-        self.assertEqual(quiet["stale_known"], ["SEC-TOKEN-0000000000"])
+        self.assertEqual(quiet["stale_known"], [{"rule": "secret-api-token", "sha256": "0" * 64}])
         self.assertEqual(quiet["health"]["status"], "COMPLETE")
         self.assertTrue(all(location["state"] == "known" for f in quiet["findings"] for location in f["locations"]))
+        self.assertEqual(quiet["acknowledgement_yaml"], "acknowledged: []\n")
 
     def test_known_value_in_a_new_object_is_new(self):
-        known = self.acknowledge(self.second)
-        _, report, _ = run_detector(self.fixture.repo, "--known-findings", ",".join(known))
+        path = self.known_file("second.yaml", self.acknowledgement(self.second))
+        _, report, _ = run_detector(self.fixture.repo, "--known-findings-file", path)
         self.assertEqual(report["status"], "ALERT")
-        token = next(f for f in self.findings("SEC-TOKEN", report) if f["id"] == self.expected_id("SEC-TOKEN", FAKE_TOKEN))
+        token = next(f for f in self.findings("secret-api-token", report) if f["id"] == self.expected_id("secret-api-token", FAKE_TOKEN))
         self.assertEqual((token["state"], token["new_locations"], token["known_locations"]), ("new", 1, 2))
         self.assertEqual({(l["path"], l["state"]) for l in token["locations"]}, {("config/app.env", "known"), ("zshrc", "new")})
-        host = next(f for f in self.findings("HOST-PRIVATE-TLD", report) if f["id"] == self.expected_id("HOST-PRIVATE-TLD", "printer.local"))
+        host = next(f for f in self.findings("host-private-tld", report) if f["id"] == self.expected_id("host-private-tld", "printer.local"))
         self.assertEqual(host["state"], "known", "the same blob under a new path is the acknowledged object")
         self.assertEqual(report["counts"]["new"], 1)
 
     def test_missing_or_malformed_acknowledgement_is_incomplete(self):
-        token_id = self.expected_id("SEC-TOKEN", FAKE_TOKEN)
-        known = [f"{token_id} {'0' * 40}", "SEC-TOKEN-xyz"]
-        _, report, _ = run_detector(self.fixture.repo, "--known-findings", ",".join(known))
+        token = next(f for f in self.findings("secret-api-token") if f["id"] == self.expected_id("secret-api-token", FAKE_TOKEN))
+        text = (
+            "acknowledged:\n"
+            f"  - rule: secret-api-token\n    sha256: {token['sha256']}\n    commit: {'0' * 40}\n"
+            f"  - rule: secret-api-token\n    sha256: xyz\n    commit: {self.third}\n"
+            f"  - rule: no-such-rule\n    sha256: {token['sha256']}\n    commit: {self.third}\n"
+        )
+        _, report, _ = run_detector(self.fixture.repo, "--known-findings-file", self.known_file("broken.yaml", text))
         self.assertEqual(report["health"]["status"], "INCOMPLETE")
         self.assertEqual(report["health"]["missing_acknowledged_commits"], ["0" * 40])
-        self.assertEqual(report["health"]["malformed_known_entries"], ["SEC-TOKEN-xyz"])
-        token = next(f for f in self.findings("SEC-TOKEN", report) if f["id"] == token_id)
-        self.assertEqual(token["state"], "new")
+        self.assertEqual(
+            report["health"]["malformed_known_entries"],
+            ["line 5: `sha256` is not 64 hex digits", "line 8: unknown rule `no-such-rule`"],
+        )
+        found = next(f for f in self.findings("secret-api-token", report) if f["id"] == token["id"])
+        self.assertEqual(found["state"], "new")
         self.assertEqual(report["status"], "ALERT")
 
     def test_known_findings_file_is_read(self):
-        path = self.fixture.directory / "known.txt"
-        path.write_text("\n".join(self.acknowledge(self.third)) + "\n", encoding="utf-8")
-        _, report, _ = run_detector(self.fixture.repo, environment={"KNOWN_FINDINGS_FILE": str(path)})
+        path = self.known_file("known.yaml", self.acknowledgement(self.third))
+        _, report, _ = run_detector(self.fixture.repo, environment={"KNOWN_FINDINGS_FILE": path})
         self.assertEqual(report["status"], "NO_NEW_FINDINGS")
 
-    def acknowledged_clone(self, name, lines):
+    def acknowledged_clone(self, name, text):
         clone = self.fixture.clone(name)
-        (clone / ".auditignore").write_text("\n".join(lines) + "\n", encoding="utf-8")
-        self.fixture.git("add", ".auditignore", cwd=clone)
+        (clone / ".auditignore.yaml").write_text(text, encoding="utf-8")
+        self.fixture.git("add", ".auditignore.yaml", cwd=clone)
         self.fixture.git("commit", "-q", "-m", "Acknowledge the findings", cwd=clone)
         return clone
 
     def test_absent_auditignore_is_an_empty_list(self):
         self.assertIsNone(self.report["health"]["acknowledgement_file"])
         self.assertEqual(self.report["expired_known"], [])
+        self.assertTrue(self.report["acknowledgement_yaml"].startswith("acknowledged:\n  - rule: "))
 
     def test_auditignore_at_the_scanned_commit_acknowledges(self):
-        lines = ["# acknowledged after the first report", "", *(line + "  # still open" for line in self.acknowledge(self.third))]
-        clone = self.acknowledged_clone("acknowledged", lines)
+        text = "# acknowledged after the first report\n---\n" + self.acknowledgement(self.third, reason="'still open'  # a comment")
+        clone = self.acknowledged_clone("acknowledged", text)
         _, report, _ = run_detector(clone)
         self.assertEqual(report["status"], "NO_NEW_FINDINGS")
         self.assertEqual(report["health"]["status"], "COMPLETE")
-        self.assertEqual(report["health"]["acknowledgement_file"], ".auditignore")
+        self.assertEqual(report["health"]["acknowledgement_file"], ".auditignore.yaml")
         self.assertEqual(report["health"]["commits"], 4)
         self.assertEqual(report["health"]["malformed_known_entries"], [])
         self.assertEqual(report["counts"]["known"], len(self.report["findings"]))
 
+    def test_acknowledgement_block_round_trips(self):
+        block = self.report["acknowledgement_yaml"]
+        self.assertEqual(block.count("\n  - rule: "), len(self.report["findings"]))
+        clone = self.acknowledged_clone("roundtrip", block)
+        _, report, _ = run_detector(clone)
+        self.assertEqual(report["status"], "NO_NEW_FINDINGS")
+        self.assertEqual(report["counts"]["known"], len(self.report["findings"]))
+
     def test_expired_acknowledgement_is_new_again(self):
-        token_id = self.expected_id("SEC-TOKEN", FAKE_TOKEN)
-        lines = [
-            f"{token_id} {self.third} exp:2000-01-01",
-            *(line + " exp:2999-12-31" for line in self.acknowledge(self.third) if not line.startswith(token_id)),
-        ]
-        clone = self.acknowledged_clone("expired", lines)
+        token = next(f for f in self.findings("secret-api-token") if f["id"] == self.expected_id("secret-api-token", FAKE_TOKEN))
+        text = f"acknowledged:\n  - rule: {token['rule']}\n    sha256: {token['sha256']}\n    commit: {self.third}\n    expires: 2000-01-01\n"
+        for finding in self.report["findings"]:
+            if finding["id"] != token["id"]:
+                text += f"  - rule: {finding['rule']}\n    sha256: {finding['sha256']}\n    commit: {self.third}\n    expires: 2999-12-31\n"
+        clone = self.acknowledged_clone("expired", text)
         _, report, _ = run_detector(clone)
         self.assertEqual(report["status"], "ALERT")
         self.assertEqual(report["counts"]["new"], 1)
-        self.assertEqual(report["expired_known"], [token_id])
+        self.assertEqual(report["expired_known"], [{"rule": token["rule"], "sha256": token["sha256"]}])
         self.assertEqual(report["health"]["status"], "COMPLETE")
 
     def test_malformed_expiry_is_a_malformed_entry(self):
-        entry = f"{self.expected_id('SEC-TOKEN', FAKE_TOKEN)} {self.third} exp:soon"
-        _, report, _ = run_detector(self.fixture.repo, "--known-findings", entry)
-        self.assertEqual(report["health"]["malformed_known_entries"], [entry])
+        text = self.acknowledgement(self.third, rules={"secret-api-token"}, expires="soon")
+        _, report, _ = run_detector(self.fixture.repo, "--known-findings-file", self.known_file("soon.yaml", text))
+        self.assertEqual(report["health"]["malformed_known_entries"], ["line 2: `expires` is not a YYYY-MM-DD date", "line 6: `expires` is not a YYYY-MM-DD date"])
         self.assertEqual(report["health"]["status"], "INCOMPLETE")
 
     def test_auditignore_that_is_not_a_file_is_a_configuration_failure(self):
         clone = self.fixture.clone("linked")
-        os.symlink("hosts.txt", clone / ".auditignore")
-        self.fixture.git("add", ".auditignore", cwd=clone)
+        os.symlink("hosts.txt", clone / ".auditignore.yaml")
+        self.fixture.git("add", ".auditignore.yaml", cwd=clone)
         self.fixture.git("commit", "-q", "-m", "Link the acknowledgement file", cwd=clone)
         code, report, _ = run_detector(clone)
         self.assertEqual(code, 2)
         self.assertEqual(report["health"]["status"], "CONFIGURATION_FAILURE")
-        self.assertIn(".auditignore", report["health"]["error"])
+        self.assertIn(".auditignore.yaml", report["health"]["error"])
+
+    def test_auditignore_outside_the_shape_is_a_configuration_failure(self):
+        clone = self.acknowledged_clone("shape", "findings:\n  - rule: secret-api-token\n")
+        code, report, _ = run_detector(clone)
+        self.assertEqual(code, 2)
+        self.assertEqual(report["health"]["status"], "CONFIGURATION_FAILURE")
+        self.assertIn("line 1: only the `acknowledged` key", report["health"]["error"])
 
     def test_auditignore_is_skipped_on_request(self):
-        clone = self.acknowledged_clone("skipped", self.acknowledge(self.third))
+        clone = self.acknowledged_clone("skipped", self.acknowledgement(self.third))
         _, report, _ = run_detector(clone, "--acknowledgement-path", "")
         self.assertEqual(report["status"], "ALERT")
         self.assertIsNone(report["health"]["acknowledgement_file"])
@@ -389,12 +425,12 @@ class ExposureScanTests(unittest.TestCase):
     def test_sensitive_domain_is_an_alert(self):
         path = self.fixture.directory / "domains.txt"
         path.write_text(SENSITIVE_DOMAIN + "\n", encoding="utf-8")
-        known = self.acknowledge(self.third, rules={"SEC-TOKEN", "SEC-URL-AUTH", "SEC-ASSIGNMENT", "SEC-PRIVATE-KEY", "PII-EMAIL", "PII-PHONE"})
+        known = self.acknowledgement(self.third, rules={"secret-api-token", "secret-url-credential", "secret-assigned-value", "secret-private-key", "personal-email-address", "personal-phone-number"})
         _, report, raw = run_detector(
-            self.fixture.repo, "--known-findings", ",".join(known), "--sensitive-domains-file", str(path)
+            self.fixture.repo, "--known-findings-file", self.known_file("no-hosts.yaml", known), "--sensitive-domains-file", str(path)
         )
         self.assertEqual(report["status"], "ALERT")
-        found = {finding["id"]: finding for finding in self.findings("HOST-SENSITIVE-DOMAIN", report)}
+        found = {finding["id"]: finding for finding in self.findings("host-sensitive-domain", report)}
         rule = self.module.HOST_SENSITIVE_DOMAIN
         expected = {
             self.module.finding_id(rule, "vpn." + SENSITIVE_DOMAIN),
@@ -410,8 +446,8 @@ class ExposureScanTests(unittest.TestCase):
         self.assertEqual({location["context"] for location in vpn["locations"]}, {"[REDACTED]", "HostName [REDACTED]"})
 
     def test_private_hosts_alone_are_review(self):
-        known = self.acknowledge(self.third, rules={"SEC-TOKEN", "SEC-URL-AUTH", "SEC-ASSIGNMENT", "SEC-PRIVATE-KEY", "PII-EMAIL", "PII-PHONE"})
-        _, report, _ = run_detector(self.fixture.repo, "--known-findings", ",".join(known))
+        known = self.acknowledgement(self.third, rules={"secret-api-token", "secret-url-credential", "secret-assigned-value", "secret-private-key", "personal-email-address", "personal-phone-number"})
+        _, report, _ = run_detector(self.fixture.repo, "--known-findings-file", self.known_file("review.yaml", known))
         self.assertEqual(report["status"], "REVIEW")
 
     def test_working_tree_is_never_read(self):
@@ -420,7 +456,7 @@ class ExposureScanTests(unittest.TestCase):
             _, report, _ = run_detector(self.fixture.repo)
         finally:
             (self.fixture.repo / "untracked.env").unlink()
-        self.assertEqual(self.ids("SEC-TOKEN", report), self.ids("SEC-TOKEN"))
+        self.assertEqual(self.ids("secret-api-token", report), self.ids("secret-api-token"))
         self.assertEqual(report["health"], self.report["health"])
 
     def test_shallow_clone_is_incomplete(self):
@@ -430,7 +466,7 @@ class ExposureScanTests(unittest.TestCase):
         self.assertEqual(report["health"]["commits"], 1)
         self.assertEqual(report["health"]["shallow_boundary"], [self.third])
         self.assertEqual(report["health"]["status"], "INCOMPLETE")
-        token = next(f for f in self.findings("SEC-TOKEN", report) if f["id"] == self.expected_id("SEC-TOKEN", FAKE_TOKEN))
+        token = next(f for f in self.findings("secret-api-token", report) if f["id"] == self.expected_id("secret-api-token", FAKE_TOKEN))
         self.assertEqual([location["path"] for location in token["locations"]], ["zshrc"])
 
     def test_unshallowed_clone_is_complete(self):
