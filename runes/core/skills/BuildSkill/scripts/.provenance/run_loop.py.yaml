@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BuildSkill/scripts/run_loop.py
     digest:
-      sha256: 30a41145927940031fa2e1ce35ad0bb8de267cea0db51f39a1ea565c933b6e61
+      sha256: bbd32e58d5e9aa7a94cde40b9e4eadc3e83393eaa7364676baf399e8a89d5414
   predicate:
     buildDefinition:
       buildType: adopt/v1

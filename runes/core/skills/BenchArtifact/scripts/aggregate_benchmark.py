@@ -9,7 +9,7 @@ import json
 import math
 import sys
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -524,7 +524,7 @@ def generate(root: Path, manifest_path: Path | None, artifact_name: str, artifac
         "metadata": {
             "artifact_name": artifact_name or manifest.get("artifact_name", "<artifact-name>"),
             "artifact_path": artifact_path or None,
-            "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "timestamp": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "models": sorted(summaries), "arms": arms,
             "run_counts": {"total": len(runs), "valid": sum(run["valid"] for run in runs), "excluded": sum(not run["valid"] for run in runs)},
             "identities": identities,

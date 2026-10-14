@@ -13,7 +13,7 @@ import sys
 import tempfile
 import time
 import webbrowser
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from scripts.generate_report import generate_html
@@ -278,7 +278,7 @@ def main():
     # Set up live report path (only when explicitly requested)
     if args.report != "none":
         if args.report == "auto":
-            timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+            timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
             live_report_path = Path(tempfile.gettempdir()) / f"skill_description_report_{skill_path.name}_{timestamp}.html"
         else:
             live_report_path = Path(args.report)
@@ -290,7 +290,7 @@ def main():
 
     # Determine output directory (create before run_loop so logs can be written)
     if args.results_dir:
-        timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d_%H%M%S")
+        timestamp = datetime.now(UTC).strftime("%Y-%m-%d_%H%M%S")
         results_dir = Path(args.results_dir) / timestamp
         results_dir.mkdir(parents=True, exist_ok=True)
     else:
