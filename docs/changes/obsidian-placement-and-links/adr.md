@@ -7,7 +7,7 @@ tags:
     - runedeck
     - domain
     - obsidian
-status: accepted
+status: proposed
 created: 2026-09-20
 updated: 2026-09-20
 author: "@N4M3Z"

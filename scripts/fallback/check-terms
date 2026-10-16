@@ -1,0 +1,114 @@
+#!/usr/bin/env python3
+"""Check that every ontology reference in the docs resolves and that every
+defined term is cited.
+
+A specification, record, or rune sets a term in italics at its first use
+and cites it, `*target* [TARGET]`, with a reference definition at the
+end of the file, `[TARGET]: https://runedeck.ai/ns#Target`. This check
+reads the content the glossary check cannot:
+
+- every reference definition under the ontology namespace names a term
+  that exists in ontology/rune.ttl;
+- every italic term that is an ontology label carries a reference tag
+  at its first use, and that tag resolves to the term's IRI.
+
+rumdl checks the rest: MD052 reports an undefined tag and MD053 an unused
+definition. `rune validate` and `rune spec validate` run the same check
+from the ontology (cli 1b0c99f9); this script is the fallback for a
+machine without rune, and the check-terms hook runs it only then.
+"""
+import json
+import pathlib
+import re
+import shutil
+import subprocess
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
+ONTOLOGY = ROOT / "ontology" / "rune.ttl"
+NS = "https://runedeck.ai/ns#"
+TERM = re.compile(r"^rune:(\w+) a (rdfs:Class|rdf:Property|skos:Concept)\b(.*?)\s\.\s*$", re.M | re.S)
+LABEL = re.compile(r'rdfs:label "([^"]+)"')
+DEFINITION = re.compile(r"^\[([A-Z][A-Z0-9-]*)\]:\s*(\S+)", re.M)
+ITALIC = re.compile(r"(?:^|[^*\w])\*([^*\n]+?)\*(?:\s*\[([A-Z][A-Z0-9-]*)\])?")
+CODE_SPAN = re.compile(r"`[^`\n]*`")
+ROOTS = ("docs/specs", "docs/changes", "docs/decisions", "runes")
+
+
+def ontology(root=ROOT):
+    """Local name by lowercase label, and the set of local names."""
+    text = (root / "ontology" / "rune.ttl").read_text()
+    by_label, names = {}, set()
+    # A class and a property may share a label (`Change` and `change`). An
+    # italic term in prose names the concept, so a class or concept wins.
+    for match in TERM.finditer(text):
+        name, kind = match.group(1), match.group(2)
+        names.add(name)
+        label = LABEL.search(match.group(3))
+        if label and (kind != "rdf:Property" or label.group(1).lower() not in by_label):
+            by_label[label.group(1).lower()] = name
+    return by_label, names
+
+
+def files(root=ROOT):
+    for top in ROOTS:
+        base = root / top
+        if base.is_dir():
+            for path in sorted(base.rglob("*.md")):
+                if "archive" in path.parts or ".provenance" in path.parts or "build" in path.parts:
+                    continue
+                yield path
+
+
+def check(root=ROOT):
+    by_label, names = ontology(root)
+    errors = []
+    for path in files(root):
+        text = CODE_SPAN.sub("", path.read_text())
+        rel = path.relative_to(root)
+        definitions = {tag: target for tag, target in DEFINITION.findall(text)}
+        for tag, target in definitions.items():
+            if target.startswith(NS) and target[len(NS):] not in names:
+                errors.append(f"{rel}: [{tag}] names {target}, which is not in ontology/rune.ttl")
+        seen = set()
+        for match in ITALIC.finditer(text):
+            term, tag = match.group(1).strip().lower(), match.group(2)
+            singular = term[:-1] if term.endswith("s") and term[:-1] in by_label else term
+            name = by_label.get(singular)
+            if name is None or name in seen:
+                continue
+            seen.add(name)
+            if tag is None:
+                errors.append(f"{rel}: first use of *{term}* has no reference tag; write `*{term}* [{name.upper()}]`")
+            elif definitions.get(tag) != NS + name:
+                errors.append(f"{rel}: [{tag}] must be defined as `[{tag}]: {NS}{name}`")
+    return errors
+
+
+def rune_findings():
+    """The same check from rune, when the binary is present: term findings only,
+    so this script and rune never disagree."""
+    spec = subprocess.run(["rune", "spec", "validate", "--json"], capture_output=True, text=True)
+    deck = subprocess.run(["rune", "validate", "--json"], capture_output=True, text=True)
+    found = []
+    for item in json.loads(spec.stdout or "[]"):
+        if "term" in item["code"] and item["severity"] == "error":
+            found.append(f"{item['path']}:{item['line'] or 0}: {item['code']}: {item['message']}")
+    found.extend(line for line in json.loads(deck.stdout or "{}").get("errors", []) if "term" in line)
+    return found
+
+
+def main():
+    """With a directory argument, check that tree against its own ontology
+    and never delegate to rune; without one, check the deck."""
+    if sys.argv[1:]:
+        errors = check(pathlib.Path(sys.argv[1]).resolve())
+    else:
+        errors = rune_findings() if shutil.which("rune") else check()
+    for line in errors:
+        print(line)
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

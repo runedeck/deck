@@ -1,16 +1,18 @@
-@prefix rune:    <https://runedeck.dev/ns#> .
-@prefix id:      <https://runedeck.dev/id/> .
+@prefix rune:    <https://runedeck.ai/ns#> .
+@prefix id:      <https://runedeck.ai/id/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 
 # Smoke-test instance graph for the shapes gate. Every node below
-# carries a seeded defect except the first, so a validation run must
-# report exactly four Violations and thirteen Warnings:
-#   rudof shacl-validate -s ontology/shapes.ttl ontology/smoke/instances.ttl
+# carries a seeded defect except the first. expected.tsv beside this
+# file names every finding the shapes must report, one per line:
+#   scripts/check-ontology smoke            compare
+#   scripts/check-ontology smoke --update   accept a reviewed change
 
 # A conforming record.
 id:DECK-0010 a rune:DecisionRecord ;
     dcterms:identifier "DECK-0010" ;
-    dcterms:title "Declared World in RDF" .
+    dcterms:title "Declared World in RDF" ;
+    rune:status "accepted" .
 
 # The duplicate: one IRI, two titles, two source files, and a
 # malformed identifier.
@@ -64,13 +66,31 @@ id:proof-malformed a rune:Proof ;
     rune:proofKind rune:vibes .
 
 # A CORE record is valid: the family is any uppercase word (2026-09-20).
-<https://runedeck.dev/id/CORE-0001> a rune:DecisionRecord ;
+# It states its status, so the status shape passes here.
+<https://runedeck.ai/id/CORE-0001> a rune:DecisionRecord ;
     dcterms:identifier "CORE-0001" ;
     dcterms:title "Markdown as System Language" ;
+    rune:status "accepted" ;
     rune:sourcePath "docs/decisions/CORE-0001 Markdown as System Language.md" .
 
+# Supersession (2026-09-23): DECK-0021 replaces DECK-0020, and DECK-0020
+# still says accepted: one Warning from the superseded-says-so shape.
+# DECK-0021 replaces DECK-4243, which does not exist: one Violation. Its
+# own status is proposed under docs/decisions/: one Warning. It also
+# lists itself, which Core cannot see; a SPARQL check owns that later.
+id:DECK-0020 a rune:DecisionRecord ;
+    dcterms:identifier "DECK-0020" ;
+    dcterms:title "Old way" ;
+    rune:status "accepted" .
+
+id:DECK-0021 a rune:DecisionRecord ;
+    dcterms:identifier "DECK-0021" ;
+    dcterms:title "New way" ;
+    rune:status "proposed" ;
+    dcterms:replaces id:DECK-0020, id:DECK-0021, id:DECK-4243 .
+
 # A lowercase family is not an identifier: one Violation.
-<https://runedeck.dev/id/core-0002> a rune:DecisionRecord ;
+<https://runedeck.ai/id/core-0002> a rune:DecisionRecord ;
     dcterms:identifier "core-0002" ;
     dcterms:title "Lowercase family" ;
     rune:sourcePath "docs/decisions/core-0002 Lowercase family.md" .

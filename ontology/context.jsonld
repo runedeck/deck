@@ -1,0 +1,37 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "rune": "https://runedeck.ai/ns#",
+    "id": "https://runedeck.ai/id/",
+    "schema": "https://schema.org/",
+    "dcterms": "http://purl.org/dc/terms/",
+    "prov": "http://www.w3.org/ns/prov#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+
+    "title": "dcterms:title",
+    "description": "schema:abstract",
+    "type": {"@id": "rune:kind", "@type": "@vocab"},
+    "category": "schema:genre",
+    "tags": {"@id": "schema:keywords", "@container": "@set"},
+    "status": "rune:status",
+    "created": {"@id": "schema:dateCreated", "@type": "xsd:date"},
+    "updated": {"@id": "schema:dateModified", "@type": "xsd:date"},
+    "author": {"@id": "schema:author", "@type": "@id"},
+    "project": {"@id": "schema:isPartOf", "@type": "@id"},
+    "related": {"@id": "dcterms:relation", "@type": "@id", "@container": "@set"},
+    "upstream": {"@id": "schema:isBasedOn", "@type": "@id", "@container": "@set"},
+    "change": {"@id": "rune:change", "@type": "@id", "@container": "@set"},
+    "supersedes": {"@id": "dcterms:replaces", "@type": "@id", "@container": "@set"},
+    "archived": {"@id": "rune:archived", "@type": "xsd:date"},
+    "responsible": {"@id": "rune:responsible", "@type": "@id", "@container": "@set"},
+    "accountable": {"@id": "rune:accountable", "@type": "@id", "@container": "@set"},
+    "consulted": {"@id": "rune:consulted", "@type": "@id", "@container": "@set"},
+    "informed": {"@id": "rune:informed", "@type": "@id", "@container": "@set"},
+
+    "adr": {"@id": "rune:decisionRecord", "@type": "@id"},
+    "decisions": {"@id": "rune:decisionRecord", "@type": "@id", "@container": "@set"},
+
+    "adopted": "rune:adopted"
+  }
+}

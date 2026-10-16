@@ -1,0 +1,26 @@
+Violation	DECK-0002	identifier	MaxCount	A decision record carries exactly one FAMILY-NNNN identifier, such as DECK-0001 or CORE-0001.
+Violation	DECK-0002	identifier	Pattern	A decision record carries exactly one FAMILY-NNNN identifier, such as DECK-0001 or CORE-0001.
+Violation	DECK-0002	sourcePath	MaxCount	Two source files claim one record identifier.
+Violation	DECK-0002	title	MaxCount	Two records share one identifier.
+Violation	DECK-0021	replaces	Class	A supersedes entry names a decision record that does not exist.
+Violation	DECK-0099	relation	Class	A related entry names a decision record that does not exist.
+Violation	core-0002	identifier	Pattern	A decision record carries exactly one FAMILY-NNNN identifier, such as DECK-0001 or CORE-0001.
+Warning	DECK-0002	status	MinCount	A record carries one status: proposed, accepted, deprecated, or superseded.
+Warning	DECK-0020	status	HasValue	A record that a successor replaces does not say status superseded.
+Warning	DECK-0021	-	Or	OR not satisfied
+Warning	DECK-0021	status	HasValue	A record that a successor replaces does not say status superseded.
+Warning	DECK-0099	status	MinCount	A record carries one status: proposed, accepted, deprecated, or superseded.
+Warning	DECK-4243	status	HasValue	A record that a successor replaces does not say status superseded.
+Warning	UseEfficientCLI	verdict	MinCount	A rule carries no bench verdict pointer. Run BenchArtifact and record the verdict.
+Warning	core-0002	status	MinCount	A record carries one status: proposed, accepted, deprecated, or superseded.
+Warning	proof-failed	exitStatus	HasValue	A proof carries no exit status, or one that is not zero.
+Warning	proof-foreign	proves	Pattern	A proof names no candidate commit, more than one, or a value that is not an entity IRI under /id/.
+Warning	proof-malformed	exitStatus	HasValue	A proof carries no exit status, or one that is not zero.
+Warning	proof-malformed	exitStatus	MinCount	A proof carries no exit status, or one that is not zero.
+Warning	proof-malformed	proofKind	In	A proof names no kind, more than one, or a kind outside rune:proofKinds.
+Warning	proof-malformed	proves	NodeKind	A proof names no candidate commit, more than one, or a value that is not an entity IRI under /id/.
+Warning	proof-malformed	proves	Pattern	A proof names no candidate commit, more than one, or a value that is not an entity IRI under /id/.
+Warning	proof-orphan	exitStatus	HasValue	A proof carries no exit status, or one that is not zero.
+Warning	proof-orphan	exitStatus	MinCount	A proof carries no exit status, or one that is not zero.
+Warning	proof-orphan	proofKind	MinCount	A proof names no kind, more than one, or a kind outside rune:proofKinds.
+Warning	proof-orphan	proves	MinCount	A proof names no candidate commit, more than one, or a value that is not an entity IRI under /id/.

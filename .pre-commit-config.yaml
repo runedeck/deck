@@ -149,25 +149,49 @@ repos:
             language: system
             files: ^\.github/workflows/.*\.ya?ml$
 
-          # The declared world is hand-edited Turtle. This hook proves the
-          # ontology parses and asserts the smoke fixture's exact findings,
-          # so deleting or breaking a shape fails the hook.
+          # The declared world is hand-edited Turtle. The smoke fixture seeds
+          # one defect per shape, and ontology/smoke/expected.tsv names every
+          # finding, so a shape that stops firing or fires on the wrong node
+          # is a named difference, never a count.
           - id: ontology-syntax
-            name: ontology syntax and shapes smoke test
-            entry: sh -c 'if command -v rudof >/dev/null 2>&1; then rudof data ontology/rune.ttl >/dev/null || exit 1; r=$(rudof shacl-validate -s ontology/shapes.ttl -r turtle ontology/smoke/instances.ttl 2>/dev/null); v=$(printf "%s" "$r" | grep -c "sh:Violation"); w=$(printf "%s" "$r" | grep -c "sh:Warning"); [ "$v" -eq 5 ] && [ "$w" -eq 13 ] || { echo "shapes smoke test expected 5 Violations and 13 Warnings, got $v and $w"; exit 1; }; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and rudof is absent"; exit 1; fi'
+            name: ontology parses and the shapes report the expected findings
+            entry: python3 scripts/check-ontology smoke
             language: system
             pass_filenames: false
-            files: ^ontology/.*\.ttl$
+            files: ^ontology/
 
           # The smoke fixture proves the shapes. This hook proves the deck:
           # it exports the real graph and fails on any Violation. A Warning
           # is declared debt, such as a rule without a verdict, and passes.
           - id: ontology-graph
             name: declared world validates the real graph
-            entry: sh -c 'if command -v rudof >/dev/null 2>&1 && command -v rune >/dev/null 2>&1; then g=$(mktemp); rune graph export --source . > "$g" || exit 1; r=$(rudof shacl-validate -s ontology/shapes.ttl -r turtle "$g" 2>/dev/null); rm -f "$g"; v=$(printf "%s" "$r" | rg -c "sh:Violation"); [ "${v:-0}" -eq 0 ] || { printf "%s" "$r" | rg -B2 -A6 "sh:Violation" | rg "focusNode|resultMessage"; echo "the real graph has $v Violations"; exit 1; }; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and rudof or rune is absent"; exit 1; fi'
+            entry: python3 scripts/check-ontology graph
             language: system
             pass_filenames: false
             files: ^(ontology/|docs/decisions/|runes/.*/rules/)
+
+          # The ontology is the one definition of every term. A term set in
+          # italics cites its ontology IRI, so a definition has one home.
+          # rune validate and rune spec validate read the ontology directly
+          # (cli 1b0c99f9); the fallback script covers a machine without rune.
+          - id: check-terms
+            name: defined terms cite the ontology (fallback without rune)
+            entry: sh -c 'if ! command -v rune >/dev/null 2>&1; then python3 scripts/fallback/check-terms; fi'
+            language: system
+            pass_filenames: false
+            files: ^(docs/|runes/|ontology/rune\.ttl)
+
+          # docs/specs/glossary.md is a render of the ontology. The script hands
+          # over to `rune spec glossary --check` when the installed rune has the
+          # flag (cli change render-spec-glossary) and compares the same bytes
+          # itself otherwise.
+          - id: glossary-current
+            name: glossary matches the ontology
+            entry: python3 scripts/fallback/generate-glossary --check
+            language: system
+            pass_filenames: false
+            files: ^(ontology/rune\.ttl|docs/specs/glossary\.md)$
+
 
           - id: openspec-validate
             name: openspec validate (strict)

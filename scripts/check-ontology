@@ -1,0 +1,151 @@
+#!/usr/bin/env python3
+"""Validate the declared world: the ontology parses, the shapes report
+exactly the findings the smoke fixture seeds, and the real graph has no
+Violation.
+
+    scripts/check-ontology smoke            compare findings with ontology/smoke/expected.tsv
+    scripts/check-ontology smoke --update   rewrite expected.tsv from the current findings
+    scripts/check-ontology graph            export the deck and fail on any Violation
+
+The expected file lists one finding per line as
+`severity<TAB>focus node<TAB>path<TAB>constraint<TAB>message`, so a
+shape that stops firing, fires on the wrong node, or fires twice is a
+named difference, never a count. Both commands skip when rudof or rune
+is absent, and fail instead when REQUIRE_GATES is set.
+"""
+import argparse
+import collections
+import pathlib
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+ONTOLOGY = ROOT / "ontology" / "rune.ttl"
+SHAPES = ROOT / "ontology" / "shapes.ttl"
+SMOKE = ROOT / "ontology" / "smoke" / "instances.ttl"
+EXPECTED = ROOT / "ontology" / "smoke" / "expected.tsv"
+SH = "http://www.w3.org/ns/shacl#"
+FIELDS = ("resultSeverity", "focusNode", "resultPath", "sourceConstraintComponent", "resultMessage")
+TRIPLE = re.compile(r'^(\S+) <' + re.escape(SH) + r'(\w+)> (?:<([^>]*)>|"((?:[^"\\]|\\.)*)"(?:\^\^<[^>]*>)?) \.$')
+
+Finding = collections.namedtuple("Finding", "severity node path constraint message")
+
+
+def short(iri):
+    """A readable form of an IRI: the local name after the last # or /."""
+    return re.split(r"[#/]", iri)[-1] if iri else "-"
+
+
+def parse(ntriples):
+    """The findings in a SHACL validation report, as sorted Finding tuples."""
+    results = collections.defaultdict(dict)
+    for line in ntriples.splitlines():
+        match = TRIPLE.match(line)
+        if not match:
+            continue
+        subject, predicate, iri, literal = match.groups()
+        if predicate in FIELDS:
+            results[subject][predicate] = literal if literal is not None else iri
+    findings = []
+    for fields in results.values():
+        if "resultSeverity" not in fields:
+            continue
+        findings.append(Finding(
+            short(fields["resultSeverity"]),
+            short(fields.get("focusNode", "")),
+            short(fields.get("resultPath", "")),
+            short(fields.get("sourceConstraintComponent", "")).removesuffix("ConstraintComponent"),
+            fields.get("resultMessage", ""),
+        ))
+    return sorted(findings)
+
+
+def validate(data):
+    """Run rudof over one data file and return its findings."""
+    run = subprocess.run(
+        ["rudof", "shacl-validate", "-s", str(SHAPES), "-r", "ntriples", str(data)],
+        capture_output=True, text=True, check=False,
+    )
+    if run.returncode not in (0, 1):
+        sys.exit(f"rudof shacl-validate failed:\n{run.stderr}")
+    return parse(run.stdout)
+
+
+def ontology_parses():
+    run = subprocess.run(["rudof", "data", str(ONTOLOGY)], capture_output=True, text=True, check=False)
+    if run.returncode != 0:
+        sys.exit(f"{ONTOLOGY.relative_to(ROOT)} does not parse:\n{run.stderr}")
+
+
+def tools_present(*names):
+    missing = [name for name in names if shutil.which(name) is None]
+    if not missing:
+        return True
+    if subprocess.os.environ.get("REQUIRE_GATES"):
+        sys.exit(f"REQUIRE_GATES set and {', '.join(missing)} absent")
+    print(f"skipped: {', '.join(missing)} absent")
+    return False
+
+
+def smoke(update):
+    ontology_parses()
+    found = validate(SMOKE)
+    lines = ["\t".join(f) for f in found]
+    if update:
+        EXPECTED.write_text("\n".join(lines) + "\n")
+        print(f"wrote {len(lines)} findings to {EXPECTED.relative_to(ROOT)}")
+        return 0
+    expected = EXPECTED.read_text().splitlines() if EXPECTED.is_file() else []
+    missing = sorted(set(expected) - set(lines))
+    unexpected = sorted(set(lines) - set(expected))
+    for line in missing:
+        print(f"missing    {line}")
+    for line in unexpected:
+        print(f"unexpected {line}")
+    if missing or unexpected:
+        print(f"smoke findings differ from {EXPECTED.relative_to(ROOT)}; run `scripts/check-ontology smoke --update` after reviewing")
+        return 1
+    print(f"smoke: {len(lines)} findings as expected")
+    return 0
+
+
+def graph():
+    ontology_parses()
+    with tempfile.NamedTemporaryFile("w", suffix=".ttl", delete=False) as handle:
+        export = subprocess.run([subprocess.os.environ.get("RUNE", "rune"), "graph", "export", "--source", str(ROOT)], capture_output=True, text=True, check=False)
+        if export.returncode != 0:
+            sys.exit(f"rune graph export failed:\n{export.stderr}")
+        handle.write(export.stdout)
+        data = pathlib.Path(handle.name)
+    try:
+        found = validate(data)
+    finally:
+        data.unlink(missing_ok=True)
+    violations = [f for f in found if f.severity == "Violation"]
+    warnings = collections.Counter(f.message for f in found if f.severity == "Warning")
+    for message, count in warnings.most_common():
+        print(f"warning x{count}: {message}")
+    for f in violations:
+        print(f"violation  {f.node}  {f.path}  {f.message}")
+    if violations:
+        print(f"the real graph has {len(violations)} Violations")
+        return 1
+    print("graph: no Violation")
+    return 0
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("command", choices=["smoke", "graph"])
+    parser.add_argument("--update", action="store_true", help="smoke only: rewrite expected.tsv")
+    args = parser.parse_args()
+    if args.command == "smoke":
+        return smoke(args.update) if tools_present("rudof") else 0
+    return graph() if tools_present("rudof", "rune") else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

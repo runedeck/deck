@@ -1,4 +1,4 @@
-@prefix rune:    <https://runedeck.dev/ns#> .
+@prefix rune:    <https://runedeck.ai/ns#> .
 @prefix sh:      <http://www.w3.org/ns/shacl#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
@@ -8,7 +8,7 @@
 # the gate. The ontology in rune.ttl only describes.
 #
 # The instance graph comes from the extractor, which mints one IRI per
-# record identifier under https://runedeck.dev/id/. Two files that claim
+# record identifier under https://runedeck.ai/id/. Two files that claim
 # one identifier therefore merge into one node, and the duplicate shows
 # up as a cardinality violation on that node.
 
@@ -17,12 +17,18 @@ rune:DecisionRecordShape a sh:NodeShape ;
     sh:targetClass rune:DecisionRecord ;
     sh:property [
         sh:path dcterms:identifier ;
-        sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:datatype xsd:string ;
         sh:pattern "^[A-Z]+-[0-9]{4}$" ;
         sh:message "A decision record carries exactly one FAMILY-NNNN identifier, such as DECK-0001 or CORE-0001." ;
     ] ;
+    # A draft inside its change (`adr.md`, status proposed) has no
+    # identifier yet; archive assigns it. Every other record has one.
+    sh:or (
+        [ sh:property [ sh:path rune:status ; sh:hasValue "proposed" ] ]
+        [ sh:property [ sh:path dcterms:identifier ; sh:minCount 1 ] ]
+    ) ;
+    sh:message "A record that is not a proposed draft carries a FAMILY-NNNN identifier." ;
     sh:property [
         sh:path dcterms:title ;
         sh:minCount 1 ;
@@ -44,15 +50,58 @@ rune:DecisionRecordShape a sh:NodeShape ;
         sh:message "Two source files claim one record identifier." ;
     ] ;
     # Axiom references-resolve: every related entry names a record that
-    # exists in the extracted graph with the declared type.
-    # Severity is Warning per the ratchet, because existing records may
-    # carry unresolved entries when the extractor first runs. The flip
-    # to Violation is a recorded follow-up after the corpus conforms.
+    # exists in the extracted graph with the declared type. The corpus
+    # conformed on 2026-09-23 (DECK-0006 and DECK-0019 were the last
+    # dangling entries), so this blocks.
     sh:property [
         sh:path dcterms:relation ;
         sh:class rune:DecisionRecord ;
-        sh:severity sh:Warning ;
+        sh:severity sh:Violation ;
         sh:message "A related entry names a decision record that does not exist." ;
+    ] ;
+    # Axiom status-is-asserted (2026-09-23): the frontmatter status is the
+    # authority and a rule only catches a lie. Every record states one
+    # status from the lifecycle. Warning until the exporter with
+    # rune:status (cli #70, #71) is installed, then Violation.
+    sh:property [
+        sh:path rune:status ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:in ( "proposed" "accepted" "deprecated" "superseded" ) ;
+        sh:severity sh:Warning ;
+        sh:message "A record carries one status: proposed, accepted, deprecated, or superseded." ;
+    ] ;
+    # Axiom supersession-is-directed: `supersedes` names an existing
+    # record. Self-replacement and a cycle need a SPARQL check, not Core.
+    sh:property [
+        sh:path dcterms:replaces ;
+        sh:class rune:DecisionRecord ;
+        sh:severity sh:Violation ;
+        sh:message "A supersedes entry names a decision record that does not exist." ;
+    ] .
+
+# Axiom archived-is-not-proposed: a record under docs/decisions/ has left
+# its change, so its status is never proposed. A draft under docs/changes/
+# is proposed. Warning until the new exporter is installed.
+rune:PlacedRecordShape a sh:NodeShape ;
+    sh:targetClass rune:DecisionRecord ;
+    sh:or (
+        [ sh:property [ sh:path rune:sourcePath ; sh:minCount 1 ; sh:pattern "^docs/changes/" ] ]
+        [ sh:property [ sh:path rune:status ; sh:in ( "accepted" "deprecated" "superseded" ) ] ]
+    ) ;
+    sh:severity sh:Warning ;
+    sh:message "A record under docs/decisions/ says accepted, deprecated, or superseded, never proposed." .
+
+# Axiom superseded-says-so: the record a successor replaces states
+# status superseded, so the two files agree. Warning until the exporter
+# emits rune:status (cli #70), then Violation.
+rune:SupersededShape a sh:NodeShape ;
+    sh:targetObjectsOf dcterms:replaces ;
+    sh:property [
+        sh:path rune:status ;
+        sh:hasValue "superseded" ;
+        sh:severity sh:Warning ;
+        sh:message "A record that a successor replaces does not say status superseded." ;
     ] .
 
 # Axiom rule-carries-verdict: a rule links to bench evidence, because a
@@ -81,7 +130,7 @@ rune:ProofShape a sh:NodeShape ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:nodeKind sh:IRI ;
-        sh:pattern "^https://runedeck\\.dev/id/" ;
+        sh:pattern "^https://runedeck\\.ai/id/" ;
         sh:severity sh:Warning ;
         sh:message "A proof names no candidate commit, more than one, or a value that is not an entity IRI under /id/." ;
     ] ;
