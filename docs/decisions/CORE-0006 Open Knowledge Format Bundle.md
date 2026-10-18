@@ -9,7 +9,7 @@ tags:
     - linking
 status: proposed
 created: 2026-09-23
-updated: 2026-10-18
+updated: 2026-10-19
 author: "@N4M3Z"
 project: deck
 related:
@@ -36,44 +36,56 @@ change: plain-text-first-principles
 
 ## Context and Problem Statement
 
-The repository is a directory of Markdown files. Its readers are a person in an editor or a vault, a model through a harness, and a tool that builds a graph or an index.
+The *[repository][REPOSITORY]* is a directory of Markdown files. A person reads it in an editor or a vault. A *[model][MODEL]* reads it through a *[harness][HARNESS]*. A tool reads it to build a graph or an index.
 Either each file says what it is and what it links to, or the reader has to guess.
-Three link forms compete: Markdown links in the repository, wikilinks in the vault, and `@path` references in a harness.
-The repository needs one contract for the file structure and the link form, one a machine can read as a graph, and the graph has to be rebuildable from the files alone (frame 04 of the canvas).
+Three link forms compete. The [repository][REPOSITORY] uses Markdown links, the vault uses wikilinks, and a [harness][HARNESS] uses `@path` references.
+The [repository][REPOSITORY] needs one contract for the file structure and the link form, one that a machine can read as a graph. The files alone have to be enough to rebuild the graph (frame 04 of the canvas).
 
 ## Decision Drivers
 
-- One optional key, so a file without it takes its type from the structure schema of its directory, and a rune may still carry it under the Agent Skills `metadata` map
-- Standard Markdown links, so GitHub, lychee, rumdl, and a plain parser resolve them
-- No central registry of types, so a repository adds a kind without asking anyone
-- A published specification another organization maintains
+- The contract has one optional key, so a file without the key takes its *[type][TYPE]* from the *[structure schema][STRUCTURESCHEMA]* of its directory. A *[rune][RUNE]* may still carry the key under the Agent Skills `metadata` map.
+- Links are standard Markdown, so GitHub, the link checker lychee, the Markdown *[linter][LINTER]* rumdl, and a plain parser resolve them.
+- The format does not keep a central registry of [types][TYPE], so a [repository][REPOSITORY] adds a kind without asking anyone.
+- Another organization publishes and maintains the specification.
 
 ## Considered Options
 
-1. Bespoke frontmatter: keep the fields each file kind grew. The contract is then written down nowhere, and a graph tool learns each kind by hand.
-2. [MIF][MIF]: typed relationships, a JSON-LD projection, bi-temporal fields, W3C PROV. It fits provenance and records, and it asks every file for more than a type. Deferred rather than rejected: the `modeled-information-format-alignment` change decides that alignment.
-3. [Open Knowledge Format 0.2][OKF]: a bundle is a directory of Markdown files with YAML frontmatter. `type` is the only required key, the identifier is the file path, links are standard Markdown, `index.md` and `log.md` are reserved, consumers tolerate unknown keys and types.
+1. Bespoke frontmatter: the [repository][REPOSITORY] keeps the fields each file kind grew. Nobody writes the contract down, and a graph tool learns each kind by hand.
+2. [MIF][MIF], the Modeled Information Format: typed relationships, a JSON-LD (JSON for Linked Data) projection, and bi-temporal fields. It also uses W3C PROV, the provenance standard of the World Wide Web Consortium. It fits provenance and records, and it asks every file for more than a [type][TYPE]. The owner defers this option and does not reject it. The `modeled-information-format-alignment` *[change][CHANGE]* decides that alignment.
+3. [Open Knowledge Format 0.2][OKF]: a bundle is a directory of Markdown files with YAML frontmatter. The format requires one key, `type`. The file path is the identifier. Links are standard Markdown. The format reserves the names `index.md` and `log.md`. A consumer tolerates unknown keys and [types][TYPE].
 
 ## Decision Outcome
 
-Option 3. The repository MUST be a conformant Open Knowledge Format 0.2 bundle. A file's type comes from the structure schema of its nearest directory, and an explicit key in the file overrides it. A rune may keep its `type` under the Agent Skills `metadata` map, and the graph export fills the type in for every file.
-Every Markdown file outside the reserved names MUST have a `type`.
-A record, a specification, or a proposal MUST link to another file in the repository with a relative Markdown link, never a wikilink or an `@path` reference.
-An instruction body MAY use the `@path` form where its harness reads it, because that text is what the harness loads.
-The repository root `index.md` MUST declare `okf_version: "0.2"`.
-MIF alignment continues where OKF is silent: provenance, typed relationships, and the record lifecycle.
+Option 3. The [repository][REPOSITORY] MUST be a conformant Open Knowledge Format 0.2 bundle. A file takes its [type][TYPE] from the [structure schema][STRUCTURESCHEMA] of its nearest directory. An explicit key in the file overrides that [type][TYPE]. A [rune][RUNE] may keep its `type` under the Agent Skills `metadata` map. The graph export fills in the [type][TYPE] for every file.
+The author MUST give every Markdown file outside the reserved names a `type`.
+A record, a specification, or a proposal MUST link to another file in the [repository][REPOSITORY] with a relative Markdown link. It MUST NOT use a wikilink or an `@path` reference for that.
+An *[instruction][INSTRUCTION]* body MAY use the `@path` form where its [harness][HARNESS] reads it, because the [harness][HARNESS] loads that text.
+The author MUST declare `okf_version: "0.2"` in the [repository][REPOSITORY] root `index.md`.
+MIF alignment continues where the Open Knowledge Format is silent: provenance, typed relationships, and the stages a record passes through.
 
 ### Consequences
 
-- [+] A directory of files reads as a graph, and a database over it is a rebuildable index, never a second home for the facts.
-- [+] Every link in the repository resolves in GitHub and in the lychee check, and Obsidian resolves relative Markdown links. Fragment conventions differ by renderer, so lychee with fragments is the repository's arbiter.
-- [-] Wikilinks are kept out of the repository, so a note copied from the vault gets rewritten at the boundary. The Obsidian compatibility capability specifies that rewrite.
-- [-] A strict outside reader of the format sees a file without the key as untyped, because the type lives in the directory schema and the graph export. We accept that.
+- [+] A directory of files reads as a graph. A database over it is an index the owner can rebuild. It is never a second home for the facts.
+- [+] Every link in the [repository][REPOSITORY] resolves in GitHub and in the link checker, lychee. Obsidian resolves relative Markdown links too. Renderers differ on fragment conventions, so the link checker with fragments on is the [repository][REPOSITORY]'s arbiter.
+- [-] The [repository][REPOSITORY] keeps wikilinks out, so whoever copies a note from the vault rewrites its links at the boundary. The Obsidian compatibility *[capability][CAPABILITY]* specifies that rewrite.
+- [-] A strict outside reader of the format sees a file without the key as untyped. The reader does so because the [type][TYPE] lives in the directory's [structure schema][STRUCTURESCHEMA] and the graph export. The owner accepts that.
 
 ## More Information
 
-- Amended on 2026-10-18: the type key is optional and derived from the directory schema, so the `metadata` map is no longer an exception.
-- Amended on 2026-10-18: the record says repository where it meant the container, because the Open Knowledge Format bundle is the repository and the marker file marks a deck.
+- Amended on 2026-10-18: the [type][TYPE] key is optional and derived from the directory's [structure schema][STRUCTURESCHEMA], so the `metadata` map is no longer an exception.
+- Amended on 2026-10-18: the record says [repository][REPOSITORY] where it meant the container. It does so because the Open Knowledge Format bundle is the [repository][REPOSITORY] and the marker file marks a *[deck][DECK]*.
+- Rewritten on 2026-10-19 in the plain spoken register. The decision is unchanged.
 
 [MIF]: https://github.com/modeled-information-format/MIF
 [OKF]: https://github.com/GoogleCloudPlatform/open-knowledge-format-bundle/blob/main/SPEC.md
+[REPOSITORY]: ../specs/glossary/repository.md
+[MODEL]: ../specs/glossary/model.md
+[HARNESS]: ../specs/glossary/harness.md
+[STRUCTURESCHEMA]: ../specs/glossary/structure-schema.md
+[RUNE]: ../specs/glossary/rune.md
+[INSTRUCTION]: ../specs/glossary/instruction.md
+[CHANGE]: ../specs/glossary/change.md
+[CAPABILITY]: ../specs/glossary/capability.md
+[DECK]: ../specs/glossary/deck.md
+[TYPE]: ../specs/glossary/type.md
+[LINTER]: ../specs/glossary/linter.md

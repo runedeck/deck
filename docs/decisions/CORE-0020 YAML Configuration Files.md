@@ -8,7 +8,7 @@ tags:
     - config
 status: accepted
 created: 2026-02-19
-updated: 2026-03-30
+updated: 2026-10-19
 author: "@N4M3Z"
 project: deck
 related:
@@ -27,30 +27,39 @@ change: one-domain-one-plugin
 
 ## Context and Problem Statement
 
-ENV vars in markdown instructions ([CORE-0005](CORE-0005%20Variables%20in%20Markdown%20Instructions%20and%20Templates.md)) need a source. Each module has configurable values (paths, feature flags, skill rosters) that differ between default and user-specific setups. The configuration system must support committed defaults, user overrides, and ENV var export without requiring users to manage shell profiles.
+An environment variable in a Markdown *[instruction][INSTRUCTION]* ([CORE-0005](CORE-0005%20Variables%20in%20Markdown%20Instructions%20and%20Templates.md)) needs a source. Each *[module][MODULE]* has configurable values (paths, feature flags, *[skill][SKILL]* rosters) that differ between the default setup and a user's own setup. The configuration system must hold committed defaults and accept user overrides. It must also export the environment variables, so that the user manages no shell profile.
 
 ## Decision Drivers
 
-- Defaults are committed and version-controlled, so the module works out of the box
-- User overrides are gitignored, so personal paths and preferences stay out of the repository
-- Override granularity is per-field, not per-file: users change one path, not the entire config
-- ENV variable export is automatic: `yq` can read individual values, but the export of an entire config subtree as prefixed ENV vars requires a multi-step pipeline
+- The author commits the defaults to version control. The [module][MODULE] then works without setup
+- The user keeps an override in a git-ignored file, so a personal path or preference stays out of the *[repository][REPOSITORY]*
+- A user overrides one field, such as one path, and keeps the rest of the configuration
+- The configuration loader exports the environment variables without a manual step. `yq` can read individual values, but the export of a whole configuration subtree as prefixed environment variables needs a multi-step pipeline
 
 ## Considered Options
 
-1. **Flat ENV files**: `.env` with `KEY=VALUE` pairs. No nesting, no merge, no defaults mechanism.
-2. **JSON config**: structured and mergeable, but hard to author by hand, with no comment support.
-3. **YAML with deep merge**: a committed `defaults.yaml` merged with a gitignored `config.yaml`, recursive so users override only the fields they need.
+1. **Flat ENV files**: a `.env` file with `KEY=VALUE` pairs. A flat file cannot nest, cannot merge, and has no defaults mechanism.
+2. **JSON config**: a structured file that merges. A person finds it hard to author by hand, and the format has no comment syntax.
+3. **YAML with deep merge**: the loader merges a committed `defaults.yaml` with a git-ignored `config.yaml` recursively. A user overrides only the fields they need.
 
 ## Decision Outcome
 
-Chosen option: **YAML with deep merge**. Each module includes `defaults.yaml` with the full schema and working defaults. Users create a gitignored `config.yaml` with only the fields they override. The config loading exports the merged result as ENV vars with a configurable prefix.
+Chosen option: **YAML with deep merge**. Each [module][MODULE] includes a `defaults.yaml` with the full schema and working defaults. A user creates a git-ignored `config.yaml` with only the fields they override. The configuration loader exports the merged result as environment variables with a configurable prefix.
 
-A module MUST include a committed `defaults.yaml` that works without user input. A user override MUST live in a git-ignored `config.yaml` and MUST merge over the defaults field by field.
+A [module][MODULE] MUST include a committed `defaults.yaml` that works without user input. A user override MUST live in a git-ignored `config.yaml` and MUST merge over the defaults field by field.
 
 ### Consequences
 
-- [+] The module works out of the box with zero user configuration
-- [+] Users override one field without knowing the full schema
-- [+] The config loading bridges config to ENV vars consumed by skills and shell commands
-- [-] Deep merge semantics can surprise: array replacement versus append, null versus missing
+- [+] The [module][MODULE] works before the user configures anything
+- [+] A user overrides one field without knowing the full schema
+- [+] The configuration loader turns the configuration into environment variables for [skills][SKILL] and shell commands
+- [-] Deep merge can surprise a user on two questions: whether an array replaces or appends, and whether null differs from missing
+
+## More Information
+
+- Rewritten on 2026-10-19 in the plain spoken register. The decision is unchanged.
+
+[INSTRUCTION]: ../specs/glossary/instruction.md
+[MODULE]: ../specs/glossary/module.md
+[SKILL]: ../specs/glossary/skill.md
+[REPOSITORY]: ../specs/glossary/repository.md
