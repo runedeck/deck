@@ -6,8 +6,9 @@ migrate legacy citations to term links.
     scripts/fallback/fix-terms --terms      add a draft entry to ontology/rune.ttl for every term link
                                             that resolves to no term, and write its page
     scripts/fallback/fix-terms --links      rewrite the legacy `*term* [TAG]` form to `*[term][TAG]*` at
-                                            the first use and `[term][TAG]` after it, and point every
-                                            `[TAG]: https://runedeck.ai/ns#Term` definition at the term's page
+                                            the first use and `[term][TAG]` after it, point every
+                                            `[TAG]: https://runedeck.ai/ns#Term` definition at the term's page,
+                                            and link every plain occurrence of a term the file links
     scripts/fallback/fix-terms [...] DIR    fix another root, never through rune
 
 A validator only reports. This is the separate fix step, like a linter's
@@ -48,10 +49,11 @@ def splice(text, edits):
 
 
 def redefine(root, path, text, tag, page_name):
-    """The text with the definition of tag pointing at the page."""
+    """The text with the definition of tag pointing at the page. Only the
+    target changes, so a definition keeps its title."""
     blanked = termlib.blank_code(text)
     edits = [
-        (m.start(), m.end(), f"[{tag}]: {termlib.relative_link(path, root, page_name)}")
+        (m.start(2), m.end(2), termlib.relative_link(path, root, page_name))
         for m in termlib.DEFINITION.finditer(blanked) if m.group(1) == tag
     ]
     return splice(text, edits)
@@ -89,6 +91,57 @@ def fix_links(root, index):
             path.write_text(text)
             changed.append(rel)
     return changed, notes
+
+
+def wrapping_stars(text, start, end):
+    """How many emphasis stars wrap text[start:end] on both sides, up to three."""
+    count = 0
+    while count < 3 and start - count > 0 and end + count < len(text) and text[start - count - 1] == "*" and text[end + count] == "*":
+        count += 1
+    return count
+
+
+def link_occurrences(root, index):
+    """Link every plain occurrence of a term the file already links, so a
+    copied paragraph keeps its links. Where two terms overlap, the longer
+    one wins (termlib.term_occurrences). The emphasis stays on the first
+    use only: a new link before the old first use takes the emphasis from
+    it, and an italic word that becomes a later link drops its stars.
+    Returns the files changed."""
+    changed = []
+    for path in termlib.markdown_files(root):
+        raw = path.read_text()
+        blanked = termlib.blank_code(raw)
+        resolved = {}
+        for tag, target in termlib.DEFINITION.findall(blanked):
+            res = termlib.resolve(root, path, tag, target, index)
+            if res.form == "link" and res.name is not None:
+                resolved[tag] = res
+        found = termlib.term_occurrences(blanked, termlib.linked_terms(blanked, resolved, index), index)
+        if not found:
+            continue
+        uses = {}
+        for match in termlib.REF_LINK.finditer(blanked):
+            if match.group(3) in resolved:
+                uses.setdefault(resolved[match.group(3)].name, match)
+        first = {}
+        for start, _end, name, _tag in found:
+            first.setdefault(name, start)
+        edits = []
+        for start, end, name, tag in found:
+            link = f"[{raw[start:end]}][{tag}]"
+            wrap = wrapping_stars(raw, start, end)
+            if start == first[name] and start < uses[name].start():
+                edits.append((start, end, link if wrap else f"*{link}*"))
+            else:
+                edits.append((start - wrap, end + wrap, link))
+        for name, use in uses.items():
+            opened, text, tag, closed = use.groups()
+            if first.get(name, len(raw)) < use.start() and opened and closed:
+                edits.append((use.start(), use.end(), f"[{text}][{tag}]"))
+        path.write_text(splice(raw, edits))
+        changed.append(path.relative_to(root))
+    return changed
 
 
 def ghosts(root, index):
@@ -157,6 +210,7 @@ def main():
     index = termlib.load(root)
     if not flags or "--links" in flags:
         changed, notes = fix_links(root, index)
+        changed.extend(rel for rel in link_occurrences(root, index) if rel not in changed)
         for rel in changed:
             print(f"links: rewrote {rel}")
         for note in notes:

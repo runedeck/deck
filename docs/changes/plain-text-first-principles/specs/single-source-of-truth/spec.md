@@ -14,7 +14,7 @@ Anything derived MUST regenerate from its *[source state][SOURCESTATE]* on deman
 #### Scenario: Derived file has no generator
 
 - **WHEN** a committed file is derived and no [generator][GENERATOR] in the *[repository][REPOSITORY]* regenerates it from its [source state][SOURCESTATE]
-- **THEN** the [validator][VALIDATOR] reports the file, and the author deletes the file or writes its generator
+- **THEN** the [validator][VALIDATOR] reports the file, and the author deletes the file or writes its [generator][GENERATOR]
 - **AND** the root index, the directory indexes, the glossary pages, and the changelog each have one
 
 ### Requirement: One Home Per Fact

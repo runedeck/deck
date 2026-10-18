@@ -6,7 +6,7 @@ The ontology (ontology/rune.ttl) is the one definition of every term. A
 labeled class, property, or concept gets one generated page under
 docs/specs/glossary/, and a Markdown file marks a term by a reference link
 to that page: `*[analysis tool][ANALYSISTOOL]*` at first use, then
-`[analysis tool][ANALYSISTOOL]`, with `[ANALYSISTOOL]: <relative path>` at
+`[analysis tool][ANALYSISTOOL]` at every later use, with `[ANALYSISTOOL]: <relative path>` at
 the end of the file. The rune CLI renders the same bytes; this module is the
 fallback for a machine without it.
 """
@@ -38,14 +38,29 @@ KIND = {"rdfs:Class": "class", "rdf:Property": "property", "skos:Concept": "conc
 PRECEDENCE = {"rdfs:Class": 0, "rdf:Property": 1, "skos:Concept": 2}
 
 TAG = r"[A-Z][A-Z0-9-]*"
-DEFINITION = re.compile(r"^\[(" + TAG + r")\]:[ \t]*(\S+)[ \t]*$", re.MULTILINE)
+# A term definition: `[TAG]: target`, with an optional Markdown title in
+# double quotes, single quotes, or parentheses. Two groups: tag and target.
+DEFINITION = re.compile(r"^\[(" + TAG + r")\]:[ \t]*(\S+)(?:[ \t]+(?:\"[^\"\n]*\"|'[^'\n]*'|\([^()\n]*\)))?[ \t]*$", re.MULTILINE)
+# Any definition line, titled or not, as rune's prose view skips it: any
+# Markdown link label, so `[MORE INFO]: ./x.md` is a definition too.
+DEFINITION_LINE = re.compile(r"^ {0,3}\[(?!\s*\])(?:\\.|[^\\\[\]])+\]:\s*\S")
 # The link form: an optional emphasis star on each side of `[text][TAG]`.
 REF_LINK = re.compile(r"(\*?)\[([^\]\n]+)\]\[(" + TAG + r")\](\*?)")
 # The legacy form: an italic term followed by a bare tag. The italic text
 # never starts with `[`, so a converted link is never matched again.
 LEGACY = re.compile(r"(?<![*\w])\*([^*\[\n][^*\n]*?)\*[ \t]*\[(" + TAG + r")\]")
-CODE_FENCE = re.compile(r"^(`{3,}|~{3,}).*?^\1[ \t]*$", re.MULTILINE | re.DOTALL)
-CODE_SPAN = re.compile(r"`[^`\n]*`")
+# A fence opens with three or more backticks or tildes indented at most
+# three spaces, and a backtick fence's info string holds no backtick.
+FENCE_OPEN = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+# A code span opens with a run of backticks and closes at the next run of
+# the same length, so ``a `b` c`` is one span.
+CODE_SPAN = re.compile(r"(?<!`)(`+)(?!`)[^\n]*?(?<!`)\1(?!`)")
+# A Setext heading: a paragraph closed by a line of `=` or `-`.
+SETEXT_UNDERLINE = re.compile(r"^ {0,3}(?:=+|-+)[ \t]*$")
+# Lines that start another block, so they are never Setext heading text.
+NOT_PARAGRAPH = re.compile(r"^ {0,3}(?:[-*+](?:[ \t]|$)|\d{1,9}[.)](?:[ \t]|$)|>|\||#)")
+# A leading YAML block closed by `---` or `...`, as rune's prose view sees it.
+FRONT_MATTER = re.compile(r"\A---[ \t]*\n.*?^(?:---|\.\.\.)[ \t]*$", re.MULTILINE | re.DOTALL)
 SCHEME = re.compile(r"^[a-z][a-z0-9+.-]*:")
 
 Term = collections.namedtuple("Term", "label precedence name kind comment status")
@@ -181,15 +196,171 @@ def markdown_files(root):
     return sorted(found)
 
 
+def fenced_blocks(text):
+    """(start, end) of every fenced code block: the opener, the body, and a
+    closing line of the opener's character at least as long as the opener,
+    indented at most three spaces. A fence with no closer runs to the end."""
+    found, opener, offset = [], None, 0
+    for line in text.split("\n"):
+        body = line.rstrip("\r")
+        if opener is None:
+            match = FENCE_OPEN.match(body)
+            if match and not (match.group(1)[0] == "`" and "`" in match.group(2)):
+                opener = (match.group(1)[0], len(match.group(1)), offset)
+        elif re.match(r" {0,3}" + re.escape(opener[0]) + "{" + str(opener[1]) + r",}[ \t]*$", body):
+            found.append((opener[2], offset + len(body)))
+            opener = None
+        offset += len(line) + 1
+    if opener is not None:
+        found.append((opener[2], len(text)))
+    return found
+
+
 def blank_code(text):
-    """Code fences and spans replaced by spaces, so offsets and lines hold."""
-    def blank(match):
-        return re.sub(r"[^\n]", " ", match.group(0))
-    return CODE_SPAN.sub(blank, CODE_FENCE.sub(blank, text))
+    """Front matter, code fences, and code spans replaced by spaces, so
+    offsets and lines hold. Rune's prose view skips the same three."""
+    def blank(chunk):
+        return re.sub(r"[^\n]", " ", chunk)
+    text = FRONT_MATTER.sub(lambda match: blank(match.group(0)), text, count=1)
+    out, last = [], 0
+    for start, end in fenced_blocks(text):
+        out += [text[last:start], blank(text[start:end])]
+        last = end
+    out.append(text[last:])
+    return CODE_SPAN.sub(lambda match: blank(match.group(0)), "".join(out))
 
 
 def line_of(text, offset):
     return text.count("\n", 0, offset) + 1
+
+
+def heading_lines(lines):
+    """Indexes of the heading lines: a `#` line, and every line of a
+    paragraph that a Setext `===` or `---` underline closes. Text that
+    continues a list item, a quote, or a table is not a heading."""
+    found = {i for i, line in enumerate(lines) if line.lstrip().startswith("#")}
+    for i, line in enumerate(lines):
+        if i == 0 or not SETEXT_UNDERLINE.match(line):
+            continue
+        top = i - 1
+        while top >= 0 and lines[top].strip() and not NOT_PARAGRAPH.match(lines[top]) and not DEFINITION_LINE.match(lines[top]):
+            top -= 1
+        if top == i - 1:
+            continue
+        if top >= 0 and lines[top].strip() and NOT_PARAGRAPH.match(lines[top]) and not lines[top].lstrip().startswith("#"):
+            continue
+        found.update(range(top + 1, i + 1))
+    return found
+
+
+def destination_end(line, start):
+    """The offset after the `)` that closes the inline-link destination
+    opening at start. Parentheses balance and a backslash escapes, as in
+    `[record](path(foo)x)`. An unclosed destination runs to the line end."""
+    depth, i = 0, start
+    while i < len(line):
+        if line[i] == "\\":
+            i += 2
+            continue
+        if line[i] == "(":
+            depth += 1
+        elif line[i] == ")":
+            depth -= 1
+            if depth == 0:
+                return i + 1
+        i += 1
+    return len(line)
+
+
+def prose_mask(line):
+    """True for each character of a line that is not prose: a term link, a
+    legacy citation, text in brackets, and an inline-link destination."""
+    masked = [False] * len(line)
+    for pattern in (REF_LINK, LEGACY):
+        for match in pattern.finditer(line):
+            masked[match.start():match.end()] = [True] * (match.end() - match.start())
+    depth, i = 0, 0
+    while i < len(line):
+        if line[i] == "[":
+            depth += 1
+        elif line[i] == "]":
+            depth = max(depth - 1, 0)
+            if depth == 0 and line[i + 1:i + 2] == "(":
+                end = destination_end(line, i + 1)
+                masked[i:end] = [True] * (end - i)
+                i = end
+                continue
+        if depth > 0:
+            masked[i] = True
+        i += 1
+    return masked
+
+
+def label_pattern(label):
+    """A whole-word, case-insensitive pattern for a label and its plural:
+    `s` or `es`, and `es` alone for a label that ends in s (`harnesses`).
+    It matches the source text itself, so offsets hold for any letter."""
+    plural = "(?:es)?" if label.lower().endswith("s") else "(?:es|s)?"
+    return re.compile(r"(?<![\w-])" + re.escape(label) + plural + r"(?![\w-])", re.IGNORECASE)
+
+
+def plain_occurrences(text, label):
+    """(start, end) of every plain occurrence of a term label in blanked text:
+    a whole word (or its plural), case-insensitive, outside a link, a legacy
+    citation, brackets, and an inline-link destination, and not on a heading
+    or a definition line, and not right after an emphasis star, where a
+    run-in label sits.
+    Every occurrence of a linked term is a link, so the validator reports
+    these and the fixer links them."""
+    if not label:
+        return []
+    pattern = label_pattern(label)
+    lines = text.split("\n")
+    headings = heading_lines(lines)
+    found, base = [], 0
+    for number, line in enumerate(lines):
+        matches = list(pattern.finditer(line)) if number not in headings and not DEFINITION_LINE.match(line) else []
+        if matches:
+            masked = prose_mask(line)
+            # A word right after an emphasis star is a run-in label such as
+            # `**Change ceremony.**`, which rune's checker leaves alone too.
+            found.extend(
+                (base + m.start(), base + m.end())
+                for m in matches
+                if not any(masked[m.start():m.end()]) and not line[:m.start()].endswith("*")
+            )
+        base += len(line) + 1
+    return found
+
+
+def linked_terms(text, resolutions, index):
+    """{name: tag} for every term the blanked text links by use: a
+    `[text][TAG]` link whose definition resolves to a term. A definition
+    alone links nothing. The tag is the term's own tag when the text uses
+    it, else the tag of the first use."""
+    uses = {}
+    for match in REF_LINK.finditer(text):
+        res = resolutions.get(match.group(3))
+        if res is not None and res.name is not None:
+            uses.setdefault(res.name, []).append(match.group(3))
+    return {name: index.tag_of[name] if index.tag_of[name] in tags else tags[0] for name, tags in uses.items()}
+
+
+def term_occurrences(text, linked, index):
+    """(start, end, name, tag) of every plain occurrence of a linked term,
+    sorted by position. Where two occurrences overlap, the longer one is the
+    more specific term and wins, then the earlier one: `missed requirement`
+    over `requirement`, `review lane` over `red review`."""
+    candidates = [
+        (start, end, name, tag)
+        for name, tag in linked.items()
+        for start, end in plain_occurrences(text, index.by_name[name].label)
+    ]
+    chosen = []
+    for cand in sorted(candidates, key=lambda c: (c[0] - c[1], c[0])):
+        if all(cand[1] <= kept[0] or cand[0] >= kept[1] for kept in chosen):
+            chosen.append(cand)
+    return sorted(chosen)
 
 
 def page_path(root, path, target):
@@ -228,7 +399,9 @@ Resolution = collections.namedtuple("Resolution", "form name page")
 
 
 def resolve(root, path, tag, target, index):
-    """What a reference definition stands for, from its target and its tag."""
+    """What a reference definition stands for, from its target and its tag.
+    A page that is not written yet resolves by its file name first, so a
+    link that a migration pointed at a missing page keeps its term."""
     if target.startswith(NS):
         name = target[len(NS):]
         return Resolution("legacy", name if name in index.by_name else None, None)
@@ -238,4 +411,4 @@ def resolve(root, path, tag, target, index):
     if page.is_file():
         name = iri_of(page)
         return Resolution("link", name if name in index.by_name else None, page)
-    return Resolution("link", index.by_tag.get(tag), page)
+    return Resolution("link", index.by_file.get(page.name) or index.by_tag.get(tag), page)
