@@ -95,6 +95,21 @@ class FixtureVerdicts(unittest.TestCase):
         result = run(SCRIPTS["binary-assets"], FIXTURES / "binary-assets" / "absent")
         self.assertEqual(result.returncode, 1)
 
+    def test_coverage_reads_term_links_in_cells(self):
+        """A capability or requirement cell may hold a term link with any
+        tag the term grammar allows, and the check reads it as its words."""
+        with tempfile.TemporaryDirectory() as scratch:
+            change = Path(scratch) / "change"
+            (change / "specs" / "cap").mkdir(parents=True)
+            (change / "specs" / "cap" / "spec.md").write_text("## ADDED Requirements\n\n### Requirement: Lane Is Checked\n\n### Requirement: A lane Exists\n")
+            (change / "design.md").write_text(
+                "# Design\n\n## Coverage table\n\n| Capability | Requirement | Check |\n| --- | --- | --- |\n"
+                "| [cap][CAP] | Lane Is Checked | missed requirement |\n| cap | A [lane][LANE2] Exists | missed requirement |\n"
+            )
+            result = run(SCRIPTS["coverage"], change)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn("coverage: 0 findings", result.stdout)
+
 
 AGE = re.compile(r"^age_days:\s*(\d+)\s*$", re.MULTILINE)
 
@@ -243,6 +258,22 @@ class ValeRules(unittest.TestCase):
             with self.subTest(fixture.name):
                 rules = {rule for _, rule in self.hits(config, fixture)}
                 self.assertNotIn(self.rule_of(fixture), rules, f"{fixture.name} trips its own rule")
+
+    def test_undefined_term_needs_a_link_a_bold_or_backticks(self):
+        """Italics alone define no term, and a hyphenated name inside link
+        text is a name, not the noun. The valid fixture holds the forms that
+        do define one."""
+        config = FIXTURES / "vale" / ".vale.ini"
+        cases = {
+            "italic.md": "# Note\n\nAn *lane* exists. A lane runs.\n",
+            "hyphen-link.md": "# Note\n\nA [review-lanes][X] label exists. A lane runs.\n\n[X]: ./x.md\n",
+        }
+        with tempfile.TemporaryDirectory() as scratch:
+            for name, body in cases.items():
+                path = Path(scratch) / name
+                path.write_text(body)
+                with self.subTest(name):
+                    self.assertIn((name, "Core.UndefinedTerm"), self.hits(config, path))
 
     def test_production_scoping(self):
         """The deck's own .vale.ini decides where a rule applies: instructions

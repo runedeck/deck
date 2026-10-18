@@ -13,7 +13,8 @@ message: "'%s' is an abbreviation with no explanation here. Spell it out at firs
 level: suggestion
 scope: text
 ignorecase: false
-first: '\b([A-Z]{2,})\b'
+# A roman numeral (Part II, chapter IV) is a number, not an abbreviation.
+first: '\b(?![IVXLC]+\b)([A-Z]{2,})\b'
 second: '(?:\((?<a>[A-Z]{2,})\)|\b(?<a>[A-Z]{2,})(?=\s*\([A-Za-z]))'
 exceptions:
   - MUST

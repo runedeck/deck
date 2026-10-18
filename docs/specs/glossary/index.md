@@ -5,6 +5,7 @@ Generated from `ontology/rune.ttl`. Edit the ontology, not these pages.
 - [Occam's razor](occams-razor.md): Of two instructions that pass the same check, the shorter one wins.
 - [accountable](accountable.md): On a record: who approves the decision, the A of RACI.
 - [agent](agent.md): The document that defines a persona and its tools for a harness to run. The running process is a prov:SoftwareAgent.
+- [agentic review lane](agentic-review-lane.md): One automated reviewer of a pull request: one harness and model that reports one check run. A free lane runs on every push. The paid lane runs when the review controller admits a head, or when the owner asks for it by label.
 - [aliases](aliases.md): On every artifact: other names it is known by, an Obsidian default.
 - [analysis baseline](analysis-baseline.md): The set of results one run of analysis tools produced on a set of artifacts, kept so a later run is compared against it.
 - [analysis result](analysis-result.md): One condition an analysis tool reports in an artifact, with the rule it violates and the location.
@@ -24,6 +25,7 @@ Generated from `ontology/rune.ttl`. Edit the ontology, not these pages.
 - [capability](capability.md): One specification: canonical under docs/specs/, or a delta inside a change.
 - [change](change.md): One spec-driven change under docs/changes/, active or archived.
 - [change](change-key.md): On a record: the change that produced it.
+- [commit trailer](commit-trailer.md): A key and value line in the last paragraph of a commit message, as git reads it. A co-author trailer names a model contributor. A resolves-thread trailer names the review thread a fix answers.
 - [companion](companion.md): A document beside a canon that the canon routes to: reference material, or the instructions and quirks of one harness, kept out of the canon so they are easy to review and to compile.
 - [consulted](consulted.md): On a record: whose input was used, people and models as model-id@harness, MADR's consulted.
 - [coverage](coverage.md): The binding of each requirement to the analysis tool that enforces it, or its listing as a missed requirement.
@@ -50,16 +52,20 @@ Generated from `ontology/rune.ttl`. Edit the ontology, not these pages.
 - [informed](informed.md): On a record: who is told the outcome, MADR's informed.
 - [instance](instance.md): The source state projected onto one harness's basis: the file assembly writes into a target for one harness and model. The deployment manifest fingerprints it and its provenance record seals it. One concrete realization of its rune, never authoritative.
 - [instruction](instruction.md): A Markdown file a harness loads to steer a model: a skill, a rule, an agent, or a routine.
+- [lane table](lane-table.md): The list of expected review lanes in the repository: each lane's bot login and whether it is free or paid. The template carries it, a consumer may edit its copy, and the review controller falls back to its own copy when a consumer has none.
 - [lifecycle](lifecycle.md): The path a change takes: an optional canvas, then the specification, the decision record, the implementation, the review, and the merge.
 - [lifecycle stage](lifecycle-stage.md): One step of the lifecycle, in order: canvas, specification, decision, implementation, review, merge.
 - [linter](linter.md): An analysis tool that matches rule patterns against a file, one file at a time, and reports style and convention violations.
 - [markdown architecture decision record](markdown-architecture-decision-record.md): An architecture decision record in Markdown with the MADR template: decision drivers, considered options, their pros and cons, and the outcome.
+- [merge base](merge-base.md): The most recent commit that a pull request head and its base branch both descend from. The commits a pull request introduces are the range from that commit to the head.
+- [merge seal](merge-seal.md): An empty commit above the reviewed commit that the owner signs with their key. It keeps its parent's tree and names the scorecard's generation and digest. It proves the owner authorized this exact reviewed head to merge, and a later push or a rebuilt scorecard unseals it.
 - [missed requirement](missed-requirement.md): A requirement no analysis tool checks yet, listed in the coverage as such.
 - [model](model.md): The language model a harness runs.
 - [module](module.md): One domain of a deck that keeps its instructions, its defaults, and its checks together behind a small interface, so it can be added, replaced, or removed without a change elsewhere.
 - [name](name.md): On a rune canon: its name, which the Agent Skills specification requires beside description.
+- [open seal](open-seal.md): An empty commit beneath a pull request head that the owner signs with their key. Its message binds the repository, the base, the head tree, and a single-use nonce, and the ready flip writes the nonce into the body. It proves the owner put their name on this pull request.
 - [project](project.md): On a record: the project it belongs to, a DOAP project such as this repository.
-- [projection](projection.md): A representation that drops information from its source state and is never authoritative. A search index stays uncommitted, and a snapshot of a state outside the repository is committed only with a provenance record that names its upstream.
+- [projection](projection.md): A representation that drops information from its source state and is never authoritative. A search index stays uncommitted, and a snapshot of a state outside the repository is committed only with a provenance record that names its upstream. A projection operator in quantum mechanics does the same: it keeps one component of a state and discards the rest.
 - [proof](proof.md): Evidence that a candidate commit shows the behavior a scenario states.
 - [proof runner](proof-runner.md): The role that runs every scene of a proof from its fence and binds the transcript to it.
 - [provenance record](provenance-record.md): The sealed output of assembly, kept under .provenance/ as an in-toto statement. It says which source state, which basis parameters, which transforms, and which builder produced an instance, with the digest of each.
@@ -70,7 +76,9 @@ Generated from `ontology/rune.ttl`. Edit the ontology, not these pages.
 - [representation](representation.md): The source state expressed in one basis. The plain-text representation is the authoritative one, and every other representation derives from it.
 - [requirement](requirement.md): One `### Requirement:` with MUST text, part of a capability.
 - [responsible](responsible.md): On a record: who does the work, the R of RACI, which MADR leaves out.
-- [review scorecard](review-scorecard.md): The review bot's record of one pull request: each review thread with its disposition, the commit it reviewed, a generation counter, the verdict, and the coverage. The signer admits a merge only when the scorecard names the head and its verdict is clean.
+- [review controller](review-controller.md): The fixed workflow the ceremony owns, bound to no vendor. It builds the review scorecard, runs the triage, invites the paid lane, reports the correctness check, and bounds paid spend to three rounds per work item.
+- [review funnel](review-funnel.md): The ordered run of the review lanes on one pull request. The free lanes fill the review scorecard on every push. The paid adjudicator judges the range since the last verdict. The owner enters twice, at the open seal and at the merge seal.
+- [review scorecard](review-scorecard.md): The review controller's record of one pull request: the reviewed commit, a generation counter, a status for every expected lane, and every review thread with its disposition. Its public record is a check run named ledger on the reviewed commit, whose first line names the artifact, its digest, the generation, and the pull request. The signer admits a merge only when the scorecard names the head and its verdict is clean.
 - [routine](routine.md): An instruction installed on a harness account, which runs it on a schedule.
 - [rule](rule.md): An always-on instruction artifact under a rules/ tree.
 - [rune](rune.md): An instruction that follows the rune template: one canon, optional sidecar, companions, and variants. A skill, a rule, or an agent is a rune when it does.
@@ -98,3 +106,4 @@ Generated from `ontology/rune.ttl`. Edit the ontology, not these pages.
 - [validator](validator.md): The role that reads artifacts and reports findings, and never edits. As an analysis tool it decides whether an artifact is valid against a grammar, a schema, or a set of shapes. It says nothing about style.
 - [variant](variant.md): A first-class alternative of a rune for one harness, one model, or one user, resolved at assembly: user, then harness and model, then harness, then the base rune.
 - [verdict](verdict.md): The bench's judgment of one artifact against its baseline, from the metrics the bench measured.
+- [work item](work-item.md): The change a pull request names in its body, or the pull request number when it names none. The paid review budget is keyed to it, so a replacement pull request does not reset the count.

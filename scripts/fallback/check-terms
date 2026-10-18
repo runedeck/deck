@@ -6,7 +6,7 @@
 
 A defined term is a reference link to its generated glossary page:
 `*[analysis tool][ANALYSISTOOL]*` at the first use in a file,
-`[analysis tool][ANALYSISTOOL]` after it, and
+`[analysis tool][ANALYSISTOOL]` at every later use, and
 `[ANALYSISTOOL]: ../../specs/glossary/analysis-tool.md` at the end of the
 file. Plain italics are emphasis and are not checked. The findings carry
 the meaning of rune's spec-term-* and delta-term-* diagnostics:
@@ -14,6 +14,7 @@ the meaning of rune's spec-term-* and delta-term-* diagnostics:
 - term-undefined (error): the link resolves to no ontology entry.
 - term-draft (warning): the term carries `rune:status "draft"`; the archiver refuses the change.
 - term-first-use (error): the first use in a file is not emphasized, or a later use is.
+- term-unlinked (error): a plain occurrence of a term the file links elsewhere; every occurrence is a link.
 - term-page (error): the page is missing, or its bytes differ from the render.
 - term-legacy (warning): the old `*term* [TAG]` form with an ontology IRI definition; run scripts/fallback/fix-terms --links.
 
@@ -82,6 +83,14 @@ def check_file(root, path, index, rendered):
                 report(match.start(), "error", "term-first-use", f"first use of [{label}][{tag}] is not emphasized; write `*[{label}][{tag}]*`")
         elif emphasized:
             report(match.start(), "error", "term-first-use", f"later use of [{label}][{tag}] is emphasized; write `[{label}][{tag}]`")
+    # Every occurrence of a term the file links is a link: a plain word
+    # between two links is the one a copied paragraph loses. A term counts
+    # as linked once the file uses a link to it, not when it only defines one.
+    linked = termlib.linked_terms(text, resolved, index)
+    for start, end, name, tag in termlib.term_occurrences(text, linked, index):
+        label = index.by_name[name].label
+        word = text[start:end]
+        report(start, "error", "term-unlinked", f"'{word}' is the term '{label}' and this file links it elsewhere; every occurrence links, write `[{word}][{tag}]`, or run {FIX} --links")
     return found
 
 

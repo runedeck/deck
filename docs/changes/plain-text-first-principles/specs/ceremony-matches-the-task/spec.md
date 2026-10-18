@@ -3,17 +3,20 @@
 ### Requirement: Ceremony Matches The Task
 
 The weight of the process MUST match the size of the task. A fix that alters no requirement takes a plain commit. New or altered behavior takes a *[change][CHANGE]* directory, and a decision with alternatives takes a record. Unneeded ceremony is complexity, and we remove it.
-The author marks a commit as small, and the *[validator][VALIDATOR]* challenges that mark whenever it touches anything that defines behavior. The author then takes the full process, or overrides the challenge with a reason.
-
-#### Scenario: Small mark touches a specification
-
-- **WHEN** a commit marked small touches a specification, the ontology, a decision record, or a test's expected result
-- **THEN** the [validator][VALIDATOR] challenges the mark, and the author takes the full process or overrides the challenge with a reason
 
 #### Scenario: Small fix arrives with full ceremony
 
 - **WHEN** a [change][CHANGE] directory contains only a fix that alters no requirement
 - **THEN** review turns it into a plain commit and removes the directory
+
+### Requirement: A Check Challenges The Small Mark
+
+The author marks a commit as small. The *[validator][VALIDATOR]* MUST challenge that mark whenever the commit touches anything that defines behavior. The author then takes the full process, or overrides the challenge with a reason.
+
+#### Scenario: Small mark touches a specification
+
+- **WHEN** a commit marked small touches a specification, the ontology, a decision record, or a test's expected result
+- **THEN** the [validator][VALIDATOR] challenges the mark, and the author takes the full process or overrides the challenge with a reason
 
 ### Requirement: Semantic Density
 

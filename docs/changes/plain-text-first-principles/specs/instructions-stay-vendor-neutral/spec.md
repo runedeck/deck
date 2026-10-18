@@ -38,17 +38,20 @@ The [validator][VALIDATOR] checks a [canon][CANON] and its [sidecars][SIDECAR] a
 ### Requirement: One Instance per Harness
 
 The [assembler][ASSEMBLER] MUST build one [instance][INSTANCE] of each *[rune][RUNE]* per [harness][HARNESS] from the [canon][CANON] and that [harness][HARNESS]'s [basis parameters][BASISPARAMETERS]. A runtime hook swaps in the active [model][MODEL]'s [variant][VARIANT], if any, at session start or on a [model][MODEL] switch. The *[deployer][DEPLOYER]* never writes an [instance][INSTANCE] per [model][MODEL].
+
+#### Scenario: New harness joins
+
+- **WHEN** a new [harness][HARNESS] joins the deployment roster
+- **THEN** the [assembler][ASSEMBLER] produces that [harness][HARNESS]'s [instance][INSTANCE] of every [instruction][INSTRUCTION] from the unchanged [canons][CANON]. The only new files in the [repository][REPOSITORY] are that [harness][HARNESS]'s [basis parameters][BASISPARAMETERS]
+
+### Requirement: Every Instance Has A Provenance Record
+
 Each [instance][INSTANCE] MUST have a *[provenance record][PROVENANCERECORD]*.
 
 #### Scenario: Assembly writes an instance
 
 - **WHEN** the [deployer][DEPLOYER] writes an [instance][INSTANCE] of an [instruction][INSTRUCTION] into a [target][TARGET]
 - **THEN** the deployment manifest records the [instance][INSTANCE]'s fingerprint, and the [provenance record][PROVENANCERECORD] seals which [state file][STATEFILE], which [basis parameters][BASISPARAMETERS], and which operator produced it
-
-#### Scenario: New harness joins
-
-- **WHEN** a new [harness][HARNESS] joins the deployment roster
-- **THEN** the [assembler][ASSEMBLER] produces that [harness][HARNESS]'s [instance][INSTANCE] of every [instruction][INSTRUCTION] from the unchanged [canons][CANON]. The only new files in the [repository][REPOSITORY] are that [harness][HARNESS]'s [basis parameters][BASISPARAMETERS]
 
 ### Requirement: Companions Earn Their Place
 

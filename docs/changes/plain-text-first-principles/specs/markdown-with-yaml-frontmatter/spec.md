@@ -68,12 +68,15 @@ The [assembler][ASSEMBLER] strips the links from each [instance][INSTANCE] and a
 ### Requirement: The Ontology Defines Every Term
 
 The ontology MUST be the only definition of a term. Before writing, the author reads the glossary and uses an existing term, or adds the term to the ontology first.
-A term link whose tag resolves to no ontology entry is a finding. While a *[change][CHANGE]* is active, the *[fixer][FIXER]* adds a draft entry for the term and the [validator][VALIDATOR] warns on every link to a draft. The *[archiver][ARCHIVER]* refuses to archive a [change][CHANGE] that still links to an undefined draft term.
 
 #### Scenario: Term link points at no entry
 
 - **WHEN** a term link's tag resolves to no entry in the ontology
-- **THEN** the [validator][VALIDATOR] reports the term and the file, and the [fixer][FIXER] adds a draft entry, run by the author or by the commit hook
+- **THEN** the [validator][VALIDATOR] reports the term and the file, and the *[fixer][FIXER]* adds a draft entry, run by the author or by the commit hook
+
+### Requirement: Draft Terms Warn And Archive Refuses Them
+
+A term link whose tag resolves to no ontology entry is a finding. While a *[change][CHANGE]* is active, the [fixer][FIXER] adds a draft entry for the term and the [validator][VALIDATOR] MUST warn on every link to a draft. The *[archiver][ARCHIVER]* MUST refuse to archive a [change][CHANGE] that links to a draft term still without a definition.
 
 #### Scenario: Change links to a draft term at archive
 

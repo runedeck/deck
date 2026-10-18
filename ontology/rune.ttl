@@ -105,7 +105,7 @@ rune:Render a rdfs:Class ;
 rune:Projection a rdfs:Class ;
     rdfs:subClassOf rune:Representation ;
     rdfs:label "projection" ;
-    rdfs:comment "A representation that drops information from its source state and is never authoritative. A search index stays uncommitted, and a snapshot of a state outside the repository is committed only with a provenance record that names its upstream." .
+    rdfs:comment "A representation that drops information from its source state and is never authoritative. A search index stays uncommitted, and a snapshot of a state outside the repository is committed only with a provenance record that names its upstream. A projection operator in quantum mechanics does the same: it keeps one component of a state and discards the rest." .
 
 # An instance is the state seen in one harness's basis: the file assembly
 # writes into a target, fingerprinted in the deployment manifest and
@@ -449,7 +449,54 @@ rune:Attestation a rdfs:Class ;
 rune:ReviewScorecard a rdfs:Class ;
     rdfs:subClassOf prov:Entity ;
     rdfs:label "review scorecard" ;
-    rdfs:comment "The review bot's record of one pull request: each review thread with its disposition, the commit it reviewed, a generation counter, the verdict, and the coverage. The signer admits a merge only when the scorecard names the head and its verdict is clean." .
+    rdfs:comment "The review controller's record of one pull request: the reviewed commit, a generation counter, a status for every expected lane, and every review thread with its disposition. Its public record is a check run named ledger on the reviewed commit, whose first line names the artifact, its digest, the generation, and the pull request. The signer admits a merge only when the scorecard names the head and its verdict is clean." .
+
+# The review ceremony's own vocabulary, defined here because the skeleton's
+# specifications use it and the ontology is the one place a term lives.
+rune:AgenticReviewLane a rdfs:Class ;
+    rdfs:subClassOf prov:SoftwareAgent ;
+    rdfs:label "agentic review lane" ;
+    rdfs:comment "One automated reviewer of a pull request: one harness and model that reports one check run. A free lane runs on every push. The paid lane runs when the review controller admits a head, or when the owner asks for it by label." .
+
+rune:ReviewFunnel a rdfs:Class ;
+    rdfs:subClassOf prov:Activity ;
+    rdfs:label "review funnel" ;
+    rdfs:comment "The ordered run of the review lanes on one pull request. The free lanes fill the review scorecard on every push. The paid adjudicator judges the range since the last verdict. The owner enters twice, at the open seal and at the merge seal." .
+
+rune:ReviewController a rdfs:Class ;
+    rdfs:subClassOf prov:SoftwareAgent ;
+    rdfs:label "review controller" ;
+    rdfs:comment "The fixed workflow the ceremony owns, bound to no vendor. It builds the review scorecard, runs the triage, invites the paid lane, reports the correctness check, and bounds paid spend to three rounds per work item." .
+
+rune:LaneTable a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "lane table" ;
+    rdfs:comment "The list of expected review lanes in the repository: each lane's bot login and whether it is free or paid. The template carries it, a consumer may edit its copy, and the review controller falls back to its own copy when a consumer has none." .
+
+rune:WorkItem a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "work item" ;
+    rdfs:comment "The change a pull request names in its body, or the pull request number when it names none. The paid review budget is keyed to it, so a replacement pull request does not reset the count." .
+
+rune:OpenSeal a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "open seal" ;
+    rdfs:comment "An empty commit beneath a pull request head that the owner signs with their key. Its message binds the repository, the base, the head tree, and a single-use nonce, and the ready flip writes the nonce into the body. It proves the owner put their name on this pull request." .
+
+rune:MergeSeal a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "merge seal" ;
+    rdfs:comment "An empty commit above the reviewed commit that the owner signs with their key. It keeps its parent's tree and names the scorecard's generation and digest. It proves the owner authorized this exact reviewed head to merge, and a later push or a rebuilt scorecard unseals it." .
+
+rune:MergeBase a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "merge base" ;
+    rdfs:comment "The most recent commit that a pull request head and its base branch both descend from. The commits a pull request introduces are the range from that commit to the head." .
+
+rune:CommitTrailer a rdfs:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "commit trailer" ;
+    rdfs:comment "A key and value line in the last paragraph of a commit message, as git reads it. A co-author trailer names a model contributor. A resolves-thread trailer names the review thread a fix answers." .
 
 # The candidate commit a proof covers, an entity IRI under /id/. A
 # candidate is proven when a proof with exit status zero exists for its

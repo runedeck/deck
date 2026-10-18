@@ -12,7 +12,7 @@ The *[analysis tool][ANALYSISTOOL]* reads the file. A second [analysis tool][ANA
 [ANALYSISTOOL]: ../../../docs/specs/glossary/analysis-tool.md
 ```
 
-The validator reports a later use that is a plain word. Define each tag once at the end of the file as a reference definition that points at the page by a relative path. A skill is deployed as a bundle, and a relative path out of the bundle breaks after deployment, so a skill file points at the page by its [repository][REPOSITORY] URL, `https://github.com/runedeck/deck/blob/main/docs/specs/glossary/<term>.md`. The tag is the label in upper case with every non-letter removed. Plain italics are emphasis and mean nothing more.
+The validator reports a later use that is a plain word. The [fixer][FIXER] links a plain occurrence of a term the file links, and it cannot tell the verb `changes` from the term, the everyday `rule` from the artifact, or the `target` of a link from a harness *[target][TARGET]*. So a file that links a term uses that word in the term's sense only. For the everyday sense, choose another word: `alters`, `principle`, `destination`. A cited record title or file name is an inline link to the file, never bare text, so its words stay its own. Define each tag once at the end of the file as a reference definition that points at the page by a relative path. A skill is deployed as a bundle, and a relative path out of the bundle breaks after deployment, so a skill file points at the page by its [repository][REPOSITORY] URL, `https://github.com/runedeck/deck/blob/main/docs/specs/glossary/<term>.md`. The tag is the label in upper case with every non-letter removed. Plain italics are emphasis and mean nothing more.
 
 Why: a model given a bare word takes its everyday meaning, and the guess reads as fact. A link puts the definition one step away and keeps one home for it. The validator reports a term that points at no entry.
 
@@ -22,3 +22,4 @@ Why: a model given a bare word takes its everyday meaning, and the guess reads a
 [DECK]: ../../../docs/specs/glossary/deck.md
 [FIXER]: ../../../docs/specs/glossary/fixer.md
 [ARCHIVER]: ../../../docs/specs/glossary/archiver.md
+[TARGET]: ../../../docs/specs/glossary/target.md

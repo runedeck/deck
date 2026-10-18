@@ -13,23 +13,23 @@ decisions:
 
 A deck grows by domains, and each domain brings its own *[instructions][INSTRUCTION]*, defaults, and checks. Without a unit that keeps those together, every addition touches shared configuration, and every tool reads every file to find what it needs.
 
-That unit is the *[module][MODULE]*. Parnas gave the criterion for splitting a system in 1972: each module hides one design decision that is likely to change, and no other module depends on it ([Parnas][PARNAS]). Ousterhout adds the measure: a good module is deep, a small interface over a large implementation, so the cost of a caller does not grow with the module ([Ousterhout][OUSTERHOUT]). Both arguments hold for instructions as they hold for code. A domain that owns its defaults, its checks, and its instructions can be added, replaced, or removed without a change anywhere else.
+That unit is the *[module][MODULE]*. Parnas gave the criterion for splitting a system in 1972: each [module][MODULE] hides one design decision that is likely to change, and no other [module][MODULE] depends on it ([Parnas][PARNAS]). Ousterhout adds the measure: a good [module][MODULE] is deep, a small interface over a large implementation, so the cost of a caller does not grow with the [module][MODULE] ([Ousterhout][OUSTERHOUT]). Both arguments hold for [instructions][INSTRUCTION] as they hold for code. A domain that owns its defaults, its checks, and its [instructions][INSTRUCTION] can be added, replaced, or removed without a change anywhere else.
 
-Three properties make a domain a module here:
+Three properties make a domain a [module][MODULE] here:
 
 - It carries its own defaults, and a user overrides them without editing the committed file.
-- Every check it needs runs through one shared hook configuration, locally and in CI, so a module cannot pass on one machine and fail on another.
+- Every check it needs runs through one shared hook configuration, locally and in CI, so a [module][MODULE] cannot pass on one machine and fail on another.
 - Anything it fetches from the network runs only after its digest matches one committed in the repository.
 
 ## What Changes
 
-Define module and *[rune][RUNE]* in the ontology. State the configuration overlay, one checker per concern, one validation path, and verified remote execution as the requirements of one capability. The record `adr.md` defines the parts of a rune: one *[canon][CANON]*, *[companions][COMPANION]* for a *[harness][HARNESS]*, *[variants][VARIANT]*, a provenance *[sidecar][SIDECAR]*, and *[assembly][ASSEMBLY]*.
+Define [module][MODULE] and *[rune][RUNE]* in the ontology. State the configuration overlay, one checker per concern, one validation path, and verified remote execution as the requirements of one capability. The record `adr.md` defines the parts of a [rune][RUNE]: one *[canon][CANON]*, *[companions][COMPANION]* for a *[harness][HARNESS]*, *[variants][VARIANT]*, a provenance *[sidecar][SIDECAR]*, and *[assembly][ASSEMBLY]*.
 
 ## Capabilities
 
 ### New Capabilities
 
-- `one-domain-one-plugin`: a module has defaults a user overlays, runs every check through one shared hook configuration, and verifies anything it fetches before it runs.
+- `one-domain-one-plugin`: a [module][MODULE] has defaults a user overlays, runs every check through one shared hook configuration, and verifies anything it fetches before it runs.
 
 ## Impact
 
@@ -39,7 +39,7 @@ Define module and *[rune][RUNE]* in the ontology. State the configuration overla
 ## Sources
 
 - [On the Criteria To Be Used in Decomposing Systems into Modules][PARNAS], D. L. Parnas, Communications of the ACM 15(12), 1972
-- [A Philosophy of Software Design][OUSTERHOUT], John Ousterhout, 2018, on deep modules
+- [A Philosophy of Software Design][OUSTERHOUT], John Ousterhout, 2018, on deep [modules][MODULE]
 
 [MODULE]: ../../specs/glossary/module.md
 [INSTRUCTION]: ../../specs/glossary/instruction.md

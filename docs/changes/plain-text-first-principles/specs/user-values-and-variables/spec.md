@@ -3,12 +3,15 @@
 ### Requirement: Variables Are $NAME
 
 A shared *[instruction][INSTRUCTION]* MUST NOT contain a value that belongs to one user or machine. Personal paths and account names leak into [instructions][INSTRUCTION] easily.
-It MUST refer to the value as a shell variable, `$NAME`, or `${NAME}` when text follows the name directly, and no *[harness][HARNESS]* syntax is needed. A name ends at the first character other than a letter, digit, or underscore. The default form `${NAME:-fallback}` supplies a value when the variable is unset.
 
 #### Scenario: Instruction embeds a configurable value
 
 - **WHEN** an [instruction][INSTRUCTION] contains a hardcoded path, account, or host that belongs to one user or machine
 - **THEN** the *[validator][VALIDATOR]* reports the value, and the author replaces it with a variable reference and explains the variable in one sentence
+
+### Requirement: Both Shell Forms Resolve In The Shell
+
+It MUST refer to the value as a shell variable, `$NAME`, or `${NAME}` when text follows the name directly, and no *[harness][HARNESS]* syntax is needed. A name ends at the first character other than a letter, digit, or underscore. The default form `${NAME:-fallback}` supplies a value when the variable is unset.
 
 #### Scenario: Assembler meets a user variable
 
@@ -19,7 +22,6 @@ It MUST refer to the value as a shell variable, `$NAME`, or `${NAME}` when text 
 ### Requirement: Canon Stays Vendor-Neutral
 
 Placeholders, wording, and mechanisms that only one [harness][HARNESS] uses, such as Claude Code's `$ARGUMENTS`, MUST be in that [harness][HARNESS]'s *[basis parameters][BASISPARAMETERS]* beside the *[canon][CANON]*. The [canon][CANON] MUST NOT hold them.
-The *[source state][SOURCESTATE]* is the superposition of the [canon][CANON] and its [basis parameters][BASISPARAMETERS], and the [assembler][ASSEMBLER] projects out one [harness][HARNESS]. The [canon][CANON] alone stays readable and neutral.
 
 #### Scenario: Harness placeholder enters the canon
 
@@ -31,6 +33,10 @@ The *[source state][SOURCESTATE]* is the superposition of the [canon][CANON] and
 - **WHEN** one [harness][HARNESS] needs wording the others do not
 - **THEN** the wording goes into that [harness][HARNESS]'s [basis parameters][BASISPARAMETERS], and the [canon][CANON] does not change
 - **AND** the [basis parameters][BASISPARAMETERS] file names its [harness][HARNESS] and adds to the [canon][CANON] without replacing it
+
+### Requirement: Assembly Projects Out One Harness
+
+The *[source state][SOURCESTATE]* is the superposition of the [canon][CANON] and its [basis parameters][BASISPARAMETERS], and the [assembler][ASSEMBLER] MUST project out one [harness][HARNESS] from it. The [canon][CANON] alone MUST stay readable and neutral.
 
 #### Scenario: Instruction depends on one harness's hook event
 
