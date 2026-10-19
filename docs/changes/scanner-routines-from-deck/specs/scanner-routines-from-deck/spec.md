@@ -1,7 +1,3 @@
----
-type: spec
----
-
 ## ADDED Requirements
 
 ### Requirement: Detector decides findings and status in code

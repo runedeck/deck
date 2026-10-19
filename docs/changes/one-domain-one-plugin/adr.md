@@ -31,33 +31,33 @@ change: one-domain-one-plugin
 ## Context and Problem Statement
 
 A *[rune][RUNE]* is the unit the deck is made of, and this record says what one is.
-The foundations define the *[instruction][INSTRUCTION]*, the file a *[harness][HARNESS]* loads to steer a *[model][MODEL]*, and require that one source serves every harness and model.
-A governed instruction has three kinds of part: what is written once, what varies by harness and model, and what records where an *[instance][INSTANCE]* came from.
-Anthropic's glossary calls rules instruction files, and says that Claude Code is the harness and Claude the model inside it ([Claude Code glossary][CC-GLOSSARY]).
-Its hooks are settings entries, and a hook rune is the Markdown source that *[assembly][ASSEMBLY]* renders into such an entry.
+The foundations define the *[instruction][INSTRUCTION]*, the file a *[harness][HARNESS]* loads to steer a *[model][MODEL]*, and require that one source serves every [harness][HARNESS] and [model][MODEL].
+A governed [instruction][INSTRUCTION] has three kinds of part: what is written once, what varies by [harness][HARNESS] and [model][MODEL], and what records where an *[instance][INSTANCE]* came from.
+Anthropic's glossary calls rules [instruction][INSTRUCTION] files, and says that Claude Code is the [harness][HARNESS] and Claude the [model][MODEL] inside it ([Claude Code glossary][CC-GLOSSARY]).
+Its hooks are settings entries, and a hook [rune][RUNE] is the Markdown source that *[assembly][ASSEMBLY]* renders into such an entry.
 
 ## Considered Options
 
-1. Leave the term to the ontology comment. Then nothing records why a rune has these parts and not others.
-2. Write one record that defines the parts and the rule for each: one *[canon][CANON]*, *[companions][COMPANION]* for what one harness needs, *[variants][VARIANT]* for what one harness or model needs, a *[sidecar][SIDECAR]* for provenance, and assembly as the only way to make an instance.
+1. Leave the term to the ontology comment. Then nothing records why a [rune][RUNE] has these parts and not others.
+2. Write one record that defines the parts and the rule for each: one *[canon][CANON]*, *[companions][COMPANION]* for what one [harness][HARNESS] needs, *[variants][VARIANT]* for what one [harness][HARNESS] or [model][MODEL] needs, a *[sidecar][SIDECAR]* for provenance, and [assembly][ASSEMBLY] as the only way to make an [instance][INSTANCE].
 
 ## Decision Outcome
 
 Option 2.
 
-- A rune MUST be one instruction: a Markdown file with YAML frontmatter, of kind skill, agent, rule, or hook. A hook rune is the source of a harness's hook configuration. The rendered configuration is not a rune.
-- A rune MUST have exactly one [canon][CANON], the vendor-neutral entrypoint, and the canon MUST NOT contain a harness-specific instruction.
-- A harness-specific instruction MUST live in a [companion][COMPANION].
+- A [rune][RUNE] MUST be one [instruction][INSTRUCTION]: a Markdown file with YAML frontmatter, of kind skill, agent, rule, or hook. A hook [rune][RUNE] is the source of a [harness][HARNESS]'s hook configuration. The rendered configuration is not a [rune][RUNE].
+- A [rune][RUNE] MUST have exactly one [canon][CANON], the vendor-neutral entrypoint, and the [canon][CANON] MUST NOT contain a harness-specific [instruction][INSTRUCTION].
+- A harness-specific [instruction][INSTRUCTION] MUST live in a [companion][COMPANION].
 - A harness-, model-, or user-specific alternative MUST live in a [variant][VARIANT].
-- An instance MUST come from [assembly][ASSEMBLY], one for each harness and model, and MUST NOT be edited in its *[target][TARGET]*.
+- An [instance][INSTANCE] MUST come from [assembly][ASSEMBLY], one for each [harness][HARNESS] and [model][MODEL], and MUST NOT be edited in its *[target][TARGET]*.
 - Provenance MUST live in the [sidecar][SIDECAR] under `.provenance/`, the one exception to metadata inside the file (CORE-0002).
 
 ### Consequences
 
-- [+] Every requirement that says rune now points at one definition, and the term check refuses a prose use with no ontology entry.
-- [+] A new harness costs companions and nothing in a canon.
-- [-] A canon that contains harness wording fails the rule, and that wording belongs in a companion.
-- [-] Model is a second assembly dimension, and resolving it needs the harness to say which model runs.
+- [+] Every requirement that says [rune][RUNE] now points at one definition, and the term check refuses a prose use with no ontology entry.
+- [+] A new [harness][HARNESS] costs [companions][COMPANION] and nothing in a [canon][CANON].
+- [-] A [canon][CANON] that contains [harness][HARNESS] wording fails the rule, and that wording belongs in a [companion][COMPANION].
+- [-] [Model][MODEL] is a second [assembly][ASSEMBLY] dimension, and resolving it needs the [harness][HARNESS] to say which [model][MODEL] runs.
 
 [INSTRUCTION]: ../../specs/glossary/instruction.md
 [CC-GLOSSARY]: https://code.claude.com/docs/en/glossary

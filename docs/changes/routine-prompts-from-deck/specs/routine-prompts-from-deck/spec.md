@@ -1,7 +1,3 @@
----
-type: spec
----
-
 ## ADDED Requirements
 
 ### Requirement: Routine file is the behavior source

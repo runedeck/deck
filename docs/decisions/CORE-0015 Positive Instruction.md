@@ -9,7 +9,7 @@ tags:
     - prompting
 status: accepted
 created: 2026-08-27
-updated: 2026-08-27
+updated: 2026-10-19
 author: "@N4M3Z"
 project: deck
 related:
@@ -27,23 +27,33 @@ change: economy-measure-context-efficiency
 
 ## Context and Problem Statement
 
-Anthropic guidance recommends stating the wanted behavior, because a model continues the conversation it is given, and a forceful prohibition can prime the behavior it names. The deck audit counts twenty negative constructions across the sixteen core rules, many of which restate a preference rather than a prohibition.
+Anthropic's guidance recommends stating the wanted behavior. It does so because a *[model][MODEL]* continues the conversation in front of it, and a forceful prohibition can prime the behavior it names. An audit of the *[deck][DECK]* counted twenty negative constructions across its sixteen core *[rules][RULE]*. Many of them restate a preference and prohibit nothing.
 
 ## Considered Options
 
 1. Leave phrasing to each author's taste.
-2. Decide positive instruction as the norm with a negation-density gate.
+2. Make positive instruction the norm, and add a lint that measures negation density.
 
 ## Decision Outcome
 
-Chosen option: positive instruction as the norm.
+Option 2. Positive instruction is the norm.
 
-- An instruction states the wanted behavior: `write plain prose` rather than a markdown prohibition.
-- Negation stays reserved for true prohibitions: safety boundaries, security invariants, and destructive actions.
-- The negation-density lint fires at warning severity when a changed rune exceeds the threshold, so real prohibitions survive and habitual negation retires.
+- Each directive states the wanted behavior, as in `write plain prose`, in place of a prohibition of markdown.
+- The author reserves negation for a true prohibition: a safety boundary, a security invariant, or a destructive action.
+- The negation-density lint reports a warning when a changed *[rune][RUNE]* exceeds the threshold, so a real prohibition survives and habitual negation leaves the [rune][RUNE].
 
 ### Consequences
 
-- [+] Rules read as direction instead of a minefield.
-- [+] The rewrite in the economy-measure-context-efficiency change has a measurable target.
-- [-] Some prohibitions need careful positive rewording to keep their exact scope.
+- [+] A [rule][RULE] tells the [model][MODEL] what to do instead of listing what to avoid.
+- [+] The rewrite in the economy-measure-context-efficiency *[change][CHANGE]* has a measurable goal.
+- [-] Some prohibitions need a careful rewording in positive form to keep their exact scope.
+
+## More Information
+
+- Rewritten on 2026-10-19 in the plain spoken register. The decision is unchanged.
+
+[MODEL]: ../specs/glossary/model.md
+[DECK]: ../specs/glossary/deck.md
+[RULE]: ../specs/glossary/rule.md
+[RUNE]: ../specs/glossary/rune.md
+[CHANGE]: ../specs/glossary/change.md
