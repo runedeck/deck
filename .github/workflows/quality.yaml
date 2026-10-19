@@ -42,11 +42,6 @@ jobs:
             - name: Test exposure detector
               run: python3 -m unittest discover -s tests -p 'test_exposure_scan.py' -v
 
-            - name: Test the foundation checks and Core Vale rules against their fixtures
-              env:
-                  REQUIRE_GATES: "1"
-              run: python3 -m unittest tests.test_check_scripts -v
-
             - name: Install JJ for push gate tests
               env:
                   JJ_VERSION: "0.45.1"
@@ -117,6 +112,13 @@ jobs:
               run: |
                   cargo install --quiet --git https://github.com/runedeck/cli --rev "$RUNE_CLI_REV" rune-cli
                   rune --version
+
+            # The fixture tests run the Vale rules and the check scripts the
+            # installer above provides, so they come after it.
+            - name: Test the foundation checks and Core Vale rules against their fixtures
+              env:
+                  REQUIRE_GATES: "1"
+              run: python3 -m unittest tests.test_check_scripts -v
 
             # Select the event range once so both prek stages inspect the same
             # change. Inspect all files only when no base commit exists.

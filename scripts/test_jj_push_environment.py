@@ -1,4 +1,4 @@
-"""Reject inherited Git repository state before the bookmark gate writes."""
+"""Drop harness Git config and reject inherited repository state before writes."""
 
 import importlib.util
 import os
@@ -16,6 +16,21 @@ SPEC = importlib.util.spec_from_file_location(
 GATE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(GATE)
 DISCOVERY = ("git", "rev-parse", "--local-env-vars")
+REF_CHECK = ("git", "check-ref-format", "refs/heads/codex/fixture")
+# A harness injects these to carry its transport settings. The gate drops them
+# before discovery, so no git command it runs reads them.
+HARNESS_CONFIG = {
+    "GIT_CONFIG_PARAMETERS": "'core.hooksPath=/fixture/hooks'",
+    "GIT_CONFIG_COUNT": "1",
+    "GIT_CONFIG_KEY_0": "safe.directory",
+    "GIT_CONFIG_VALUE_0": "/fixture/workshop",
+}
+
+
+def harness_config(name):
+    return name in ("GIT_CONFIG_PARAMETERS", "GIT_CONFIG_COUNT") or name.startswith(
+        ("GIT_CONFIG_KEY_", "GIT_CONFIG_VALUE_")
+    )
 
 
 class GitEnvironmentTests(unittest.TestCase):
@@ -25,7 +40,9 @@ class GitEnvironmentTests(unittest.TestCase):
         self.directory = Path(self.temporary.name)
         self.names = GATE.run(*DISCOVERY).splitlines()
         self.environment = {
-            name: value for name, value in os.environ.items() if name not in self.names
+            name: value
+            for name, value in os.environ.items()
+            if name not in self.names and not harness_config(name)
         }
 
     def assert_rejected(self, variables):
@@ -52,12 +69,38 @@ class GitEnvironmentTests(unittest.TestCase):
         )
         self.assertEqual(list(self.directory.iterdir()), [])
 
+    def assert_dropped(self, variables):
+        calls = []
+        original_run = GATE.run
+
+        def stop_at_ref_check(*arguments, **keywords):
+            calls.append(arguments)
+            self.assertTrue(
+                set(variables).isdisjoint(os.environ), "Git read the harness config"
+            )
+            if arguments == DISCOVERY:
+                return original_run(*arguments, **keywords)
+            raise StopIteration
+
+        environment = {**self.environment, **variables}
+        with (
+            mock.patch.dict(os.environ, environment, clear=True),
+            mock.patch.object(GATE, "run", side_effect=stop_at_ref_check),
+            self.assertRaises(StopIteration),
+        ):
+            GATE.main(["--bookmark", "codex/fixture"])
+        self.assertEqual(calls, [DISCOVERY, REF_CHECK])
+        self.assertEqual(list(self.directory.iterdir()), [])
+
     def test_all_git_repository_variables_stop_before_stateful_commands(self):
         self.assertTrue({"GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE"} <= set(self.names))
         for name in self.names:
             for value in ("", str(self.directory / "private-fixture-value")):
                 with self.subTest(name=name, empty=value == ""):
-                    self.assert_rejected({name: value})
+                    if harness_config(name):
+                        self.assert_dropped({name: value})
+                    else:
+                        self.assert_rejected({name: value})
 
     def test_combined_repository_redirection_reports_only_names(self):
         self.assert_rejected(
@@ -69,8 +112,8 @@ class GitEnvironmentTests(unittest.TestCase):
             }
         )
 
-    def test_malformed_runtime_configuration_stops_before_parsing(self):
-        self.assert_rejected(
+    def test_malformed_runtime_configuration_is_dropped_before_parsing(self):
+        self.assert_dropped(
             {"GIT_CONFIG_PARAMETERS": "malformed fixture", "GIT_CONFIG_COUNT": "invalid"}
         )
 
@@ -152,7 +195,15 @@ class GitEnvironmentTests(unittest.TestCase):
         (template / "config").write_text(f"[core]\n    worktree = {outside}\n")
         configuration = self.directory / "gitconfig"
         original_run = GATE.run
+        subprocess_run = subprocess.run
         initialized = []
+        ancestry = []
+
+        def fast_forward(command, *positional, **keywords):
+            if tuple(command[2:4]) == ("merge-base", "--is-ancestor"):
+                ancestry.append(command)
+                return subprocess.CompletedProcess(command, 0)
+            return subprocess_run(command, *positional, **keywords)
 
         def stop_before_fetch(*arguments, **keywords):
             if arguments == DISCOVERY or arguments[:2] == ("git", "check-ref-format"):
@@ -197,10 +248,13 @@ class GitEnvironmentTests(unittest.TestCase):
                     mock.patch.object(GATE, "run", side_effect=stop_before_fetch),
                     mock.patch.object(GATE, "target", side_effect=["a" * 40, "b" * 40]),
                     mock.patch.object(GATE, "live_target", return_value="b" * 40),
+                    mock.patch.object(GATE.subprocess, "run", side_effect=fast_forward),
                     self.assertRaises(StopIteration),
                 ):
                     GATE.main(["--bookmark", "codex/fixture"])
         self.assertEqual(len(initialized), 3)
+        ancestor = ["git", f"--git-dir={self.directory}", "merge-base", "--is-ancestor"]
+        self.assertEqual(ancestry, [[*ancestor, "b" * 40, "a" * 40]] * 3)
 
     def test_discovery_failure_stops_before_stateful_commands(self):
         error = subprocess.CalledProcessError(1, DISCOVERY)
@@ -232,7 +286,7 @@ class GitEnvironmentTests(unittest.TestCase):
             self.assertEqual(dict(os.environ), environment)
             raise StopIteration
 
-        with mock.patch.dict(os.environ, environment, clear=True):
+        with mock.patch.dict(os.environ, {**environment, **HARNESS_CONFIG}, clear=True):
             with (
                 mock.patch.object(GATE, "run", side_effect=stop_at_ref_check),
                 self.assertRaises(StopIteration),
