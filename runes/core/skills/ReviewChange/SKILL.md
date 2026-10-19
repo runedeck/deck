@@ -13,7 +13,7 @@ The owner decides a specification one *[requirement][REQUIREMENT]* at a time. Yo
 
 - The [change][CHANGE] directory with its specifications, the `design.md` coverage table, the *[decision records][DECISIONRECORD]* it cites, and any reviewer verdicts.
 - The glossary pages, so you can explain a term inside a [requirement][REQUIREMENT] from its definition.
-- One channel, either the terminal with `AskUserQuestion` or voice through a project built from voice-safe files.
+- One channel, either the terminal with the harness's choice prompt or voice through a project built from voice-safe files.
 
 ## Constraints
 
@@ -65,7 +65,7 @@ At the end, or when the owner asks, read every decision back as prose. Write one
 
 ## References
 
-- The terminal form: `AskUserQuestion` with four [requirements][REQUIREMENT] per call and a header such as `N/32`. Each item gets one summary line. Do not copy the [requirement][REQUIREMENT] over. The options are `Keep` plus three concrete proposed [changes][CHANGE], and `Other` for the owner's own words. Keep the state in a `state.json` in the workshop's spec directory so the walk resumes. Discuss after every batch before the next one.
+- The terminal form: the harness's choice prompt with four [requirements][REQUIREMENT] per call and a header such as `N/32`. Each item gets one summary line. Do not copy the [requirement][REQUIREMENT] over. The options are `Keep` plus three concrete proposed [changes][CHANGE], and `Other` for the owner's own words. Keep the state in a `state.json` in the workshop's spec directory so the walk resumes. Discuss after every batch before the next one.
 - The voice form: a project built from voice-safe files. Such a file has no index ids and reads as narrative under headings. It has no tables, lists, code, paths, extensions, or abbreviations. Each section is self-contained, and the file stays under twelve kilobytes.
 - The SelfContainedQuestionOptions rule: describe each option's [change][CHANGE] in plain words.
 
