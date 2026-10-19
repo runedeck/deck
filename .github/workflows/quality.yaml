@@ -150,6 +150,10 @@ jobs:
             # The prek CLI is called directly: the wrapper action logs at
             # TRACE level and buries the failing hook's output. REQUIRE_GATES
             # turns a missing linter into a failure instead of a skip.
+            # The idea snapshot check reads the owner's vault through the
+            # Obsidian CLI, which no runner has, so it stays a local gate:
+            # a fresh branch's first push checks every file and would fail
+            # on it under REQUIRE_GATES.
             - name: Commit-stage checks
               env:
                   REQUIRE_GATES: "1"
@@ -158,9 +162,9 @@ jobs:
                   TO_REF: ${{ steps.check-range.outputs.to }}
               run: |
                   if [ "$RANGE_USABLE" = "true" ]; then
-                      prek run --from-ref "$FROM_REF" --to-ref "$TO_REF"
+                      prek run --skip sync-idea --from-ref "$FROM_REF" --to-ref "$TO_REF"
                   else
-                      prek run --all-files
+                      prek run --skip sync-idea --all-files
                   fi
 
             # Scan the same range at the pre-push stage. Without a usable base,
