@@ -18,7 +18,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "runes/core/skills/SafetyFirst"
-POLICY_SHA256 = "5ecac2914fd8a9e041cd61228e06af64b1888cd8da2f4de76a6adf71e9e19a8e"
+POLICY_SHA256 = "6b762301756a6c0df6bd162c718f7799d59839882a93d1c83f9f90fc8c42b8b8"
 
 
 def injection_commands(text):
