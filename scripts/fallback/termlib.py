@@ -14,6 +14,8 @@ import collections
 import os
 import pathlib
 import re
+import shutil
+import subprocess
 
 NS = "https://runedeck.ai/ns#"
 ONTOLOGY = pathlib.Path("ontology") / "rune.ttl"
@@ -62,6 +64,10 @@ NOT_PARAGRAPH = re.compile(r"^ {0,3}(?:[-*+](?:[ \t]|$)|\d{1,9}[.)](?:[ \t]|$)|>
 # A leading YAML block closed by `---` or `...`, as rune's prose view sees it.
 FRONT_MATTER = re.compile(r"\A---[ \t]*\n.*?^(?:---|\.\.\.)[ \t]*$", re.MULTILINE | re.DOTALL)
 SCHEME = re.compile(r"^[a-z][a-z0-9+.-]*:")
+# A bare URL and anything in angle brackets (an autolink, an HTML tag with
+# its attributes) are not prose, so a term inside them is never linked.
+BARE_URL = re.compile(r"\b[a-z][a-z0-9+.-]*://[^\s<>\]\)]+", re.IGNORECASE)
+ANGLE_SPAN = re.compile(r"<[^<>\n]*>")
 
 Term = collections.namedtuple("Term", "label precedence name kind comment status")
 Finding = collections.namedtuple("Finding", "path line severity name message")
@@ -274,9 +280,10 @@ def destination_end(line, start):
 
 def prose_mask(line):
     """True for each character of a line that is not prose: a term link, a
-    legacy citation, text in brackets, and an inline-link destination."""
+    legacy citation, text in brackets, an inline-link destination, a bare
+    URL, and an autolink or HTML tag in angle brackets."""
     masked = [False] * len(line)
-    for pattern in (REF_LINK, LEGACY):
+    for pattern in (REF_LINK, LEGACY, BARE_URL, ANGLE_SPAN):
         for match in pattern.finditer(line):
             masked[match.start():match.end()] = [True] * (match.end() - match.start())
     depth, i = 0, 0
@@ -298,10 +305,17 @@ def prose_mask(line):
 
 def label_pattern(label):
     """A whole-word, case-insensitive pattern for a label and its plural:
-    `s` or `es`, and `es` alone for a label that ends in s (`harnesses`).
+    `s` or `es`, `es` alone for a label that ends in s (`harnesses`), and
+    `ies` for a label that ends in a consonant and y (`capabilities`).
     It matches the source text itself, so offsets hold for any letter."""
-    plural = "(?:es)?" if label.lower().endswith("s") else "(?:es|s)?"
-    return re.compile(r"(?<![\w-])" + re.escape(label) + plural + r"(?![\w-])", re.IGNORECASE)
+    lower = label.lower()
+    if lower.endswith("s"):
+        body, plural = re.escape(label), "(?:es)?"
+    elif len(lower) > 1 and lower.endswith("y") and lower[-2] not in "aeiou":
+        body, plural = re.escape(label[:-1]) + "(?:y|ies)", ""
+    else:
+        body, plural = re.escape(label), "(?:es|s)?"
+    return re.compile(r"(?<![\w-])" + body + plural + r"(?![\w-])", re.IGNORECASE)
 
 
 def plain_occurrences(text, label):
@@ -412,3 +426,16 @@ def resolve(root, path, tag, target, index):
         name = iri_of(page)
         return Resolution("link", name if name in index.by_name else None, page)
     return Resolution("link", index.by_file.get(page.name) or index.by_tag.get(tag), page)
+
+
+def rune_links_every_occurrence():
+    """True when the installed rune carries the every-occurrence link model,
+    read from its own help: an older rune has `spec fix --links` too, but
+    its help does not say it links every occurrence, and handing over to it
+    would skip the check."""
+    rune = shutil.which("rune")
+    if not rune:
+        return False
+    result = subprocess.run([rune, "spec", "fix", "--help"], capture_output=True, text=True, check=False)
+    return result.returncode == 0 and "every occurrence" in result.stdout
+
