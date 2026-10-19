@@ -173,9 +173,9 @@ class FixTerms(unittest.TestCase):
 
 LINKED_ONTOLOGY = "@prefix rune: <https://runedeck.ai/ns#> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n\n" + "".join(
     f'rune:{name} a rdfs:Class ;\n    rdfs:label "{label}" ;\n    rdfs:comment "The {label}." .\n\n'
-    for name, label in (("Harness", "harness"), ("Rule", "rule"), ("Requirement", "requirement"), ("MissedRequirement", "missed requirement"), ("RedReview", "red review"), ("ReviewLane", "review lane"))
+    for name, label in (("Harness", "harness"), ("Rule", "rule"), ("Requirement", "requirement"), ("MissedRequirement", "missed requirement"), ("RedReview", "red review"), ("ReviewLane", "review lane"), ("Capability", "capability"))
 )
-PAGE = {"HARNESS": "harness", "RULE": "rule", "REQUIREMENT": "requirement", "MISSEDREQUIREMENT": "missed-requirement", "REDREVIEW": "red-review", "REVIEWLANE": "review-lane"}
+PAGE = {"HARNESS": "harness", "RULE": "rule", "REQUIREMENT": "requirement", "MISSEDREQUIREMENT": "missed-requirement", "REDREVIEW": "red-review", "REVIEWLANE": "review-lane", "CAPABILITY": "capability"}
 
 
 def definitions(*tags):
@@ -188,6 +188,8 @@ HARNESS = definitions("HARNESS")
 UNLINKED = {
     "line-edges": (FIRST + "harness works.\nThe harness\n" + HARNESS, ["harness", "harness"]),
     "es-plural": (FIRST + "Two harnesses work.\n" + HARNESS, ["harnesses"]),
+    "ies-plural": ("A *[capability][CAPABILITY]* here. Two capabilities, no capabilitys.\n\n[CAPABILITY]: ../specs/glossary/capability.md\n", ["capabilities"]),
+    "bare-url": (FIRST + "See https://example.com/harness and <https://x/harness> and <a href=\"harness\">x</a>, then a harness.\n" + HARNESS, ["harness"]),
     # An emphasized word is a run-in label (`**Change ceremony.**`) and stays plain, as in rune.
     "italic-word": (FIRST + "A later *harness* here.\n" + HARNESS, []),
     "legacy-citation": (FIRST + "A *harness* [HARNESS] cite.\n" + HARNESS, []),

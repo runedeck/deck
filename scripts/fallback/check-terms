@@ -105,8 +105,7 @@ def check(root):
 
 
 def rune_has_link_model():
-    rune = shutil.which("rune")
-    return bool(rune) and subprocess.run([rune, "spec", "fix", "-h"], capture_output=True, check=False).returncode == 0
+    return termlib.rune_links_every_occurrence()
 
 
 def rune_findings():

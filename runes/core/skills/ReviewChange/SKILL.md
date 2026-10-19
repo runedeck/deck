@@ -23,7 +23,7 @@ The owner decides a specification one *[requirement][REQUIREMENT]* at a time. Yo
 - Never skip past "I do not understand" or "I have no idea what you just said". Re-explain with the four-part template first, then ask again.
 - Before the next [requirement][REQUIREMENT], discuss the owner's answers and answer the owner's questions. The owner's words: "always before you move on, I need you to discuss with me and answer my questions".
 - A verdict binds to the [requirement][REQUIREMENT]'s current text. When the owner [changes][CHANGE] the text, say what the new text claims before you move on.
-- When a decision [changes][CHANGE] during the walk, the readback states only the final decision and marks the reversal where it matters.
+- When the owner reverses a decision during the walk, the readback states only the final decision and marks the reversal where it matters.
 
 ## Instructions
 
