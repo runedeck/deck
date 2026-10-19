@@ -22,7 +22,7 @@ The owner decides a specification one *[requirement][REQUIREMENT]* at a time. Yo
 - Numbers are words in anything spoken or read back.
 - Never skip past "I do not understand" or "I have no idea what you just said". Re-explain with the four-part template first, then ask again.
 - Before the next [requirement][REQUIREMENT], discuss the owner's answers and answer the owner's questions. The owner's words: "always before you move on, I need you to discuss with me and answer my questions".
-- A verdict binds to the [requirement][REQUIREMENT]'s current text. When the owner [changes][CHANGE] the text, say what the new text claims before you move on.
+- A verdict binds to the [requirement][REQUIREMENT]'s current text. When the owner rewrites the text, say what the new text claims before you move on.
 - When the owner reverses a decision during the walk, the readback states only the final decision and marks the reversal where it matters.
 
 ## Instructions
@@ -54,7 +54,7 @@ When a [requirement][REQUIREMENT] or a term has an arcane name, rewrite it in pl
 
 ### Read back as prose
 
-At the end, or when the owner asks, read every decision back as prose. Write one paragraph per [requirement][REQUIREMENT], named by heading, that says what the owner decided and why, in the plain register. Rules that apply to every specification, new [requirements][REQUIREMENT], new [changes][CHANGE], and ontology [changes][CHANGE] get their own sections. Open items come last. Write the readback to a dated file that the implementing session reads first. The first one was `runedeck-review-decisions-2026-10-17.md` in the workshop.
+At the end, or when the owner asks, read every decision back as prose. Write one paragraph per [requirement][REQUIREMENT], named by heading, that says what the owner decided and why, in the plain register. Rules that apply to every specification, new [requirements][REQUIREMENT], new [changes][CHANGE], and ontology edits get their own sections. Open items come last. Write the readback to a dated file that the implementing session reads first. The first one was `runedeck-review-decisions-2026-10-17.md` in the workshop.
 
 ## Verification
 
@@ -65,7 +65,7 @@ At the end, or when the owner asks, read every decision back as prose. Write one
 
 ## References
 
-- The terminal form: the harness's choice prompt with four [requirements][REQUIREMENT] per call and a header such as `N/32`. Each item gets one summary line. Do not copy the [requirement][REQUIREMENT] over. The options are `Keep` plus three concrete proposed [changes][CHANGE], and `Other` for the owner's own words. Keep the state in a `state.json` in the workshop's spec directory so the walk resumes. Discuss after every batch before the next one.
+- The terminal form: the harness's choice prompt with four [requirements][REQUIREMENT] per call and a header such as `N/32`. Each item gets one summary line. Do not copy the [requirement][REQUIREMENT] over. The options are `Keep` plus three concrete proposed edits, and `Other` for the owner's own words. Keep the state in a `state.json` in the workshop's spec directory so the walk resumes. Discuss after every batch before the next one.
 - The voice form: a project built from voice-safe files. Such a file has no index ids and reads as narrative under headings. It has no tables, lists, code, paths, extensions, or abbreviations. Each section is self-contained, and the file stays under twelve kilobytes.
 - The SelfContainedQuestionOptions rule: describe each option's [change][CHANGE] in plain words.
 
