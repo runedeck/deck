@@ -6,6 +6,11 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- Add `scripts/eval-rune` and `evals/`: each case runs with the rune and without it, and each run leaves a record and an optional GIF (runes-carry-eval-records).
+- Add eval suites with records for twelve core and development runes, listed in `evals/` (runes-carry-eval-records).
+- Add the FullSend skill in development: take one task to a merge-ready pull request while the owner reads nothing, then ask once, through the question tool, to merge.
+- Add the PruneTests skill in development: delete tests that no plausible bug can fail, repair weak ones with a recorded mutation, and hand the pull request to FullSend.
+- Add the PreferExistingTools, ProofsShowTheRealApp, AskBeforeMovingData, and AnswerBeforeEditing rules in core.
 - Add the Dotfiles Scanner and Online Mentions routines with a deterministic detector the run takes from the deck object store, and retire GitHub Exposure (scanner-routines-from-deck).
 - Add `routines/`: the Repository Digest and Weekly Ceremony Audit prompts as deck files a Claude Code routine reads at `main`, with the instance values in the provider stub (routine-prompts-from-deck).
 - Add `scripts/check-ontology`: the smoke fixture names each finding in `ontology/smoke/expected.tsv`, and the graph check prints each violation by node. Both hooks call it.
@@ -94,11 +99,13 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Removed
 
+- Remove the Claude Code variant of SafetyFirst. Its load-time probe stopped the skill from loading where Bash was not granted, and the canon alone scores 0.44 against 0 (runes-carry-eval-records).
 - Remove the legacy per-block review ledgers from BuildSkill and ReviewMarkers.
 - Remove the dated markdown backlog.
 
 ### Fixed
 
+- Fix VersionControl's directory advice: `gh -R` and `glab -R` take a remote `OWNER/REPO`, so a local directory needs its own `cd` call (runes-carry-eval-records).
 - Fix the Dotfiles Scanner to fetch the whole branch history and report a scan that stops at a shallow boundary as incomplete (scanner-routines-from-deck).
 - Fix a Dotfiles notification bullet to point to the first file before a commit message (scanner-routines-from-deck).
 - Fix the Repository Digest and Weekly Ceremony Audit to end with the notification text only (routine-prompts-from-deck).
