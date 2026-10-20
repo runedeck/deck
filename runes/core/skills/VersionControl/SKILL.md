@@ -1,9 +1,9 @@
 ---
 name: VersionControl
-description: "Git and Jujutsu discipline for commits, pushes, pull-request review loops, history rewrites, worktrees, and repository governance. USE WHEN committing, pushing, creating or babysitting pull requests, responding to review bots, or changing Git history. Also use when cleaning branches, setting branch protection or CODEOWNERS, or working in a jj colocated repository. NOT FOR one-shot read-only pull-request audits, queue reports, or code review outside an active review-and-fix loop."
+description: "Git and Jujutsu discipline for commits, pull request and merge request text, pushes, pull-request review loops, history rewrites, worktrees, and repository governance. USE WHEN writing a commit message or a pull request or merge request title or description, committing, pushing, creating or babysitting pull requests, responding to review bots, or changing Git history. Also use when cleaning branches, setting branch protection or CODEOWNERS, or working in a jj colocated repository. NOT FOR one-shot read-only pull-request audits, queue reports, or code review outside an active review-and-fix loop."
 compatibility: "Requires Git. Jujutsu repositories require jj. GitHub and GitLab tasks require gh or glab and network access."
 metadata:
-    version: 0.5.0
+    version: 0.6.0
     upstream: https://github.com/N4M3Z/forge-core
 ---
 
@@ -34,7 +34,7 @@ Commit discipline, staging hygiene, push policy, and repo governance. In a jj co
 
 ### Write the commit message
 
-Use a conventional prefix. Explain why, not what. Keep the first line under 72 characters.
+Use a conventional prefix. Explain why, not what. Keep the first line under 72 characters, in plain words, by the title rules in [PullRequestText.md](PullRequestText.md).
 
 - `feat:`: New feature or capability.
 - `fix:`: Bug fix.
@@ -52,11 +52,9 @@ Repair an invalid declaration or report the policy conflict. Preserve the truste
 ### Open the pull request
 
 - Obtain explicit approval for the new pull request under [Authorization.md](Authorization.md).
-- Keep the title under 70 characters.
-- Write the body as `## Summary` bullets plus the sections the repository's checks require (deck requires `## Release Notes`).
+- Write the title and the body by [PullRequestText.md](PullRequestText.md).
 - Create the pull request from a feature branch, never from main.
 - When the user requests active babysitting, read [BabysitPR.md](BabysitPR.md) and use its review-and-fix loop.
-- Do not append a generation footer, a tool badge, or a session link to the body.
 
 ### Manage rebase and summon economics
 
