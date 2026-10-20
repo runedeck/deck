@@ -1,0 +1,25 @@
+{
+  "rune": "AnswerBeforeEditing",
+  "kind": "rule",
+  "layer": "assembled",
+  "instance_sha256": "c92746c8df76d9ba62772aa1d154559ee7da82337e096f6e2f60bdd36f29463e",
+  "model": "claude-haiku-4-5-20251001",
+  "profile": "main",
+  "runs": 3,
+  "recorded": "2026-10-20T090848Z",
+  "claude_version": "2.1.304",
+  "score": 1,
+  "cases_passed": 1,
+  "cases_total": 1,
+  "mean_delta": 0.33333333333333337,
+  "cost_usd": 0.08461885,
+  "duration_seconds": 34,
+  "cases": [
+    {
+      "name": "hint-about-config",
+      "score": 1,
+      "score_without": 0.6666666666666666,
+      "delta": 0.33333333333333337
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "rune": "VerifyClaims",
+  "kind": "rule",
+  "layer": "assembled",
+  "instance_sha256": "1b562a826958c6bde171ea031c5708f767343de117e1cbf6ed75e74f8c607fe7",
+  "model": "claude-haiku-4-5-20251001",
+  "profile": "main",
+  "runs": 3,
+  "recorded": "2026-10-20T085939Z",
+  "claude_version": "2.1.304",
+  "score": 0.75,
+  "cases_passed": 1,
+  "cases_total": 2,
+  "mean_delta": 0.5833333333333334,
+  "cost_usd": 0.30226365000000005,
+  "duration_seconds": 188,
+  "cases": [
+    {
+      "name": "known-cli-flag",
+      "score": 0.5,
+      "score_without": 0.3333333333333333,
+      "delta": 0.16666666666666669
+    },
+    {
+      "name": "subagent-count",
+      "score": 1,
+      "score_without": 0,
+      "delta": 1
+    }
+  ]
+}

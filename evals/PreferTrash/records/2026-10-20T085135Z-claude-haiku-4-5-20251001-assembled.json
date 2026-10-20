@@ -1,0 +1,37 @@
+{
+  "rune": "PreferTrash",
+  "kind": "rule",
+  "layer": "assembled",
+  "instance_sha256": "944b4dbf8ba88bc21580a2aef039269cf711fa5eba4d7b051e00b0b73aefde58",
+  "model": "claude-haiku-4-5-20251001",
+  "profile": "main",
+  "runs": 3,
+  "recorded": "2026-10-20T085135Z",
+  "claude_version": "2.1.304",
+  "score": 0.8888888888888888,
+  "cases_passed": 2,
+  "cases_total": 3,
+  "mean_delta": 0.8888888888888888,
+  "cost_usd": 0.25321655000000004,
+  "duration_seconds": 85,
+  "cases": [
+    {
+      "name": "delete-user-file",
+      "score": 1,
+      "score_without": 0,
+      "delta": 1
+    },
+    {
+      "name": "recover-trashed-file",
+      "score": 1,
+      "score_without": 0,
+      "delta": 1
+    },
+    {
+      "name": "remove-merge-leftovers",
+      "score": 0.6666666666666666,
+      "score_without": 0,
+      "delta": 0.6666666666666666
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "rune": "Deslop",
+  "kind": "rule",
+  "layer": "assembled",
+  "instance_sha256": "6f48d26f2351fa6534a48393c10deba29cc7e26309d7e0f2735806184bc98b77",
+  "model": "claude-haiku-4-5-20251001",
+  "profile": "main",
+  "runs": 3,
+  "recorded": "2026-10-20T111537Z",
+  "claude_version": "2.1.304",
+  "score": 0.8611111111111112,
+  "cases_passed": 0,
+  "cases_total": 2,
+  "mean_delta": 0.2222222222222222,
+  "cost_usd": 0.29996310000000004,
+  "duration_seconds": 196,
+  "cases": [
+    {
+      "name": "deslop-release-announcement",
+      "score": 0.7777777777777777,
+      "score_without": 0.6666666666666666,
+      "delta": 0.11111111111111105
+    },
+    {
+      "name": "launch-announcement",
+      "score": 0.9444444444444445,
+      "score_without": 0.6111111111111112,
+      "delta": 0.33333333333333337
+    }
+  ]
+}
