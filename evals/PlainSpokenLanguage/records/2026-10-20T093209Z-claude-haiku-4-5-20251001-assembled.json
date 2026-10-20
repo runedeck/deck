@@ -1,0 +1,37 @@
+{
+  "rune": "PlainSpokenLanguage",
+  "kind": "rule",
+  "layer": "assembled",
+  "instance_sha256": "470fcb00d281c2da511c8534e2bcd0660afdab02a0c24e72a30a7c831bd7668d",
+  "model": "claude-haiku-4-5-20251001",
+  "profile": "main",
+  "runs": 3,
+  "recorded": "2026-10-20T093209Z",
+  "claude_version": "2.1.304",
+  "score": 0.7222222222222223,
+  "cases_passed": 1,
+  "cases_total": 3,
+  "mean_delta": 0.26666666666666666,
+  "cost_usd": 0.27020905,
+  "duration_seconds": 105,
+  "cases": [
+    {
+      "name": "decision-leads-with-point",
+      "score": 1,
+      "score_without": 0.6666666666666666,
+      "delta": 0.33333333333333337
+    },
+    {
+      "name": "one-question-at-a-time",
+      "score": 0.8333333333333334,
+      "score_without": 0.5,
+      "delta": 0.33333333333333337
+    },
+    {
+      "name": "status-update-abbreviations",
+      "score": 0.3333333333333333,
+      "score_without": 0.20000000000000004,
+      "delta": 0.13333333333333328
+    }
+  ]
+}
