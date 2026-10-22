@@ -1,6 +1,6 @@
 ---
 name: BrowserbaseToolkit
-description: "Drive real Chrome browsers in the cloud with Browserbase and the browse CLI: automate, scrape, fill forms, and run browser agents (Stagehand V4, the Agents API), plus Fetch, Search, Sessions, Contexts, and Functions. USE WHEN automating or scraping a website, driving a headless or cloud browser, using Browserbase or the browse CLI or Stagehand, migrating Stagehand V3 code to V4, fetching a page's content, web search for URLs, filling a web form programmatically, or deciding which browser-automation capability to use. NOT FOR driving a browser on the user's own machine, the harness's built-in browser tools, or a local Playwright run with no cloud session."
+description: "Drive real Chrome browsers in the cloud with Browserbase and the browse CLI: automate, scrape, fill forms, and run browser agents (Stagehand V4, the Agents API), plus Fetch, Search, Sessions, Contexts, and Functions. USE WHEN automating or scraping a website, driving a headless or cloud browser, using Browserbase or the browse CLI or Stagehand, migrating Stagehand V3 code to V4, fetching a page's content, reading a page exactly after a fetch tool returned HTTP 403, stopped at a redirect, or gave a summary instead of the text, web search for URLs, filling a web form programmatically, or deciding which browser-automation capability to use. NOT FOR driving a browser on the user's own machine, the harness's built-in browser tools, or a local Playwright run with no cloud session."
 metadata:
     version: 0.1.0
 ---
@@ -13,7 +13,6 @@ plain-language instructions where selectors break.
 
 The upstream skill at <https://browserbase.com/SKILL.md> is the full command reference, and
 `browse skills install` installs the copy bundled with the installed CLI version.
-[`Troubleshooting.md`](Troubleshooting.md) maps misleading errors to their real causes.
 
 ## Prerequisites
 
@@ -57,20 +56,27 @@ Use the lightest capability that answers the task.
 - **Functions:** the automation runs in Browserbase's cloud on a schedule or a webhook. TypeScript
   only.
 - **Model Gateway:** the code calls a model through the Browserbase key instead of a provider key.
+- **Starters:** a template or catalog skill starts the project. Read [`Starters.md`](Starters.md).
+
+### Read a page exactly
+
+When a fetch tool returns HTTP 403, stops at a redirect, or gives a summary instead of the page
+text, use Fetch first. It starts no browser, and the text is in the `content` field of its JSON
+result. When Fetch fails or the page needs JavaScript, read the page in a short session, then stop
+it. The Free plan includes 1 browser hour [PRICING].
+
+```sh
+browse cloud fetch <url> --allow-redirects
+browse open <url> --remote -s read --wait domcontentloaded
+browse get markdown -s read
+browse stop -s read
+```
 
 ### Write Stagehand V4 code
 
 Read [`StagehandV4.md`](StagehandV4.md) before you write or change Stagehand code. A script gets a
 browser from `browserbase.launch()` and passes it to `Stagehand.create()` [STAGEMIGRATE]. Then
 read the V4 pages that the docs index lists for the task [STAGEDOCS].
-
-### Start from a template or a catalog skill
-
-- `browse templates list` shows the starters. Slugs change, so check the list before you clone. On
-  2026-10-20 the list had `sec-filing-research`, `form-filling`, and `dynamic-form-filling`.
-- `browse templates clone <slug> <dir> --language typescript` copies a starter into a directory.
-- `browse skills find "<task>" --json` searches the browse.sh catalog of tested per-site
-  automations. `browse skills add <domain>/<task>` installs one.
 
 ## Verification
 
@@ -84,9 +90,8 @@ session, so a result payload is their proof.
 
 ## Troubleshooting
 
-[`Troubleshooting.md`](Troubleshooting.md) lists symptoms whose error message names the wrong
-cause: a placeholder provider key, the used-up free token allowance, bot protection, and V3 code
-on the V4 SDK.
+[`Troubleshooting.md`](Troubleshooting.md) maps each error whose message names the wrong cause to
+the real cause.
 
 ## References
 
