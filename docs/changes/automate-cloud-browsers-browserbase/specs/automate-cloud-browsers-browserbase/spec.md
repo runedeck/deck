@@ -9,6 +9,20 @@ The skill MUST rank the platform's capabilities from the one that starts no brow
 - **WHEN** the user needs the content of a page that loads without JavaScript or a click
 - **THEN** the session uses the fetch capability and starts no browser session
 
+### Requirement: Refused fetch falls back to the platform
+
+The skill MUST direct the session to the platform's fetch capability when the session's own fetch tool is refused, stops at a redirect, or returns a summary instead of the page text. It MUST allow a browser session only when that fetch fails or the page needs JavaScript, and it MUST tell the session to stop that browser session after the read.
+
+#### Scenario: Own fetch tool returns a summary
+
+- **WHEN** the session's own fetch tool returns HTTP 403 or a summary instead of the page text
+- **THEN** the session reads the exact page text through the platform's fetch capability and starts no browser session
+
+#### Scenario: Platform fetch cannot read the page
+
+- **WHEN** the platform's fetch capability fails on a page that needs JavaScript
+- **THEN** the session reads the page in one browser session and stops that session after the read
+
 ### Requirement: Stagehand code matches the current major version
 
 The skill MUST lead the session to write startup code for the current major Stagehand version. It MUST forbid code that this version removed.

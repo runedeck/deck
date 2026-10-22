@@ -14,7 +14,8 @@ The skill was written and measured in forge-provision. This *[change][CHANGE]* b
 
 ## What Changes
 
-- The BrowserbaseToolkit [skill][SKILL] joins the development domain at `runes/development/skills/BrowserbaseToolkit/`: a *[canon][CANON]* and two *[companions][COMPANION]*, Stagehand V4 and Troubleshooting.
+- The BrowserbaseToolkit [skill][SKILL] joins the development domain at `runes/development/skills/BrowserbaseToolkit/`: a *[canon][CANON]* and three *[companions][COMPANION]*, Stagehand V4, Starters, and Troubleshooting.
+- The skill also loads when a session's own fetch tool is refused or returns a summary instead of the page. A scan of the owner's session records on 2026-10-24 found both failures in several sessions. The skill then reads the page through the platform's fetch first and a short browser session second.
 - The skill points at the vendor's published skill file for the full command reference and carries no copy of it. The forge-provision version vendored that file with a sealed provenance sidecar. The record in `adr.md` holds that decision.
 - The skill holds plain documents only, no executable, and names no harness tool.
 
@@ -22,11 +23,11 @@ The skill was written and measured in forge-provision. This *[change][CHANGE]* b
 
 ### New Capabilities
 
-- automate-cloud-browsers-browserbase: a session on Browserbase picks the lightest capability, writes current Stagehand code, needs one secret, names the real cause of a misleading error, and reads the command reference upstream.
+- automate-cloud-browsers-browserbase: a session on Browserbase picks the lightest capability, reads a refused page through the platform, writes current Stagehand code, needs one secret, names the real cause of a misleading error, and reads the command reference upstream.
 
 ## Impact
 
-- `runes/development/skills/BrowserbaseToolkit/` (new): `SKILL.md`, `StagehandV4.md`, `Troubleshooting.md`.
+- `runes/development/skills/BrowserbaseToolkit/` (new): `SKILL.md`, `StagehandV4.md`, `Starters.md`, `Troubleshooting.md`.
 - `CHANGELOG.md` gains one line.
 - The record in `adr.md` moves to `docs/decisions/` at archive.
 
