@@ -8,6 +8,7 @@
 - [x] 1.4 Record the decision in `adr.md`
 - [x] 1.5 The CHANGELOG line
 - [x] 1.6 The blocked page fallback in the canon, its trigger and four steps, and the Starters companion that keeps the canon under 100 lines
+- [x] 1.7 `INSTALL.md` in the Mintlify shape, bun only, and the Claude variant that reads the installed CLI state at load
 
 ## 2. Verification
 

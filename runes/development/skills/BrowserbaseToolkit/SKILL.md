@@ -12,20 +12,13 @@ browser runs on your machine. The `browse` CLI talks to the platform. Stagehand 
 plain-language instructions where selectors break.
 
 The upstream skill at <https://browserbase.com/SKILL.md> is the full command reference, and
-`browse skills install` installs the copy bundled with the installed CLI version.
+`browse skills show` prints the copy bundled with the installed CLI version.
 
 ## Prerequisites
 
-- Node.js for the `browse` CLI. Stagehand V4 needs Node.js 22.18, Python 3.11, or Go 1.26 or
-  later [STAGEINSTALL].
-- One secret: `BROWSERBASE_API_KEY`. The key alone resolves its default project.
-- Install the CLI and check access:
-
-```sh
-npm install -g browse@latest
-export BROWSERBASE_API_KEY=bb_live_<your-key>
-browse cloud projects list
-```
+- Node.js for the `browse` CLI, and one secret: `BROWSERBASE_API_KEY`.
+- When `browse` is missing or `browse cloud projects list` fails, follow
+  [`INSTALL.md`](INSTALL.md). It installs with bun.
 
 ## Constraints
 
@@ -80,11 +73,7 @@ read the V4 pages that the docs index lists for the task [STAGEDOCS].
 
 ## Verification
 
-```sh
-browse cloud sessions list
-```
-
-A browser run appears as `RUNNING` or `COMPLETED`. Open its replay at
+In `browse cloud sessions list`, a browser run appears as `RUNNING` or `COMPLETED`. Open its replay at
 `https://www.browserbase.com/sessions/<full-id>` and keep the full ID. Fetch and Search start no
 session, so a result payload is their proof.
 
@@ -99,7 +88,6 @@ the real cause.
 - Browserbase docs: <https://docs.browserbase.com>
 - Stagehand V4 docs index: <https://docs.stagehand.dev/llms.txt>
 
-[STAGEINSTALL]: https://docs.stagehand.dev/v4/first-steps/installation.md
 [STAGEMIGRATE]: https://docs.stagehand.dev/v4/migrations/v3.md
 [STAGEDOCS]: https://docs.stagehand.dev/llms.txt
 [PRICING]: https://www.browserbase.com/pricing
