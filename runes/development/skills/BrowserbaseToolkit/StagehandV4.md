@@ -1,7 +1,8 @@
 # Stagehand V4
 
 Stagehand V4 changed how a script starts, where the methods live, and how caching works. V3 code
-fails on the V4 SDK. The migration guide [STAGEMIGRATE] is the source for every rule here.
+fails on the V4 SDK. The migration guide [STAGEMIGRATE] is the source for every rule here. V4
+needs Node.js 22.18, Python 3.11, or Go 1.26 or later [STAGEINSTALL].
 
 ## Start a script
 
@@ -52,3 +53,4 @@ Read the V4 pages that the docs index lists before you write code [STAGEDOCS].
 
 [STAGEMIGRATE]: https://docs.stagehand.dev/v4/migrations/v3.md
 [STAGEDOCS]: https://docs.stagehand.dev/llms.txt
+[STAGEINSTALL]: https://docs.stagehand.dev/v4/first-steps/installation.md

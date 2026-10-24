@@ -41,17 +41,17 @@ The BrowserbaseToolkit *[skill][SKILL]* came from forge-provision with four docu
 Option 2, in the development domain.
 
 - The skill MUST point at the vendor's published skill file for the full command reference and MUST NOT hold a copy of it.
-- The skill MUST consist of plain documents only and MUST name no *[harness][HARNESS]* tool, so every harness can load it.
+- The canonical skill and its shared companions MUST consist of plain documents only and MUST name no *[harness][HARNESS]* tool, so every harness can load them. Claude Code runtime syntax goes only in the Claude variant, which other harnesses never receive.
 - The skill lives in the development domain, beside the other skills a session uses while it writes code. A vendor domain holds a skill whose model or privacy constraints differ from the rest, as the Proton domain does. This skill has no such constraint.
 
 ### Consequences
 
-- [+] The skill is three documents, and an upstream change needs no new adoption review or seal.
+- [+] The skill holds only its own documents, and an upstream change needs no new adoption review or seal.
 - [+] The link gives the session the current upstream text.
 - [-] The install command copies the reference bundled with the installed CLI, so that copy is as fresh as the CLI version.
 - [-] A session that needs a command the canon does not list needs network access to the published address, or the CLI on the machine.
 - [-] No digest pins what the session reads from upstream. The vendor can change the file under the link.
-- [-] The deck has no bench verdict and no proof for the skill yet. The measurement lives in the forge-provision bench workspace.
+- [-] The deck has no recorded proof for the skill yet. The bench result sits in the benchmark workspace, outside the deck.
 
 [SKILL]: ../../specs/glossary/skill.md
 [CANON]: ../../specs/glossary/canon.md

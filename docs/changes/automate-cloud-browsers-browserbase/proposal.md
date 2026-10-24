@@ -17,7 +17,9 @@ The skill was written and measured in forge-provision. This *[change][CHANGE]* b
 - The BrowserbaseToolkit [skill][SKILL] joins the development domain at `runes/development/skills/BrowserbaseToolkit/`: a *[canon][CANON]* and three *[companions][COMPANION]*, Stagehand V4, Starters, and Troubleshooting.
 - The skill also loads for a blocked page, where a session's own fetch tool is refused or returns a summary instead of the page. A scan of the owner's session records on 2026-10-24 found both failures in several sessions. The skill's blocked page fallback tries the platform's fetch first and one short browser session second. It stops and asks the user when the site needs a paid plan or a login, or when the page content is private.
 - The skill points at the vendor's published skill file for the full command reference and carries no copy of it. The forge-provision version vendored that file with a sealed provenance sidecar. The record in `adr.md` holds that decision.
-- The skill holds plain documents only, no executable, and names no harness tool.
+- An `INSTALL.md` in the [Mintlify install.md shape][INSTALLMD] installs the CLI with bun, removes an npm copy that would hide it, and verifies access with the key.
+- A Claude variant reads the installed CLI copies and their version when the skill loads, within 5 seconds and 300 bytes per read. Other harnesses get the canonical body only.
+- The skill holds plain documents only, no executable.
 
 ## Capabilities
 
@@ -27,7 +29,7 @@ The skill was written and measured in forge-provision. This *[change][CHANGE]* b
 
 ## Impact
 
-- `runes/development/skills/BrowserbaseToolkit/` (new): `SKILL.md`, `StagehandV4.md`, `Starters.md`, `Troubleshooting.md`.
+- `runes/development/skills/BrowserbaseToolkit/` (new): `SKILL.md`, `INSTALL.md`, `StagehandV4.md`, `Starters.md`, `Troubleshooting.md`, and `claude/SKILL.md`.
 - `CHANGELOG.md` gains one line.
 - The record in `adr.md` moves to `docs/decisions/` at archive.
 
@@ -43,4 +45,5 @@ The skill was written and measured in forge-provision. This *[change][CHANGE]* b
 [CANON]: ../../specs/glossary/canon.md
 [COMPANION]: ../../specs/glossary/companion.md
 [BBSKILL]: https://browserbase.com/SKILL.md
+[INSTALLMD]: https://github.com/mintlify/install-md
 [STAGEMIGRATE]: https://docs.stagehand.dev/v4/migrations/v3.md
