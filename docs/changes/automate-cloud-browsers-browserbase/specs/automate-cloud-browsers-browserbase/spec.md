@@ -9,9 +9,9 @@ The skill MUST rank the platform's capabilities from the one that starts no brow
 - **WHEN** the user needs the content of a page that loads without JavaScript or a click
 - **THEN** the session uses the fetch capability and starts no browser session
 
-### Requirement: Refused fetch falls back to the platform
+### Requirement: Blocked page fallback
 
-The skill MUST direct the session to the platform's fetch capability when the session's own fetch tool is refused, stops at a redirect, or returns a summary instead of the page text. It MUST allow a browser session only when that fetch fails or the page needs JavaScript, and it MUST tell the session to stop that browser session after the read.
+The skill MUST call a page blocked when the session's own fetch tool is refused, stops at a redirect, or returns a summary instead of the page text. It MUST direct the session to the platform's fetch first, and to one browser session only when that fetch fails or the page needs JavaScript. The session MUST stop that browser session after the read.
 
 #### Scenario: Own fetch tool returns a summary
 
@@ -22,6 +22,15 @@ The skill MUST direct the session to the platform's fetch capability when the se
 
 - **WHEN** the platform's fetch capability fails on a page that needs JavaScript
 - **THEN** the session reads the page in one browser session and stops that session after the read
+
+### Requirement: Blocked page stops for the user
+
+The skill MUST tell the session to stop and ask the user when a blocked page needs a paid plan or a login, or when its content is private.
+
+#### Scenario: Blocked page asks for a login
+
+- **WHEN** the browser session for a blocked page shows a login form
+- **THEN** the session signs in nowhere, stops, and asks the user how to go on
 
 ### Requirement: Stagehand code matches the current major version
 
