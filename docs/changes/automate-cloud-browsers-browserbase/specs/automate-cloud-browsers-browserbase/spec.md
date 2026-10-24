@@ -1,13 +1,13 @@
 ## ADDED Requirements
 
-### Requirement: Lightest capability answers the task
+### Requirement: Lightest feature answers the task
 
-The skill MUST rank the platform's capabilities from the one that starts no browser to the one that needs a paid plan. It MUST direct the session to the lightest capability that answers the task.
+The skill MUST rank the platform's features from the one that starts no browser to the one that needs a paid plan. It MUST direct the session to the lightest feature that answers the task.
 
 #### Scenario: User needs page content without interaction
 
 - **WHEN** the user needs the content of a page that loads without JavaScript or a click
-- **THEN** the session uses the fetch capability and starts no browser session
+- **THEN** the session uses the platform's fetch and starts no browser session
 
 ### Requirement: Blocked page fallback
 
@@ -16,12 +16,21 @@ The skill MUST call a page blocked when the session's own fetch tool is refused,
 #### Scenario: Own fetch tool returns a summary
 
 - **WHEN** the session's own fetch tool returns HTTP 403 or a summary instead of the page text
-- **THEN** the session reads the exact page text through the platform's fetch capability and starts no browser session
+- **THEN** the session reads the page through the platform's fetch and starts no browser session
 
 #### Scenario: Platform fetch cannot read the page
 
-- **WHEN** the platform's fetch capability fails on a page that needs JavaScript
+- **WHEN** the platform's fetch fails on a page that needs JavaScript
 - **THEN** the session reads the page in one browser session and stops that session after the read
+
+### Requirement: Read page arrives as clean markdown
+
+The skill MUST turn a page that it reads into the page's main content as markdown, without the navigation, footer, or other page chrome.
+
+#### Scenario: Fetched page carries navigation and a footer
+
+- **WHEN** the platform returns a page whose article sits between a navigation bar and a footer
+- **THEN** the session hands on the article as markdown, and the navigation and footer are absent
 
 ### Requirement: Blocked page stops for the user
 

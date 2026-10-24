@@ -1,10 +1,10 @@
 # Starters
 
-A project can start from a Browserbase template or from a tested automation in the browse.sh
+A project can begin from a Browserbase starter project or from a tested automation in the browse.sh
 catalog. Both lists change, so read the current list before you pick one. The commands below match
-the `--help` output of `browse` 0.9.2.
+the `--help` output of `browse` 0.11.3.
 
-## Templates
+## Starter projects
 
 ```sh
 browse templates list
@@ -13,7 +13,7 @@ browse templates clone <slug> <dir> --language typescript
 ```
 
 `clone` copies a ready-to-run project into the directory. Without `--language`, it takes TypeScript
-when the template has it, then Python. On 2026-10-20 the list had `sec-filing-research`,
+when the starter has it, then Python. On 2026-10-20 the list had `sec-filing-research`,
 `form-filling`, and `dynamic-form-filling`.
 
 ## Catalog skills

@@ -1,70 +1,80 @@
 # browse
 
 > The Browserbase `browse` CLI drives cloud Chrome browsers and calls the Fetch and Search APIs.
-> The BrowserbaseToolkit skill uses it for every Browserbase task.
+> Defuddle turns the pages it reads into clean markdown. The BrowserbaseToolkit skill uses both.
 
-I want you to install the Browserbase `browse` CLI for me. Execute all the steps below autonomously.
+I want you to install the Browserbase `browse` CLI and Defuddle for me. Execute all the steps below
+autonomously.
 
 ## OBJECTIVE
 
-Install the `browse` CLI with bun and confirm that it reaches Browserbase with the user's API key.
+Install `browse` and Defuddle with bun, and confirm that `browse` reaches Browserbase with the
+user's API key.
 
 ## DONE WHEN
 
-`browse --version` runs the copy you installed, and `browse cloud projects list` lists at least one
-project.
+`which -a browse` lists one path under `~/.bun/bin`, `defuddle --version` and `jq --version` run,
+and `browse cloud projects list` lists at least one project.
 
 ## TODO
 
-- [ ] Install `browse` with bun
-- [ ] Remove an npm copy that hides the bun copy on `PATH`
+- [ ] Install bun and jq when they are missing
+- [ ] Install `browse` and Defuddle with bun
+- [ ] Remove an npm copy of `browse` that hides the bun copy on `PATH`
 - [ ] Confirm that `BROWSERBASE_API_KEY` is set
 - [ ] Verify access to Browserbase
 
 ## Steps
 
-### 1. Install the CLI
+### 1. Install bun and jq
 
-You must install with bun. When bun is missing, install bun first. On macOS, use Homebrew:
+On macOS, use Homebrew. On another system, install bun from <https://bun.sh> and jq from the system
+package manager.
 
 ```sh
 command -v bun >/dev/null 2>&1 || brew install oven-sh/bun/bun
-bun add -g browse@latest
+command -v jq >/dev/null 2>&1 || brew install jq
 ```
 
-### 2. Remove an npm copy
+### 2. Install the tools with bun
 
-An npm copy in the Homebrew prefix can come before bun's `~/.bun/bin` on `PATH` and hide the bun
-copy. List every copy:
+The `defuddle-cli` package gives the `defuddle` command.
 
 ```sh
-which -a browse
+bun add -g browse@latest defuddle-cli@latest
 ```
 
-When the list shows a path outside `~/.bun/bin`, remove the npm copy:
+### 3. Remove an npm copy
+
+An npm copy in the Homebrew prefix can come before `~/.bun/bin` on `PATH` and hide the bun copy.
+When `which -a browse` lists a path outside `~/.bun/bin`, remove the npm copy:
 
 ```sh
 npm uninstall -g browse
 ```
 
-### 3. Confirm the key
+### 4. Confirm the key
 
-You need one secret, `BROWSERBASE_API_KEY`. The key alone resolves the default project, so do not
-ask for a project ID. Check the key without printing it:
+You need one secret, `BROWSERBASE_API_KEY`. Keep it in the environment or a secret store, never in
+a chat, a log, or a tracked file. The key alone resolves the default project, so do not ask for a
+project ID. Set `BROWSERBASE_PROJECT_ID` only to pin a non-default project on a key with several
+projects. Check the key without printing it:
 
 ```sh
 [ -n "$BROWSERBASE_API_KEY" ] && echo "set" || echo "not set"
 ```
 
-When the key is not set, stop and ask the user to put it in the environment. Do not ask for the
-key in the chat.
+When the key is not set, stop and ask the user to put it in the environment.
 
-### 4. Verify access
+### 5. Verify access
 
 ```sh
-browse --version
+which -a browse
+defuddle --version
+jq --version
 browse cloud projects list
 ```
 
-EXECUTE NOW: Complete the above TODO list to achieve: `browse --version` runs the copy you
-installed, and `browse cloud projects list` lists at least one project.
+EXECUTE NOW: Complete the above TODO list to achieve: `which -a browse` lists one path under
+`~/.bun/bin`, `defuddle --version` and `jq --version` run, and `browse cloud projects list` lists at
+least one project.

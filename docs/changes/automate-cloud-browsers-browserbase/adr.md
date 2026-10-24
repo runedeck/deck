@@ -10,7 +10,7 @@ tags:
     - browserbase
 status: proposed
 created: 2026-10-22
-updated: 2026-10-22
+updated: 2026-10-25
 author: "@N4M3Z"
 project: deck
 related: []
@@ -33,7 +33,7 @@ The BrowserbaseToolkit *[skill][SKILL]* came from forge-provision with four docu
 ## Considered Options
 
 1. Adopt the vendor's file through the review state machine, with a sealed sidecar, and adopt it again on each upstream change.
-2. Drop the copy. The canon links the published address for the full command reference and names the CLI command that installs the bundled copy.
+2. Drop the copy. The canon links the published address for the full command reference and names the CLI command that prints the bundled copy.
 3. Keep the copy without a review. This breaks the adoption rule and is listed only to say so.
 
 ## Decision Outcome
@@ -41,14 +41,15 @@ The BrowserbaseToolkit *[skill][SKILL]* came from forge-provision with four docu
 Option 2, in the development domain.
 
 - The skill MUST point at the vendor's published skill file for the full command reference and MUST NOT hold a copy of it.
-- The canonical skill and its shared companions MUST consist of plain documents only and MUST name no *[harness][HARNESS]* tool, so every harness can load them. Claude Code runtime syntax goes only in the Claude variant, which other harnesses never receive.
+- The canonical skill and its shared companions MUST name no *[harness][HARNESS]* tool, so every harness can load them. Claude Code runtime syntax goes only in the Claude variant, which other harnesses never receive.
+- The skill MUST carry no executable that changes the host. Its one script reads a page into a temporary directory and stops every browser session that it opens.
 - The skill lives in the development domain, beside the other skills a session uses while it writes code. A vendor domain holds a skill whose model or privacy constraints differ from the rest, as the Proton domain does. This skill has no such constraint.
 
 ### Consequences
 
-- [+] The skill holds only its own documents, and an upstream change needs no new adoption review or seal.
-- [+] The link gives the session the current upstream text.
-- [-] The install command copies the reference bundled with the installed CLI, so that copy is as fresh as the CLI version.
+- [+] The skill holds only its own files, and an upstream change needs no new adoption review or seal.
+- [+] The link gives the session the current upstream text, and `browse skills show` prints the copy that matches the installed CLI.
+- [-] The printed copy is as fresh as the installed CLI version.
 - [-] A session that needs a command the canon does not list needs network access to the published address, or the CLI on the machine.
 - [-] No digest pins what the session reads from upstream. The vendor can change the file under the link.
 - [-] The deck has no recorded proof for the skill yet. The bench result sits in the benchmark workspace, outside the deck.

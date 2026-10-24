@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Read one web page as clean markdown through Browserbase: the Fetch API
+# first, then one cloud browser session that is always stopped. Defuddle
+# turns the saved HTML into markdown on stdout. Status lines go to stderr.
+# Exit 0: markdown printed. Exit 2: usage, a missing tool, or no key.
+# Exit 3: Fetch and the browser session were both blocked or empty.
+set -uo pipefail
+
+url=${1:-}
+[ -n "$url" ] || { echo "usage: read-page <url>" >&2; exit 2; }
+for tool in browse defuddle jq; do
+    command -v "$tool" >/dev/null 2>&1 || { echo "read-page: $tool is missing, see INSTALL.md" >&2; exit 2; }
+done
+[ -n "${BROWSERBASE_API_KEY:-}" ] || { echo "read-page: BROWSERBASE_API_KEY is not set, see INSTALL.md" >&2; exit 2; }
+
+work=$(mktemp -d)
+session="read-page-$$"
+opened=""
+# shellcheck disable=SC2329  # the EXIT trap below calls it
+cleanup() {
+    [ -n "$opened" ] && browse stop -s "$session" >/dev/null 2>&1
+    rm -rf "$work"
+}
+trap cleanup EXIT
+
+page="$work/page.html"
+# A blocked page or a JavaScript shell defuddles to a few words.
+min_bytes=200
+
+to_markdown() {
+    defuddle parse "$page" --markdown >"$work/page.md" 2>/dev/null || return 1
+    size=$(wc -c <"$work/page.md" | tr -d ' ')
+    [ "$size" -ge "$min_bytes" ]
+}
+
+status=$(browse cloud fetch "$url" --allow-redirects --format raw --output "$page" 2>/dev/null \
+    | jq -r '.statusCode // empty' 2>/dev/null)
+if [ -n "$status" ] && [ "$status" -lt 400 ] && to_markdown; then
+    cat "$work/page.md"
+    echo "read-page: read through the Fetch API, HTTP $status" >&2
+    exit 0
+fi
+echo "read-page: the Fetch API gave ${status:-no result}, opening one cloud browser session" >&2
+
+if ! browse open "$url" --remote -s "$session" >/dev/null 2>"$work/open.err"; then
+    echo "read-page: the browser session did not open: $(tail -1 "$work/open.err")" >&2
+    exit 3
+fi
+opened=1
+# The session returns the body alone, so state the encoding for defuddle.
+if browse get html -s "$session" 2>/dev/null | jq -r '"<meta charset=\"utf-8\">" + (.html // "")' >"$page" && to_markdown; then
+    cat "$work/page.md"
+    echo "read-page: read through a cloud browser session, now stopped" >&2
+    exit 0
+fi
+title=$(browse get title -s "$session" 2>/dev/null | jq -r '.title // empty' 2>/dev/null)
+echo "read-page: the browser session page \"${title:-no title}\" was blocked or empty, the site may need Proxies or a Verified session" >&2
+exit 3

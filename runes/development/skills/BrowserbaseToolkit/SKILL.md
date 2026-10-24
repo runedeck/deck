@@ -1,81 +1,30 @@
 ---
 name: BrowserbaseToolkit
-description: "Drive real Chrome browsers in the cloud with Browserbase and the browse CLI: automate, scrape, fill forms, and run browser agents (Stagehand V4, the Agents API), plus Fetch, Search, Sessions, Contexts, and Functions. USE WHEN automating or scraping a website, driving a headless or cloud browser, using Browserbase or the browse CLI or Stagehand, migrating Stagehand V3 code to V4, fetching a page's content, a blocked page where a fetch tool returned HTTP 403, stopped at a redirect, or gave a summary instead of the text, web search for URLs, filling a web form programmatically, or deciding which browser-automation capability to use. NOT FOR driving a browser on the user's own machine, the harness's built-in browser tools, or a local Playwright run with no cloud session."
+description: "Read or drive a web page in a Browserbase cloud browser with the browse CLI. USE WHEN a fetch tool is blocked (HTTP 403, a redirect it does not follow, or a summary instead of the page), a page needs JavaScript or clicks, or the user asks for Browserbase. NOT FOR driving a browser on this machine."
 metadata:
     version: 0.1.0
 ---
 
 # BrowserbaseToolkit
 
-Browserbase runs real Chrome browsers in the cloud. Your code or your agent drives them, so no
-browser runs on your machine. The `browse` CLI talks to the platform. Stagehand drives a page with
-plain-language instructions where selectors break.
-
-The upstream skill at <https://browserbase.com/SKILL.md> is the full command reference, and
-`browse skills show` prints the copy bundled with the installed CLI version.
+Browserbase runs Chrome browsers in the cloud, so the browser does not run on this machine. The
+`browse` CLI is the interface to the platform, and Defuddle turns a saved page into clean markdown.
 
 ## Prerequisites
 
-- Node.js for the `browse` CLI, and one secret: `BROWSERBASE_API_KEY`.
-- When `browse` is missing or `browse cloud projects list` fails, follow
-  [`INSTALL.md`](INSTALL.md). It installs with bun.
-
-## Constraints
-
-- The key alone resolves its default project, so `BROWSERBASE_PROJECT_ID` and `projectId` are not
-  needed. Set one only to pin a non-default project on a multi-project key. Older docs that require
-  it are out of date.
-- Do not put the API key in a chat, a log, or a tracked file. Keep it in the local environment or
-  a secret store.
-- On the Free plan, leave provider keys such as `MODEL_API_KEY` empty. A placeholder value sends a
-  bad key to the provider, and the error looks like a broken Browserbase key.
-- Proxies and Verified sessions are paid features [PRICING]. A plain session on a bot-protected
-  site gets blocked.
-- Do not write Stagehand V3 code. V4 removed `new Stagehand({ env })`, `init()`, `agent()`, and
-  `cacheDir` [STAGEMIGRATE].
+- `browse`, `defuddle`, `jq`, and `BROWSERBASE_API_KEY` in the environment. When one is missing, or
+  `browse cloud projects list` fails, do the steps in [`INSTALL.md`](INSTALL.md).
 
 ## Instructions
 
-### Choose a capability
-
-Use the lightest capability that answers the task.
-
-- **Fetch:** you need page content without JavaScript or interaction. No browser starts.
-- **Search:** you need URLs or ranked web results for a query.
-- **Stagehand:** you script the steps and want `act`, `extract`, and `observe` over selectors.
-- **Agents API:** you state a goal in plain words and a hosted agent picks the steps.
-- **Sessions over CDP:** the project already uses Playwright, Puppeteer, or Selenium.
-- **Contexts:** a run must reuse a login or cookies.
-- **Functions:** the automation runs in Browserbase's cloud on a schedule or a webhook. TypeScript
-  only.
-- **Model Gateway:** the code calls a model through the Browserbase key instead of a provider key.
-- **Starters:** a template or catalog skill starts the project. Read [`Starters.md`](Starters.md).
-
-### Blocked page fallback
-
-A page is blocked when a fetch tool returns HTTP 403, stops at a redirect, or gives a summary
-instead of the page text. Take these steps in order, and stop at the first one that works:
-
-1. Fetch the page. No browser starts, and the text is in the `content` field of the JSON result:
-   `browse cloud fetch <url> --allow-redirects`
-2. When Fetch fails or the page needs JavaScript, read it in a short session, then stop it:
-   `browse open <url> --remote -s read`, `browse get markdown -s read`, `browse stop -s read`.
-   The Free plan includes 1 browser hour [PRICING].
-3. When the session is blocked too, the site needs Proxies or a Verified session, which are paid.
-   Stop and tell the user.
-4. When the page needs a login or its content is private, stop and ask the user.
-
-### Write Stagehand V4 code
-
-Read [`StagehandV4.md`](StagehandV4.md) before you write or change Stagehand code. A script gets a
-browser from `browserbase.launch()` and passes it to `Stagehand.create()` [STAGEMIGRATE]. Then
-read the V4 pages that the docs index lists for the task [STAGEDOCS].
+Read [`Workflow.md`](Workflow.md) and do its steps: the constraints first, then the blocked page
+fallback or Drive a page.
 
 ## Verification
 
-In `browse cloud sessions list`, a browser run appears as `RUNNING` or `COMPLETED`. Open its replay at
-`https://www.browserbase.com/sessions/<full-id>` and keep the full ID. Fetch and Search start no
-session, so a result payload is their proof.
+- The markdown contains the page's main text, and no navigation bar or footer.
+- After a browser session, the `browserbaseSessionUrl` that `browse open` printed shows the replay,
+  and `browse cloud sessions list` shows the session as `COMPLETED`. Fetch starts no session.
 
 ## Troubleshooting
 
@@ -84,10 +33,6 @@ the real cause.
 
 ## References
 
-- Upstream skill, the full command reference: <https://browserbase.com/SKILL.md>
-- Browserbase docs: <https://docs.browserbase.com>
-- Stagehand V4 docs index: <https://docs.stagehand.dev/llms.txt>
-
-[STAGEMIGRATE]: https://docs.stagehand.dev/v4/migrations/v3.md
-[STAGEDOCS]: https://docs.stagehand.dev/llms.txt
-[PRICING]: https://www.browserbase.com/pricing
+- The vendor's skill file, the full command reference: <https://browserbase.com/SKILL.md>.
+  `browse skills show` prints the copy that matches the installed CLI.
+- Defuddle: <https://github.com/kepano/defuddle>

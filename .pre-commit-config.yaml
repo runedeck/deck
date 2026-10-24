@@ -92,6 +92,15 @@ repos:
             language: system
             pass_filenames: false
 
+          # A skill that needs setup ships an INSTALL.md in the Mintlify
+          # install.md shape (BuildSkill SkillInstallation.md), and the schema
+          # in schemas/ states that shape.
+          - id: mdschema-skill-install
+            name: mdschema skill install files
+            entry: sh -c 'if command -v mdschema >/dev/null 2>&1; then for install in runes/*/skills/*/INSTALL.md; do [ -f "$install" ] || continue; mdschema check "$install" --schema schemas/INSTALL.mdschema || exit 1; done; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and mdschema is absent"; exit 1; fi'
+            language: system
+            pass_filenames: false
+
           - id: stable-shell-schemas
             name: stable shell schema copies
             entry: make validate-schemas
