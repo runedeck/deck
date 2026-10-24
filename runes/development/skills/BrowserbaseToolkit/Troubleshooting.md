@@ -1,8 +1,8 @@
 # Troubleshooting
 
 Symptom-first fixes for Browserbase failures whose error message points at the wrong cause. The
-upstream skill at <https://browserbase.com/SKILL.md> covers CLI mechanics such as a missing key or
-an unknown flag. This file covers the traps where the message misleads.
+vendor's skill file, which `browse skills show` prints, covers CLI mechanics such as a missing key
+or an unknown flag. This file covers the traps where the message misleads.
 
 - **"API key not valid" or "Incorrect API key provided" from a model call, while the browser
   session started fine.** Cause: a placeholder provider key in `.env`
@@ -56,11 +56,11 @@ rm -f .env.bak
   `page.goto()` on the same Stagehand page. This uses no model tokens and works on Free, but it
   breaks more easily when the page changes.
 
-## Escalation order for a blocked site
+## When the blocked page fallback fails
 
-Try the cheapest option first: `browse cloud fetch <url>` (no browser, no tokens). Next, use
-`browse cloud search "<query>"` to find another source. Next, use a plain session on an unprotected
-copy of the data. Use Proxies or Verified on a paid plan only after that.
+The fallback in [`Workflow.md`](Workflow.md) tries Fetch, then one browser session. When both are
+blocked, use `browse cloud search "<query>"` to find an unprotected copy of the same data, and read
+that copy. Use Proxies or Verified on a paid plan only after that.
 
 [PRICING]: https://www.browserbase.com/pricing
 [STAGEMIGRATE]: https://docs.stagehand.dev/v4/migrations/v3.md

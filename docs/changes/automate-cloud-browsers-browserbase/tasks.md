@@ -2,13 +2,14 @@
 
 ## 1. Authoring
 
-- [x] 1.1 BrowserbaseToolkit canon: the capability ladder, the V4 rule, the one-secret rule, and the upstream link in place of the vendored reference
+- [x] 1.1 BrowserbaseToolkit canon: the feature ladder, the V4 rule, the one-secret rule, and the upstream link in place of the vendored reference
 - [x] 1.2 StagehandV4 companion: the start shape, the method moves, caching, and the removed forms
 - [x] 1.3 Troubleshooting companion: the misleading errors, the template secret hygiene, the two exits past the token cap, the escalation order
 - [x] 1.4 Record the decision in `adr.md`
 - [x] 1.5 The CHANGELOG line
 - [x] 1.6 The blocked page fallback in the canon, its trigger and four steps, and the Starters companion that keeps the canon under 100 lines
 - [x] 1.7 `INSTALL.md` in the Mintlify shape, bun only, and the Claude variant that reads the installed CLI state at load
+- [x] 1.8 Daily-use rework: a short canon routing to the Workflow companion, the Features companion, Defuddle for clean markdown, the Claude variant replacing the body with the read-page script, and the `INSTALL.md` schema hook
 
 ## 2. Verification
 
