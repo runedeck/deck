@@ -1,6 +1,6 @@
 ---
 name: BrowserbaseToolkit
-description: "Drive real Chrome browsers in the cloud with Browserbase and the browse CLI: automate, scrape, fill forms, and run browser agents (Stagehand V4, the Agents API), plus Fetch, Search, Sessions, Contexts, and Functions. USE WHEN automating or scraping a website, driving a headless or cloud browser, using Browserbase or the browse CLI or Stagehand, migrating Stagehand V3 code to V4, fetching a page's content, reading a page exactly after a fetch tool returned HTTP 403, stopped at a redirect, or gave a summary instead of the text, web search for URLs, filling a web form programmatically, or deciding which browser-automation capability to use. NOT FOR driving a browser on the user's own machine, the harness's built-in browser tools, or a local Playwright run with no cloud session."
+description: "Drive real Chrome browsers in the cloud with Browserbase and the browse CLI: automate, scrape, fill forms, and run browser agents (Stagehand V4, the Agents API), plus Fetch, Search, Sessions, Contexts, and Functions. USE WHEN automating or scraping a website, driving a headless or cloud browser, using Browserbase or the browse CLI or Stagehand, migrating Stagehand V3 code to V4, fetching a page's content, a blocked page where a fetch tool returned HTTP 403, stopped at a redirect, or gave a summary instead of the text, web search for URLs, filling a web form programmatically, or deciding which browser-automation capability to use. NOT FOR driving a browser on the user's own machine, the harness's built-in browser tools, or a local Playwright run with no cloud session."
 metadata:
     version: 0.1.0
 ---
@@ -58,19 +58,19 @@ Use the lightest capability that answers the task.
 - **Model Gateway:** the code calls a model through the Browserbase key instead of a provider key.
 - **Starters:** a template or catalog skill starts the project. Read [`Starters.md`](Starters.md).
 
-### Read a page exactly
+### Blocked page fallback
 
-When a fetch tool returns HTTP 403, stops at a redirect, or gives a summary instead of the page
-text, use Fetch first. It starts no browser, and the text is in the `content` field of its JSON
-result. When Fetch fails or the page needs JavaScript, read the page in a short session, then stop
-it. The Free plan includes 1 browser hour [PRICING].
+A page is blocked when a fetch tool returns HTTP 403, stops at a redirect, or gives a summary
+instead of the page text. Take these steps in order, and stop at the first one that works:
 
-```sh
-browse cloud fetch <url> --allow-redirects
-browse open <url> --remote -s read --wait domcontentloaded
-browse get markdown -s read
-browse stop -s read
-```
+1. Fetch the page. No browser starts, and the text is in the `content` field of the JSON result:
+   `browse cloud fetch <url> --allow-redirects`
+2. When Fetch fails or the page needs JavaScript, read it in a short session, then stop it:
+   `browse open <url> --remote -s read`, `browse get markdown -s read`, `browse stop -s read`.
+   The Free plan includes 1 browser hour [PRICING].
+3. When the session is blocked too, the site needs Proxies or a Verified session, which are paid.
+   Stop and tell the user.
+4. When the page needs a login or its content is private, stop and ask the user.
 
 ### Write Stagehand V4 code
 
