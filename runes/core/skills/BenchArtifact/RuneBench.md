@@ -41,7 +41,7 @@ The route registry invokes Rune, not `grok` or `agy`:
       "argv": [
         "--json", "run", "grok@claude", "--model", "grok-4.6",
         "--repo", "{scratch}", "--mode", "read-only",
-        "--prompt-file", "{prompt_file}", "--clean-harness-state"
+        "--prompt-file", "{prompt_file}", "--clean"
       ],
       "artifact_argv": ["--system-prompt-file", "{artifact}"],
       "response": "json",

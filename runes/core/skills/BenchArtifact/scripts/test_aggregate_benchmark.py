@@ -242,7 +242,7 @@ class AggregateTests(unittest.TestCase):
         self.assertEqual(checker_verdict["label"], "No checker data")
         self.assertIn("1 of 2 matched pairs", " ".join(checker_verdict["parts"]))
 
-    def test_unreliable_checker_density_is_excluded(self):
+    def test_unreliable_checker_density_stays_null(self):
         self.write_run("baseline", 1, lint=4, checker_words=1, density_reliable=False)
         self.write_run("with_rule", 1, lint=0, checker_words=50)
         manifest = self.root / "evals.json"
@@ -255,6 +255,42 @@ class AggregateTests(unittest.TestCase):
 
         self.assertIsNone(result["baseline"]["metrics"]["lint_per100w"]["mean"])
         self.assertIsNone(result["paired_corpus"]["baseline"]["lint_per100w"])
+
+    def test_unreliable_density_keeps_assertion_results_comparable(self):
+        self.write_run(
+            "baseline", 1, words=1, checker_words=1, passed=0,
+            density_reliable=False,
+        )
+        self.write_run(
+            "with_rule", 1, words=3, checker_words=3, density_reliable=False,
+        )
+        manifest = self.root / "evals.json"
+        manifest.write_text(json.dumps({
+            "arms": {"baseline": {}, "with_rule": {}},
+            "comparisons": [{"id": "rule", "primary": "with_rule", "baseline": "baseline"}],
+        }), encoding="utf-8")
+
+        data = AGG.generate(self.root, manifest, "STE", "")
+        cell = data["comparisons"][0]["models"]["model"]
+
+        self.assertEqual([run["state"] for run in data["runs"]], ["valid", "valid"])
+        self.assertTrue(all(run["result"]["lint_per100w"] is None for run in data["runs"]))
+        self.assertEqual(cell["paired_samples"], 1)
+        self.assertEqual(cell["deltas"]["assertion_pass_rate"], 1.0)
+        self.assertIsNone(cell["deltas"]["lint_per100w"])
+        self.assertEqual(cell["verdict"]["label"], "No checker data")
+        self.assertIn("| model | No checker data | 1 | 0.00 → 1.00 | — → — |", AGG.markdown(data))
+
+    def test_reliable_density_without_checker_words_is_missing_grading(self):
+        self.write_run("baseline", 1, checker_words=1)
+        grading_path = self.root / "eval-1-case" / "baseline@model" / "run-1" / "grading.json"
+        grading = json.loads(grading_path.read_text(encoding="utf-8"))
+        del grading["lint"]["words"]
+        grading_path.write_text(json.dumps(grading), encoding="utf-8")
+
+        run = AGG.generate(self.root, None, "STE", "")["runs"][0]
+
+        self.assertEqual(run["state"], "missing_grading")
 
     def test_rune_cache_usage_field_is_aggregated(self):
         self.write_run("baseline", 1, cache_tokens=17)

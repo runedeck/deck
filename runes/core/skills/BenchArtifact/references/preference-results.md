@@ -110,6 +110,8 @@ The aggregate keeps named arms, explicit comparisons, matched pairs, exclusions,
 
 Corpus ratios use total findings and total words from matched outputs.
 
+A checker can report an unreliable density for a short answer. The run then keeps its assertion results and its matched pair. Its density fields are null, and the corpus ratios leave out its findings and words.
+
 The aggregator calculates each model verdict once. The JSON stores its status, label, and explanation points.
 
 The Markdown and HTML reports render this stored verdict.

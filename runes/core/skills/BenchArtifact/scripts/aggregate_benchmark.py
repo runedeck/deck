@@ -172,18 +172,24 @@ def load_run(
             metric(timing, field),
             metric(execution_result, field),
         )
+    # An unreliable density keeps the run comparable. Its checker metrics stay null.
+    checker_fields = (
+        ("lint_violations", "lint_per100w", "checker_word_count")
+        if density_reliable else ()
+    )
     grading_complete = (
         bool(grading)
-        and density_reliable
         and all(finite_number(result.get(field)) for field in (
             "assertion_pass_rate", "assertions_passed", "assertions_total",
-            "lint_violations", "lint_per100w", "checker_word_count",
+            *checker_fields,
         ))
         and result["assertions_total"] > 0
         and 0 <= result["assertions_passed"] <= result["assertions_total"]
         and 0 <= result["assertion_pass_rate"] <= 1
-        and result["lint_violations"] >= 0
-        and result["checker_word_count"] > 0
+        and (
+            not density_reliable
+            or (result["lint_violations"] >= 0 and result["checker_word_count"] > 0)
+        )
     )
     valid = state == "valid" and grading_complete
     result_state = "valid" if valid else state if state != "valid" else "missing_grading"

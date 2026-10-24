@@ -847,6 +847,62 @@ class RunBenchmarkTests(unittest.TestCase):
         self.assertEqual(status, 1)
         self.assertFalse(call_log.exists())
 
+    def test_invalid_regex_fails_before_a_provider_call(self):
+        manifest = self.root / "invalid-regex-evals.json"
+        self.write_json(manifest, {
+            "schema_version": 2, "arms": {"baseline": {}}, "comparisons": [],
+            "evals": [{
+                "id": 1, "name": "sample", "prompt": "Review.", "files": [],
+                "assertions": [{
+                    "kind": "forbidden_regex",
+                    "text": "The response never disables signing.",
+                    "patterns": ["git commit (--no-gpg-sign"],
+                }],
+            }],
+        })
+        call_log = self.root / "invalid-regex-calls.log"
+        routes = self.root / "invalid-regex-routes.json"
+        self.write_json(routes, {"routes": {"fake": {
+            "binary": "fake-harness", "model": "model", "vendor": "test",
+            "argv": ["--prompt-file", "{prompt_file}"], "response": "text",
+            "env": {"CALL_LOG": str(call_log)},
+            "context_canary": "List visible artifact rules.",
+            "forbidden_context_markers": ["SECRET_ARTIFACT"],
+        }}})
+
+        with redirect_stdout(io.StringIO()):
+            status = self.run_cross_harness([
+                "--workspace", str(self.root / "invalid-regex-workspace"),
+                "--iteration", "1", "--manifest", str(manifest),
+                "--routes", str(routes), "--seed", "1",
+            ])
+
+        self.assertEqual(status, 1)
+        self.assertFalse(call_log.exists())
+
+    def test_regex_kinds_need_pattern_strings(self):
+        manifest = {
+            "schema_version": 2, "arms": {"baseline": {}}, "comparisons": [],
+            "evals": [{
+                "id": 1, "name": "sample", "prompt": "Review.",
+                "assertions": [{
+                    "kind": "required_regex",
+                    "text": "The response names the tool.",
+                    "patterns": [],
+                }],
+            }],
+        }
+
+        with self.assertRaisesRegex(ValueError, "required_regex needs pattern strings"):
+            RUN.validate_manifest(manifest)
+
+        manifest["evals"][0]["assertions"][0]["patterns"] = ["home[- manager"]
+        with self.assertRaisesRegex(ValueError, "is not a valid regular expression"):
+            RUN.validate_manifest(manifest)
+
+        manifest["evals"][0]["assertions"][0]["patterns"] = [r"home[- ]manager"]
+        RUN.validate_manifest(manifest)
+
 
 if __name__ == "__main__":
     unittest.main()

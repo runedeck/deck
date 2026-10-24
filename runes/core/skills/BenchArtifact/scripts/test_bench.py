@@ -57,6 +57,63 @@ class BenchTests(unittest.TestCase):
 
         self.assertNotIn("--approve", run.call_args.args[0])
 
+    def test_grade_reads_the_frozen_iteration_manifest(self):
+        self.config.update({"grader": "grade.py", "checker": "lint.py"})
+        with mock.patch.object(BENCH, "run") as run:
+            BENCH.grade(self.config)
+
+        argv = run.call_args.args[0]
+        self.assertEqual(
+            argv[argv.index("--manifest") + 1],
+            self.root / "iteration-1" / "manifest.json",
+        )
+
+    def test_judge_reads_the_frozen_iteration_manifest(self):
+        with mock.patch.object(BENCH, "run") as run:
+            BENCH.judge(self.config)
+
+        argv = run.call_args.args[0]
+        self.assertEqual(
+            argv[argv.index("--manifest") + 1],
+            self.root / "iteration-1" / "manifest.json",
+        )
+
+    def test_report_aggregates_the_frozen_iteration_manifest(self):
+        self.config["artifact_name"] = "Example"
+        with mock.patch.object(BENCH, "run") as run:
+            BENCH.report(self.config)
+
+        argv = run.call_args_list[0].args[0]
+        self.assertIn("scripts.aggregate_benchmark", argv)
+        self.assertEqual(
+            argv[argv.index("--manifest") + 1],
+            self.root / "iteration-1" / "manifest.json",
+        )
+
+    def test_quick_grades_and_aggregates_the_scratch_manifest(self):
+        scratch = self.root / "iteration-999"
+        self.config.update({
+            "grader": "grade.py",
+            "checker": "lint.py",
+            "artifact_name": "Example",
+            "quick": {"routes": ["first"], "cases": [1]},
+        })
+
+        def write_table(argv, **kwargs):
+            scratch.mkdir(exist_ok=True)
+            (scratch / "benchmark.md").write_text("table\n", encoding="utf-8")
+
+        with (
+            mock.patch.object(BENCH, "run", side_effect=write_table) as run,
+            mock.patch("builtins.print"),
+        ):
+            BENCH.quick(self.config)
+
+        frozen = scratch / "manifest.json"
+        for call in run.call_args_list[1:]:
+            argv = call.args[0]
+            self.assertEqual(argv[argv.index("--manifest") + 1], frozen)
+
     def test_repeat_summary_reports_configured_repeats(self):
         self.assertEqual(BENCH.repeat_summary(self.config), "2 repeats")
         self.assertEqual(BENCH.repeat_summary({}), "1 repeat")

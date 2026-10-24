@@ -112,11 +112,16 @@ def iteration_dir(config: dict) -> Path:
     return config["_root"] / f"iteration-{config['iteration']}"
 
 
+def frozen_manifest(config: dict) -> Path:
+    """The run step freezes the run plan here. Later steps read only this copy."""
+    return iteration_dir(config) / "manifest.json"
+
+
 def grade(config: dict) -> None:
     argv = [
         sys.executable, path(config, "grader"),
         "--iteration", iteration_dir(config),
-        "--manifest", path(config, "manifest"),
+        "--manifest", frozen_manifest(config),
         "--checker", path(config, "checker"),
     ]
     if config.get("checker_config"):
@@ -130,7 +135,7 @@ def judge(config: dict) -> None:
             sys.executable, path(config, "judge_script"),
             "--cross-harness",
             "--iteration", iteration_dir(config),
-            "--manifest", path(config, "manifest"),
+            "--manifest", frozen_manifest(config),
             "--routes", path(config, "routes"),
             "--judge-route", judge_pass["route"],
             "--seed", config["seed"],
@@ -148,7 +153,7 @@ def report(config: dict) -> None:
         [
             sys.executable, "-m", "scripts.aggregate_benchmark",
             iteration_dir(config),
-            "--manifest", path(config, "manifest"),
+            "--manifest", frozen_manifest(config),
             "--artifact-name", config["artifact_name"],
         ],
         cwd=bench_dir,
@@ -213,7 +218,7 @@ def quick(config: dict) -> None:
     run(
         [
             sys.executable, "-m", "scripts.aggregate_benchmark", scratch,
-            "--manifest", path(config, "manifest"),
+            "--manifest", frozen_manifest(quick_config),
             "--artifact-name", config["artifact_name"],
         ],
         cwd=bench_dir,
