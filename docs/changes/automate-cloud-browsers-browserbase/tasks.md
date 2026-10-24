@@ -13,7 +13,7 @@
 
 - [x] 2.1 `rune validate --skill-layers` on the skill and `rune validate` on the deck
 - [x] 2.2 `rune spec validate`, `scripts/check-spec-names`, the skill mdschema check, and `vale --no-global` on the added files
-- [ ] 2.3 Bench case in the deck with no skill as baseline (BenchArtifact). The forge-provision runs of 2026-10-20 and 2026-10-22 are the reference result
+- [x] 2.3 Bench the deck skill against a baseline with no skill (BenchArtifact): three cases on Opus 5.5, Fable 5.1, and Haiku 5.5, iteration 2 of 2026-10-24
 - [ ] 2.4 One recorded proof per scenario under `docs/proofs/automate-cloud-browsers-browserbase/`
 
 ## 3. Record
