@@ -185,6 +185,25 @@ tr.delta td { font-weight: 700; border-top: 2px solid var(--line); }
 .null { color: var(--muted-text); }
 details { border: 1px solid var(--line); border-radius: var(--radius);
           margin-bottom: 0.6rem; overflow: hidden; background: var(--surface); }
+.case-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+             padding: 1rem 1.15rem 0.6rem; margin-bottom: 0.9rem; }
+.case-card h3 { font-size: 1.05rem; margin: 0 0 0.5rem; }
+.case-card blockquote { margin: 0.4rem 0 0.6rem; padding: 0.5rem 0.9rem; border-left: 3px solid var(--line);
+                        background: var(--code-bg); font-size: 0.88rem; border-radius: 0 8px 8px 0; }
+.case-card .case-why { font-size: 0.9rem; margin: 0.4rem 0 0.8rem; }
+.case-grid { margin-bottom: 0.6rem; }
+.case-grid th, .case-grid td { text-align: left; white-space: normal; }
+.case-grid td { font-family: var(--serif); font-size: 0.86rem; }
+.case-grid td.case-arm { font-weight: 600; white-space: nowrap; }
+.case-label { display: inline-block; margin: 0.1rem 0.3rem 0.1rem 0; padding: 0.18rem 0.6rem;
+              border-radius: 999px; font-weight: 600; font-size: 0.84rem; border: 1px solid transparent; }
+.case-label.b-ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 18%, var(--bg));
+                   border-color: color-mix(in srgb, var(--ok) 55%, transparent); }
+.case-label.b-fail { color: var(--fail); background: color-mix(in srgb, var(--fail) 18%, var(--bg));
+                     border-color: color-mix(in srgb, var(--fail) 55%, transparent); }
+.case-details { margin: 0 0 0.4rem; }
+.case-details ul { margin: 0.2rem 0 0.6rem; padding-left: 1rem; font-size: 0.84rem; list-style: none; }
+.case-details .run-head { padding: 0.5rem 1rem 0; font-family: var(--mono); font-size: 0.76rem; }
 summary { cursor: pointer; padding: 0.6rem 1rem; font-weight: 600; font-size: 0.88rem; }
 summary:hover { background: var(--card); }
 .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem;
@@ -343,6 +362,11 @@ mark.diff-b { background: color-mix(in srgb, var(--neutral) 30%, transparent); c
     <div class="cards" id="summary"></div>
     <div class="verdict-tabs" id="verdict-tabs" role="tablist" aria-label="Verdict comparison"></div>
     <div id="verdict-panels"></div>
+  </section>
+  <section id="questions" aria-labelledby="questions-heading">
+    <h2 id="questions-heading">What each case asked</h2>
+    <p class="muted">One card for each case: the question in plain words, the prompt the models received, and what each answer did. Green means the answer passed every content check. Red names the first thing it got wrong. The check details sit under each card.</p>
+    <div id="case-cards"></div>
   </section>
   <section id="how" aria-labelledby="how-heading">
     <h2 id="how-heading">How to read this report</h2>
@@ -742,6 +766,7 @@ const recordedVerdict = data => {
 const nav = document.getElementById("nav");
 const addNav = (id, label) => { const item = el("li"); const link = el("a", label); link.href = `#${id}`; item.appendChild(link); nav.appendChild(item); };
 addNav("verdicts", "Verdicts");
+addNav("questions", "Cases");
 addNav("how", "How to read");
 
 const verdictPanelsRoot = document.getElementById("verdict-panels");
@@ -1192,6 +1217,101 @@ document.getElementById("threshold-line").textContent =
 document.getElementById("weight-line").textContent =
   "dimension weights: " + JUDGE_DIMENSIONS.map(id => `${id} \u00d7${dimensionWeight(id)}`).join(" \u00b7 ")
   + " (a weight below 1 softens the label, 0 removes the dimension)";
+
+const CARD_CLASSES = { pass: "b-ok", fail: "b-fail", excluded: "b-neutral" };
+// The baseline row comes first, so each card reads without, then with.
+const caseArms = (Object.keys(DATA.arms || {}).length ? Object.keys(DATA.arms)
+  : [...new Set(runs.map(run => run.arm))].sort())
+  .sort((a, b) => Number(typeof DATA.arms?.[a]?.artifact_kind === "string")
+    - Number(typeof DATA.arms?.[b]?.artifact_kind === "string"));
+const caseModels = Array.isArray(DATA.case_models) && DATA.case_models.length ? DATA.case_models
+  : [...new Set(runs.map(run => run.model))].sort();
+const caseList = Array.isArray(DATA.cases) && DATA.cases.length ? DATA.cases
+  : [...new Map(runs.map(run => [String(run.eval_id), { id: run.eval_id, name: run.eval_name }])).values()]
+    .sort((a, b) => Number(a.id) - Number(b.id));
+const modelName = model => {
+  const match = /^claude-([a-z]+)-(\d+)-(\d+)$/.exec(model);
+  return match ? `${match[1].charAt(0).toUpperCase()}${match[1].slice(1)} ${match[2]}.${match[3]}` : model;
+};
+const treatmentArms = caseArms.filter(arm => typeof DATA.arms?.[arm]?.artifact_kind === "string");
+const armRowLabel = arm => {
+  const spec = DATA.arms?.[arm] || {};
+  if (typeof spec.artifact_kind !== "string") {
+    const kinds = [...new Set(treatmentArms.map(name => DATA.arms[name].artifact_kind))];
+    return kinds.length === 1 ? `Without ${kinds[0]}` : "Without artifact";
+  }
+  return treatmentArms.length > 1 && spec.artifact_name ? `With ${spec.artifact_name}` : `With ${spec.artifact_kind}`;
+};
+// An aggregate written before the card field gets a label from its own expectations.
+const runCard = run => {
+  if (run.card && typeof run.card.label === "string") return run.card;
+  if (!run.valid) return { outcome: "excluded", label: run.state || "excluded" };
+  const failed = (run.expectations || []).find(item => !item.passed);
+  return failed ? { outcome: "fail", label: failed.text || "failed a check" }
+    : { outcome: "pass", label: "passed every check" };
+};
+const cardRoot = document.getElementById("case-cards");
+if (!caseList.length) cardRoot.appendChild(el("p", "No cases were recorded.", "empty"));
+for (const item of caseList) {
+  const caseRuns = runs.filter(run => String(run.eval_id) === String(item.id));
+  const card = el("article", null, "case-card");
+  card.appendChild(el("h3", item.question || `Case ${item.id}: ${item.name || ""}`.trim()));
+  if (typeof item.prompt === "string" && item.prompt) card.appendChild(el("blockquote", item.prompt));
+  if (typeof item.why === "string" && item.why) card.appendChild(el("p", item.why, "case-why"));
+  const table = el("table", null, "case-grid");
+  const headRow = el("tr");
+  headRow.appendChild(el("th", ""));
+  for (const model of caseModels) headRow.appendChild(el("th", modelName(model)));
+  const thead = el("thead");
+  thead.appendChild(headRow);
+  const tbody = el("tbody");
+  for (const arm of caseArms) {
+    const row = el("tr");
+    row.appendChild(el("td", armRowLabel(arm), "case-arm"));
+    for (const model of caseModels) {
+      const cell = el("td");
+      const groups = new Map();
+      for (const run of caseRuns.filter(entry => entry.arm === arm && entry.model === model)) {
+        const { outcome, label } = runCard(run);
+        const key = `${outcome}|${label}`;
+        groups.set(key, { outcome, label, count: (groups.get(key)?.count || 0) + 1 });
+      }
+      if (!groups.size) cell.appendChild(el("span", "—", "null"));
+      for (const group of groups.values()) {
+        const text = group.count > 1 ? `${group.label} ×${group.count}` : group.label;
+        cell.appendChild(el("span", text, `case-label ${CARD_CLASSES[group.outcome] || "b-neutral"}`));
+      }
+      row.appendChild(cell);
+    }
+    tbody.appendChild(row);
+  }
+  table.append(thead, tbody);
+  const scroller = el("div", null, "scroll");
+  scroller.appendChild(table);
+  card.appendChild(scroller);
+  const detail = el("details", null, "case-details");
+  detail.appendChild(el("summary", "Check details"));
+  for (const arm of caseArms) {
+    for (const model of caseModels) {
+      for (const run of caseRuns.filter(entry => entry.arm === arm && entry.model === model)
+        .sort((a, b) => a.run_number - b.run_number)) {
+        const passed = run.result?.assertions_passed;
+        const total = run.result?.assertions_total;
+        const tally = Number.isFinite(passed) && Number.isFinite(total) ? ` · ${passed}/${total} checks` : ` · ${run.state}`;
+        detail.appendChild(el("div", `${armRowLabel(arm)} · ${modelName(model)} · run ${run.run_number}${tally}`, "run-head"));
+        const list = el("ul");
+        for (const check of run.expectations || []) {
+          const line = el("li", `${check.passed ? "✓" : "✕"} ${check.text}`, check.passed ? "good" : "bad");
+          if (check.evidence) line.appendChild(el("span", ` · ${check.evidence}`, "muted"));
+          list.appendChild(line);
+        }
+        detail.appendChild(list);
+      }
+    }
+  }
+  card.appendChild(detail);
+  cardRoot.appendChild(card);
+}
 
 const runRoot = document.getElementById("runs");
 const waffle = el("div", null, "waffle");

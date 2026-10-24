@@ -136,6 +136,20 @@ Read [execution-results.md](execution-results.md) for execution, timing, and gra
 
 Read [preference-results.md](preference-results.md) for judging and aggregate records.
 
+## Case cards
+
+The report opens with one card for each case. Each card shows what the case asked and what each answer did.
+
+A case can set `question`, `why`, and `pass_label`. An assertion can set `fail_label`. All four fields are optional.
+
+Write `question` as a plain title for a reader who does not know the product, for example "Write the code that starts a cloud browser".
+
+Write `why` in one or two sentences that say what a right answer does and what a wrong one costs. Explain each product name there, for example "Stagehand is Browserbase's code library for steering a browser from a script."
+
+Write each label in four words or fewer. A label says what the answer did, for example "old v3 code" or "key only".
+
+A cell shows `pass_label` when every content check passes. Otherwise it shows the `fail_label` of a failed forbidden check, then of a failed required check. A check without `fail_label` shows its `text`. A word-count check never picks the label.
+
 ## Report links
 
 A local report shows each artifact source path without a link.

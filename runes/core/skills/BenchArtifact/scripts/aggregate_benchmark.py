@@ -500,6 +500,58 @@ def compare(
     return output
 
 
+CARD_FIELDS = ("question", "why", "pass_label")
+FORBIDDEN_KINDS = {"forbidden_patterns", "forbidden_regex"}
+CARD_STATES = {
+    "missing_execution": "not run",
+    "missing_grading": "not graded",
+    "timeout": "timed out",
+    "provider_failure": "provider failed",
+    "invalid_output": "invalid output",
+}
+
+
+def run_card(run: dict, case: dict | None) -> dict:
+    """The plain label of one run on its case card.
+
+    A failed forbidden check names what the answer did, so it picks the label
+    before a failed required check. A word-count check never picks it.
+    """
+    case = case or {}
+    if not run["valid"]:
+        return {"outcome": "excluded", "label": CARD_STATES.get(run["state"], run["state"])}
+    if not run["expectations"] and run["result"].get("assertion_pass_rate") != 1:
+        return {"outcome": "fail", "label": "failed a check"}
+    assertions = {}
+    for assertion in case.get("assertions") or []:
+        if isinstance(assertion, dict):
+            assertions.setdefault(assertion.get("text"), assertion)
+    failed = [
+        (assertions.get(expectation.get("text"), {}), expectation)
+        for expectation in run["expectations"]
+        if isinstance(expectation, dict) and not expectation.get("passed")
+    ]
+    failed = [item for item in failed if item[0].get("kind") != "word_range"]
+    if not failed:
+        return {"outcome": "pass", "label": case.get("pass_label") or "passed every check"}
+    failed.sort(key=lambda item: item[0].get("kind") not in FORBIDDEN_KINDS)
+    assertion, expectation = failed[0]
+    label = assertion.get("fail_label") or expectation.get("text") or "failed a check"
+    return {"outcome": "fail", "label": label}
+
+
+def case_cards(manifest: dict) -> list[dict]:
+    """The plain-words header of each case card, read from the frozen manifest."""
+    return [
+        {
+            "id": case.get("id"), "name": case.get("name"), "prompt": case.get("prompt"),
+            **{field: case.get(field) for field in CARD_FIELDS},
+        }
+        for case in manifest.get("evals") or []
+        if isinstance(case, dict)
+    ]
+
+
 def generate(root: Path, manifest_path: Path | None, artifact_name: str, artifact_path: str) -> dict:
     if manifest_path is None and (root / "manifest.json").is_file():
         manifest_path = root / "manifest.json"
@@ -507,6 +559,17 @@ def generate(root: Path, manifest_path: Path | None, artifact_name: str, artifac
     if manifest.get("schema_version") == SCHEMA_VERSION:
         validate_manifest(manifest, require_run_plan=True)
     runs = apply_run_plan(discover(root, manifest), manifest)
+    cases = {
+        str(case.get("id")): case
+        for case in manifest.get("evals") or [] if isinstance(case, dict)
+    }
+    for run in runs:
+        run["card"] = run_card(run, cases.get(str(run["eval_id"])))
+    plan = normalize_run_plan(manifest)
+    case_models = (
+        [route["model"] for route in plan["routes"]]
+        if plan else sorted({run["model"] for run in runs})
+    )
     discovered_arms = sorted({run["arm"] for run in runs})
     arms = list(manifest.get("arms", {})) or discovered_arms
     comparisons = manifest.get("comparisons", [])
@@ -541,6 +604,8 @@ def generate(root: Path, manifest_path: Path | None, artifact_name: str, artifac
         ),
         "summaries": summaries,
         "runs": runs,
+        "cases": case_cards(manifest),
+        "case_models": case_models,
         "preference_judgments": judgments,
         "judging": judging,
         "metric_definitions": manifest.get("metrics"),

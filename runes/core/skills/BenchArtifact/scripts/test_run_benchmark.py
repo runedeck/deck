@@ -903,6 +903,31 @@ class RunBenchmarkTests(unittest.TestCase):
         manifest["evals"][0]["assertions"][0]["patterns"] = [r"home[- ]manager"]
         RUN.validate_manifest(manifest)
 
+    def test_case_card_fields_are_optional_and_labels_stay_short(self):
+        def manifest_with(case_fields, assertion_fields):
+            return {
+                "schema_version": 2, "arms": {"baseline": {}}, "comparisons": [],
+                "evals": [{
+                    "id": 1, "name": "sample", "prompt": "Review.", **case_fields,
+                    "assertions": [{
+                        "kind": "required_patterns", "text": "Names the tool.",
+                        "patterns": ["tool"], **assertion_fields,
+                    }],
+                }],
+            }
+
+        RUN.validate_manifest(manifest_with({}, {}))
+        RUN.validate_manifest(manifest_with(
+            {"question": "Name the tool", "why": "The tool matters.", "pass_label": "named the tool"},
+            {"fail_label": "no tool named"},
+        ))
+        with self.assertRaisesRegex(ValueError, "pass_label must be one to 4 words"):
+            RUN.validate_manifest(manifest_with({"pass_label": "named the right tool here"}, {}))
+        with self.assertRaisesRegex(ValueError, "fail_label must be one to 4 words"):
+            RUN.validate_manifest(manifest_with({}, {"fail_label": " "}))
+        with self.assertRaisesRegex(ValueError, "why must be non-empty text"):
+            RUN.validate_manifest(manifest_with({"why": ""}, {}))
+
 
 if __name__ == "__main__":
     unittest.main()
