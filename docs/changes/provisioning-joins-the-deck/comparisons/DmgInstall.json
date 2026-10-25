@@ -1,0 +1,121 @@
+{
+  "cases": [
+    {
+      "id": "1",
+      "name": "dmg-installer",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "fail",
+          "without": "fail"
+        }
+      }
+    },
+    {
+      "id": "2",
+      "name": "latest-url",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "pass"
+        }
+      }
+    }
+  ],
+  "iterations": [
+    {
+      "artifact_sha256": "4c2d5a3d5fb8fe472ab6e0e948d9926b3f6195dc93d46751ce567705e12e98dc",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "number": 1
+    },
+    {
+      "artifact_sha256": "4c2d5a3d5fb8fe472ab6e0e948d9926b3f6195dc93d46751ce567705e12e98dc",
+      "models": [
+        "claude-fable-5-1",
+        "claude-haiku-5-5"
+      ],
+      "number": 2
+    }
+  ],
+  "models": [
+    "claude-fable-5-1",
+    "claude-haiku-5-5",
+    "claude-opus-5-5"
+  ],
+  "rune": "DmgInstall",
+  "sources": [
+    {
+      "path": "forge-provision/DmgInstall/iteration-1/benchmark.json",
+      "sha256": "77e4d152d12af40736d92fe44c2dc2d0e2a36d1c122aa1b946990ba7f94dee92"
+    },
+    {
+      "path": "forge-provision/DmgInstall/iteration-1/eval-1-dmg-installer/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "f57fa691180553106c3f292e8e7d7123bc6be714de15d15017d241b3b2c12770"
+    },
+    {
+      "path": "forge-provision/DmgInstall/iteration-1/eval-1-dmg-installer/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "69c1e83b580ab35c0a2199dfee8ca6edadecccea12b03e77cc739f9dd8fbc9d6"
+    },
+    {
+      "path": "forge-provision/DmgInstall/iteration-1/eval-2-latest-url/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "99febbff09e469b0eaf3b3e88b28e07edb73a560b9280b76a92f798538d9ffea"
+    },
+    {
+      "path": "forge-provision/DmgInstall/iteration-1/eval-2-latest-url/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "6a3e4e52100a5183fe6b2a48279fb1fc1313da971aa45b734c6b6561d30570e6"
+    },
+    {
+      "path": "forge-provision/DmgInstall/iteration-2/benchmark.json",
+      "sha256": "56a230f5410cb184ce253dcdabd597c5a89d080855ff8e80da4f6a1902697bc4"
+    },
+    {
+      "path": "forge-provision/DmgInstall/iteration-2/eval-1-dmg-installer/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "f666b1c7fc130ef08cf60208b00aa43d9c6aef9374e5dd6f176272be39e57cfa"
+    },
+    {
+      "path": "forge-provision/DmgInstall/iteration-2/eval-1-dmg-installer/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "d742951fedab63d8c886d1924d17b12c055fc025842933c000cf251ea5eb164a"
+    },
+    {
+      "path": "forge-provision/DmgInstall/iteration-2/eval-1-dmg-installer/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "0e9eb958671b34693b126050ff85a4eb67886c6c71f6f4faeb23ee5b4fbd30d3"
+    },
+    {
+      "path": "forge-provision/DmgInstall/iteration-2/eval-1-dmg-installer/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "a85c62f2a92dbf45b2117b3d36cb5966d05bdd61e7257e5c55dba574bd7b6a82"
+    },
+    {
+      "path": "forge-provision/DmgInstall/iteration-2/eval-2-latest-url/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "8f8091c1e7570fdf52c972c9e29eb12abe51c841cffff658845c9a1203d0dac6"
+    },
+    {
+      "path": "forge-provision/DmgInstall/iteration-2/eval-2-latest-url/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "2fa7f24d078393175841ca04d5942d0547f54781b6ea0e878f439afecf52e95e"
+    },
+    {
+      "path": "forge-provision/DmgInstall/iteration-2/eval-2-latest-url/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "68d91b9e019c8430fc6ee5a99293c3d7c6df61c08912237ba620b17107d65fb0"
+    },
+    {
+      "path": "forge-provision/DmgInstall/iteration-2/eval-2-latest-url/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "c6864651b6d7f4393251531a7a60ec526326ec174cfd1cd6a0b8a0ede74acb79"
+    }
+  ]
+}

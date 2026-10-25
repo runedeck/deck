@@ -1,0 +1,121 @@
+{
+  "cases": [
+    {
+      "id": "1",
+      "name": "keep-app-drop-cask",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "pass"
+        }
+      }
+    },
+    {
+      "id": "2",
+      "name": "block-cask-upgrade",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "fail"
+        }
+      }
+    }
+  ],
+  "iterations": [
+    {
+      "artifact_sha256": "3562fc044fec7c32b134f24fe117b3c364cc697c98268f7a23fd89ba21cc36a5",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "number": 1
+    },
+    {
+      "artifact_sha256": "3562fc044fec7c32b134f24fe117b3c364cc697c98268f7a23fd89ba21cc36a5",
+      "models": [
+        "claude-fable-5-1",
+        "claude-haiku-5-5"
+      ],
+      "number": 2
+    }
+  ],
+  "models": [
+    "claude-fable-5-1",
+    "claude-haiku-5-5",
+    "claude-opus-5-5"
+  ],
+  "rune": "HomebrewToolkit",
+  "sources": [
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-1/benchmark.json",
+      "sha256": "1f166b5bed4da0e731ae0568a6bd03f4c5e345ddb8a7e59423451b308047fc4f"
+    },
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-1/eval-1-keep-app-drop-cask/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "ba22dbf9ee651113aeb388e84e04d02797ca1e6fded6c18ea1b6fd814e7ca58a"
+    },
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-1/eval-1-keep-app-drop-cask/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "027e87c9f1c1f67254b2ce0d599faf0f2e09dcf1d433388f94d740156d499543"
+    },
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-1/eval-2-block-cask-upgrade/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "4f9e65201a8ec51e30665ea4f049751d2ae6e3d4859adf4e4af9f3b4426bff30"
+    },
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-1/eval-2-block-cask-upgrade/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "28526fb39e385b98ec6b0f45eb3ded36cf387efefb6fc6712e8d53a4614e8c22"
+    },
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-2/benchmark.json",
+      "sha256": "8df10696868e3c8e458ecf424b41691114b1514a773af28e987eb1124b122813"
+    },
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-2/eval-1-keep-app-drop-cask/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "ee87222a7e10a3cc371f95ebb590d992f66f0aecc520f0a79e87da6e7f89d128"
+    },
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-2/eval-1-keep-app-drop-cask/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "1d03bacc74c11a44ee8dd90a49a623bbfbc420e374914f6244fcc5a41ed8c61c"
+    },
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-2/eval-1-keep-app-drop-cask/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "aea9dbeb680230d66fd9413cc4adc16824136cd0d5cbdcd96cd0ae7a79914f0b"
+    },
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-2/eval-1-keep-app-drop-cask/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "8cfced667d416033d0440bb78389cbf7c84066fb0977c743480f4b188105ff0d"
+    },
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-2/eval-2-block-cask-upgrade/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "19fdcc4ca34044c1118cd5dde87c0766f61208b162681fae9432cceceb3cc6bb"
+    },
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-2/eval-2-block-cask-upgrade/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "26b5cdecc340f10153850a5b0cfffa127f4673207096493d509650d64abb35ee"
+    },
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-2/eval-2-block-cask-upgrade/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "fe8fa8d71ba221c70c671d43879e0ec4e8b1387b1988c39f290341f57c1e5bdd"
+    },
+    {
+      "path": "forge-provision/HomebrewToolkit/iteration-2/eval-2-block-cask-upgrade/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "bbb02a3bbc4cd17dfe2d55b56bc7d7af4c0927bf70baaa476f400b82dce6ca59"
+    }
+  ]
+}

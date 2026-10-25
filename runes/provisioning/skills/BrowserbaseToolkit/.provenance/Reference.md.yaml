@@ -1,0 +1,27 @@
+provenance:
+  _type: https://in-toto.io/Statement/v1
+  predicateType: https://slsa.dev/provenance/v1
+  subject:
+  - name: skills/BrowserbaseToolkit/Reference.md
+    digest:
+      sha256: 3bf8afb4a5bc69745833584afbe2dd2ad89cfacfba020442b7a57d9a3b1de6a8
+  predicate:
+    buildDefinition:
+      buildType: adopt/v1
+      externalParameters:
+        upstream_url: https://browserbase.com/SKILL.md
+        transforms_applied:
+        - align
+      resolvedDependencies:
+      - name: upstream
+        uri: https://browserbase.com/SKILL.md
+        digest:
+          sha256: 822d5bdbb43e31f2a97569970ddad9b18a2d0c4e5027c9f2c8ba400bcf447af2
+    runDetails:
+      builder:
+        id: rune-cli
+        version:
+          rune: 0.6.0
+      metadata:
+        startedOn: 2026-10-20T02:41:28+00:00
+        review: pending
