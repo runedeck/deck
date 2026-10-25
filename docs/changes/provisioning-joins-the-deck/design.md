@@ -47,7 +47,7 @@ The module's defaults give the codebase location as `PROVISION_ROOT`. A skill wr
 
 ## Risks
 
-- The deployer may not support a module that the default selection leaves out. Task 1.2 checks the cli first, and the fallback is a default selection that lists every module except provisioning.
+- The deployer has no flag that keeps a module out of every selection. The `all` cast excludes `provisioning/**` instead. A consumer `.rune` with `include: ['**']` still receives the module, because that pattern asks for every rune. The owner accepted that on 2026-10-26, so the cli needs no change.
 - A rewrite can drop a fact that a weaker model needs. The comparison runs on Haiku 5.5 as one of its models.
 - The clone carries personal data from the old codebase: names, addresses, and host names in records and manifests. The codebase stays local until task 5.1 passes.
 - A script path in a rune breaks when the codebase renames a script. Task 4.3 adds a check in the codebase that resolves every path the module names.

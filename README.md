@@ -4,7 +4,7 @@ The deck: a collection of runes (markdown skills, agents, rules, and hooks) that
 
 The deck grows as artifacts pass adoption review. It includes the `meta`, `development`, `council`, `research`, and `security` domains.
 
-The `provisioning` module holds machine setup skills and rules. The default deployment leaves it out: the `all` cast excludes it, and a consumer names the module with `rune add provisioning` to receive it.
+The `provisioning` module holds machine setup skills and rules. The default deployment leaves it out: the `all` cast excludes it. A consumer names the module with `rune add provisioning` to receive it, and a `.rune` with `include: ['**']` receives it too.
 
 The `BuildTask` skill prepares provider tasks. The `ConfigureScanners` skill prepares public exposure scanners.
 

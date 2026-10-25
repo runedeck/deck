@@ -20,11 +20,11 @@ The *[validator][VALIDATOR]* MUST report every executable file in the provisioni
 
 ### Requirement: The Default Deployment Omits the Module
 
-The *[deployer][DEPLOYER]* MUST NOT deploy the provisioning module when a consumer selects every module of the deck. A consumer receives provisioning runes only after it selects the module by its name. A machine gets setup instructions only on its owner's request.
+The *[deployer][DEPLOYER]* MUST NOT deploy the provisioning module when a consumer takes the deck's default selection, which holds every other module. A consumer receives provisioning runes only when its own selection asks for them: by the module's name, or by a pattern that matches every rune. A machine gets setup instructions only on its owner's request.
 
-#### Scenario: Consumer installs the whole deck
+#### Scenario: Consumer takes the default selection
 
-- **WHEN** a consumer selects every module of the deck
+- **WHEN** a consumer takes the deck's default selection
 - **THEN** the deployer leaves every *[harness][HARNESS]* tree without a provisioning rune
 
 ### Requirement: A Provisioning Rune Shows That It Helps

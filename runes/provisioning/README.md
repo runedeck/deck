@@ -4,7 +4,7 @@ Skills and rules for setting up a machine. They hold the facts that models lack:
 
 ## Selection
 
-The default deployment leaves this module out. The `all` cast excludes `provisioning/**`, so a consumer that selects every module receives no provisioning rune. A consumer receives the module after it names the module:
+The default deployment leaves this module out. The `all` cast excludes `provisioning/**`, so a consumer that takes the `all` cast receives no provisioning rune. A `.rune` with `include: ['**']` asks for every rune by pattern, so it receives this module too. A consumer receives the module when it names the module:
 
 ~~~sh
 rune add provisioning
