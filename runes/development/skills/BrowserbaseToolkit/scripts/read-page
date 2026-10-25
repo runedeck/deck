@@ -42,11 +42,13 @@ if [ -n "$status" ] && [ "$status" -lt 400 ] && to_markdown; then
 fi
 echo "read-page: the Fetch API gave ${status:-no result}, opening one cloud browser session" >&2
 
+# Mark the session before the call: an open that creates the session and then
+# fails while loading the page must still stop it in the EXIT trap.
+opened=1
 if ! browse open "$url" --remote -s "$session" >/dev/null 2>"$work/open.err"; then
     echo "read-page: the browser session did not open: $(tail -1 "$work/open.err")" >&2
     exit 3
 fi
-opened=1
 # The session returns the body alone, so state the encoding for defuddle.
 if browse get html -s "$session" 2>/dev/null | jq -r '"<meta charset=\"utf-8\">" + (.html // "")' >"$page" && to_markdown; then
     cat "$work/page.md"
