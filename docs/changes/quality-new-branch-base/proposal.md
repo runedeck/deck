@@ -11,6 +11,7 @@ The quality workflow runs both check stages over one range of commits. A pull re
 ## What Changes
 
 - The range for the first push of a branch starts at the branch's merge base with `main`. The stages then inspect the files the branch changes, the same files a pull request on that branch shows.
+- A branch that jj rewrote and pushed again starts at the same merge base, because its earlier head no longer exists on the remote.
 - A push to `main` with no earlier head still inspects every file. A later push and a pull request keep their ranges.
 
 ## Capabilities
