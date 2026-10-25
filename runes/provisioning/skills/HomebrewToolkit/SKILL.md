@@ -16,7 +16,7 @@ best-practice playbook for using brew without surprises, especially the destruct
 List the active taps once before you add or remove one:
 
 ```sh
-brew tap 2>/dev/null | paste -sd' ' - || echo "(brew not installed)"
+command -v brew >/dev/null && brew tap | paste -sd' ' - || echo "(brew not installed)"
 ```
 
 Resolve the provisioning codebase root once before any script step:

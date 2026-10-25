@@ -59,8 +59,8 @@ and a mount point when that entry holds a mounted filesystem (`man hdiutil`, sec
 Space padding sits inside the fields, so split on tabs: `grep '^/dev/'` keeps the device lines,
 `cut -f 3` prints the third tab-separated field of each, and `grep -m 1 .` keeps the first one
 that is not empty. The result has no trailing whitespace. A pattern on
-`/Volumes/` or on a literal `/tmp/` prefix never matches a `-mountrandom /tmp` mount, so the old
-one-line check always reported a failed mount and left the image attached.
+`/Volumes/` or on a literal `/tmp/` prefix never matches a `-mountrandom /tmp` mount, so a check
+built on either pattern reports a failed mount and leaves the image attached.
 
 An empty `MOUNT_POINT` means nothing mounted, so there is nothing to detach. When the mount holds
 no `<App>.app`, the script detaches it before it exits.
@@ -107,8 +107,8 @@ mkdir -p "$(dirname "${CLI_SYMLINK}")"
 ln -sf "${CMUX_APP}/Contents/Resources/bin/cmux" "${CLI_SYMLINK}"
 ```
 
-`ln -sf` overwrites any existing symlink. Symlink target: `~/.local/bin/<tool>` (assumes
-`~/.local/bin` is in PATH, which `dotzsh` / `prezto` add by default).
+`ln -sf` overwrites any existing symlink. Symlink target: `~/.local/bin/<tool>`. That directory
+must be on `PATH`. No shell adds it on macOS by default, so check with `command -v <tool>`.
 
 Verify post-symlink:
 

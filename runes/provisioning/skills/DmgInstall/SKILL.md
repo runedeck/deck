@@ -13,10 +13,9 @@ channel releases). Pairs with a Brewfile tombstone comment explaining why the ap
 not a cask: see the HomebrewToolkit skill.
 
 Reference implementation: `$PROVISION_ROOT/scripts/install/cmux.sh`. Every new
-DMG-installed app should mirror its shape unless there is a specific reason to deviate. Two places
-in that script still differ from this skill, so follow the skill there: it passes `-quiet` to
-`hdiutil attach` and matches a `/tmp/` prefix (step 4 below explains why neither yields a mount
-point), and it removes the app when `codesign --verify` fails (the constraint below says warn).
+DMG-installed app should mirror its shape unless there is a specific reason to deviate. Where the
+script and this skill disagree, follow the skill: step 4 gives the mount-point parse, and the
+constraint below says a failed `codesign --verify` warns.
 
 ## Prerequisites
 

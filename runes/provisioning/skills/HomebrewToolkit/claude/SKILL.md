@@ -13,7 +13,7 @@ best-practice playbook for using brew without surprises, especially the destruct
 
 Active taps, injected on load:
 
-!`brew tap 2>/dev/null | paste -sd' ' - || echo "(brew not installed)"`
+!`command -v brew >/dev/null && brew tap | paste -sd' ' - || echo "(brew not installed)"`
 
 Resolve the provisioning codebase root once before any script step:
 
