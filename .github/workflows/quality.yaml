@@ -121,7 +121,12 @@ jobs:
               run: python3 -m unittest tests.test_check_scripts -v
 
             # Select the event range once so both prek stages inspect the same
-            # change. Inspect all files only when no base commit exists.
+            # change. The first push of a new branch carries no before commit,
+            # and a rewritten branch carries one that no ref reaches any more.
+            # Both start at the branch's merge base with main. Without it, the
+            # stages inspected every file, and a hook that needs a desktop tool,
+            # such as the idea snapshot check, failed on every such push.
+            # Inspect all files only when no base commit exists.
             - name: Select check range
               id: check-range
               env:
@@ -137,6 +142,10 @@ jobs:
                       to="$PR_HEAD"
                   elif [ -n "$PUSH_BASE" ] && ! printf '%s' "$PUSH_BASE" | grep -q '^0*$'; then
                       from="$PUSH_BASE"
+                  fi
+                  if [ "$GITHUB_REF" != "refs/heads/main" ] \
+                      && { [ -z "$from" ] || ! git cat-file -e "$from^{commit}" 2>/dev/null; }; then
+                      from=$(git merge-base origin/main "$to" 2>/dev/null || true)
                   fi
 
                   if [ -n "$from" ] && git cat-file -e "$from^{commit}" 2>/dev/null; then
