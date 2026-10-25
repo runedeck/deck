@@ -28,7 +28,7 @@
 - [x] 4.1 Clone the old codebase with history to `~/Developer/runedeck/provision`, colocate it with jj, remove the skills, the rule, and the module identity in one commit
 - [x] 4.2 Rewrite the links from records and scripts to the skills, which now sit in the deck
 - [x] 4.3 Add a check in the codebase that resolves every script path the provisioning module names
-- [ ] 4.4 Add the Multica server and CLI drift check under `scripts/verify/`
+- [x] 4.4 Add the Multica server and CLI drift check under `scripts/verify/`
 - [x] 4.5 Add the codebase to the workshop's list of active clones
 
 ## 5. Retirement
