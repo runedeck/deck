@@ -1,17 +1,17 @@
 ## 1. Module
 
-- [ ] 1.1 Create `runes/provisioning/` with its module identity, defaults that give `PROVISION_ROOT`, README, license, and the schema files of each kind
-- [ ] 1.2 Find how the cli selects modules, then make the default deployment leave the module out, with a fixture test
-- [ ] 1.3 Add `scripts/check-provisioning-module`, its hook entry, and a test that an executable file fails
-- [ ] 1.4 Add `scripts/record-comparison` and `scripts/check-provisioning-evidence`, with a test that a rune without a comparison fails
+- [x] 1.1 Create `runes/provisioning/` with its module identity, defaults that give `PROVISION_ROOT`, README, license, and the schema files of each kind
+- [x] 1.2 Find how the cli selects modules, then make the default deployment leave the module out, with a fixture test
+- [x] 1.3 Add `scripts/check-provisioning-module`, its hook entry, and a test that an executable file fails
+- [x] 1.4 Add `scripts/record-comparison` and `scripts/check-provisioning-evidence`, with a test that a rune without a comparison fails
 
 ## 2. Whole skills
 
 - [ ] 2.1 Move BrowserbaseToolkit, keep its upstream reference under adoption review, record its comparison
 - [ ] 2.2 Move HomebrewToolkit and record its comparison
-- [ ] 2.3 Move GhosttyToolkit and record its comparison
+- [x] 2.3 Move GhosttyToolkit and record its comparison
 - [ ] 2.4 Move DmgInstall, fix the `-quiet` contradiction, record its comparison
-- [ ] 2.5 Move TmuxToolkit and record its comparison
+- [x] 2.5 Move TmuxToolkit and record its comparison
 
 ## 3. Rewritten skills
 
