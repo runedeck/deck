@@ -6,6 +6,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Added
 
+- Add the `provisioning` module shell: `PROVISION_ROOT` defaults, the `all` cast leaves it out, no executable file in it, and a two-model comparison record per rune (provisioning-joins-the-deck).
 - Add the BrowserbaseToolkit skill in development: read a blocked page through a Browserbase cloud browser as clean markdown (automate-cloud-browsers-browserbase).
 - Add the Dotfiles Scanner and Online Mentions routines with a deterministic detector the run takes from the deck object store, and retire GitHub Exposure (scanner-routines-from-deck).
 - Add `routines/`: the Repository Digest and Weekly Ceremony Audit prompts as deck files a Claude Code routine reads at `main`, with the instance values in the provider stub (routine-prompts-from-deck).

@@ -1,0 +1,13 @@
+# Defaults of the provisioning module (CORE-0020). The decision record says
+# that a consumer overrides a field in a git-ignored config.yaml beside this
+# file and that a loader exports the merged result as environment variables.
+#
+# No loader exports module configuration yet (environment-variables-
+# supported-syntax specifies it), so a config.yaml override has no effect
+# today. The override that works now: export PROVISION_ROOT in the shell
+# before the rune's resolve step. No prefix rule exists either, so the key
+# below is the variable name itself: a loader exports it as exactly
+# PROVISION_ROOT, and a rune reads the same name through the shell. The
+# value keeps a leading tilde, so a future loader must expand it to the home
+# directory before the export. A rune's own resolve step uses $HOME.
+PROVISION_ROOT: ~/Developer/runedeck/provision

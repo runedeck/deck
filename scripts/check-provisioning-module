@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+"""Report every executable file in the provisioning module
+(provisioning-joins-the-deck, The Validator Rejects Executable Files in the Module).
+
+    scripts/check-provisioning-module            check the deck
+    scripts/check-provisioning-module <root>     check another root, for a test
+
+The provisioning module holds skills and rules only. The scripts that change
+a machine live in the provisioning codebase, outside the deck. A file under
+runes/provisioning/ is a finding when it has an execute permission bit or
+when its first line starts with `#!`. The check prints one line per file and
+exits 1 on any finding. It exits 0 when the module is absent or clean.
+"""
+import pathlib
+import stat
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+MODULE = pathlib.Path("runes") / "provisioning"
+EXECUTE = stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH
+
+
+def reasons(path):
+    found = []
+    if path.stat().st_mode & EXECUTE:
+        found.append("execute permission")
+    with path.open("rb") as handle:
+        if handle.read(2) == b"#!":
+            found.append("interpreter line")
+    return found
+
+
+def check(root):
+    root = pathlib.Path(root)
+    module = root / MODULE
+    if not module.is_dir():
+        return []
+    findings = []
+    for path in sorted(module.rglob("*")):
+        if not path.is_file():
+            continue
+        found = reasons(path)
+        if found:
+            findings.append(f"{path.relative_to(root).as_posix()}: {' and '.join(found)}")
+    return findings
+
+
+def main():
+    root = pathlib.Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT
+    findings = check(root)
+    for line in findings:
+        print(line)
+    return 1 if findings else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
