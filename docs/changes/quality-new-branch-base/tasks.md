@@ -8,7 +8,7 @@
 ## 2. Verification
 
 - [x] 2.1 The first push of a new `change/**` branch runs the `quality` check over the branch's files, and the Draft Open workflow opens the draft: pull request #78 opened that way on 2026-10-25
-- [ ] 2.2 A push to `main` keeps its range, and a pull request keeps its base
+- [x] 2.2 A push to `main` keeps its range, and a pull request keeps its base: the local range runs on 2026-10-25, and pull request #78 checked as a pull request
 
 ## 3. Record
 
