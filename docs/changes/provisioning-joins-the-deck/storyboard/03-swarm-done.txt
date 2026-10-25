@@ -1,0 +1,32 @@
+ STORYBOARD · provisioning-joins-the-deck · SWARM DONE · nothing pushed
+ + added  ~ changed  ✓ passes  ✗ fails  ◆ waits on you
+╭──────────────────────────────────────────────────────────────────────────╮
+│ STACK · opus/provisioning-domain                               7 commits │
+│ ✓ docs   propose the module                         opus   change docs   │
+│ ✓ feat   module shell, checks, generator            fable  19 files      │
+│ ✓ feat   five whole skills, five records            fable  34 files      │
+│ ✓ feat   gpg, ssh, password rewritten               fable   9 files      │
+│ ✓ feat   chezmoi, sandbox, harness, DotfilesScope   fable   9 files      │
+│ ✓ fix    last whole-skill review findings           opus    4 files      │
+│ ✓ docs   tick 1.1–1.4, 2.3, 2.5                     opus    1 file       │
+╰──────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────╮
+│ TREE · runes/provisioning                             11 skills · 1 rule │
+│ + module.yaml  defaults.yaml  README.md  LICENSE  2 schemas              │
+│ + skills/  Browserbase Homebrew Ghostty DmgInstall Tmux                  │
+│ + skills/  Gpg Ssh Password Chezmoi Sandbox HarnessSecurity              │
+│ + rules/DotfilesScope.md    ~ casts/all.yaml excludes provisioning/**    │
+╰──────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────╮
+│ CHECKS · combined tree                                                   │
+│ ✓ rune validate, 0 errors   ✓ spec validate   ✓ every prek hook but one  │
+│ ✗ evidence: 7 rewritten runes have no record yet, waits on runs          │
+│ ✗ old, not this stack: ReviewChange CSI008 ×3, SafetyFirst hash test     │
+╰──────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────╮
+│ OWNER · waiting                                                   5 asks │
+│ ◆ approve comparison runs      ◆ decide include ['**'] path              │
+│ ◆ copy KEYS into provision     ◆ read the private Multica script         │
+│ ◆ personal-data review of provision, then archive forge-provision        │
+╰──────────────────────────────────────────────────────────────────────────╯
+ ▸ next  runs on your word · provision fixes · proof 6.2 · PR when you say
