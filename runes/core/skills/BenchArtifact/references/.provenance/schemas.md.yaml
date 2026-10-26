@@ -4,18 +4,22 @@ provenance:
   subject:
   - name: skills/BenchArtifact/references/schemas.md
     digest:
-      sha256: f2eefe946f37869bb0516d93df44b3712ff07fce643b84213cb05fb816ccb766
+      sha256: 9f8dfa8699d7646268a1b31752e2752bd2a7391608b6b9f7110ba65779054beb
   predicate:
     buildDefinition:
       buildType: adopt/v1
       externalParameters:
         source: ''
-        upstream_url: https://github.com/N4M3Z/forge-core
-        upstream_commit: ''
+        upstream_url: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/references/schemas.md
+        upstream_commit: b9e19e6f44773509fbdd7001d77ff41a49a486c1
         transforms_applied:
         - align
       resolvedDependencies:
       - name: upstream
+        uri: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/references/schemas.md
+        digest:
+          sha256: 8e8876180a8989b406a4d3edddf875b04cdfd5805cc8616686d552b11ce4455f
+      - name: forge-core
         uri: https://github.com/N4M3Z/forge-core
         digest:
           sha256: 8e8876180a8989b406a4d3edddf875b04cdfd5805cc8616686d552b11ce4455f

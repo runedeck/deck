@@ -1,5 +1,7 @@
 # Description optimization
 
+<!-- Based on skill-creator/SKILL.md from anthropics/skills at commit b9e19e6, under the Apache License 2.0. Changed by runedeck. See THIRD_PARTY_NOTICES.md at the skill root. -->
+
 > Measure how reliably a skill's description triggers against realistic queries, then let the optimization loop propose a better one.
 
 The `description` field is the primary triggering mechanism: Claude sees only name + description when deciding whether to consult a skill. Claude tends to undertrigger, so descriptions should be a little pushy, naming both what the skill does and the concrete contexts that should invoke it, even when the user does not use the skill's own vocabulary. Only substantive queries trigger skills at all: simple one-step requests ("read this PDF") may not trigger even on a perfect description match, so eval queries must be complex enough that consulting a skill would actually help.

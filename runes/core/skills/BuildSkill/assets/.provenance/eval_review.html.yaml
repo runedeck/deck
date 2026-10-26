@@ -4,18 +4,22 @@ provenance:
   subject:
   - name: skills/BuildSkill/assets/eval_review.html
     digest:
-      sha256: 6b832486750c14a62af28be65b5c4da545e94e3fec58d34370661b731150fd82
+      sha256: bd0bd2f4fe00b65c7d093c824b5ac103dcc12fd174990a911bd7c8e20718ca6d
   predicate:
     buildDefinition:
       buildType: adopt/v1
       externalParameters:
         source: ''
-        upstream_url: https://github.com/N4M3Z/forge-core
-        upstream_commit: ''
+        upstream_url: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/assets/eval_review.html
+        upstream_commit: b9e19e6f44773509fbdd7001d77ff41a49a486c1
         transforms_applied:
         - copy
       resolvedDependencies:
       - name: upstream
+        uri: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/assets/eval_review.html
+        digest:
+          sha256: ce477dcc74dc1c0d1d3352646a79167b5a63634e936b1019160025065974e452
+      - name: forge-core
         uri: https://github.com/N4M3Z/forge-core
         digest:
           sha256: ce477dcc74dc1c0d1d3352646a79167b5a63634e936b1019160025065974e452

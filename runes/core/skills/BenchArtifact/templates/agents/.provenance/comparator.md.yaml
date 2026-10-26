@@ -4,18 +4,22 @@ provenance:
   subject:
   - name: skills/BenchArtifact/templates/agents/comparator.md
     digest:
-      sha256: f20e5bb049bbf43a344f1efe86bd0cbf37c0f2443662e5addaaa0c29880b14eb
+      sha256: 696b4ebb73a0fe7b408372157488d029bd9046ac0771242ba406cea7077c251b
   predicate:
     buildDefinition:
       buildType: adopt/v1
       externalParameters:
         source: ''
-        upstream_url: https://github.com/N4M3Z/forge-core
-        upstream_commit: ''
+        upstream_url: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/agents/comparator.md
+        upstream_commit: b9e19e6f44773509fbdd7001d77ff41a49a486c1
         transforms_applied:
         - copy
       resolvedDependencies:
       - name: upstream
+        uri: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/agents/comparator.md
+        digest:
+          sha256: fe1fc9787c495d864c5d6eada47396478572325fde1b33a96d78bf4b849b7a3e
+      - name: forge-core
         uri: https://github.com/N4M3Z/forge-core
         digest:
           sha256: fe1fc9787c495d864c5d6eada47396478572325fde1b33a96d78bf4b849b7a3e

@@ -1,3 +1,6 @@
+# Based on skill-creator/eval-viewer/generate_review.py from anthropics/skills
+# at commit b9e19e6, under the Apache License 2.0. Changed by runedeck. See
+# THIRD_PARTY_NOTICES.md at the skill root.
 """Generate and serve a review page for eval results.
 
 Reads the workspace directory, discovers runs (directories with outputs/),

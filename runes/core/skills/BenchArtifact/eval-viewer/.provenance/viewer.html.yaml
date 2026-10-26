@@ -4,18 +4,22 @@ provenance:
   subject:
   - name: skills/BenchArtifact/eval-viewer/viewer.html
     digest:
-      sha256: b25046383696c593d4cc7de52aa71e1f36c7f7d653ce9d27bcffa7410e84bfa9
+      sha256: 0a57a8f624da5296f65748b25806e3c4241b86a4ad14ea8792b8c2152ab4bb4d
   predicate:
     buildDefinition:
       buildType: adopt/v1
       externalParameters:
         source: ''
-        upstream_url: https://github.com/N4M3Z/forge-core
-        upstream_commit: ''
+        upstream_url: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/eval-viewer/viewer.html
+        upstream_commit: b9e19e6f44773509fbdd7001d77ff41a49a486c1
         transforms_applied:
         - align
       resolvedDependencies:
       - name: upstream
+        uri: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/eval-viewer/viewer.html
+        digest:
+          sha256: a53213426ee1100441d701a3a0d49cda7a842f992d2c36463f4d3cc0258575fa
+      - name: forge-core
         uri: https://github.com/N4M3Z/forge-core
         digest:
           sha256: a53213426ee1100441d701a3a0d49cda7a842f992d2c36463f4d3cc0258575fa

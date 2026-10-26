@@ -4,18 +4,22 @@ provenance:
   subject:
   - name: skills/BuildSkill/SKILL.md
     digest:
-      sha256: 766cf5bd847cfc2760803b9cf9298739397d219754169f299594f4f15445b954
+      sha256: 0df252e87b6365529e235b2ea46c6d5457bf120118cbfe41625b85710777b9d4
   predicate:
     buildDefinition:
       buildType: adopt/v1
       externalParameters:
         source: ''
-        upstream_url: https://github.com/N4M3Z/forge-core
-        upstream_commit: ''
+        upstream_url: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/SKILL.md
+        upstream_commit: b9e19e6f44773509fbdd7001d77ff41a49a486c1
         transforms_applied:
         - align
       resolvedDependencies:
       - name: upstream
+        uri: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/SKILL.md
+        digest:
+          sha256: dcd4803e61e913e6fc27294184cd3a71f09f5e924ff20c8a9a20173e7b3c2bcf
+      - name: forge-core
         uri: https://github.com/N4M3Z/forge-core
         digest:
           sha256: 92201e60243b40081f9e4853fbac262e3a04321e372626a6b145c671ed42792b

@@ -100,6 +100,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Fixed
 
+- Fix the Apache License 2.0 terms for the skill-creator material in BuildSkill and BenchArtifact: license text, notices, and provenance at anthropics/skills `b9e19e6`.
 - Fix the Dotfiles Scanner to fetch the whole branch history and report a scan that stops at a shallow boundary as incomplete (scanner-routines-from-deck).
 - Fix a Dotfiles notification bullet to point to the first file before a commit message (scanner-routines-from-deck).
 - Fix the Repository Digest and Weekly Ceremony Audit to end with the notification text only (routine-prompts-from-deck).

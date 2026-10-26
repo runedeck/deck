@@ -4,18 +4,22 @@ provenance:
   subject:
   - name: skills/BenchArtifact/scripts/aggregate_benchmark.py
     digest:
-      sha256: 6e724af0fed7998623c1ccf5fb2ef7c3974c485a6a36594708a25b4ba51fa9b4
+      sha256: dec383944c555be1e7c28dfc37d4eafa478effda7603645fef5428d190dd259b
   predicate:
     buildDefinition:
       buildType: adopt/v1
       externalParameters:
         source: ''
-        upstream_url: https://github.com/N4M3Z/forge-core
-        upstream_commit: ''
+        upstream_url: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/scripts/aggregate_benchmark.py
+        upstream_commit: b9e19e6f44773509fbdd7001d77ff41a49a486c1
         transforms_applied:
         - align
       resolvedDependencies:
       - name: upstream
+        uri: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/scripts/aggregate_benchmark.py
+        digest:
+          sha256: 123ef128ea5ccc01a4b1ac212ef5567f21e9c13d3d240609780beeb3200c49aa
+      - name: forge-core
         uri: https://github.com/N4M3Z/forge-core
         digest:
           sha256: 611193feb2263e0dae80f3dfc62c0467bf84d52e14ee491adcf99449ffaec6dd

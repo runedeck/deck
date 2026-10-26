@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Based on skill-creator/scripts/run_loop.py from anthropics/skills at commit
+# b9e19e6, under the Apache License 2.0. Changed by runedeck. See
+# THIRD_PARTY_NOTICES.md at the skill root.
 """Run the eval + improve loop until all pass or max iterations reached.
 
 Combines run_eval.py and improve_description.py in a loop, tracking history

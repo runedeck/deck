@@ -4,18 +4,22 @@ provenance:
   subject:
   - name: skills/BenchArtifact/eval-viewer/generate_review.py
     digest:
-      sha256: f82b9e4a88fa24d2f8afef6bd16ace2c6faf5a671762df2b718717eb92e54316
+      sha256: ddbb8a746e656ad6a1efd49fb77740f771120c0b74fc8e808f27f2fba97ceb2e
   predicate:
     buildDefinition:
       buildType: adopt/v1
       externalParameters:
         source: ''
-        upstream_url: https://github.com/N4M3Z/forge-core
-        upstream_commit: ''
+        upstream_url: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/eval-viewer/generate_review.py
+        upstream_commit: b9e19e6f44773509fbdd7001d77ff41a49a486c1
         transforms_applied:
         - copy
       resolvedDependencies:
       - name: upstream
+        uri: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/eval-viewer/generate_review.py
+        digest:
+          sha256: fc9d1b9243fe5ab6012ebd579bd76d0035de1b79fd3b969de114defab26478fb
+      - name: forge-core
         uri: https://github.com/N4M3Z/forge-core
         digest:
           sha256: 71eef1a5e8b7ade005c97968ea7bb81a6018a8c013a6e812dc68ffa2047d28dd

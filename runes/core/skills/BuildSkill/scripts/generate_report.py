@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Based on skill-creator/scripts/generate_report.py from anthropics/skills at
+# commit b9e19e6, under the Apache License 2.0. Changed by runedeck. See
+# THIRD_PARTY_NOTICES.md at the skill root.
 """Generate an HTML report from run_loop.py output.
 
 Takes the JSON output from run_loop.py and generates a visual HTML report

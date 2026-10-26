@@ -1,3 +1,7 @@
+# Based on skill-creator/scripts/run_eval.py and skill-
+# creator/scripts/package_skill.py from anthropics/skills at commit b9e19e6,
+# under the Apache License 2.0. Changed by runedeck. See
+# THIRD_PARTY_NOTICES.md at the skill root.
 """Claude Code harness adapter.
 
 Adapter contract — a harness module registered in scripts/harness must expose:

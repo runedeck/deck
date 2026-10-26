@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Based on skill-creator/scripts/package_skill.py from anthropics/skills at
+# commit b9e19e6, under the Apache License 2.0. Changed by runedeck. See
+# THIRD_PARTY_NOTICES.md at the skill root.
 """Package a skill directory into a distributable .skill archive.
 
 Usage:

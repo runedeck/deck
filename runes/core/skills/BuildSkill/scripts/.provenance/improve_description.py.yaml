@@ -4,18 +4,22 @@ provenance:
   subject:
   - name: skills/BuildSkill/scripts/improve_description.py
     digest:
-      sha256: cf9569a6db2752218fde000f3888b29b0d581e08db0ff6f057e3658e38de1429
+      sha256: 4c6823846f80c61c7a909297f0f8e1bedd4fbf2bd903b801f3e4e3ae58108b55
   predicate:
     buildDefinition:
       buildType: adopt/v1
       externalParameters:
         source: ''
-        upstream_url: https://github.com/N4M3Z/forge-core
-        upstream_commit: ''
+        upstream_url: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/scripts/improve_description.py
+        upstream_commit: b9e19e6f44773509fbdd7001d77ff41a49a486c1
         transforms_applied:
         - copy
       resolvedDependencies:
       - name: upstream
+        uri: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/scripts/improve_description.py
+        digest:
+          sha256: 87d864570220b699fac52da309d2d6efdb060647bfebc74f768128e646accf80
+      - name: forge-core
         uri: https://github.com/N4M3Z/forge-core
         digest:
           sha256: 686f346cd682687f16350aa509982f8c7dbc6d9b3bb8a3ad044d565ea21aef24

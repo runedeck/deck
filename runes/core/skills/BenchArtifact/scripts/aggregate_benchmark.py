@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Based on skill-creator/scripts/aggregate_benchmark.py from anthropics/skills
+# at commit b9e19e6, under the Apache License 2.0. Changed by runedeck. See
+# THIRD_PARTY_NOTICES.md at the skill root.
 """Aggregate named benchmark arms and explicit comparisons."""
 
 import argparse
