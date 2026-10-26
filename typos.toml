@@ -20,3 +20,7 @@ extend-exclude = [
 [default]
 # Mermaid node identifiers such as BA in fenced diagrams.
 extend-ignore-re = ["[A-Z]{2} ?-->", "--> ?[A-Z]{2}", "[A-Z]{2}\\[", "\\bfpr\\b"]
+
+[default.extend-words]
+# Debian GObject introspection packages, such as gir1.2-atspi-2.0.
+gir = "gir"
