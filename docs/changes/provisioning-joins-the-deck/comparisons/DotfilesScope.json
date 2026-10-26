@@ -1,0 +1,121 @@
+{
+  "cases": [
+    {
+      "id": "1",
+      "name": "capture-live-config",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "pass"
+        }
+      }
+    },
+    {
+      "id": "2",
+      "name": "fresh-machine-home",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "fail"
+        }
+      }
+    }
+  ],
+  "iterations": [
+    {
+      "artifact_sha256": "2cce7f9b5f9575500f157775eaba28f817ad2c81ee599b474938803f44b6bf33",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "number": 1
+    },
+    {
+      "artifact_sha256": "2cce7f9b5f9575500f157775eaba28f817ad2c81ee599b474938803f44b6bf33",
+      "models": [
+        "claude-fable-5-1",
+        "claude-haiku-5-5"
+      ],
+      "number": 2
+    }
+  ],
+  "models": [
+    "claude-fable-5-1",
+    "claude-haiku-5-5",
+    "claude-opus-5-5"
+  ],
+  "rune": "DotfilesScope",
+  "sources": [
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-1/benchmark.json",
+      "sha256": "2d403253b576fced7ffca6f04813cd0fa1f453766999728d213ee35131889ce5"
+    },
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-1/eval-1-capture-live-config/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "3fbe09878b1ce2fb8f19f0be173ba412d8e4e3f2ce14987d8e1b775946ad6484"
+    },
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-1/eval-1-capture-live-config/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "491025b0e1edd32dee945eb33746ea273fbcf6f070ab993b53857f54e8aa4658"
+    },
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-1/eval-2-fresh-machine-home/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "c968aa0f01562fa9737b6c62cd3afedd93ca7b999ac64ed83fccb9fa012a2ec5"
+    },
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-1/eval-2-fresh-machine-home/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "183ef0b8a1b032a1c3ca32291412e2bbfd40c7436ee15cdc9cb7f9f00763c1e4"
+    },
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-2/benchmark.json",
+      "sha256": "4cbfa623304f93592429e0eb65dc22f7e9362e839e4399ef7b3ae381658c0611"
+    },
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-2/eval-1-capture-live-config/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "471313749c31f0e8cdd0f8700b8b8890ad35ff73b6ba5d863d7e7ccf8f929653"
+    },
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-2/eval-1-capture-live-config/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "fce4a3463c138ebad41e61a50b91155bce4b98cbc61838dd8f22a861e490d5bc"
+    },
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-2/eval-1-capture-live-config/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "259e5ca372174913a8818fe8bad82fc09d74f18659c1fd2c6f12e0c79b337359"
+    },
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-2/eval-1-capture-live-config/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "89a03cf22a6011033064dd5534382e6efd2086fdf816b45facafd3458ef9723e"
+    },
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-2/eval-2-fresh-machine-home/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "02c65b60e9863359c845e3f00a53e5c2bebe51a0afda2200501149947851bfc9"
+    },
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-2/eval-2-fresh-machine-home/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "3c9ffc14273815ae18673bf9d5e6ae7804ee4094bab22de82e4884e93b70fdf7"
+    },
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-2/eval-2-fresh-machine-home/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "da574b53d81ac89939eac2a05c8fb7332f1f9d7b6c781e760a7ce64855072b09"
+    },
+    {
+      "path": "forge-provision/DotfilesScope-v2/iteration-2/eval-2-fresh-machine-home/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "4e9a84270ae009b057dacad3b195331d525f12baabe1325e64ce9ddb11f676c1"
+    }
+  ]
+}

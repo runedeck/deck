@@ -1,0 +1,121 @@
+{
+  "cases": [
+    {
+      "id": "1",
+      "name": "toolchain-script",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "fail"
+        }
+      }
+    },
+    {
+      "id": "2",
+      "name": "vault-scaffold",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "fail"
+        }
+      }
+    }
+  ],
+  "iterations": [
+    {
+      "artifact_sha256": "f404db5b6b27e736b54d4244f1639b123ee988c4b49c000ba9db719baa64393c",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "number": 1
+    },
+    {
+      "artifact_sha256": "f404db5b6b27e736b54d4244f1639b123ee988c4b49c000ba9db719baa64393c",
+      "models": [
+        "claude-fable-5-1",
+        "claude-haiku-5-5"
+      ],
+      "number": 2
+    }
+  ],
+  "models": [
+    "claude-fable-5-1",
+    "claude-haiku-5-5",
+    "claude-opus-5-5"
+  ],
+  "rune": "GpgToolkit",
+  "sources": [
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-1/benchmark.json",
+      "sha256": "3ffb33bce023d950ec52951371a183d9d4ea6fc831c799f3107df56ada08d417"
+    },
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-1/eval-1-toolchain-script/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "5b2ace4dd26322fddd2ee4deaec03dee1af1c09351f454e57b4144615eb0c0ca"
+    },
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-1/eval-1-toolchain-script/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "d5f5c5cd0ec04164312bb02a8d0cef2baf3dc640b165027acd5038d4445521e0"
+    },
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-1/eval-2-vault-scaffold/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "cdf6e8aaaffd8d8f857f84f185bb27aa1aa7dacad2c06731c91c42d2a479a5fd"
+    },
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-1/eval-2-vault-scaffold/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "fd67254db9b201a15caa8bbfe6690d3ebc3734b9d194b7c2bf062753ade26ec4"
+    },
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-2/benchmark.json",
+      "sha256": "7e5056e4b6730a9a6afb3b791d8b9db4640fb75735305295ef4f19190d69c89f"
+    },
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-2/eval-1-toolchain-script/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "837191d2db128e329d664e58b196fd34d5cd40b543282c22a0460c81a08d23bf"
+    },
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-2/eval-1-toolchain-script/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "3a933ca30bea40b8216dac6189018507a7901b718b36cd14b0b82855e4d325be"
+    },
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-2/eval-1-toolchain-script/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "0ba61550e6a3895c14e74e284523d57a6f16791c99030e8ba61872f1f36b3b45"
+    },
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-2/eval-1-toolchain-script/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "d5379ac8b86d51d4b6351a7c6c51dab01ad2001799dc2a9b5a1581c565b773af"
+    },
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-2/eval-2-vault-scaffold/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "0d477157c6a6589e780ef1fc8ffa2c9131c7072f5c8397b4192361c5ce40ec54"
+    },
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-2/eval-2-vault-scaffold/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "3246cdee3c1109cf7c0e6ae540fe611fda6b4aceec94047bd699b47a4b5e6b2e"
+    },
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-2/eval-2-vault-scaffold/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "9b37669129b30ae92ff2a0e16ebb9712f4a1d34161cd3a7fc18d3acda565c96b"
+    },
+    {
+      "path": "forge-provision/GpgToolkit-v2/iteration-2/eval-2-vault-scaffold/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "7abb8a19675b2f2cc93985ec008267ba5d9bd1ec27425d4e2da8c71c28944580"
+    }
+  ]
+}

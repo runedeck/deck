@@ -10,18 +10,18 @@
 - [ ] 2.1 Move BrowserbaseToolkit, keep its upstream reference under adoption review, record its comparison
 - [ ] 2.2 Move HomebrewToolkit and record its comparison
 - [x] 2.3 Move GhosttyToolkit and record its comparison
-- [ ] 2.4 Move DmgInstall, fix the `-quiet` contradiction, record its comparison
+- [x] 2.4 Move DmgInstall, fix the `-quiet` contradiction, record its comparison
 - [x] 2.5 Move TmuxToolkit and record its comparison
 
 ## 3. Rewritten skills
 
-- [ ] 3.1 Rewrite GpgToolkit to owner facts, write cases that ask for them, record its comparison
-- [ ] 3.2 Rewrite Chezmoi to owner facts, write cases, record its comparison
-- [ ] 3.3 Rewrite SshToolkit to owner facts, write cases, record its comparison
-- [ ] 3.4 Rewrite PasswordToolkit to owner facts, write cases, record its comparison
-- [ ] 3.5 Rewrite SandboxToolkit to owner facts, write cases, record its comparison
-- [ ] 3.6 Rewrite HarnessSecurity to owner facts, write cases, record its comparison
-- [ ] 3.7 Rewrite the dotfiles boundary rule with frontmatter and record its comparison
+- [x] 3.1 Rewrite GpgToolkit to owner facts, write cases that ask for them, record its comparison
+- [x] 3.2 Rewrite Chezmoi to owner facts, write cases, record its comparison
+- [x] 3.3 Rewrite SshToolkit to owner facts, write cases, record its comparison
+- [x] 3.4 Rewrite PasswordToolkit to owner facts, write cases, record its comparison
+- [x] 3.5 Rewrite SandboxToolkit to owner facts, write cases, record its comparison
+- [x] 3.6 Rewrite HarnessSecurity to owner facts, write cases, record its comparison
+- [x] 3.7 Rewrite the dotfiles boundary rule with frontmatter and record its comparison
 
 ## 4. Provisioning codebase
 
