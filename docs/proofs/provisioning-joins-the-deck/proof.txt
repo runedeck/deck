@@ -7,7 +7,6 @@ $ cat runes/provisioning/module.yaml
   description: Machine setup skills and rules that hold the facts models lack, with every script outside the deck.
   events: []
 $ ls runes/provisioning/skills
-  BrowserbaseToolkit
   Chezmoi
   DmgInstall
   GhosttyToolkit
@@ -21,7 +20,6 @@ $ ls runes/provisioning/skills
 $ ls runes/provisioning/rules
   DotfilesScope.md
 $ sh -c 'for name in $(ls runes/provisioning/skills); do fd -t d "^$name$" runes; done'
-  runes/provisioning/skills/BrowserbaseToolkit/
   runes/provisioning/skills/Chezmoi/
   runes/provisioning/skills/DmgInstall/
   runes/provisioning/skills/GhosttyToolkit/
@@ -62,9 +60,7 @@ $ cat consumer/.rune
       casts: [all]
 $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.config" rune install --no-color'
     flatten   skills/HomebrewToolkit/user/Signing.md → Signing.md
-  warning: skipping /Users/N4M3Z/Developer/runedeck/deck/.workspaces/opus-provisioning-domain/runes/provisioning/skills/BrowserbaseToolkit/Reference.md (adoption review pending — run `rune adopt status`)
     flatten   skills/HomebrewToolkit/user/Signing.md → Signing.md
-  warning: skipping /Users/N4M3Z/Developer/runedeck/deck/.workspaces/opus-provisioning-domain/runes/provisioning/skills/BrowserbaseToolkit/Reference.md (adoption review pending — run `rune adopt status`)
 
    ✓ claude
      agents 3  rules 31  skills 159
@@ -311,8 +307,7 @@ $ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/provisioning-joins-the-deck/deplo
   .opencode: none
 $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.config" rune add provisioning --no-color'
     flatten   skills/HomebrewToolkit/user/Signing.md → Signing.md
-  warning: skipping /Users/N4M3Z/Developer/runedeck/deck/.workspaces/opus-provisioning-domain/runes/provisioning/skills/BrowserbaseToolkit/Reference.md (adoption review pending — run `rune adopt status`)
-  staged rune selection 'provisioning' in consumer → /private/var/folders/mj/33qc2qzj3bv1nbphfn99f7k00000gn/T/rune-proof-96929-provisioning-joins-the-deck-the-default-deployment-omits-the-module-consumer-takes-the-default-selection-30de8368-19-0/consumer/.rune
+  staged rune selection 'provisioning' in consumer → /private/var/folders/mj/33qc2qzj3bv1nbphfn99f7k00000gn/T/rune-proof-42388-provisioning-joins-the-deck-the-default-deployment-omits-the-module-consumer-takes-the-default-selection-2e026588-19-0/consumer/.rune
   next: rune install (or: rune tui --edit to review)
 $ cat consumer/.rune
   version: 1
@@ -327,13 +322,10 @@ $ cat consumer/.rune
       - provisioning
 $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.config" rune install --no-color'
     flatten   skills/HomebrewToolkit/user/Signing.md → Signing.md
-  warning: skipping /Users/N4M3Z/Developer/runedeck/deck/.workspaces/opus-provisioning-domain/runes/provisioning/skills/BrowserbaseToolkit/Reference.md (adoption review pending — run `rune adopt status`)
     flatten   skills/HomebrewToolkit/user/Signing.md → Signing.md
-  warning: skipping /Users/N4M3Z/Developer/runedeck/deck/.workspaces/opus-provisioning-domain/runes/provisioning/skills/BrowserbaseToolkit/Reference.md (adoption review pending — run `rune adopt status`)
 
    ✓ claude
-     rules 1  skills 38
-     ● BrowserbaseToolkit
+     rules 1  skills 35
      ● Chezmoi
      ● DmgInstall
      ● GhosttyToolkit
@@ -346,8 +338,7 @@ $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.confi
      ● TmuxToolkit
      ● DotfilesScope
    ✓ codex
-     rules 1  skills 38
-     ● BrowserbaseToolkit
+     rules 1  skills 35
      ● Chezmoi
      ● DmgInstall
      ● GhosttyToolkit
@@ -360,8 +351,7 @@ $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.confi
      ● TmuxToolkit
      ● DotfilesScope
    ✓ gemini
-     rules 1  skills 38
-     ● BrowserbaseToolkit
+     rules 1  skills 35
      ● Chezmoi
      ● DmgInstall
      ● GhosttyToolkit
@@ -374,8 +364,7 @@ $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.confi
      ● TmuxToolkit
      ● DotfilesScope
    ✓ opencode
-     rules 1  skills 38
-     ● BrowserbaseToolkit
+     rules 1  skills 35
      ● Chezmoi
      ● DmgInstall
      ● GhosttyToolkit
@@ -388,20 +377,19 @@ $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.confi
      ● TmuxToolkit
      ● DotfilesScope
 
-   ● 156 deployed  ○ 727 skipped
+   ● 144 deployed  ○ 727 skipped
 
 $ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/provisioning-joins-the-deck/deployed-module-runes.py" consumer'
-  .agents: BrowserbaseToolkit Chezmoi DmgInstall GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
-  .claude: BrowserbaseToolkit Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
+  .agents: Chezmoi DmgInstall GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
+  .claude: Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
   .codex: DotfilesScope
-  .gemini: BrowserbaseToolkit Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
-  .opencode: BrowserbaseToolkit Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
+  .gemini: Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
+  .opencode: Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
 
 ## provisioning-joins-the-deck#a-provisioning-rune-shows-that-it-helps/rune-arrives-without-a-comparison
 kind: check
 $ sh -c 'mkdir -p scratch/runes scratch/scripts scratch/docs/changes/provisioning-joins-the-deck && cp -R "$RUNE_PROOF_ROOT/runes/provisioning" scratch/runes/ && cp -R "$RUNE_PROOF_ROOT/docs/changes/provisioning-joins-the-deck/comparisons" scratch/docs/changes/provisioning-joins-the-deck/ && cp "$RUNE_PROOF_ROOT/scripts/check-provisioning-evidence" scratch/scripts/'
 $ ls scratch/docs/changes/provisioning-joins-the-deck/comparisons
-  BrowserbaseToolkit.json
   Chezmoi.json
   DmgInstall.json
   DotfilesScope.json
@@ -438,6 +426,7 @@ $ DECK_ROOT=. sh -c '"$HOME/Developer/runedeck/provision/scripts/verify/deck-scr
   warn:env (.env missing; using .env.example placeholders — cp .env.example .env and edit)
   verify:deck-script-paths
         module: ./runes/provisioning
+  ok:path (scripts/configure/)
   ok:path (scripts/configure/claude-plugins.sh)
   ok:path (scripts/configure/codex.sh)
   ok:path (scripts/configure/dcg.sh)
@@ -447,6 +436,7 @@ $ DECK_ROOT=. sh -c '"$HOME/Developer/runedeck/provision/scripts/verify/deck-scr
   ok:path (scripts/configure/git-ssh-sign.sh)
   ok:path (scripts/configure/keyvault-scaffold.sh)
   ok:path (scripts/configure/zed.sh)
+  ok:path (scripts/install/)
   ok:path (scripts/install/cmux.sh)
   ok:path (scripts/install/container.sh)
   ok:path (scripts/install/dcg.sh)
@@ -454,11 +444,15 @@ $ DECK_ROOT=. sh -c '"$HOME/Developer/runedeck/provision/scripts/verify/deck-scr
   ok:path (scripts/install/paperkey.sh)
   ok:path (scripts/install/pass.sh)
   ok:path (scripts/install/ssh-yubikey-key.sh)
+  ok:path (scripts/lib/dmg.sh)
   ok:path (scripts/lib/env.sh)
+  ok:path (scripts/sandbox/claude-box/Containerfile)
+  ok:path (scripts/sandbox/claude-box/managed-settings.json)
+  ok:path (scripts/sandbox/claude-box/redact)
   ok:path (scripts/verify/ai-proxy-egress.sh)
   ok:path (scripts/verify/codex-skills.sh)
   ok:path (scripts/verify/harness-proxy.sh)
-  summary:deck-script-paths (20 checked, 0 missing)
+  summary:deck-script-paths (26 checked, 0 missing)
 
 ## provisioning-joins-the-deck#provisioning-runes-contain-no-personal-data/skill-contains-the-owner-s-host-name
 kind: check

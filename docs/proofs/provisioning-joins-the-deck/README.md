@@ -1,11 +1,11 @@
 ---
 type: proof
 change: provisioning-joins-the-deck
-head: d4164ca9a5308ef0e142aaca34134527839e7b72
+head: 89d986d144a6762d72250df8227d98471ab98c7e
 head_change: npqsvqlstvzqzwtqvmzrmyrzvnvnuzsy
-head_tree: 5a48ae5bc6c3506b32bb42f8519f1df2c6251048
+head_tree: 963bcc212f50addff3fdb033c3486008ea3e5285
 recorded: 2026-10-26
-transcript: dd02028ab29bbe55864b572a5b03432cf837635f6a37882569b021119115769a
+transcript: 36c93fa7ee329118e9c761b9bd154aee9ffaf947ea006c278516789299f2c84a
 scenes:
 - scenario: provisioning-joins-the-deck#provisioning-runes-share-one-module/machine-setup-skill-joins-the-deck
   kind: check
@@ -16,7 +16,7 @@ scenes:
 - scenario: provisioning-joins-the-deck#a-provisioning-rune-shows-that-it-helps/rune-arrives-without-a-comparison
   kind: check
 - scenario: provisioning-joins-the-deck#provisioning-runes-point-at-scripts-inside-the-provisioning-codebase/deployed-skill-points-at-an-install-script
-  kind: unproven
+  kind: check
 - scenario: provisioning-joins-the-deck#provisioning-runes-contain-no-personal-data/skill-contains-the-owner-s-host-name
   kind: check
 ---
