@@ -20,26 +20,27 @@ press the key. chezmoi externals make plugin clones declarative:
     url = "https://github.com/tmux-plugins/tmux-continuum.git"
     refreshPeriod = "168h"
 
-[".config/tmux/plugins/catppuccin-tmux"]
+[".config/tmux/plugins/catppuccin/tmux"]
     type = "git-repo"
     url = "https://github.com/catppuccin/tmux.git"
     refreshPeriod = "168h"
 ```
 
 `chezmoi apply` clones each repo at first run and refreshes weekly. TPM still parses the `@plugin`
-lines in `tmux.conf` to register and load each plugin. Only the clone step is taken out of TPM's
-hands. Pin a plugin by setting `refreshPeriod = "8760h"` (one year) until you bump it.
+lines in `tmux.conf` to register and load its plugins. Catppuccin loads directly. Pin a plugin by
+setting `refreshPeriod = "8760h"` (one year) until you bump it.
 
 Append TPM bootstrap to the *end* of `tmux.conf`:
 
 ```tmux
+run '~/.config/tmux/plugins/catppuccin/tmux/catppuccin.tmux'
+
 set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
-set -g @plugin 'catppuccin/tmux'
 
 run '~/.config/tmux/plugins/tpm/tpm'
 ```
 
-The `run` line must be last. TPM reads the `@plugin` declarations above it and sources each
+The TPM `run` line must be last. TPM reads the `@plugin` declarations above it and sources each
 plugin's entry script.

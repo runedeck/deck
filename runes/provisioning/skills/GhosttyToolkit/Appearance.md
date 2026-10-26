@@ -3,17 +3,22 @@
 ## Appearance baseline
 
 ```toml
-theme = Nord Wave                # +list-themes | grep -i nord for variants
+# +list-themes | grep -i nord for variants
+theme = Nord Wave
 font-family = MesloLGS Nerd Font Mono
 font-size = 15
 cursor-style = block
 cursor-style-blink = false
 
-font-thicken = true              # firms up text on retina without going bold
-font-thicken-strength = 1        # 1 = lightest thickening (255 = max)
-adjust-cell-height = 1           # 1px vertical breathing room
+# firms up text on retina without going bold
+font-thicken = true
+# 1 = lightest thickening (255 = max)
+font-thicken-strength = 1
+# 1px vertical breathing room
+adjust-cell-height = 1
 
-bold-is-bright = true            # bright ANSI codes render as bright (p10k, ls --color)
+# bright ANSI codes render as bright (p10k, ls --color)
+bold-is-bright = true
 ```
 
 `font-thicken-strength` higher than 1 starts looking aggressive at 15pt+. Step up for smaller fonts.
@@ -24,19 +29,26 @@ Back off at 18pt+.
 ```toml
 window-padding-x = 8
 window-padding-y = 6
-window-padding-balance = true        # equalize when cells don't divide evenly
-window-save-state = always           # restore tabs/splits on relaunch
+# equalize when cells don't divide evenly
+window-padding-balance = true
+# restore tabs/splits on relaunch
+window-save-state = always
 window-inherit-working-directory = true
 window-inherit-font-size = true
 
 background-opacity = 0.96
-background-blur = 20                 # macOS native vibrancy, 0-100
+# macOS native vibrancy, 0-100
+background-blur = 20
 unfocused-split-opacity = 0.85
 
-window-colorspace = display-p3       # Apple Silicon Retina wide-gamut
-resize-overlay = after-first         # size hint only after first drag
-window-step-resize = true            # cell-snap on drag-resize (macOS)
-window-new-tab-position = end        # browser-convention tab placement
+# Apple Silicon Retina wide-gamut
+window-colorspace = display-p3
+# size hint only after first drag
+resize-overlay = after-first
+# cell-snap on drag-resize (macOS)
+window-step-resize = true
+# browser-convention tab placement
+window-new-tab-position = end
 ```
 
 `window-colorspace = display-p3` matters for color-managed themes. Nord is defined in sRGB so colors
@@ -49,9 +61,12 @@ tabs/splits restored.
 ## macOS-native integration
 
 ```toml
-macos-titlebar-style = transparent       # tabs break under non-native fullscreen
-macos-non-native-fullscreen = padded-notch    # MBP notch-aware
-macos-option-as-alt = left               # left-Option = Meta; right keeps € ç etc.
+# tabs break under non-native fullscreen
+macos-titlebar-style = transparent
+# MBP notch-aware
+macos-non-native-fullscreen = padded-notch
+# left-Option = Meta; right keeps € ç etc.
+macos-option-as-alt = left
 macos-window-shadow = true
 ```
 
