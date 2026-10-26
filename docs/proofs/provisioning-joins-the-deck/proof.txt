@@ -63,7 +63,7 @@ $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.confi
     flatten   skills/HomebrewToolkit/user/Signing.md → Signing.md
 
    ✓ claude
-     agents 3  rules 31  skills 159
+     agents 3  rules 31  skills 167
      ● AcceptanceTesting
      ● AdoptArtifact
      ● AdversaryReview
@@ -71,6 +71,7 @@ $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.confi
      ● AgenticOntology
      ● Art
      ● BenchArtifact
+     ● BrowserbaseToolkit
      ● BuildAsset
      ● BuildAvatar
      ● BuildSkill
@@ -126,12 +127,13 @@ $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.confi
      ● VerifyClaims
      ● WriteConciseReports
    ✓ codex
-     agents 3  rules 31  skills 144
+     agents 3  rules 31  skills 152
      ● AcceptanceTesting
      ● AdoptArtifact
      ● AgenticOntology
      ● Art
      ● BenchArtifact
+     ● BrowserbaseToolkit
      ● BuildAsset
      ● BuildAvatar
      ● BuildSkill
@@ -183,12 +185,13 @@ $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.confi
      ● VerifyClaims
      ● WriteConciseReports
    ✓ gemini
-     agents 3  rules 31  skills 144
+     agents 3  rules 31  skills 152
      ● AcceptanceTesting
      ● AdoptArtifact
      ● AgenticOntology
      ● Art
      ● BenchArtifact
+     ● BrowserbaseToolkit
      ● BuildAsset
      ● BuildAvatar
      ● BuildSkill
@@ -240,12 +243,13 @@ $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.confi
      ● VerifyClaims
      ● WriteConciseReports
    ✓ opencode
-     agents 3  rules 31  skills 144
+     agents 3  rules 31  skills 152
      ● AcceptanceTesting
      ● AdoptArtifact
      ● AgenticOntology
      ● Art
      ● BenchArtifact
+     ● BrowserbaseToolkit
      ● BuildAsset
      ● BuildAvatar
      ● BuildSkill
@@ -297,7 +301,7 @@ $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.confi
      ● VerifyClaims
      ● WriteConciseReports
 
-   ● 727 deployed
+   ● 759 deployed
 
 $ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/provisioning-joins-the-deck/deployed-module-runes.py" consumer'
   .agents: none
@@ -307,7 +311,7 @@ $ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/provisioning-joins-the-deck/deplo
   .opencode: none
 $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.config" rune add provisioning --no-color'
     flatten   skills/HomebrewToolkit/user/Signing.md → Signing.md
-  staged rune selection 'provisioning' in consumer → /private/var/folders/mj/33qc2qzj3bv1nbphfn99f7k00000gn/T/rune-proof-42388-provisioning-joins-the-deck-the-default-deployment-omits-the-module-consumer-takes-the-default-selection-2e026588-19-0/consumer/.rune
+  staged rune selection 'provisioning' in consumer → /private/var/folders/mj/33qc2qzj3bv1nbphfn99f7k00000gn/T/rune-proof-76616-provisioning-joins-the-deck-the-default-deployment-omits-the-module-consumer-takes-the-default-selection-2f91ac60-19-0/consumer/.rune
   next: rune install (or: rune tui --edit to review)
 $ cat consumer/.rune
   version: 1
@@ -377,7 +381,7 @@ $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.confi
      ● TmuxToolkit
      ● DotfilesScope
 
-   ● 144 deployed  ○ 727 skipped
+   ● 144 deployed  ○ 759 skipped
 
 $ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/provisioning-joins-the-deck/deployed-module-runes.py" consumer'
   .agents: Chezmoi DmgInstall GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
