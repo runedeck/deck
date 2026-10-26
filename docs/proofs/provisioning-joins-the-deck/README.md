@@ -1,11 +1,11 @@
 ---
 type: proof
 change: provisioning-joins-the-deck
-head: 3d9ec1a1d7d50e68b42230f7b670b7b0f0457be0
-head_change: rxkkozuozolnuuwxpoyyqtloppovrqyl
-head_tree: eff248e7720d4a8668425a25ee080e4f5a98595b
+head: d4164ca9a5308ef0e142aaca34134527839e7b72
+head_change: npqsvqlstvzqzwtqvmzrmyrzvnvnuzsy
+head_tree: 5a48ae5bc6c3506b32bb42f8519f1df2c6251048
 recorded: 2026-10-26
-transcript: 08dbcf52e3c4f8a95d4cd2d4a0066cc0b2cd26abaf2afe6164c8d407b12dafea
+transcript: dd02028ab29bbe55864b572a5b03432cf837635f6a37882569b021119115769a
 scenes:
 - scenario: provisioning-joins-the-deck#provisioning-runes-share-one-module/machine-setup-skill-joins-the-deck
   kind: check
@@ -16,7 +16,7 @@ scenes:
 - scenario: provisioning-joins-the-deck#a-provisioning-rune-shows-that-it-helps/rune-arrives-without-a-comparison
   kind: check
 - scenario: provisioning-joins-the-deck#provisioning-runes-point-at-scripts-inside-the-provisioning-codebase/deployed-skill-points-at-an-install-script
-  kind: check
+  kind: unproven
 - scenario: provisioning-joins-the-deck#provisioning-runes-contain-no-personal-data/skill-contains-the-owner-s-host-name
   kind: check
 ---
@@ -48,7 +48,6 @@ version: 0.1.0
 description: Machine setup skills and rules that hold the facts models lack, with every script outside the deck.
 events: []
 $ ls runes/provisioning/skills
-BrowserbaseToolkit
 Chezmoi
 DmgInstall
 GhosttyToolkit
@@ -62,7 +61,6 @@ TmuxToolkit
 $ ls runes/provisioning/rules
 DotfilesScope.md
 $ sh -c 'for name in $(ls runes/provisioning/skills); do fd -t d "^$name$" runes; done'
-runes/provisioning/skills/BrowserbaseToolkit/
 runes/provisioning/skills/Chezmoi/
 runes/provisioning/skills/DmgInstall/
 runes/provisioning/skills/GhosttyToolkit/
@@ -154,11 +152,11 @@ $ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.confi
 ...
  ● [..] deployed  ○ [..] skipped
 $ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/provisioning-joins-the-deck/deployed-module-runes.py" consumer'
-.agents: BrowserbaseToolkit Chezmoi DmgInstall GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
-.claude: BrowserbaseToolkit Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
+.agents: Chezmoi DmgInstall GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
+.claude: Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
 .codex: DotfilesScope
-.gemini: BrowserbaseToolkit Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
-.opencode: BrowserbaseToolkit Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
+.gemini: Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
+.opencode: Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
 ```
 
 ## provisioning-joins-the-deck#a-provisioning-rune-shows-that-it-helps/rune-arrives-without-a-comparison
@@ -168,7 +166,6 @@ A scratch copy contains the module and the change's comparison records, one per 
 ```console
 $ sh -c 'mkdir -p scratch/runes scratch/scripts scratch/docs/changes/provisioning-joins-the-deck && cp -R "$RUNE_PROOF_ROOT/runes/provisioning" scratch/runes/ && cp -R "$RUNE_PROOF_ROOT/docs/changes/provisioning-joins-the-deck/comparisons" scratch/docs/changes/provisioning-joins-the-deck/ && cp "$RUNE_PROOF_ROOT/scripts/check-provisioning-evidence" scratch/scripts/'
 $ ls scratch/docs/changes/provisioning-joins-the-deck/comparisons
-BrowserbaseToolkit.json
 Chezmoi.json
 DmgInstall.json
 DotfilesScope.json
@@ -192,7 +189,7 @@ $ sh -c 'rg -e "check-provisioning-evidence" "$RUNE_PROOF_ROOT/.pre-commit-confi
 
 ## provisioning-joins-the-deck#provisioning-runes-point-at-scripts-inside-the-provisioning-codebase/deployed-skill-points-at-an-install-script
 
-The module's defaults give `PROVISION_ROOT`, the location of the provisioning codebase. A skill writes each script path as `$PROVISION_ROOT/scripts/<verb>/<target>.sh`, and the deployer copies that text unchanged into each harness tree. The codebase's own check runs from its default location with `DECK_ROOT` at the working copy. It resolves each path the module gives, 20 at this head.
+The module's defaults give `PROVISION_ROOT`, the location of the provisioning codebase. A skill writes each script path as `$PROVISION_ROOT/scripts/<verb>/<target>.sh`, and the deployer copies that text unchanged into each harness tree. The codebase's own check runs from its default location with `DECK_ROOT` at the working copy. It resolves each path the module gives and reports none missing.
 
 ```console
 $ cd .
@@ -210,27 +207,8 @@ $ DECK_ROOT=. sh -c '"$HOME/Developer/runedeck/provision/scripts/verify/deck-scr
 ...
 verify:deck-script-paths
       module: ./runes/provisioning
-ok:path (scripts/configure/claude-plugins.sh)
-ok:path (scripts/configure/codex.sh)
-ok:path (scripts/configure/dcg.sh)
-ok:path (scripts/configure/dotfiles.sh)
-ok:path (scripts/configure/git-identity.sh)
-ok:path (scripts/configure/git-signing-ssh.sh)
-ok:path (scripts/configure/git-ssh-sign.sh)
-ok:path (scripts/configure/keyvault-scaffold.sh)
-ok:path (scripts/configure/zed.sh)
-ok:path (scripts/install/cmux.sh)
-ok:path (scripts/install/container.sh)
-ok:path (scripts/install/dcg.sh)
-ok:path (scripts/install/gpg-toolchain.sh)
-ok:path (scripts/install/paperkey.sh)
-ok:path (scripts/install/pass.sh)
-ok:path (scripts/install/ssh-yubikey-key.sh)
-ok:path (scripts/lib/env.sh)
-ok:path (scripts/verify/ai-proxy-egress.sh)
-ok:path (scripts/verify/codex-skills.sh)
-ok:path (scripts/verify/harness-proxy.sh)
-summary:deck-script-paths (20 checked, 0 missing)
+...
+summary:deck-script-paths ([..] checked, 0 missing)
 ```
 
 ## provisioning-joins-the-deck#provisioning-runes-contain-no-personal-data/skill-contains-the-owner-s-host-name

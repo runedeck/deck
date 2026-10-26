@@ -7,7 +7,7 @@
 
 ## 2. Whole skills
 
-- [x] 2.1 Move BrowserbaseToolkit, keep its upstream reference under adoption review, record its comparison
+- [x] 2.1 BrowserbaseToolkit moved to the development module instead, through the change automate-cloud-browsers-browserbase
 - [x] 2.2 Move HomebrewToolkit and record its comparison
 - [x] 2.3 Move GhosttyToolkit and record its comparison
 - [x] 2.4 Move DmgInstall, fix the `-quiet` contradiction, record its comparison

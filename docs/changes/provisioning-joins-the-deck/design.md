@@ -12,7 +12,7 @@ The scripts move as a clone with history. The clone keeps every commit, so the r
 
 | Source part | Destination | Treatment |
 | --- | --- | --- |
-| BrowserbaseToolkit | `runes/provisioning/skills/` | whole, upstream reference keeps its pending adoption review |
+| BrowserbaseToolkit | `runes/development/skills/` | moved by the change automate-cloud-browsers-browserbase |
 | HomebrewToolkit, GhosttyToolkit, TmuxToolkit | `runes/provisioning/skills/` | whole |
 | DmgInstall | `runes/provisioning/skills/` | whole, with the `-quiet` contradiction between its two companions fixed |
 | GpgToolkit, Chezmoi, SshToolkit, PasswordToolkit, SandboxToolkit, HarnessSecurity | `runes/provisioning/skills/` | rewrite to owner facts: scripts, decisions, local traps |

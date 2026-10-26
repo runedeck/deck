@@ -17,7 +17,7 @@ The owner's machine setup is one codebase with skills, a rule, scripts, manifest
 - A new `provisioning` module in `runes/` with skills and rules only. The default deployment of the deck leaves it out.
 - A check that reports every executable file in the module.
 - A check that refuses a provisioning rune without a recorded comparison on at least two models.
-- Five skills move whole: BrowserbaseToolkit, HomebrewToolkit, GhosttyToolkit, DmgInstall, and TmuxToolkit.
+- HomebrewToolkit, GhosttyToolkit, DmgInstall, and TmuxToolkit move whole. BrowserbaseToolkit moved to the development module through the change automate-cloud-browsers-browserbase.
 - Six skills move as rewrites that contain only the owner's facts: GpgToolkit, Chezmoi, SshToolkit, PasswordToolkit, SandboxToolkit, and HarnessSecurity.
 - DotfilesStrategy stays behind. The dotfiles boundary rule moves after its own comparison.
 - The scripts, manifests, orchestrator, tests, and decision records move with their history to `~/Developer/runedeck/provision`, which stays unpublished until a personal-data review.

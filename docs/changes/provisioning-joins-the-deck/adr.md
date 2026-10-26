@@ -42,7 +42,7 @@ The owner's machine setup is one codebase: twelve skills, one rule, shell script
 
 Option 3.
 
-- BrowserbaseToolkit, HomebrewToolkit, GhosttyToolkit, DmgInstall, and TmuxToolkit move as whole skills. Each one helped at least one model.
+- HomebrewToolkit, GhosttyToolkit, DmgInstall, and TmuxToolkit move as whole skills. Each one helped at least one model. BrowserbaseToolkit also helped, and it moved to the development module through the change automate-cloud-browsers-browserbase.
 - GpgToolkit, Chezmoi, SshToolkit, PasswordToolkit, SandboxToolkit, and HarnessSecurity shrink to the facts that belong to the owner: the scripts to run, the decisions that apply, and the traps found on this machine.
 - DotfilesStrategy does not move. Its comparison of tools is general knowledge, and the owner's choice of chezmoi is already part of the Chezmoi skill.
 - The dotfiles boundary rule moves as a rule after its own comparison.
