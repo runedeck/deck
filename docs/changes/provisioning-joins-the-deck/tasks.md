@@ -39,5 +39,5 @@
 
 ## 6. Verification
 
-- [ ] 6.1 Run `rune spec validate`, `rune validate --skill-layers`, `mdschema check`, and the new checks
-- [ ] 6.2 Record a proof: a consumer installs the whole deck and receives no provisioning rune, then names the module and receives it
+- [x] 6.1 Run `rune spec validate`, `rune validate --skill-layers`, `mdschema check`, and the new checks
+- [x] 6.2 Record a proof: a consumer installs the whole deck and receives no provisioning rune, then names the module and receives it
