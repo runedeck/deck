@@ -1,11 +1,11 @@
 ---
 type: proof
 change: provisioning-joins-the-deck
-head: c2ec1a33a3aca62ed4e6982a82926ecdeecbd293
-head_change: tsqrmrovllsvmvzplsyvtyrmszqwumxv
-head_tree: fe552524f15e3d126e79d7ee964d09ee4e099fca
+head: 3d9ec1a1d7d50e68b42230f7b670b7b0f0457be0
+head_change: rxkkozuozolnuuwxpoyyqtloppovrqyl
+head_tree: eff248e7720d4a8668425a25ee080e4f5a98595b
 recorded: 2026-10-26
-transcript: b7472669a68ab95a87b4ae9559433c01dac56a75921da4ec9860c9e0bb87bdbe
+transcript: 08dbcf52e3c4f8a95d4cd2d4a0066cc0b2cd26abaf2afe6164c8d407b12dafea
 scenes:
 - scenario: provisioning-joins-the-deck#provisioning-runes-share-one-module/machine-setup-skill-joins-the-deck
   kind: check

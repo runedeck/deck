@@ -1,0 +1,470 @@
+## provisioning-joins-the-deck#provisioning-runes-share-one-module/machine-setup-skill-joins-the-deck
+kind: check
+$ cd .
+$ cat runes/provisioning/module.yaml
+  name: provisioning
+  version: 0.1.0
+  description: Machine setup skills and rules that hold the facts models lack, with every script outside the deck.
+  events: []
+$ ls runes/provisioning/skills
+  BrowserbaseToolkit
+  Chezmoi
+  DmgInstall
+  GhosttyToolkit
+  GpgToolkit
+  HarnessSecurity
+  HomebrewToolkit
+  PasswordToolkit
+  SandboxToolkit
+  SshToolkit
+  TmuxToolkit
+$ ls runes/provisioning/rules
+  DotfilesScope.md
+$ sh -c 'for name in $(ls runes/provisioning/skills); do fd -t d "^$name$" runes; done'
+  runes/provisioning/skills/BrowserbaseToolkit/
+  runes/provisioning/skills/Chezmoi/
+  runes/provisioning/skills/DmgInstall/
+  runes/provisioning/skills/GhosttyToolkit/
+  runes/provisioning/skills/GpgToolkit/
+  runes/provisioning/skills/HarnessSecurity/
+  runes/provisioning/skills/HomebrewToolkit/
+  runes/provisioning/skills/PasswordToolkit/
+  runes/provisioning/skills/SandboxToolkit/
+  runes/provisioning/skills/SshToolkit/
+  runes/provisioning/skills/TmuxToolkit/
+$ fd '^DotfilesScope\.md$' runes
+  runes/provisioning/rules/DotfilesScope.md
+
+## provisioning-joins-the-deck#the-validator-rejects-executable-files-in-the-module/install-script-enters-the-module
+kind: check
+$ sh -c 'mkdir -p scratch/runes scratch/scripts && cp -R "$RUNE_PROOF_ROOT/runes/provisioning" scratch/runes/ && cp "$RUNE_PROOF_ROOT/scripts/check-provisioning-module" scratch/scripts/'
+$ python3 scratch/scripts/check-provisioning-module scratch
+$ sh -c 'printf "#!/bin/sh\nbrew install --cask ghostty\n" > scratch/runes/provisioning/skills/GhosttyToolkit/install.sh'
+$ chmod +x scratch/runes/provisioning/skills/GhosttyToolkit/install.sh
+$ head -n 1 scratch/runes/provisioning/skills/GhosttyToolkit/install.sh
+  #!/bin/sh
+$ python3 scratch/scripts/check-provisioning-module scratch
+  runes/provisioning/skills/GhosttyToolkit/install.sh: execute permission and interpreter line
+$ sh -c 'rg -e "check-provisioning-module" "$RUNE_PROOF_ROOT/.pre-commit-config.yaml"'
+            - id: check-provisioning-module
+              entry: python3 scripts/check-provisioning-module
+
+## provisioning-joins-the-deck#the-default-deployment-omits-the-module/consumer-takes-the-default-selection
+kind: check
+$ sh -c 'mkdir -p home/.config consumer && printf "version: 1\nsources:\n  deck:\n    local: %s\nrunes:\n  deck:\n    casts: [all]\n" "$RUNE_PROOF_ROOT" > consumer/.rune'
+$ cat consumer/.rune
+  version: 1
+  sources:
+    deck:
+      local: /Users/N4M3Z/Developer/runedeck/deck/.workspaces/opus-provisioning-domain
+  runes:
+    deck:
+      casts: [all]
+$ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.config" rune install --no-color'
+    flatten   skills/HomebrewToolkit/user/Signing.md → Signing.md
+  warning: skipping /Users/N4M3Z/Developer/runedeck/deck/.workspaces/opus-provisioning-domain/runes/provisioning/skills/BrowserbaseToolkit/Reference.md (adoption review pending — run `rune adopt status`)
+    flatten   skills/HomebrewToolkit/user/Signing.md → Signing.md
+  warning: skipping /Users/N4M3Z/Developer/runedeck/deck/.workspaces/opus-provisioning-domain/runes/provisioning/skills/BrowserbaseToolkit/Reference.md (adoption review pending — run `rune adopt status`)
+
+   ✓ claude
+     agents 3  rules 31  skills 159
+     ● AcceptanceTesting
+     ● AdoptArtifact
+     ● AdversaryReview
+     ● AgentTeam
+     ● AgenticOntology
+     ● Art
+     ● BenchArtifact
+     ● BuildAsset
+     ● BuildAvatar
+     ● BuildSkill
+     ● BuildTask
+     ● ConfigureScanners
+     ● ContinuousIntegration
+     ● DetachedJob
+     ● DraftArtifact
+     ● ForgeCycle
+     ● IntakeIdea
+     ● MergeTrain
+     ● Obsidian
+     ● ProtonMailBoundary
+     ● RTK
+     ● ResearchGrid
+     ● ReviewChange
+     ● SafetyFirst
+     ● SimplifiedTechnicalEnglish
+     ● Storyboard
+     ● VersionControl
+     ● rune
+     ● ste
+     ● PaletteCritic
+     ● AnchorWorkingDirectory
+     ● ArtifactLength
+     ● AsciiDiagrams
+     ● AvoidDuplication
+     ● CaptureOnTouch
+     ● CiteSources
+     ● ConsultTheOntology
+     ● Deslop
+     ● FixAtTheHighestLeverage
+     ● FlagRuleConflicts
+     ● LessIsMore
+     ● NoAgenticAttribution
+     ● NoEmDash
+     ● NoItemCounts
+     ● OnePurpose
+     ● OwnersVoice
+     ● PlainSpokenLanguage
+     ● PreferTrash
+     ● RemoteWrites
+     ● ReportFailures
+     ● ReviewMarkers
+     ● RuneShell
+     ● ScenarioTitles
+     ● SelfContainedQuestionOptions
+     ● SentenceCase
+     ● SkillLayout
+     ● UntrustedModels
+     ● UseEfficientCLI
+     ● UseSimplifiedTechnicalEnglish
+     ● VerifyClaims
+     ● WriteConciseReports
+   ✓ codex
+     agents 3  rules 31  skills 144
+     ● AcceptanceTesting
+     ● AdoptArtifact
+     ● AgenticOntology
+     ● Art
+     ● BenchArtifact
+     ● BuildAsset
+     ● BuildAvatar
+     ● BuildSkill
+     ● BuildTask
+     ● ConfigureScanners
+     ● ContinuousIntegration
+     ● DetachedJob
+     ● DraftArtifact
+     ● ForgeCycle
+     ● IntakeIdea
+     ● Obsidian
+     ● RTK
+     ● ReviewChange
+     ● SafetyFirst
+     ● SimplifiedTechnicalEnglish
+     ● Storyboard
+     ● VersionControl
+     ● rune
+     ● PaletteCritic.toml
+     ● AnchorWorkingDirectory
+     ● ArtifactLength
+     ● AsciiDiagrams
+     ● AvoidDuplication
+     ● CaptureOnTouch
+     ● CiteSources
+     ● ConsultTheOntology
+     ● Deslop
+     ● FixAtTheHighestLeverage
+     ● FlagRuleConflicts
+     ● LessIsMore
+     ● NoAgenticAttribution
+     ● NoEmDash
+     ● NoItemCounts
+     ● OnePurpose
+     ● OwnersVoice
+     ● PlainSpokenLanguage
+     ● PreferTrash
+     ● RemoteWrites
+     ● ReportFailures
+     ● ReviewMarkers
+     ● RuneShell
+     ● ScenarioTitles
+     ● SelfContainedQuestionOptions
+     ● SentenceCase
+     ● SkillLayout
+     ● UntrustedModels
+     ● UseEfficientCLI
+     ● UseSimplifiedTechnicalEnglish
+     ● VerifyClaims
+     ● WriteConciseReports
+   ✓ gemini
+     agents 3  rules 31  skills 144
+     ● AcceptanceTesting
+     ● AdoptArtifact
+     ● AgenticOntology
+     ● Art
+     ● BenchArtifact
+     ● BuildAsset
+     ● BuildAvatar
+     ● BuildSkill
+     ● BuildTask
+     ● ConfigureScanners
+     ● ContinuousIntegration
+     ● DetachedJob
+     ● DraftArtifact
+     ● ForgeCycle
+     ● IntakeIdea
+     ● Obsidian
+     ● RTK
+     ● ReviewChange
+     ● SafetyFirst
+     ● SimplifiedTechnicalEnglish
+     ● Storyboard
+     ● VersionControl
+     ● rune
+     ● palette-critic
+     ● AnchorWorkingDirectory
+     ● ArtifactLength
+     ● AsciiDiagrams
+     ● AvoidDuplication
+     ● CaptureOnTouch
+     ● CiteSources
+     ● ConsultTheOntology
+     ● Deslop
+     ● FixAtTheHighestLeverage
+     ● FlagRuleConflicts
+     ● LessIsMore
+     ● NoAgenticAttribution
+     ● NoEmDash
+     ● NoItemCounts
+     ● OnePurpose
+     ● OwnersVoice
+     ● PlainSpokenLanguage
+     ● PreferTrash
+     ● RemoteWrites
+     ● ReportFailures
+     ● ReviewMarkers
+     ● RuneShell
+     ● ScenarioTitles
+     ● SelfContainedQuestionOptions
+     ● SentenceCase
+     ● SkillLayout
+     ● UntrustedModels
+     ● UseEfficientCLI
+     ● UseSimplifiedTechnicalEnglish
+     ● VerifyClaims
+     ● WriteConciseReports
+   ✓ opencode
+     agents 3  rules 31  skills 144
+     ● AcceptanceTesting
+     ● AdoptArtifact
+     ● AgenticOntology
+     ● Art
+     ● BenchArtifact
+     ● BuildAsset
+     ● BuildAvatar
+     ● BuildSkill
+     ● BuildTask
+     ● ConfigureScanners
+     ● ContinuousIntegration
+     ● DetachedJob
+     ● DraftArtifact
+     ● ForgeCycle
+     ● IntakeIdea
+     ● Obsidian
+     ● RTK
+     ● ReviewChange
+     ● SafetyFirst
+     ● SimplifiedTechnicalEnglish
+     ● Storyboard
+     ● VersionControl
+     ● rune
+     ● palette-critic
+     ● AnchorWorkingDirectory
+     ● ArtifactLength
+     ● AsciiDiagrams
+     ● AvoidDuplication
+     ● CaptureOnTouch
+     ● CiteSources
+     ● ConsultTheOntology
+     ● Deslop
+     ● FixAtTheHighestLeverage
+     ● FlagRuleConflicts
+     ● LessIsMore
+     ● NoAgenticAttribution
+     ● NoEmDash
+     ● NoItemCounts
+     ● OnePurpose
+     ● OwnersVoice
+     ● PlainSpokenLanguage
+     ● PreferTrash
+     ● RemoteWrites
+     ● ReportFailures
+     ● ReviewMarkers
+     ● RuneShell
+     ● ScenarioTitles
+     ● SelfContainedQuestionOptions
+     ● SentenceCase
+     ● SkillLayout
+     ● UntrustedModels
+     ● UseEfficientCLI
+     ● UseSimplifiedTechnicalEnglish
+     ● VerifyClaims
+     ● WriteConciseReports
+
+   ● 727 deployed
+
+$ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/provisioning-joins-the-deck/deployed-module-runes.py" consumer'
+  .agents: none
+  .claude: none
+  .codex: none
+  .gemini: none
+  .opencode: none
+$ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.config" rune add provisioning --no-color'
+    flatten   skills/HomebrewToolkit/user/Signing.md → Signing.md
+  warning: skipping /Users/N4M3Z/Developer/runedeck/deck/.workspaces/opus-provisioning-domain/runes/provisioning/skills/BrowserbaseToolkit/Reference.md (adoption review pending — run `rune adopt status`)
+  staged rune selection 'provisioning' in consumer → /private/var/folders/mj/33qc2qzj3bv1nbphfn99f7k00000gn/T/rune-proof-96929-provisioning-joins-the-deck-the-default-deployment-omits-the-module-consumer-takes-the-default-selection-30de8368-19-0/consumer/.rune
+  next: rune install (or: rune tui --edit to review)
+$ cat consumer/.rune
+  version: 1
+  sources:
+    deck:
+      local: /Users/N4M3Z/Developer/runedeck/deck/.workspaces/opus-provisioning-domain
+  runes:
+    deck:
+      casts:
+      - all
+      include:
+      - provisioning
+$ sh -c 'cd consumer && HOME="$PWD/../home" XDG_CONFIG_HOME="$PWD/../home/.config" rune install --no-color'
+    flatten   skills/HomebrewToolkit/user/Signing.md → Signing.md
+  warning: skipping /Users/N4M3Z/Developer/runedeck/deck/.workspaces/opus-provisioning-domain/runes/provisioning/skills/BrowserbaseToolkit/Reference.md (adoption review pending — run `rune adopt status`)
+    flatten   skills/HomebrewToolkit/user/Signing.md → Signing.md
+  warning: skipping /Users/N4M3Z/Developer/runedeck/deck/.workspaces/opus-provisioning-domain/runes/provisioning/skills/BrowserbaseToolkit/Reference.md (adoption review pending — run `rune adopt status`)
+
+   ✓ claude
+     rules 1  skills 38
+     ● BrowserbaseToolkit
+     ● Chezmoi
+     ● DmgInstall
+     ● GhosttyToolkit
+     ● GpgToolkit
+     ● HarnessSecurity
+     ● HomebrewToolkit
+     ● PasswordToolkit
+     ● SandboxToolkit
+     ● SshToolkit
+     ● TmuxToolkit
+     ● DotfilesScope
+   ✓ codex
+     rules 1  skills 38
+     ● BrowserbaseToolkit
+     ● Chezmoi
+     ● DmgInstall
+     ● GhosttyToolkit
+     ● GpgToolkit
+     ● HarnessSecurity
+     ● HomebrewToolkit
+     ● PasswordToolkit
+     ● SandboxToolkit
+     ● SshToolkit
+     ● TmuxToolkit
+     ● DotfilesScope
+   ✓ gemini
+     rules 1  skills 38
+     ● BrowserbaseToolkit
+     ● Chezmoi
+     ● DmgInstall
+     ● GhosttyToolkit
+     ● GpgToolkit
+     ● HarnessSecurity
+     ● HomebrewToolkit
+     ● PasswordToolkit
+     ● SandboxToolkit
+     ● SshToolkit
+     ● TmuxToolkit
+     ● DotfilesScope
+   ✓ opencode
+     rules 1  skills 38
+     ● BrowserbaseToolkit
+     ● Chezmoi
+     ● DmgInstall
+     ● GhosttyToolkit
+     ● GpgToolkit
+     ● HarnessSecurity
+     ● HomebrewToolkit
+     ● PasswordToolkit
+     ● SandboxToolkit
+     ● SshToolkit
+     ● TmuxToolkit
+     ● DotfilesScope
+
+   ● 156 deployed  ○ 727 skipped
+
+$ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/provisioning-joins-the-deck/deployed-module-runes.py" consumer'
+  .agents: BrowserbaseToolkit Chezmoi DmgInstall GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
+  .claude: BrowserbaseToolkit Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
+  .codex: DotfilesScope
+  .gemini: BrowserbaseToolkit Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
+  .opencode: BrowserbaseToolkit Chezmoi DmgInstall DotfilesScope GhosttyToolkit GpgToolkit HarnessSecurity HomebrewToolkit PasswordToolkit SandboxToolkit SshToolkit TmuxToolkit
+
+## provisioning-joins-the-deck#a-provisioning-rune-shows-that-it-helps/rune-arrives-without-a-comparison
+kind: check
+$ sh -c 'mkdir -p scratch/runes scratch/scripts scratch/docs/changes/provisioning-joins-the-deck && cp -R "$RUNE_PROOF_ROOT/runes/provisioning" scratch/runes/ && cp -R "$RUNE_PROOF_ROOT/docs/changes/provisioning-joins-the-deck/comparisons" scratch/docs/changes/provisioning-joins-the-deck/ && cp "$RUNE_PROOF_ROOT/scripts/check-provisioning-evidence" scratch/scripts/'
+$ ls scratch/docs/changes/provisioning-joins-the-deck/comparisons
+  BrowserbaseToolkit.json
+  Chezmoi.json
+  DmgInstall.json
+  DotfilesScope.json
+  GhosttyToolkit.json
+  GpgToolkit.json
+  HarnessSecurity.json
+  HomebrewToolkit.json
+  PasswordToolkit.json
+  SandboxToolkit.json
+  SshToolkit.json
+  TmuxToolkit.json
+$ python3 scratch/scripts/check-provisioning-evidence scratch
+$ rm scratch/docs/changes/provisioning-joins-the-deck/comparisons/TmuxToolkit.json
+$ python3 scratch/scripts/check-provisioning-evidence scratch
+  runes/provisioning/skills/TmuxToolkit: no comparison record
+$ sh -c 'rg -e "check-provisioning-evidence" "$RUNE_PROOF_ROOT/.pre-commit-config.yaml"'
+            - id: check-provisioning-evidence
+              entry: python3 scripts/check-provisioning-evidence
+
+## provisioning-joins-the-deck#provisioning-runes-point-at-scripts-inside-the-provisioning-codebase/deployed-skill-points-at-an-install-script
+kind: check
+$ cd .
+$ tail -n 1 runes/provisioning/defaults.yaml
+  PROVISION_ROOT: ~/Developer/runedeck/provision
+$ rg -o -e '\$PROVISION_ROOT/scripts/[A-Za-z0-9_./-]+\.sh' runes/provisioning/skills/HarnessSecurity/SKILL.md
+  $PROVISION_ROOT/scripts/configure/codex.sh
+  $PROVISION_ROOT/scripts/configure/dcg.sh
+  $PROVISION_ROOT/scripts/install/dcg.sh
+  $PROVISION_ROOT/scripts/configure/claude-plugins.sh
+  $PROVISION_ROOT/scripts/verify/harness-proxy.sh
+  $PROVISION_ROOT/scripts/verify/ai-proxy-egress.sh
+  $PROVISION_ROOT/scripts/verify/codex-skills.sh
+$ DECK_ROOT=. sh -c '"$HOME/Developer/runedeck/provision/scripts/verify/deck-script-paths.sh"'
+  warn:env (.env missing; using .env.example placeholders — cp .env.example .env and edit)
+  verify:deck-script-paths
+        module: ./runes/provisioning
+  ok:path (scripts/configure/claude-plugins.sh)
+  ok:path (scripts/configure/codex.sh)
+  ok:path (scripts/configure/dcg.sh)
+  ok:path (scripts/configure/dotfiles.sh)
+  ok:path (scripts/configure/git-identity.sh)
+  ok:path (scripts/configure/git-signing-ssh.sh)
+  ok:path (scripts/configure/git-ssh-sign.sh)
+  ok:path (scripts/configure/keyvault-scaffold.sh)
+  ok:path (scripts/configure/zed.sh)
+  ok:path (scripts/install/cmux.sh)
+  ok:path (scripts/install/container.sh)
+  ok:path (scripts/install/dcg.sh)
+  ok:path (scripts/install/gpg-toolchain.sh)
+  ok:path (scripts/install/paperkey.sh)
+  ok:path (scripts/install/pass.sh)
+  ok:path (scripts/install/ssh-yubikey-key.sh)
+  ok:path (scripts/lib/env.sh)
+  ok:path (scripts/verify/ai-proxy-egress.sh)
+  ok:path (scripts/verify/codex-skills.sh)
+  ok:path (scripts/verify/harness-proxy.sh)
+  summary:deck-script-paths (20 checked, 0 missing)
+
+## provisioning-joins-the-deck#provisioning-runes-contain-no-personal-data/skill-contains-the-owner-s-host-name
+kind: check
+$ sh -c 'mkdir -p scratch/runes && cp -R "$RUNE_PROOF_ROOT/runes/provisioning" scratch/runes/'
+$ rg -n -e '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' -e '/Users/[A-Za-z0-9_.-]+' -e '\b[A-Za-z0-9-]+\.(local|lan|home|internal)\b' -e 'ssh +[A-Za-z0-9_-]+@' scratch/runes/provisioning
+$ sh -c 'printf "Connect with ssh owner@laptop.local before the key lands.\n" >> scratch/runes/provisioning/skills/SshToolkit/SKILL.md'
+$ rg -n -e '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' -e '/Users/[A-Za-z0-9_.-]+' -e '\b[A-Za-z0-9-]+\.(local|lan|home|internal)\b' -e 'ssh +[A-Za-z0-9_-]+@' scratch/runes/provisioning
+  scratch/runes/provisioning/skills/SshToolkit/SKILL.md:69:Connect with ssh owner@laptop.local before the key lands.
+
