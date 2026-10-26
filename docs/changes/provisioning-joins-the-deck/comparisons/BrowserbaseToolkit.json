@@ -13,7 +13,7 @@
           "without": "fail"
         },
         "claude-opus-5-5": {
-          "with": "pass",
+          "with": "fail",
           "without": "fail"
         }
       }
@@ -52,6 +52,21 @@
         "claude-haiku-5-5"
       ],
       "number": 2
+    },
+    {
+      "artifact_sha256": "be02cdc46dca82b36655ea0a418299ee8dd6c3055a2e8497fea701f3a55ea8a8",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "number": 3
+    },
+    {
+      "artifact_sha256": "be02cdc46dca82b36655ea0a418299ee8dd6c3055a2e8497fea701f3a55ea8a8",
+      "models": [
+        "claude-fable-5-1",
+        "claude-haiku-5-5"
+      ],
+      "number": 4
     },
     {
       "models": [],
@@ -124,6 +139,62 @@
     {
       "path": "forge-provision/BrowserbaseToolkit/iteration-2/eval-2-required-env/with_artifact@claude-haiku-5-5/run-1/grading.json",
       "sha256": "8e41ea49d4c004fcffe5787f262450e8d2deb40c074557cab0b83866c1261ab4"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-3/benchmark.json",
+      "sha256": "b6c9fb4af88e1032812d2e21b75b54685598d10c9cc9da3f7570342e3f6fee87"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-3/eval-1-stagehand-v4-init/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "1ed4c0c78eb6f4c730537cad75d9e94c5eadadc794f4ace5b43fa8fdc8cb7698"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-3/eval-1-stagehand-v4-init/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "bf3d2ed12bcd7e8b9ea17e971c09206956dd9d8b40efb8d68f87a8105d116e3c"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-3/eval-2-required-env/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "88ff18bc4ba06183ae9f585d2c58032ad69bbf37fa7f0cfe68ae594ee1a5cf72"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-3/eval-2-required-env/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "612a63da5bade651fc5873be72cb6c46ba7735c49bf8452100385ab0aeb2f3c6"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-4/benchmark.json",
+      "sha256": "1709b8e0e783b6aa5cf2679f057ee7f00217d59031ba568269f40d5e23ee8bca"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-4/eval-1-stagehand-v4-init/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "5d0db88d9fc230aadfd31ff8a71d9df9d1a953955e1d5210b45fbbc155347fc6"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-4/eval-1-stagehand-v4-init/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "d342a0d54a0886f9dbfbec8c6c9c12e5c308ed927561f9f4422e3db1e02040dc"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-4/eval-1-stagehand-v4-init/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "a17448730fa52b232cc96d02489247cbc1421baf7eec4a01aa8b576fc4c0fe15"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-4/eval-1-stagehand-v4-init/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "2cf870de5c8ed41649872ce3ddfb4affb82a7597eee154081dfc3b12a8ca365f"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-4/eval-2-required-env/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "c59d1d58b6e6a5c4912da95c6adcb53ce7d68bd8fd443075c491803a0ac6effb"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-4/eval-2-required-env/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "dd51bd0e4c1e9362e5958f3aa44c41148ae08345f24b9be2b9b38666205a31db"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-4/eval-2-required-env/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "190d9697e9ddb211033028006abf85e21063e8b00b74ea3c1b1be4797848cfef"
+    },
+    {
+      "path": "forge-provision/BrowserbaseToolkit/iteration-4/eval-2-required-env/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "bb6b0ca7b0ce3787f624ec75417f774dd718052d67bfe293fd49442d4ed732ac"
     }
   ]
 }
