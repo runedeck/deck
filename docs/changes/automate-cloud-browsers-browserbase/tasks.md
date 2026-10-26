@@ -10,6 +10,7 @@
 - [x] 1.6 The blocked page fallback in the canon, its trigger and four steps, and the Starters companion that keeps the canon under 100 lines
 - [x] 1.7 `INSTALL.md` in the Mintlify shape, bun only, and the Claude variant that reads the installed CLI state at load
 - [x] 1.8 Daily-use rework: a short canon routing to the Workflow companion, the Features companion, Defuddle for clean markdown, the Claude variant replacing the body with the read-page script, and the `INSTALL.md` schema hook
+- [x] 1.9 Keep a page address literal: single quotes in every command, no pre-approval for `read-page`, and a script guard that refuses a non-http address or one that contains the API key
 
 ## 2. Verification
 

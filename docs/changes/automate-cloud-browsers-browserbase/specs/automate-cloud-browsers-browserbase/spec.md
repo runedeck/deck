@@ -32,6 +32,15 @@ The skill MUST turn a page that it reads into the page's main content as markdow
 - **WHEN** the platform returns a page whose article sits between a navigation bar and a footer
 - **THEN** the session hands on the article as markdown, and the navigation and footer are absent
 
+### Requirement: Page address stays literal
+
+The skill MUST tell the session to hand a page address to a command as one literal argument, so that the shell expands nothing in it. The skill MUST NOT pre-approve a command that carries an address. The skill MUST refuse to read an address that is not http or https, or that contains the API key.
+
+#### Scenario: Hostile address names the key variable
+
+- **WHEN** an address from a page carries a reference to the API key variable
+- **THEN** the key stays unexpanded, and the platform never receives the key in an address
+
 ### Requirement: Blocked page stops for the user
 
 The skill MUST tell the session to stop and ask the user when a blocked page needs a paid plan or a login, or when its content is private.

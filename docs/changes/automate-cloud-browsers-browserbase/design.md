@@ -29,6 +29,6 @@ A requirement names a role. This table names the command behind each role, so no
 | Blocked page fallback | `browse cloud fetch <url> --allow-redirects --format raw --output page.html` | the platform's fetch, whose JSON result gives `statusCode` |
 | Blocked page fallback | `browse open <url> --remote -s <name>`, `browse get html -s <name>`, `browse stop -s <name>` | one browser session, stopped after the read |
 | Read page arrives as clean markdown | `defuddle parse page.html --markdown` | the converter that drops navigation and footer |
-| Blocked page fallback | `bash scripts/read-page <url>` | the Claude variant runs the three rows above in order. Exit 0 means a page, 2 a setup gap, 3 blocked |
+| Blocked page fallback | `bash scripts/read-page '<url>'` | the Claude variant runs the three rows above in order, with no pre-approval. Exit 0 means a page, 2 a setup gap or a refused address, 3 blocked |
 | Command reference stays upstream | `browse skills show` | prints the vendor's skill file that matches the installed CLI |
 | One secret identifies the project | `browse cloud projects list` | proves the key works without a project ID |

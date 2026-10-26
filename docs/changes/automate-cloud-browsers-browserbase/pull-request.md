@@ -7,7 +7,7 @@ A session's own fetch tool gets blocked: HTTP 403, a redirect it does not follow
 ## Changes
 
 - Add `runes/development/skills/BrowserbaseToolkit/` with `SKILL.md`, `Workflow.md`, `Features.md`, `StagehandV4.md`, `Starters.md`, `Troubleshooting.md`, and `INSTALL.md` in the Mintlify install.md shape.
-- Add `claude/SKILL.md` with `mode: replace`: it injects the installed tool paths and runs `scripts/read-page`, which tries the Fetch API, then one browser session that it always stops, and prints defuddled markdown.
+- Add `claude/SKILL.md` with `mode: replace`: it injects the installed tool paths and runs `scripts/read-page`, which tries the Fetch API, then one browser session that it always stops, and prints defuddled markdown. The variant pre-approves only the tool check: the session passes the address in single quotes, and the script refuses a non-http address or one that contains the API key.
 - Add the `mdschema-skill-install` hook to `.pre-commit-config.yaml`, which checks every skill `INSTALL.md` against `schemas/INSTALL.mdschema`.
 - Add `docs/changes/automate-cloud-browsers-browserbase/` with proposal, delta spec, design, tasks, `adr.md`, and this body, and one `CHANGELOG.md` line.
 

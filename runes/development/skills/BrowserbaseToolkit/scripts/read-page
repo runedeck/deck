@@ -2,7 +2,8 @@
 # Read one web page as clean markdown through Browserbase: the Fetch API
 # first, then one cloud browser session that is always stopped. Defuddle
 # turns the saved HTML into markdown on stdout. Status lines go to stderr.
-# Exit 0: markdown printed. Exit 2: usage, a missing tool, or no key.
+# Exit 0: markdown printed. Exit 2: usage, a missing tool, no key, or a
+# refused address.
 # Exit 3: Fetch and the browser session were both blocked or empty.
 set -uo pipefail
 
@@ -12,6 +13,15 @@ for tool in browse defuddle jq; do
     command -v "$tool" >/dev/null 2>&1 || { echo "read-page: $tool is missing, see INSTALL.md" >&2; exit 2; }
 done
 [ -n "${BROWSERBASE_API_KEY:-}" ] || { echo "read-page: BROWSERBASE_API_KEY is not set, see INSTALL.md" >&2; exit 2; }
+# A hostile address can carry the key after an unquoted shell expansion, so
+# refuse anything that is not plain http(s) or that contains the key itself.
+case "$url" in
+    http://* | https://*) ;;
+    *) echo "read-page: only http and https addresses are read" >&2; exit 2 ;;
+esac
+case "$url" in
+    *"$BROWSERBASE_API_KEY"*) echo "read-page: the address contains the API key, refusing to send it" >&2; exit 2 ;;
+esac
 
 work=$(mktemp -d)
 session="read-page-$$"

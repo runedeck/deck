@@ -1,6 +1,6 @@
 ---
 mode: replace
-allowed-tools: 'Bash(which -a browse defuddle jq 2>/dev/null | head -c 600), Bash(bash "${CLAUDE_SKILL_DIR}/scripts/read-page" *)'
+allowed-tools: 'Bash(which -a browse defuddle jq 2>/dev/null | head -c 600)'
 ---
 
 # BrowserbaseToolkit
@@ -18,12 +18,14 @@ the check did not run: run `which -a browse defuddle jq` yourself.
 Read the constraints in [`Workflow.md`](Workflow.md) before the first browser session.
 
 For a blocked page (HTTP 403, a redirect the fetch tool does not follow, or a summary instead of
-the page), run:
+the page), run this with the address in single quotes, and any `'` in it written as `%27`. The
+quotes stop the shell from expanding `$` or a backtick that a hostile address carries:
 
-`bash "${CLAUDE_SKILL_DIR}/scripts/read-page" <url>`
+`bash "${CLAUDE_SKILL_DIR}/scripts/read-page" '<url>'`
 
 The script checks the key, tries the Fetch API, then one browser session that it always stops, and
-prints the page as clean markdown. Exit 2 means a missing tool or key: do `INSTALL.md`. Exit 3
+prints the page as clean markdown. Exit 2 means a missing tool or key: do `INSTALL.md`. When its
+stderr says the address was refused, tell the user and do not read the page another way. Exit 3
 means the site blocked Browserbase too: tell the user. Any other exit: report its stderr. When the
 markdown shows a login form or private content, stop and ask the user.
 
