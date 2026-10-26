@@ -5,6 +5,7 @@
 - [x] 1.1 Point the three term definitions in `runes/core/skills/ReviewChange/SKILL.md` at the glossary pages by repository URL
 - [x] 1.2 Add the bundle sentence to `runes/core/rules/ConsultTheOntology.md`
 - [x] 1.3 Add the delta for `skill-term-links-survive-deployment` and the changelog line
+- [x] 1.4 Move the `AskUserQuestion` text of ReviewChange into a `claude/SKILL.md` variant, so the generic layer names no harness tool
 
 ## 2. Verification
 
