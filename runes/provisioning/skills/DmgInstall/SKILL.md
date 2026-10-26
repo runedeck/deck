@@ -13,7 +13,10 @@ channel releases). Pairs with a Brewfile tombstone comment explaining why the ap
 not a cask: see the HomebrewToolkit skill.
 
 Reference implementation: `$PROVISION_ROOT/scripts/install/cmux.sh`. Every new
-DMG-installed app should mirror its shape unless there is a specific reason to deviate.
+DMG-installed app should mirror its shape unless there is a specific reason to deviate. The shared
+steps live in `$PROVISION_ROOT/scripts/lib/dmg.sh`: the mount-point parse, the detach, the exit
+trap, and the copy through a temporary name. Source it, and give the new script a `--dry-run` that
+stops before any download, mount, or copy.
 
 ## Prerequisites
 
