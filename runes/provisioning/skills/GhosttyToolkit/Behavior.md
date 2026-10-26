@@ -5,7 +5,8 @@
 ```toml
 keybind = global:cmd+§=toggle_quick_terminal
 quick-terminal-position = top
-quick-terminal-size = 100%,40%           # full width, 40% height
+# full width, 40% height
+quick-terminal-size = 100%,40%
 quick-terminal-screen = mouse
 quick-terminal-animation-duration = 0.12
 quick-terminal-autohide = true
@@ -24,7 +25,8 @@ quick-terminal equivalent. Ghostty stays installed for this drop-down alone.
 ```toml
 shell-integration = detect
 shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
-scrollback-limit = 100000000             # ~100MB; Claude Code emits a lot
+# ~100MB; Claude Code emits a lot
+scrollback-limit = 100000000
 ```
 
 `ssh-terminfo` installs `xterm-ghostty` on remote hosts on first SSH connection. `ssh-env`
@@ -34,7 +36,8 @@ no manual `TERM=xterm-256color ssh ...`.
 ## OSC 8 hyperlink hover
 
 ```toml
-link-previews = osc8                     # hover preview only for explicit OSC 8 links
+# hover preview only for explicit OSC 8 links
+link-previews = osc8
 ```
 
 Default `true` regex-scans every visible line on cursor move, which is noticeable in long buffers.
@@ -45,10 +48,13 @@ build tools). Plain text URLs stay Cmd-clickable. Only the popover hover preview
 
 ```toml
 mouse-hide-while-typing = true
-mouse-shift-capture = false              # Shift+click escapes to tmux/vim selection
+# Shift+click escapes to tmux/vim selection
+mouse-shift-capture = false
 copy-on-select = clipboard
-clipboard-paste-protection = true        # warn on multi-line / control-char paste
-clipboard-paste-bracketed-safe = true    # auto-trust bracketed-paste-aware apps
+# warn on multi-line / control-char paste
+clipboard-paste-protection = true
+# auto-trust bracketed-paste-aware apps
+clipboard-paste-bracketed-safe = true
 ```
 
 `mouse-shift-capture = false` is load-bearing for tmux: it lets Shift+click bypass tmux's mouse-on
@@ -79,8 +85,10 @@ shell-integration), clear (`cmd+k`), command palette (`cmd+shift+p`).
 `ghostty +list-keybinds --default` enumerates the full set.
 
 ```toml
-keybind = cmd+shift+r=reload_config      # over Ghostty's default cmd+shift+,
-keybind = shift+enter=text:\n            # multi-line input when kitty negotiation misses
+# over Ghostty's default cmd+shift+,
+keybind = cmd+shift+r=reload_config
+# multi-line input when kitty negotiation misses
+keybind = shift+enter=text:\n
 ```
 
 `shift+enter=text:\n` is the workaround for Claude Code multi-line input under older Claude Code,

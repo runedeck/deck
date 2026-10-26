@@ -61,7 +61,8 @@ Ghostty has no plugin system. The extension points:
 Machine-local pattern:
 
 ```toml
-config-file = ?local.conf                # silent if absent; for laptop-vs-desktop font-size tweaks
+# silent if absent; for laptop-vs-desktop font-size tweaks
+config-file = ?local.conf
 ```
 
 ### Reload after edit
