@@ -12,7 +12,7 @@ The *[analysis tool][ANALYSISTOOL]* reads the file. A second [analysis tool][ANA
 [ANALYSISTOOL]: ../../../docs/specs/glossary/analysis-tool.md
 ```
 
-Later uses in the same file are plain words. A later link is allowed and stays plain. Define each tag once at the end of the file as a reference definition that points at the page by a relative path. The tag is the label in upper case with every non-letter removed. Plain italics are emphasis and mean nothing more.
+Later uses in the same file are plain words. A later link is allowed and stays plain. Define each tag once at the end of the file as a reference definition that points at the page by a relative path. A skill is deployed as a bundle, and a relative path out of the bundle breaks after deployment, so a skill file points at the page by its repository URL, `https://github.com/runedeck/deck/blob/main/docs/specs/glossary/<term>.md`. The tag is the label in upper case with every non-letter removed. Plain italics are emphasis and mean nothing more.
 
 Why: a model given a bare word takes its everyday meaning, and the guess reads as fact. A link puts the definition one step away and keeps one home for it. The validator reports a term that points at no entry.
 
