@@ -34,7 +34,9 @@ directory (`cd "$(mktemp -d)"`), then:
 ## Drive a page
 
 Open a session, list the page's elements, act on them, and stop the session. `browse snapshot`
-lists each element with a ref such as `[0-12]`, which `click` and `fill` take.
+lists each element with a ref such as `[0-12]`, which `click` and `fill` take. `browse open` prints
+`browserbaseSessionUrl`, the live view and later the replay of the session. Give that link to the
+user as printed, with the full session ID.
 
 ```sh
 browse open '<url>' --remote -s work
