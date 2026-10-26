@@ -1,7 +1,7 @@
 # Troubleshooting
 
 Symptom-first fixes for Browserbase failures whose error message points at the wrong cause. The
-upstream [`Reference.md`](Reference.md) covers CLI mechanics such as a missing key or an unknown
+upstream reference (<https://browserbase.com/SKILL.md>) covers CLI mechanics such as a missing key or an unknown
 flag. This file covers the traps where the message misleads.
 
 - **"API key not valid" or "Incorrect API key provided" from a model call, while the browser

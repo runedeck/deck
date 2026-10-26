@@ -11,7 +11,7 @@ Browserbase runs real Chrome browsers in the cloud. Your code or your agent driv
 browser runs on your machine. The `browse` CLI talks to the platform. Stagehand drives a page with
 plain-language instructions where selectors break.
 
-[`Reference.md`](Reference.md) is the adopted upstream command reference.
+The upstream command reference is <https://browserbase.com/SKILL.md>.
 [`Troubleshooting.md`](Troubleshooting.md) maps misleading errors to their real causes.
 
 ## Prerequisites
@@ -88,8 +88,8 @@ on the V4 SDK.
 
 ## References
 
-- [`Reference.md`](Reference.md): the adopted upstream skill, pinned in
-  `.provenance/Reference.md.yaml`. Upstream: <https://browserbase.com/SKILL.md>
+- Upstream command reference: <https://browserbase.com/SKILL.md>. A local copy waits for its
+  adoption review, and the deployer leaves it out until then.
 - Browserbase docs: <https://docs.browserbase.com>
 - Stagehand V4 docs index: <https://docs.stagehand.dev/llms.txt>
 
