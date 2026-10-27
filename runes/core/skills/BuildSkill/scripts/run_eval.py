@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-# Based on skill-creator/scripts/run_eval.py from anthropics/skills at commit
-# b9e19e6, under the Apache License 2.0. Changed by runedeck. See
-# THIRD_PARTY_NOTICES.md at the skill root.
-"""Run trigger evaluation for a skill description.
+"""Measure how often the agent picks a skill for each query of an eval set.
 
-Tests whether a skill's description causes the harness to trigger (read the
-skill) for a set of queries. Outputs results as JSON.
+Every query is probed ``runs_per_query`` times inside a throwaway project
+directory, optionally across a pool of worker processes. The per-query
+trigger rate is then compared with a threshold to decide pass or fail.
 
-Trigger probes run inside an isolated temporary project directory so the
-target repository is never written to.
+Usage, from the skill directory:
+
+    python3 -m scripts.run_eval --eval-set evals.json --skill-path ../my-skill
 """
 
 import argparse
@@ -17,38 +16,84 @@ import re
 import shutil
 import sys
 import tempfile
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor
+from dataclasses import dataclass
 from pathlib import Path
 
 from scripts.harness import get_harness
 from scripts.utils import parse_skill_md
 
-SKILL_NAME_PATTERN = re.compile(r"^[A-Za-z0-9]+(?:[-_][A-Za-z0-9]+)*$")
 SKILL_NAME_MAX_LENGTH = 64
+_SKILL_NAME_PATTERN = re.compile(r"^[A-Za-z0-9]+(?:[-_][A-Za-z0-9]+)*$")
+QUERY_DISPLAY_WIDTH = 70
 
 
-def run_single_query(
-    query: str,
-    skill_name: str,
-    skill_description: str,
-    timeout: int,
-    project_root: str,
-    model: str | None = None,
-    harness_name: str = "claude",
-) -> bool:
-    """Probe one query through the harness adapter and report triggering."""
-    harness = get_harness(harness_name)
-    probe = getattr(harness, "probe_trigger", None)
-    if probe is None:
-        raise ValueError(f"Harness '{harness_name}' does not support trigger evals")
-    return probe(
-        query=query,
-        skill_name=skill_name,
-        skill_description=skill_description,
-        project_root=project_root,
-        timeout=timeout,
-        model=model,
-    )
+@dataclass(frozen=True)
+class ProbeJob:
+    """One probe of one query; picklable so a process pool can carry it."""
+
+    query: str
+    skill_name: str
+    description: str
+    project_root: str
+    timeout: int
+    model: str | None
+    harness_name: str
+
+
+def validate_skill_name(skill_name: str) -> None:
+    """Raise ValueError unless the name fits the allowed shape."""
+    if len(skill_name) > SKILL_NAME_MAX_LENGTH:
+        raise ValueError(
+            f"skill name {skill_name!r} is longer than {SKILL_NAME_MAX_LENGTH} characters"
+        )
+    if not _SKILL_NAME_PATTERN.match(skill_name):
+        raise ValueError(
+            f"skill name {skill_name!r} must be groups of letters and digits "
+            "joined by single '-' or '_' characters"
+        )
+
+
+def validate_eval_set(eval_set: list[dict]) -> None:
+    """Raise ValueError on malformed items or repeated query text."""
+    seen: set[str] = set()
+    for position, item in enumerate(eval_set):
+        if not isinstance(item, dict) or "query" not in item or "should_trigger" not in item:
+            raise ValueError(
+                f"eval set item {position} must be an object with 'query' and 'should_trigger'"
+            )
+        query = item["query"]
+        if not isinstance(query, str):
+            # A malformed eval set is bad input; callers report every input error as ValueError.
+            raise ValueError(f"eval set item {position}: 'query' must be a string")  # noqa: TRY004
+        if query in seen:
+            raise ValueError(f"duplicate query in eval set: {query!r}")
+        seen.add(query)
+
+
+def run_probe(job: ProbeJob) -> bool:
+    """Run one probe. A failure counts as not picked and is reported on stderr."""
+    try:
+        harness = get_harness(job.harness_name)
+        picked = harness.probe_trigger(
+            job.query,
+            job.skill_name,
+            job.description,
+            job.project_root,
+            job.timeout,
+            model=job.model,
+        )
+        return bool(picked)
+    # Any probe failure counts as not picked, so one broken run cannot stop the eval.
+    except Exception as exc:  # noqa: BLE001
+        shown = job.query[:QUERY_DISPLAY_WIDTH]
+        print(f"warning: probe failed for {shown!r}: {exc}", file=sys.stderr)
+        return False
+
+
+def shorten_query(query: str, width: int = QUERY_DISPLAY_WIDTH) -> str:
+    """Return the query on one line, cut to ``width`` characters."""
+    return " ".join(query.split())[:width]
 
 
 def run_eval(
@@ -62,143 +107,135 @@ def run_eval(
     model: str | None = None,
     harness_name: str = "claude",
 ) -> dict:
-    """Run the full eval set inside an isolated project directory."""
-    if len(skill_name) > SKILL_NAME_MAX_LENGTH or not SKILL_NAME_PATTERN.match(skill_name):
-        raise ValueError(
-            f"Invalid skill name '{skill_name}': must match {SKILL_NAME_PATTERN.pattern}"
-            f" and stay within {SKILL_NAME_MAX_LENGTH} characters"
-        )
+    """Probe every query and report trigger rates against the threshold."""
+    validate_eval_set(eval_set)
+    validate_skill_name(skill_name)
+    if runs_per_query < 1:
+        raise ValueError("runs_per_query must be at least 1")
 
-    get_harness(harness_name)
+    harness = get_harness(harness_name)
+    if not hasattr(harness, "probe_trigger"):
+        raise ValueError(f"harness {harness_name!r} does not support trigger probes")
 
-    isolated_root = Path(tempfile.mkdtemp(prefix="skill-trigger-eval-"))
+    project_root = tempfile.mkdtemp(prefix="trigger-eval-")
     try:
-        (isolated_root / ".claude" / "commands").mkdir(parents=True)
-        return _run_eval_in_root(
-            eval_set=eval_set,
-            skill_name=skill_name,
-            description=description,
-            num_workers=num_workers,
-            timeout=timeout,
-            project_root=isolated_root,
-            runs_per_query=runs_per_query,
-            trigger_threshold=trigger_threshold,
-            model=model,
-            harness_name=harness_name,
-        )
-    finally:
-        shutil.rmtree(isolated_root, ignore_errors=True)
-
-
-def _run_eval_in_root(
-    eval_set: list[dict],
-    skill_name: str,
-    description: str,
-    num_workers: int,
-    timeout: int,
-    project_root: Path,
-    runs_per_query: int,
-    trigger_threshold: float,
-    model: str | None,
-    harness_name: str,
-) -> dict:
-    results = []
-
-    with ProcessPoolExecutor(max_workers=num_workers) as executor:
-        future_to_info = {}
-        for item in eval_set:
-            for run_idx in range(runs_per_query):
-                future = executor.submit(
-                    run_single_query,
-                    item["query"],
-                    skill_name,
-                    description,
-                    timeout,
-                    str(project_root),
-                    model,
-                    harness_name,
-                )
-                future_to_info[future] = (item, run_idx)
-
-        query_triggers: dict[str, list[bool]] = {}
-        query_items: dict[str, dict] = {}
-        for future in as_completed(future_to_info):
-            item, _ = future_to_info[future]
-            query = item["query"]
-            query_items[query] = item
-            if query not in query_triggers:
-                query_triggers[query] = []
-            try:
-                query_triggers[query].append(future.result())
-            # Worker failures become failed query results.
-            except Exception as error:  # noqa: BLE001
-                print(f"Warning: query failed: {error}", file=sys.stderr)
-                query_triggers[query].append(False)
-
-    for query, triggers in query_triggers.items():
-        item = query_items[query]
-        trigger_rate = sum(triggers) / len(triggers)
-        should_trigger = item["should_trigger"]
-        if should_trigger:
-            did_pass = trigger_rate >= trigger_threshold
+        (Path(project_root) / ".claude" / "commands").mkdir(parents=True, exist_ok=True)
+        jobs = [
+            ProbeJob(
+                query=item["query"],
+                skill_name=skill_name,
+                description=description,
+                project_root=project_root,
+                timeout=timeout,
+                model=model,
+                harness_name=harness_name,
+            )
+            for item in eval_set
+            for _ in range(runs_per_query)
+        ]
+        if num_workers > 1:
+            with ProcessPoolExecutor(max_workers=num_workers) as pool:
+                outcomes = list(pool.map(run_probe, jobs))
         else:
-            did_pass = trigger_rate < trigger_threshold
-        results.append({
-            "query": query,
-            "should_trigger": should_trigger,
-            "trigger_rate": trigger_rate,
-            "triggers": sum(triggers),
-            "runs": len(triggers),
-            "pass": did_pass,
-        })
+            outcomes = [run_probe(job) for job in jobs]
+    finally:
+        shutil.rmtree(project_root, ignore_errors=True)
 
-    passed = sum(1 for r in results if r["pass"])
-    total = len(results)
+    results = []
+    for position, item in enumerate(eval_set):
+        picks = outcomes[position * runs_per_query : (position + 1) * runs_per_query]
+        triggers = sum(1 for picked in picks if picked)
+        rate = triggers / runs_per_query
+        should_trigger = bool(item["should_trigger"])
+        passed = rate >= trigger_threshold if should_trigger else rate < trigger_threshold
+        results.append(
+            {
+                "query": item["query"],
+                "should_trigger": should_trigger,
+                "trigger_rate": rate,
+                "triggers": triggers,
+                "runs": runs_per_query,
+                "pass": passed,
+            }
+        )
 
+    passed_count = sum(1 for result in results if result["pass"])
     return {
         "skill_name": skill_name,
         "description": description,
         "results": results,
         "summary": {
-            "total": total,
-            "passed": passed,
-            "failed": total - passed,
+            "total": len(results),
+            "passed": passed_count,
+            "failed": len(results) - passed_count,
         },
     }
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Run trigger evaluation for a skill description")
-    parser.add_argument("--eval-set", required=True, help="Path to eval set JSON file")
-    parser.add_argument("--skill-path", required=True, help="Path to skill directory")
-    parser.add_argument("--description", default=None, help="Override description to test")
-    parser.add_argument("--num-workers", type=int, default=10, help="Number of parallel workers")
-    parser.add_argument("--timeout", type=int, default=30, help="Timeout per query in seconds")
-    parser.add_argument("--runs-per-query", type=int, default=3, help="Number of runs per query")
-    parser.add_argument("--trigger-threshold", type=float, default=0.5, help="Trigger rate threshold")
-    parser.add_argument("--model", default=None, help="Model to use (default: the harness's configured model)")
-    parser.add_argument("--harness", default="claude", help="Harness adapter to use (default: claude)")
-    parser.add_argument("--verbose", action="store_true", help="Print progress to stderr")
-    args = parser.parse_args()
+def print_verbose_summary(result: dict, stream=None) -> None:
+    """Print the tested description, the pass count, and one line per query."""
+    stream = stream or sys.stderr
+    summary = result["summary"]
+    print(f"Description under test: {result['description']}", file=stream)
+    print(f"Passed {summary['passed']}/{summary['total']}", file=stream)
+    for entry in result["results"]:
+        status = "PASS" if entry["pass"] else "FAIL"
+        expected = "should trigger" if entry["should_trigger"] else "should not trigger"
+        print(
+            f"  {status}  {entry['triggers']}/{entry['runs']} picks  "
+            f"{expected:<18}  {shorten_query(entry['query'])}",
+            file=stream,
+        )
 
-    eval_set = json.loads(Path(args.eval_set).read_text(encoding="utf-8"))
-    skill_path = Path(args.skill_path)
 
-    if not (skill_path / "SKILL.md").exists():
-        print(f"Error: No SKILL.md found at {skill_path}", file=sys.stderr)
+def load_eval_set(path: Path) -> list[dict]:
+    """Read an eval set file; raise ValueError when it is not a JSON list."""
+    with Path(path).open(encoding="utf-8") as handle:
+        data = json.load(handle)
+    if not isinstance(data, list):
+        # A malformed eval set is bad input; the command line reports it as ValueError.
+        raise ValueError(f"{path}: the eval set must be a JSON array")  # noqa: TRY004
+    return data
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Measure how often a skill triggers for each eval query"
+    )
+    parser.add_argument("--eval-set", type=Path, required=True, help="eval set JSON file")
+    parser.add_argument("--skill-path", type=Path, required=True, help="skill directory")
+    parser.add_argument(
+        "--description",
+        default=None,
+        help="test this description instead of the one in SKILL.md",
+    )
+    parser.add_argument("--num-workers", type=int, default=10)
+    parser.add_argument("--timeout", type=int, default=30, help="seconds per probe")
+    parser.add_argument("--runs-per-query", type=int, default=3)
+    parser.add_argument("--trigger-threshold", type=float, default=0.5)
+    parser.add_argument("--model", default=None)
+    parser.add_argument("--harness", default="claude")
+    parser.add_argument("--verbose", action="store_true")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> None:
+    args = build_parser().parse_args(argv)
+
+    if not (args.skill_path / "SKILL.md").is_file():
+        print(f"error: no SKILL.md in {args.skill_path}", file=sys.stderr)
         sys.exit(1)
 
-    name, original_description, _content = parse_skill_md(skill_path)
-    description = args.description or original_description
-
-    if args.verbose:
-        print(f"Evaluating: {description}", file=sys.stderr)
-
     try:
-        output = run_eval(
-            eval_set=eval_set,
-            skill_name=name,
-            description=description,
+        skill_name, frontmatter_description, _ = parse_skill_md(args.skill_path)
+        eval_set = load_eval_set(args.eval_set)
+        description = (
+            args.description if args.description is not None else frontmatter_description
+        )
+        result = run_eval(
+            eval_set,
+            skill_name,
+            description,
             num_workers=args.num_workers,
             timeout=args.timeout,
             runs_per_query=args.runs_per_query,
@@ -206,19 +243,13 @@ def main():
             model=args.model,
             harness_name=args.harness,
         )
-    except ValueError as e:
-        print(f"Error: {e}", file=sys.stderr)
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
         sys.exit(1)
 
     if args.verbose:
-        summary = output["summary"]
-        print(f"Results: {summary['passed']}/{summary['total']} passed", file=sys.stderr)
-        for r in output["results"]:
-            status = "PASS" if r["pass"] else "FAIL"
-            rate_str = f"{r['triggers']}/{r['runs']}"
-            print(f"  [{status}] rate={rate_str} expected={r['should_trigger']}: {r['query'][:70]}", file=sys.stderr)
-
-    print(json.dumps(output, indent=2))
+        print_verbose_summary(result)
+    print(json.dumps(result, indent=2))
 
 
 if __name__ == "__main__":

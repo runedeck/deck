@@ -68,6 +68,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- Change BuildSkill's trigger-eval scripts and review page to a clean-room rewrite with tests, so the deck carries no copied skill-creator code.
 - Change the Dotfiles Scanner to read acknowledgements from `.auditignore.yaml` and to run the detector from a checked copy in the scratch directory (scanner-routines-from-deck).
 - Routine notifications open with the result and whether to act, group details in bullets, end with one next step, and show health only when degraded (routine-prompts-from-deck).
 - Require `### Consequences` under `## Decision Outcome` with `[+]` and `[-]` items, as the runeADR template states, and convert every record (decision-records-match-template).
@@ -101,7 +102,6 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Fixed
 
-- Fix the Apache License 2.0 terms for the skill-creator material in BuildSkill: license text, notices, and provenance at anthropics/skills `b9e19e6`.
 - Fix the Dotfiles Scanner to fetch the whole branch history and report a scan that stops at a shallow boundary as incomplete (scanner-routines-from-deck).
 - Fix a Dotfiles notification bullet to point to the first file before a commit message (scanner-routines-from-deck).
 - Fix the Repository Digest and Weekly Ceremony Audit to end with the notification text only (routine-prompts-from-deck).

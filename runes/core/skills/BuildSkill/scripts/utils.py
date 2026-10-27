@@ -1,54 +1,97 @@
-# Based on skill-creator/scripts/utils.py from anthropics/skills at commit
-# b9e19e6, under the Apache License 2.0. Changed by runedeck. See
-# THIRD_PARTY_NOTICES.md at the skill root.
-"""Shared utilities for build-skill scripts."""
+"""Shared helpers for the trigger-evaluation scripts.
 
+The only helper so far reads a skill's frontmatter. The standard library has
+no YAML parser, so the frontmatter is read by hand. That is enough for the
+toolkit's needs: top-level keys with plain, quoted, or block-scalar values.
+"""
+
+import re
 from pathlib import Path
+
+FRONTMATTER_FENCE = "---"
+
+# A top-level key starts at column zero; indented keys belong to nested maps.
+_TOP_LEVEL_KEY = re.compile(r"^([A-Za-z0-9_.-]+):(.*)$")
+_BLOCK_SCALAR_INDICATORS = frozenset({">", "|", ">-", "|-", ">+", "|+"})
+
+
+def _unquote(value: str) -> str:
+    """Remove one layer of matching quotes and undo the escapes they allow."""
+    if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+        return value[1:-1].replace('\\"', '"').replace("\\\\", "\\")
+    if len(value) >= 2 and value[0] == "'" and value[-1] == "'":
+        return value[1:-1].replace("''", "'")
+    return value
+
+
+def _read_block_scalar(lines: list[str], start: int) -> tuple[str, int]:
+    """Join the indented lines that follow a block indicator with single spaces.
+
+    Returns the joined text and the index of the first line that is not part
+    of the block.
+    """
+    pieces: list[str] = []
+    index = start
+    while index < len(lines):
+        candidate = lines[index]
+        if candidate.strip() == "":
+            index += 1
+            continue
+        if not candidate[0].isspace():
+            break
+        pieces.append(candidate.strip())
+        index += 1
+    return " ".join(pieces), index
+
+
+def parse_frontmatter_fields(lines: list[str]) -> dict[str, str]:
+    """Return the top-level scalar fields found in frontmatter lines."""
+    fields: dict[str, str] = {}
+    index = 0
+    while index < len(lines):
+        match = _TOP_LEVEL_KEY.match(lines[index])
+        index += 1
+        if match is None:
+            continue
+        key = match.group(1)
+        raw_value = match.group(2).strip()
+        if raw_value in _BLOCK_SCALAR_INDICATORS:
+            fields[key], index = _read_block_scalar(lines, index)
+        else:
+            fields[key] = _unquote(raw_value)
+    return fields
 
 
 def parse_skill_md(skill_path: Path) -> tuple[str, str, str]:
-    """Parse a SKILL.md file, returning (name, description, full_content)."""
-    content = (skill_path / "SKILL.md").read_text(encoding="utf-8")
-    lines = content.split("\n")
+    """Return the name, the description, and the full text of a SKILL.md file.
 
-    if lines[0].strip() != "---":
-        raise ValueError("SKILL.md missing frontmatter (no opening ---)")
+    Raises ValueError when the frontmatter fences are missing or when the
+    name or description is missing or empty.
+    """
+    skill_md = Path(skill_path) / "SKILL.md"
+    content = skill_md.read_text(encoding="utf-8")
+    lines = content.splitlines()
 
-    end_idx = None
-    for i, line in enumerate(lines[1:], start=1):
-        if line.strip() == "---":
-            end_idx = i
-            break
+    if not lines or lines[0] != FRONTMATTER_FENCE:
+        raise ValueError(
+            f"{skill_md}: the file must begin with a '{FRONTMATTER_FENCE}' line "
+            "that opens the frontmatter"
+        )
+    closing = next(
+        (i for i in range(1, len(lines)) if lines[i] == FRONTMATTER_FENCE), None
+    )
+    if closing is None:
+        raise ValueError(
+            f"{skill_md}: no '{FRONTMATTER_FENCE}' line closes the frontmatter"
+        )
 
-    if end_idx is None:
-        raise ValueError("SKILL.md missing frontmatter (no closing ---)")
-
-    name = ""
-    description = ""
-    frontmatter_lines = lines[1:end_idx]
-    i = 0
-    while i < len(frontmatter_lines):
-        line = frontmatter_lines[i]
-        if line.startswith("name:"):
-            name = line[len("name:"):].strip().strip('"').strip("'")
-        elif line.startswith("description:"):
-            value = line[len("description:"):].strip()
-            # Handle YAML multiline indicators (>, |, >-, |-)
-            if value in (">", "|", ">-", "|-"):
-                continuation_lines: list[str] = []
-                i += 1
-                while i < len(frontmatter_lines) and (frontmatter_lines[i].startswith("  ") or frontmatter_lines[i].startswith("\t")):
-                    continuation_lines.append(frontmatter_lines[i].strip())
-                    i += 1
-                description = " ".join(continuation_lines)
-                continue
-            else:
-                description = value.strip('"').strip("'")
-        i += 1
-
+    fields = parse_frontmatter_fields(lines[1:closing])
+    name = fields.get("name", "").strip()
+    description = fields.get("description", "").strip()
     if not name:
-        raise ValueError("SKILL.md frontmatter has an empty 'name'")
+        raise ValueError(f"{skill_md}: the frontmatter needs a non-empty 'name'")
     if not description:
-        raise ValueError("SKILL.md frontmatter has an empty 'description'")
-
+        raise ValueError(
+            f"{skill_md}: the frontmatter needs a non-empty 'description'"
+        )
     return name, description, content
