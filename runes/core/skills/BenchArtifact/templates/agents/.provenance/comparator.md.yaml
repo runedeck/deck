@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BenchArtifact/templates/agents/comparator.md
     digest:
-      sha256: 696b4ebb73a0fe7b408372157488d029bd9046ac0771242ba406cea7077c251b
+      sha256: f20e5bb049bbf43a344f1efe86bd0cbf37c0f2443662e5addaaa0c29880b14eb
   predicate:
     buildDefinition:
       buildType: adopt/v1

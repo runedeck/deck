@@ -4,7 +4,7 @@ provenance:
   subject:
   - name: skills/BuildSkill/scripts/package_skill.py
     digest:
-      sha256: cf466be3e2be84f16031ee8af16a986ef2f303c8101e724ba534a5b632a584c7
+      sha256: ed85c995f94cf72deda331640f20759bb3a6f48ea99e57dd7acfb99383483c9c
   predicate:
     buildDefinition:
       buildType: adopt/v1

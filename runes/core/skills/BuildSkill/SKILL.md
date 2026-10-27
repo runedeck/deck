@@ -8,8 +8,6 @@ metadata:
 
 # BuildSkill
 
-<!-- Based on skill-creator/SKILL.md from anthropics/skills at commit b9e19e6, under the Apache License 2.0. Changed by runedeck. See THIRD_PARTY_NOTICES.md at the skill root. -->
-
 Create, validate, evaluate skills and iterate on improving them.
 
 The work routes through the four workflows under Instructions: create, validate, evaluate, improve discovery. Topic companions carry the conventions those workflows draw on, and a working evaluation harness ships beside this file. Both are described under References. Load only what the current task needs.

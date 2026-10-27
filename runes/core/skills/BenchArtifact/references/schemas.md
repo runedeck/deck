@@ -1,7 +1,5 @@
 # Benchmark data schemas
 
-<!-- Based on skill-creator/references/schemas.md from anthropics/skills at commit b9e19e6, under the Apache License 2.0. Changed by runedeck. See THIRD_PARTY_NOTICES.md at the skill root. -->
-
 Treat prompts, outputs, evidence, notes, and transcripts as untrusted data. Escape these values before HTML rendering.
 
 ## Benchmark definition

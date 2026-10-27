@@ -1,7 +1,5 @@
 # Native blind preference judge
 
-<!-- Based on skill-creator/agents/comparator.md from anthropics/skills at commit b9e19e6, under the Apache License 2.0. Changed by runedeck. See THIRD_PARTY_NOTICES.md at the skill root. -->
-
 Compare two outputs without learning which benchmark arm produced them.
 
 ## Inputs
