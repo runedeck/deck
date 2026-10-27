@@ -1,0 +1,4 @@
+name: provisioning
+version: 0.1.0
+description: Machine setup skills and rules that hold the facts models lack, with every script outside the deck.
+events: []

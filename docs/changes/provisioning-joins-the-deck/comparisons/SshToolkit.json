@@ -1,0 +1,121 @@
+{
+  "cases": [
+    {
+      "id": "1",
+      "name": "signing-scripts-order",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "fail"
+        }
+      }
+    },
+    {
+      "id": "2",
+      "name": "second-yubikey-names",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "fail"
+        }
+      }
+    }
+  ],
+  "iterations": [
+    {
+      "artifact_sha256": "a62d268d791c6d0c8e289652f8fb7f624740d31b993336d55807cbe7f7b58f65",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "number": 1
+    },
+    {
+      "artifact_sha256": "a62d268d791c6d0c8e289652f8fb7f624740d31b993336d55807cbe7f7b58f65",
+      "models": [
+        "claude-fable-5-1",
+        "claude-haiku-5-5"
+      ],
+      "number": 2
+    }
+  ],
+  "models": [
+    "claude-fable-5-1",
+    "claude-haiku-5-5",
+    "claude-opus-5-5"
+  ],
+  "rune": "SshToolkit",
+  "sources": [
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-1/benchmark.json",
+      "sha256": "ad354e273e7ac63ffaf2ea5c067fd74866354a00cc8ba5b84841908553447e07"
+    },
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-1/eval-1-signing-scripts-order/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "cc7602691a8c8cdade79fcf209be36643b31fce04bcf6a4a4fca4f442afc2f9f"
+    },
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-1/eval-1-signing-scripts-order/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "d4f7d3df477789921023ed9e5fb5c615957c3dabbf7b03152918ce36ee2e9174"
+    },
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-1/eval-2-second-yubikey-names/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "6595ad0dfea09886fcc5f2e69b8daed03b3867d3048a04e1e3ef71178fdcbb3c"
+    },
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-1/eval-2-second-yubikey-names/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "cd8c644c7938bf2a4a121dec30212a1728004272af2a2567d258792c025ebb97"
+    },
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-2/benchmark.json",
+      "sha256": "0a26a065ef025a3780a38760eb5b73ce6fc43d5a30253cc0d1995294398d65ae"
+    },
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-2/eval-1-signing-scripts-order/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "0a03550148820909a8c96b212e9705cec46a3a313a4b48e6897f79ca3e82e61b"
+    },
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-2/eval-1-signing-scripts-order/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "7f185bbf69f9a0e698894e2d90e83f29b229aad07b41a671d6f5310cf986367c"
+    },
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-2/eval-1-signing-scripts-order/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "ab384414244b4746d53ee01f42f725c224c3808d0006c36b4da3efba0d53a3fb"
+    },
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-2/eval-1-signing-scripts-order/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "5ae448a0a5bf2120224f5bb6420c2a177100defb73c7de66e2c34a1a5da00c2f"
+    },
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-2/eval-2-second-yubikey-names/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "f5c1f14617a19a288e433955254d3235432bfa9f0bd33c9f05fb93dd885e9c1f"
+    },
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-2/eval-2-second-yubikey-names/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "dbbaf30aa954f502e2ca76c051b3c99e953aeb0b139a66ffeb0c1eb0d72e77ee"
+    },
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-2/eval-2-second-yubikey-names/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "d6b0170951700c83890b58d7fe56575b56f7a39f765429af29ee174ac95d768f"
+    },
+    {
+      "path": "forge-provision/SshToolkit-v2/iteration-2/eval-2-second-yubikey-names/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "67cb7aa882c971e52505163170a0f496675ff09bd3a85e8a3c071f5e4a986e0a"
+    }
+  ]
+}

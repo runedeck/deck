@@ -1,0 +1,23 @@
+ STORYBOARD · provisioning-joins-the-deck · SWARM · adr proposed
+ ▮ done  ▯ open  ◆ waits on you  ◇ yours, later
+╭──────────────────────────────────────────────────────────────────────────╮
+│ CHANGE · swarm                                                tasks 5/26 │
+│ prompt ✓ · pushback ✓ · specify ✓ · isolate ✓ · [swarm] · gates ·        │
+│ skim · lanes · babysit · approve · extract · recycle                     │
+│ ▮▮▮▮▮▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯▯  19%                                          │
+╰──────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────╮
+│ TASKS                                                         6 sections │
+│ 1 module          ▯▯▯▯    0/4  next 1.1 module shell, defaults, schemas  │
+│ 2 whole skills    ▯▯▯▯▯   0/5  next 2.1 move BrowserbaseToolkit          │
+│ 3 rewritten runes ▯▯▯▯▯▯▯ 0/7  next 3.1 rewrite GpgToolkit               │
+│ 4 codebase        ▮▮▮▮▯   4/5  next 4.4 Multica drift check        ◆     │
+│ 5 retirement      ▮▯▯     1/3  next 5.1 personal-data review       ◇     │
+│ 6 verification    ▯▯      0/2  next 6.1 validators, combined tree        │
+╰──────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────╮
+│ OWNER · waiting                                              2 asks open │
+│ ◆ read the private Multica script   ◆ approve 96 comparison runs         │
+│ ◇ personal-data review              ◇ archive forge-provision, 12 PRs    │
+╰──────────────────────────────────────────────────────────────────────────╯
+ ▸ this turn  tick 4.1 4.2 4.3 4.5 5.3 · fan out 1.x to 3.x · 4 fable, 4 opus

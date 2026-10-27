@@ -1,0 +1,121 @@
+{
+  "cases": [
+    {
+      "id": "1",
+      "name": "excluded-commands-home",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "fail"
+        }
+      }
+    },
+    {
+      "id": "2",
+      "name": "proxy-route-check",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "pass"
+        }
+      }
+    }
+  ],
+  "iterations": [
+    {
+      "artifact_sha256": "d91b7a394242e1382afa5eac8557a1be198b6662136080a656145bf044c0f40b",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "number": 1
+    },
+    {
+      "artifact_sha256": "d91b7a394242e1382afa5eac8557a1be198b6662136080a656145bf044c0f40b",
+      "models": [
+        "claude-fable-5-1",
+        "claude-haiku-5-5"
+      ],
+      "number": 2
+    }
+  ],
+  "models": [
+    "claude-fable-5-1",
+    "claude-haiku-5-5",
+    "claude-opus-5-5"
+  ],
+  "rune": "HarnessSecurity",
+  "sources": [
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-1/benchmark.json",
+      "sha256": "2c594c76556a47d1488657c34b8b115978e4c97cddfb9ba781bea3548b1d316b"
+    },
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-1/eval-1-excluded-commands-home/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "4155ac439fc1d5b6945919b9b6d3c03857d91b0e2fc55071e943bb9d527aa3e8"
+    },
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-1/eval-1-excluded-commands-home/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "2e6396200bf2770306f357998fccdbb6b8aab4e07edad89f4e89741b51783d8b"
+    },
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-1/eval-2-proxy-route-check/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "df791cdbf1052d866e570781df4cf2ec1a0563040076c8f6c3066a43013224d3"
+    },
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-1/eval-2-proxy-route-check/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "c3cb6ea6b11bfcac908823d6def68af0fb5fb02f2d5a4539e530390e739bebbe"
+    },
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-2/benchmark.json",
+      "sha256": "a1266a73dc97b9903c0203e64f4c14b0e4af721478cd982ad69c2138be8ec0de"
+    },
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-2/eval-1-excluded-commands-home/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "90fc99a324e8a1bd84cf44d2828eb483aac0cdefcc540c925f6d0855409fc9d2"
+    },
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-2/eval-1-excluded-commands-home/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "93d0551a3468b13878bb14f8ec16ed708341c9d864d262b6e61bb463d8bbbbde"
+    },
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-2/eval-1-excluded-commands-home/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "05e886b06c6c26448b5f8779f53609fd32b8628a4087854a6442378382474ad7"
+    },
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-2/eval-1-excluded-commands-home/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "e7ab79c5cf52cd3e1a245993bb16fad425024d35e4028e5f3acec390018e4dc7"
+    },
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-2/eval-2-proxy-route-check/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "08fb2696a814088a8c4aa1a140e6a72456e8946489c78415c1a1ed7d1d737548"
+    },
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-2/eval-2-proxy-route-check/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "6fb077f7fab47a3ff7e008c2a7bdc0eb61266e8bdcc6363705ed8d8c340ad185"
+    },
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-2/eval-2-proxy-route-check/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "7c4ae839432d998b0322f6ab01f38b15c5936a44e8a93e7670b8439cee2097d9"
+    },
+    {
+      "path": "forge-provision/HarnessSecurity-v2/iteration-2/eval-2-proxy-route-check/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "4bfe523c8ac68f2ceb596137b1edbbc192b7c6a4c6eb9302dacc181ec62a57be"
+    }
+  ]
+}

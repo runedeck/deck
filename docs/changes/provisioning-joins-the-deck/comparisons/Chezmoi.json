@@ -1,0 +1,121 @@
+{
+  "cases": [
+    {
+      "id": "1",
+      "name": "bootstrap-script",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "fail"
+        }
+      }
+    },
+    {
+      "id": "2",
+      "name": "settings-permission-source",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "pass"
+        }
+      }
+    }
+  ],
+  "iterations": [
+    {
+      "artifact_sha256": "42ed4222e7b1a438619d8ea59bcb49494480da179356debaca483e5355c02abe",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "number": 1
+    },
+    {
+      "artifact_sha256": "42ed4222e7b1a438619d8ea59bcb49494480da179356debaca483e5355c02abe",
+      "models": [
+        "claude-fable-5-1",
+        "claude-haiku-5-5"
+      ],
+      "number": 2
+    }
+  ],
+  "models": [
+    "claude-fable-5-1",
+    "claude-haiku-5-5",
+    "claude-opus-5-5"
+  ],
+  "rune": "Chezmoi",
+  "sources": [
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-1/benchmark.json",
+      "sha256": "91af77e3a640479120a8532b15576efc36f7355eb36e1bcc6f204cd46e7fc432"
+    },
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-1/eval-1-bootstrap-script/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "d3cb4849ae442b3ad1b3d2be26f94b41f3cb2a541b4d461d221d8d4ad405d68e"
+    },
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-1/eval-1-bootstrap-script/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "4a12e28a0afefaec203d03910e2e8f6cd60ee3354d0606bc000755c72b40c7d4"
+    },
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-1/eval-2-settings-permission-source/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "04e7baf614160c783b0698ba2830564e86d5341ccb9fb292807485b8e1ef11c3"
+    },
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-1/eval-2-settings-permission-source/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "b0ee51820858ccaf110f6e78aedf8eeb1586cbe82d8a0cc91daef136ae0f324a"
+    },
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-2/benchmark.json",
+      "sha256": "94474449e7385b612e2039a3d7a74c19899b2cb7e67a3ee12a0fb71d0f64c42e"
+    },
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-2/eval-1-bootstrap-script/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "acb92ffc343ea4100c19af7d479a2df339d25d5b1cb446cf69e41c633e346c7a"
+    },
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-2/eval-1-bootstrap-script/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "4d5285e0a331d5d985ea2faad0540f97bb055a5981fde36d8c2d960fdcf3e6c0"
+    },
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-2/eval-1-bootstrap-script/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "329850076c5ce06b20a20aee9951eafc4372aa5a3d512b4d051313e500ab5f47"
+    },
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-2/eval-1-bootstrap-script/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "a86a7a8cccc0fb904b9c05651801feaec6463951e0758b1d4397bb24f914328c"
+    },
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-2/eval-2-settings-permission-source/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "ced57d92c3809f547c7b85200658326abe30fb71e0ed418841a8895de629448c"
+    },
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-2/eval-2-settings-permission-source/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "b260b45be3f4f29e7d2de9403e1dbf1ace7162dfa7fed885d2daa6f4a4e0f976"
+    },
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-2/eval-2-settings-permission-source/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "77ac610f07a97ae3e7c6c1b39b1d6daa3079a5692c7b2fe8867ef22f572e6028"
+    },
+    {
+      "path": "forge-provision/Chezmoi-v2/iteration-2/eval-2-settings-permission-source/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "1b878bcee0d524db7936421cd38281b50752c80a9c64d74590069fa26b70f059"
+    }
+  ]
+}

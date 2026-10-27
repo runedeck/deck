@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+"""Refuse a provisioning rune without a comparison that shows it helps
+(provisioning-joins-the-deck, A Provisioning Rune Shows That It Helps).
+
+    scripts/check-provisioning-evidence            check the deck
+    scripts/check-provisioning-evidence <root>     check another root, for a test
+
+For every rune under runes/provisioning/, each skills/<Name>/ directory and
+each rules/<Name>.md, the check looks for a record at
+docs/changes/*/comparisons/<Name>.json or
+docs/changes/archive/*/comparisons/<Name>.json, as scripts/record-comparison
+writes it. A record passes when at least two models have a result other than
+`excluded` for both arms of some case, and at least one model has `with`
+equal to `pass` and `without` equal to `fail` on at least one case. A
+finding names the rune path and the reason: no record, fewer than two
+models, no changed answer, or a record that is unreadable or malformed.
+The check exits 1 on any finding and 0 when the module is absent. A record
+whose rune does not exist is ignored.
+
+The check reads the tree and not the history. A later rewrite of a rune
+that already has a record passes this check, so review asks for a new
+comparison when the rune text changes.
+"""
+import json
+import pathlib
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+MODULE = pathlib.Path("runes") / "provisioning"
+VERDICTS = {"pass", "fail", "excluded"}
+
+
+def runes(root):
+    """(display path, name) for each skill directory and rule file."""
+    module = root / MODULE
+    found = []
+    skills = module / "skills"
+    if skills.is_dir():
+        for path in sorted(skills.iterdir()):
+            if path.is_dir() and not path.name.startswith("."):
+                found.append((path.relative_to(root).as_posix(), path.name))
+    rules = module / "rules"
+    if rules.is_dir():
+        for path in sorted(rules.glob("*.md")):
+            if not path.name.startswith("."):
+                found.append((path.relative_to(root).as_posix(), path.stem))
+    return found
+
+
+def records(root, name):
+    changes = root / "docs" / "changes"
+    return sorted(changes.glob(f"*/comparisons/{name}.json")) + sorted(changes.glob(f"archive/*/comparisons/{name}.json"))
+
+
+def malformed(record):
+    """The first shape problem in a record, or None when it has the shape
+    that scripts/record-comparison writes."""
+    if not isinstance(record, dict):
+        return "the record is not an object"
+    cases = record.get("cases", [])
+    if not isinstance(cases, list):
+        return "cases is not a list"
+    for index, case in enumerate(cases, 1):
+        if not isinstance(case, dict):
+            return f"case {index} is not an object"
+        results = case.get("results", {})
+        if not isinstance(results, dict):
+            return f"case {index} results is not an object"
+        for model, result in results.items():
+            if not isinstance(result, dict):
+                return f"case {index} result for {model} is not an object"
+            for arm in ("with", "without"):
+                value = result.get(arm, "excluded")
+                if not isinstance(value, str) or value not in VERDICTS:
+                    return f"case {index} result for {model} has an unknown {arm} value"
+    return None
+
+
+def reason(record):
+    """None when the record proves the rune, else why not."""
+    problem = malformed(record)
+    if problem:
+        return f"malformed record: {problem}"
+    covered = set()
+    changed = False
+    for case in record.get("cases", []):
+        for model, result in case.get("results", {}).items():
+            with_rune = result.get("with", "excluded")
+            without = result.get("without", "excluded")
+            if with_rune != "excluded" and without != "excluded":
+                covered.add(model)
+            if with_rune == "pass" and without == "fail":
+                changed = True
+    if len(covered) < 2:
+        return "fewer than two models"
+    if not changed:
+        return "no changed answer"
+    return None
+
+
+def check(root):
+    root = pathlib.Path(root)
+    if not (root / MODULE).is_dir():
+        return []
+    findings = []
+    for display, name in runes(root):
+        found = records(root, name)
+        if not found:
+            findings.append(f"{display}: no comparison record")
+            continue
+        failures = []
+        for path in found:
+            try:
+                why = reason(json.loads(path.read_text()))
+            except (OSError, ValueError) as error:
+                why = f"unreadable record: {error}"
+            if why is None:
+                failures = []
+                break
+            failures.append(f"{display}: {why} ({path.relative_to(root).as_posix()})")
+        findings.extend(failures)
+    return findings
+
+
+def main():
+    root = pathlib.Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT
+    findings = check(root)
+    for line in findings:
+        print(line)
+    return 1 if findings else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

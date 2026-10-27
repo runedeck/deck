@@ -1,0 +1,21 @@
+# Traps found on this machine
+
+Each trap below cost a session. The fix named is the one that worked.
+
+1. A rune launch profile vanished after an apply. `~/.config/rune/config.yaml` is rendered from `dot_config/rune/modify_config.yaml.tmpl`, whose last step keeps only the live `.setup` block. A profile or model written into the live file lasts until anyone applies. Fix: add `launch.models` and `launch.profiles` entries to the template, then let the owner apply. Test a variant through a separate config path.
+
+2. `chezmoi diff ~/.claude/settings.json` shows hundreds of lines. The live file inlines the permission rules from `.chezmoidata/harness/claude.json`, and the key order differs. Fix: run the key-level `jq` check in [Commands.md](Commands.md), which works inside the sandbox where `diff <(...)` does not. The `modify_` script copies only `hooks`, `model`, and `outputStyle` back from the live file, so those three keep what the harness wrote, and every other app-written key goes at apply. The owner wants no default `model` key, so report such a key and do not edit the live file.
+
+3. A plugin stopped after an apply. `claude plugin install` writes `enabledPlugins` and `extraKnownMarketplaces` into the live settings. Neither is among the three keys the script keeps (trap 2), so the apply replaces both with the template's values. Fix: name the plugin in the codebase manifest that `$PROVISION_ROOT/scripts/configure/claude-plugins.sh` installs and in the settings template. The `changed` list of the drift check in [Commands.md](Commands.md) shows the pending loss.
+
+4. A placeholder such as `@GITLAB_HOST@` appeared in `~/.gitconfig`, the Claude settings, or a sandbox network list. Private values come from `[data.private]` in the chezmoi config, which `.chezmoi.toml.tmpl` fills from `pass` at `chezmoi init`. Fix: the owner runs `chezmoi init` before the next `chezmoi apply` whenever the private key list changed. A template never calls `pass`, because every harness policy denies the password store.
+
+5. `chezmoi re-add` did nothing and exited 0. The source is a template: `dot_gitconfig.tmpl`, or the settings `modify_` script. `re-add` skips a templated source without a message, so live edits pile up while the template falls behind. Fix: `chezmoi edit <target>`, then `chezmoi diff`. `chezmoi add --force` would replace the template with the live file.
+
+6. `chezmoi apply` failed or was blocked in an agent session. The harness sandbox cannot write the chezmoi state database, and the permission data allows read-only chezmoi commands only. Fix: hand the owner the exact command, `chezmoi apply <target>`, to run outside the sandbox. Add `--force` only for `~/.claude/settings.json`, and only after the drift check shows nothing the owner wants to keep: the `modify_` script keeps `hooks`, `model`, and `outputStyle`, and `--force` drops every other app key (a plugin enablement, a UI setting) without a prompt. Never add it for a target with uncaptured live edits (trap 5): `--force` skips the prompt that protects them, and the edits are gone.
+
+7. The dcg hook entry vanished from the live settings, or a session asked to restore it. Nothing in the chezmoi source registers a hook. The settings script copies the live `hooks` block back as it is, so an apply neither adds nor removes an entry, and the rune hook dispatcher leaves dcg's direct entry (matcher `Bash|PowerShell`, absolute path) in place. dcg's own `self_heal_hook`, on by default in its config, re-asserts that entry while dcg runs. Fix for a missing entry: the owner runs `dcg install` outside the sandbox, then `dcg doctor`. Do not add the entry to the template: the final merge replaces `hooks` with the live block, so the addition never reaches the file.
+
+8. The settings template contains a bare `@GITLAB_HOST@` in the auto-mode prose on purpose. The rendered classifier text names the real host, and a generic rewrite was abandoned. Do not "fix" it.
+
+9. A long-deferred apply pulled external updates at once. Only the two `git-repo` externals, the first-party shell framework and the avatar, refresh on their `refreshPeriod` during apply. Every third-party external is an archive pinned at a fixed URL with a SHA-256, so it moves only when the weekly pull request moves the pin. Apply often, or pass `--refresh-externals=never` to one apply.
