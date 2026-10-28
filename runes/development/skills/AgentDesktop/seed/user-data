@@ -1,0 +1,76 @@
+#cloud-config
+# Ubuntu 26.04.1 autoinstall for a throwaway agent VM in Parallels.
+# The agent user has no password and no sudo. Admin work goes through
+# prlctl exec, which runs as root once Parallels Tools are installed.
+autoinstall:
+  version: 1
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+  timezone: Etc/UTC
+  storage:
+    layout:
+      name: direct
+  ssh:
+    install-server: false
+  packages:
+    - xserver-xorg
+    - xfce4
+    - xfce4-terminal
+    - lightdm
+    - lightdm-gtk-greeter
+    - dbus-x11
+    - x11-utils
+    - xdotool
+    - scrot
+    - build-essential
+    - dkms
+    - linux-headers-generic
+    - git
+    - curl
+    - jq
+    - ripgrep
+    - python3-venv
+  user-data:
+    hostname: ubuntu-agent
+    groups:
+      - autologin
+    users:
+      - name: agent
+        gecos: Agent
+        shell: /bin/bash
+        lock_passwd: true
+        groups: [autologin, audio, video, input]
+    write_files:
+      - path: /etc/lightdm/lightdm.conf.d/50-agent-autologin.conf
+        content: |
+          [Seat:*]
+          autologin-user=agent
+          autologin-session=xfce
+          user-session=xfce
+      - path: /usr/local/sbin/install-parallels-tools
+        permissions: '0755'
+        content: |
+          #!/bin/sh
+          # Install Parallels Tools from whichever attached CD carries them.
+          set -u
+          mkdir -p /mnt/prl-tools
+          for device in /dev/sr0 /dev/sr1 /dev/sr2 /dev/sr3; do
+              [ -b "$device" ] || continue
+              mount -o ro "$device" /mnt/prl-tools 2>/dev/null || continue
+              if [ -x /mnt/prl-tools/install ]; then
+                  /mnt/prl-tools/install --install-unattended-with-deps
+                  status=$?
+                  umount /mnt/prl-tools
+                  exit "$status"
+              fi
+              umount /mnt/prl-tools
+          done
+          echo "no Parallels Tools CD found" >&2
+          exit 1
+    runcmd:
+      - [systemctl, set-default, graphical.target]
+      - [sh, -c, '/usr/local/sbin/install-parallels-tools > /var/log/install-parallels-tools.log 2>&1']
+      - [systemctl, reboot]
+  # Power off, so the host can move the disk ahead of the installer CD.
+  shutdown: poweroff

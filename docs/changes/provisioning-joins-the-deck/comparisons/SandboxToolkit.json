@@ -1,0 +1,121 @@
+{
+  "cases": [
+    {
+      "id": "1",
+      "name": "apiserver-plugins",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "pass"
+        }
+      }
+    },
+    {
+      "id": "2",
+      "name": "claude-box-build",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "fail"
+        }
+      }
+    }
+  ],
+  "iterations": [
+    {
+      "artifact_sha256": "9f82c5f4b5903614ddaa2d5fb6abfca7964c0bce7b11ce22795eb1f260303993",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "number": 1
+    },
+    {
+      "artifact_sha256": "9f82c5f4b5903614ddaa2d5fb6abfca7964c0bce7b11ce22795eb1f260303993",
+      "models": [
+        "claude-fable-5-1",
+        "claude-haiku-5-5"
+      ],
+      "number": 2
+    }
+  ],
+  "models": [
+    "claude-fable-5-1",
+    "claude-haiku-5-5",
+    "claude-opus-5-5"
+  ],
+  "rune": "SandboxToolkit",
+  "sources": [
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-1/benchmark.json",
+      "sha256": "dba00b6d315a1bcd8835d8c5e55eabbab10bf8e481902d112173e8d5be532d71"
+    },
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-1/eval-1-apiserver-plugins/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "d4676128627b293f21e67bd5eaaec5d0dfa70e2b1eb7c12ea202386ac9bfd98b"
+    },
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-1/eval-1-apiserver-plugins/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "ab7f051bbb1fd632e9a451a847046171541d43d6fe4c9f025d70c50207d23e6f"
+    },
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-1/eval-2-claude-box-build/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "1bff3dbf8652330b20493e6167404f5ca59476632e8aee8501499e751689658c"
+    },
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-1/eval-2-claude-box-build/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "29467da86d46090dad688af21607e0936f0880e88822aa70f64c3f2de5ce1707"
+    },
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-2/benchmark.json",
+      "sha256": "ae58bad02cb813d109acedd5b7aa235bf7e5fdfcaaeee794ab10b4da8e6f6da5"
+    },
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-2/eval-1-apiserver-plugins/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "660cb22d0bf68dcf792883e08151f0467ca093f947c0cf768f5b0e2d21b769c5"
+    },
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-2/eval-1-apiserver-plugins/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "6c305eb00d269b2001036394fc4edde14cf4d987c0cddfab5049e15095fbea48"
+    },
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-2/eval-1-apiserver-plugins/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "8f4949661af178c3bf244a84f5522a8c8bd2791b1ee09a8c60922a9b07b5f51f"
+    },
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-2/eval-1-apiserver-plugins/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "3bd7381a446407dfb3a0bb89e1f12bc5aa4a99e0fcc306357affb4bea0cde443"
+    },
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-2/eval-2-claude-box-build/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "094c9fe58290274f29396f7619cf1472875cad1e9b4c7d51315aaa8cc55ada53"
+    },
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-2/eval-2-claude-box-build/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "6af55d3ba8014b953feaa959e933c4a5e1fd5ab0f6448096b8f61c4ea9a03ddf"
+    },
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-2/eval-2-claude-box-build/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "99ee04412a33c01422029433c1ec4fe5011abe7a4776edd863f344da52e3e7f7"
+    },
+    {
+      "path": "forge-provision/SandboxToolkit-v2/iteration-2/eval-2-claude-box-build/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "c13f64ac721e2cde87972a851f2705fb8af21e60693a32b04ef532468e5e4083"
+    }
+  ]
+}

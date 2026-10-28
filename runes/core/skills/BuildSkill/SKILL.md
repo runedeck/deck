@@ -67,7 +67,7 @@ Companions, each loaded only when its condition applies:
 - [RuneDeck.md](RuneDeck.md): where skills live and how they validate and deploy in a Rune deck.
 - [ImplementationLoop.md](ImplementationLoop.md): frozen requirements, independent reviews, repairs, and evidence for the exact candidate.
 
-The scripts beside this file run as `python3 -m scripts.<name>` from this directory: the description-optimization pipeline (`run_eval`, `run_loop`, `improve_description`, `generate_report`) and `package_skill` for claude.ai upload, with harness invocation behind `scripts/harness/` adapters. The evaluation loop, its agent templates, and the review viewer live in the BenchArtifact skill.
+The scripts beside this file run as `python3 -m scripts.<name>` from this directory: the description-optimization pipeline (`run_eval`, `run_loop`, `improve_description`, `generate_report`) and `package_skill` for claude.ai upload, with harness invocation behind `scripts/harness/` adapters. The evaluation loop, its agent templates, and its report live in the BenchArtifact skill.
 
 External sources:
 

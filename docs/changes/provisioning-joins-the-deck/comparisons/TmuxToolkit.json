@@ -1,0 +1,121 @@
+{
+  "cases": [
+    {
+      "id": "1",
+      "name": "catppuccin-raw",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "pass"
+        }
+      }
+    },
+    {
+      "id": "2",
+      "name": "declarative-plugins",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "pass"
+        }
+      }
+    }
+  ],
+  "iterations": [
+    {
+      "artifact_sha256": "7055ddaa5420ff0e7d99cf6310b9a0b8e82920d9f999e3fcd9d2b99c925559a0",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "number": 1
+    },
+    {
+      "artifact_sha256": "7055ddaa5420ff0e7d99cf6310b9a0b8e82920d9f999e3fcd9d2b99c925559a0",
+      "models": [
+        "claude-fable-5-1",
+        "claude-haiku-5-5"
+      ],
+      "number": 2
+    }
+  ],
+  "models": [
+    "claude-fable-5-1",
+    "claude-haiku-5-5",
+    "claude-opus-5-5"
+  ],
+  "rune": "TmuxToolkit",
+  "sources": [
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-1/benchmark.json",
+      "sha256": "61506da4fd46b25bf969d30a05546427d14ed5ebf2ee0970d6824e9e20f0c120"
+    },
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-1/eval-1-catppuccin-raw/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "ff315d9d128dbd3ff3772f239eaf8e6cf0e2f6b589fc7ad43296e1de836e1fe4"
+    },
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-1/eval-1-catppuccin-raw/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "b596cd945e9320fd611037301efcd53df32d63035dac152e1c0f5c230908d1ee"
+    },
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-1/eval-2-declarative-plugins/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "91f165b780454f8afd16b95884f35dbb13407f119c6fe60ab20daf0d670829ca"
+    },
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-1/eval-2-declarative-plugins/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "2abefaa7403ab583b8e0829d3ded063dda82a566f854248902de72178e8c615b"
+    },
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-2/benchmark.json",
+      "sha256": "ca5e8f384a6e2b583092ffc854e06a42b13b9bef6ff8c358e25f3a9d6397c8ef"
+    },
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-2/eval-1-catppuccin-raw/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "3795adae26990540429c7e92b2bc04be0b762bb2b58bb12ba8a5b4e9994b0c1f"
+    },
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-2/eval-1-catppuccin-raw/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "c5b814559817c00fc3282f0745bc18bf7da2e4d32260773a5be38d94b7bf8b76"
+    },
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-2/eval-1-catppuccin-raw/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "9177f9ebe089cdec9bcfd8b87f2e0246938b4d9564fe690cafc382ff7e505de1"
+    },
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-2/eval-1-catppuccin-raw/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "6b14f993777dba82ba9fbadf2b1c90176b1e49545bce2c3e3f76eb992fa14f31"
+    },
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-2/eval-2-declarative-plugins/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "c9b7904203bec126501f2a0c1f3f5f8eab0e5db5c74a6ee0181cb24e4b2e60e2"
+    },
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-2/eval-2-declarative-plugins/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "c8de6300e719406bedeffc2152fdec1e171dc58392d6e3ef6edcf50550fca803"
+    },
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-2/eval-2-declarative-plugins/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "f5e402dffb8411b38a4674075d983aa130240bca086dac196e64b8216deb0c76"
+    },
+    {
+      "path": "forge-provision/TmuxToolkit/iteration-2/eval-2-declarative-plugins/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "27109a2a34d98362815843fb9c78bc040bd223d56db7da0fd4224762a05e8917"
+    }
+  ]
+}

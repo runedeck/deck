@@ -92,6 +92,15 @@ repos:
             language: system
             pass_filenames: false
 
+          # A skill that needs setup ships an INSTALL.md in the Mintlify
+          # install.md shape (BuildSkill SkillInstallation.md), and the schema
+          # in schemas/ states that shape.
+          - id: mdschema-skill-install
+            name: mdschema skill install files
+            entry: sh -c 'if command -v mdschema >/dev/null 2>&1; then for install in runes/*/skills/*/INSTALL.md; do [ -f "$install" ] || continue; mdschema check "$install" --schema schemas/INSTALL.mdschema || exit 1; done; elif [ -n "${REQUIRE_GATES:-}" ]; then echo "REQUIRE_GATES set and mdschema is absent"; exit 1; fi'
+            language: system
+            pass_filenames: false
+
           - id: stable-shell-schemas
             name: stable shell schema copies
             entry: make validate-schemas
@@ -433,6 +442,49 @@ repos:
             entry: python3 scripts/check-provenance
             language: system
             files: ^runes/|^docs/ideas/
+
+          # The provisioning module holds instruction text only. A file with
+          # an execute permission or an interpreter line belongs in the
+          # provisioning codebase, outside the deck.
+          - id: check-provisioning-module
+            name: provisioning module has no executable file
+            entry: python3 scripts/check-provisioning-module
+            language: system
+            pass_filenames: false
+            stages: [pre-commit, pre-push]
+            files: ^runes/provisioning/
+
+          # A provisioning rune needs a comparison record on two models that
+          # shows a changed answer, or the archiver refuses the change.
+          - id: check-provisioning-evidence
+            name: provisioning runes carry a comparison record
+            entry: python3 scripts/check-provisioning-evidence
+            language: system
+            pass_filenames: false
+            files: ^(runes/provisioning/|docs/changes/)
+
+          - id: provisioning-check-tests
+            name: provisioning check tests
+            entry: python3 -m unittest discover -s tests -p 'test_check_provisioning_*.py'
+            language: system
+            pass_filenames: false
+            files: ^(scripts/check-provisioning-|tests/test_check_provisioning_)
+
+          - id: record-comparison-tests
+            name: comparison record generator tests
+            entry: python3 -m unittest discover -s tests -p test_record_comparison.py
+            language: system
+            pass_filenames: false
+            files: ^(scripts/record-comparison$|tests/test_record_comparison\.py$)
+
+          # The selection test installs a scratch deck with rune. It skips
+          # without rune and fails under REQUIRE_GATES (CI).
+          - id: provisioning-selection-tests
+            name: default deployment leaves the provisioning module out
+            entry: python3 -m unittest discover -s tests -p test_provisioning_default_selection.py
+            language: system
+            pass_filenames: false
+            files: ^(casts/|runes/provisioning/|tests/test_provisioning_default_selection\.py$)
 
           # Every dcg pack validates and each fixture in .dcg/fixtures.txt keeps
           # its decision and its rule, so a pack edit cannot silently admit

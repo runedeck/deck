@@ -69,6 +69,6 @@ At the end, or when the owner asks, read every decision back as prose. Write one
 - The voice form: a project built from voice-safe files. Such a file has no index ids and reads as narrative under headings. It has no tables, lists, code, paths, extensions, or abbreviations. Each section is self-contained, and the file stays under twelve kilobytes.
 - The SelfContainedQuestionOptions rule: describe each option's [change][CHANGE] in plain words.
 
-[REQUIREMENT]: ../../../../docs/specs/glossary/requirement.md
-[CHANGE]: ../../../../docs/specs/glossary/change.md
-[DECISIONRECORD]: ../../../../docs/specs/glossary/decision-record.md
+[REQUIREMENT]: https://github.com/runedeck/deck/blob/main/docs/specs/glossary/requirement.md
+[CHANGE]: https://github.com/runedeck/deck/blob/main/docs/specs/glossary/change.md
+[DECISIONRECORD]: https://github.com/runedeck/deck/blob/main/docs/specs/glossary/decision-record.md

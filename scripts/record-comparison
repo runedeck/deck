@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+"""Write the comparison record of one provisioning rune from a BenchArtifact
+workspace (provisioning-joins-the-deck, A Provisioning Rune Shows That It Helps).
+
+    python3 scripts/record-comparison <bench-workspace> --change <change-id> [--rune <Name>] [--root <dir>]
+
+The workspace holds one directory per iteration, `iteration-<n>/`, with the
+benchmark metadata in `benchmark.json` and one grading file per run at
+`eval-<id>-<name>/<arm>@<model>/run-<n>/grading.json`, where `<arm>` is
+`with_artifact` or `baseline`. A run passes when every expectation in its
+grading file passed. A grading file whose `expectations` is empty, null, or
+absent holds no grade, so that run counts as not graded. For each case,
+model, and arm the result is `pass` when every graded run passed, `fail`
+when a graded run failed, and `excluded` when no run is graded. When two
+iterations cover one model, the higher iteration number wins for that
+model. The case id and name come from the case directory name.
+
+The record goes to `docs/changes/<change-id>/comparisons/<Name>.json` under
+the repository root (`--root`, default this repository). The name comes from
+`--rune` or from `metadata.artifact_name` in the latest `benchmark.json`,
+and `arms.with_artifact.artifact_sha256` of each iteration identifies the
+rune text under test:
+
+    {
+      "rune": "<Name>",
+      "models": ["<model>", ...],
+      "cases": [{"id": "1", "name": "<name>",
+                 "results": {"<model>": {"with": "pass", "without": "fail"}}}],
+      "iterations": [{"number": 2, "models": ["<model>", ...], "artifact_sha256": "<digest>"}],
+      "sources": [{"path": "<relative to the benchmark root>", "sha256": "<file digest>"}]
+    }
+
+A source path is relative to the benchmark root, `$ROOT_BENCHMARK` (default
+`~/Data/Benchmarks`), or to the workspace's parent directory when the
+workspace is elsewhere, so the public record carries no user name. Keys and
+lists are sorted, so the same workspace always gives the same bytes.
+"""
+import argparse
+import hashlib
+import json
+import os
+import pathlib
+import re
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+ITERATION = re.compile(r"^iteration-(\d+)$")
+CASE = re.compile(r"^eval-([^-]+)-(.+)$")
+ARMS = {"with_artifact": "with", "baseline": "without"}
+
+
+def sha256(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def benchmark_root(workspace):
+    root = pathlib.Path(os.environ.get("ROOT_BENCHMARK", "~/Data/Benchmarks")).expanduser()
+    try:
+        root = root.resolve()
+    except OSError:
+        return workspace.parent
+    return root if workspace.is_relative_to(root) else workspace.parent
+
+
+def iterations(workspace):
+    found = []
+    for path in workspace.iterdir():
+        match = ITERATION.match(path.name)
+        if match and path.is_dir():
+            found.append((int(match.group(1)), path))
+    return sorted(found)
+
+
+def grade(path):
+    """pass or fail from one grading file, or None when it holds no expectation."""
+    expectations = json.loads(path.read_text()).get("expectations")
+    if not isinstance(expectations, list) or not expectations:
+        return None
+    if all(isinstance(item, dict) and item.get("passed") is True for item in expectations):
+        return "pass"
+    return "fail"
+
+
+def verdict(grades):
+    if not grades:
+        return "excluded"
+    return "fail" if "fail" in grades else "pass"
+
+
+def collect_runs(iteration_dir):
+    """{(case_id, case_name): {model: {arm: [grades]}}} for one iteration."""
+    cases = {}
+    for case_dir in sorted(iteration_dir.iterdir()):
+        match = CASE.match(case_dir.name)
+        if not match or not case_dir.is_dir():
+            continue
+        key = (match.group(1), match.group(2))
+        for arm_dir in sorted(case_dir.iterdir()):
+            if not arm_dir.is_dir() or "@" not in arm_dir.name:
+                continue
+            arm, model = arm_dir.name.split("@", 1)
+            if arm not in ARMS:
+                continue
+            grades = [grade(path) for path in sorted(arm_dir.glob("run-*/grading.json"))]
+            graded = [result for result in grades if result is not None]
+            cases.setdefault(key, {}).setdefault(model, {}).setdefault(ARMS[arm], []).extend(graded)
+    return cases
+
+
+def case_order(key):
+    case_id, name = key
+    return (0, int(case_id)) if case_id.isdigit() else (1, case_id), name
+
+
+def build(workspace, name=None):
+    found = iterations(workspace)
+    if not found:
+        raise SystemExit(f"no iteration-<n> directory under {workspace}")
+    root = benchmark_root(workspace)
+    winner = {}
+    runs_by_iteration = {}
+    iteration_records = []
+    sources = []
+    artifact_name = None
+    for number, path in found:
+        runs = collect_runs(path)
+        models = sorted({model for case in runs.values() for model in case})
+        for model in models:
+            winner[model] = number
+        runs_by_iteration[number] = runs
+        record = {"number": number, "models": models}
+        benchmark = path / "benchmark.json"
+        if benchmark.is_file():
+            data = json.loads(benchmark.read_text())
+            artifact_name = data.get("metadata", {}).get("artifact_name") or artifact_name
+            digest = data.get("arms", {}).get("with_artifact", {}).get("artifact_sha256")
+            if digest:
+                record["artifact_sha256"] = digest
+            sources.append(benchmark)
+        iteration_records.append(record)
+        sources.extend(path.glob("eval-*/*@*/run-*/grading.json"))
+    name = name or artifact_name
+    if not name:
+        raise SystemExit("no --rune and no metadata.artifact_name in any benchmark.json")
+    models = sorted(winner)
+    results = {}
+    for number, runs in runs_by_iteration.items():
+        for key, by_model in runs.items():
+            case = results.setdefault(key, {})
+            for model, arms in by_model.items():
+                if winner[model] == number:
+                    case[model] = {arm: verdict(arms.get(arm, [])) for arm in ("with", "without")}
+    excluded = {"with": "excluded", "without": "excluded"}
+    cases = [
+        {"id": key[0], "name": key[1], "results": {model: results[key].get(model, excluded) for model in models}}
+        for key in sorted(results, key=case_order)
+    ]
+    return {
+        "rune": name,
+        "models": models,
+        "cases": cases,
+        "iterations": iteration_records,
+        "sources": sorted(
+            ({"path": path.relative_to(root).as_posix(), "sha256": sha256(path)} for path in sources),
+            key=lambda source: source["path"],
+        ),
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("workspace", help="BenchArtifact workspace with iteration-<n>/ directories")
+    parser.add_argument("--change", required=True, help="change id under docs/changes/")
+    parser.add_argument("--rune", help="rune name; default metadata.artifact_name")
+    parser.add_argument("--root", default=str(ROOT), help="repository root; default this repository")
+    args = parser.parse_args()
+    workspace = pathlib.Path(args.workspace).expanduser().resolve()
+    if not workspace.is_dir():
+        raise SystemExit(f"no workspace at {workspace}")
+    change = pathlib.Path(args.root).resolve() / "docs" / "changes" / args.change
+    if not change.is_dir():
+        raise SystemExit(f"no change at {change}")
+    record = build(workspace, args.rune)
+    target = change / "comparisons" / f"{record['rune']}.json"
+    target.parent.mkdir(exist_ok=True)
+    target.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
+    print(target.relative_to(pathlib.Path(args.root).resolve()).as_posix())
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
