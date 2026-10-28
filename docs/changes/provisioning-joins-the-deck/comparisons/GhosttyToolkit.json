@@ -1,0 +1,121 @@
+{
+  "cases": [
+    {
+      "id": "1",
+      "name": "trailing-comment",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "pass"
+        }
+      }
+    },
+    {
+      "id": "2",
+      "name": "alt-arrow-tmux",
+      "results": {
+        "claude-fable-5-1": {
+          "with": "pass",
+          "without": "pass"
+        },
+        "claude-haiku-5-5": {
+          "with": "pass",
+          "without": "fail"
+        },
+        "claude-opus-5-5": {
+          "with": "pass",
+          "without": "fail"
+        }
+      }
+    }
+  ],
+  "iterations": [
+    {
+      "artifact_sha256": "87fe6668a4db2e77c29b64904e33c2bfae3c035a6f330b9e349fc2b0a27ef9e1",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "number": 1
+    },
+    {
+      "artifact_sha256": "87fe6668a4db2e77c29b64904e33c2bfae3c035a6f330b9e349fc2b0a27ef9e1",
+      "models": [
+        "claude-fable-5-1",
+        "claude-haiku-5-5"
+      ],
+      "number": 2
+    }
+  ],
+  "models": [
+    "claude-fable-5-1",
+    "claude-haiku-5-5",
+    "claude-opus-5-5"
+  ],
+  "rune": "GhosttyToolkit",
+  "sources": [
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-1/benchmark.json",
+      "sha256": "18cd835632b1caa7b5e346788df4258062aa468b408cb7cb0e3c90ba79f0852e"
+    },
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-1/eval-1-trailing-comment/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "0863ee77182894c875804efbe9d93c9843d9670bb2fd6536ea0c2291393510dc"
+    },
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-1/eval-1-trailing-comment/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "3b1df1f3c12dc421f0d0d2dea81611544655279f9cac8d2042686e5ceecc42ba"
+    },
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-1/eval-2-alt-arrow-tmux/baseline@claude-opus-5-5/run-1/grading.json",
+      "sha256": "98a58b40b53f2d9ed8af0299284b7a8dc3cd6dfc9269c5931a6f5c10f49c65b2"
+    },
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-1/eval-2-alt-arrow-tmux/with_artifact@claude-opus-5-5/run-1/grading.json",
+      "sha256": "ef1be529a4e98857ea7369190cd895347eaa556cbcfe94b4480dd6f46fb83a8c"
+    },
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-2/benchmark.json",
+      "sha256": "4336b0d199b9d0642eca86142317eb96251c639c0549df663a72618e97439748"
+    },
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-2/eval-1-trailing-comment/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "cc91f9fe08c8ac649f58107b7b1ce128e9494b5725d459a7deffd89a834a7543"
+    },
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-2/eval-1-trailing-comment/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "f3ba8215de08ea0a747a1b4b517aae70e0982dcc9f50e33da2c0344672a5dfd1"
+    },
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-2/eval-1-trailing-comment/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "717b6975d5e676c597cb4e459794bd0064f98980823d36467d3a81abc8b09273"
+    },
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-2/eval-1-trailing-comment/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "f9a046cf2079a9857759a6b03cae072d1c06de9be1edf6d251e739370495750d"
+    },
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-2/eval-2-alt-arrow-tmux/baseline@claude-fable-5-1/run-1/grading.json",
+      "sha256": "f1271178d2c0e31fc73d8d024323eee3eb9a29f25c0cb142b40668008d937802"
+    },
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-2/eval-2-alt-arrow-tmux/baseline@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "4bd278a41c0ef90e30baf479a0ef588c4a9a480b842d0df8cb7c4b9592d613d8"
+    },
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-2/eval-2-alt-arrow-tmux/with_artifact@claude-fable-5-1/run-1/grading.json",
+      "sha256": "88bee402262588a3fca75e9f774c9038865580d305cc3310d1bce07c9d115333"
+    },
+    {
+      "path": "forge-provision/GhosttyToolkit/iteration-2/eval-2-alt-arrow-tmux/with_artifact@claude-haiku-5-5/run-1/grading.json",
+      "sha256": "e0bb3f1f127419fa8c3aa9d8b9f77b62132209dc4b8fb666ae97ec1075cb4b0e"
+    }
+  ]
+}

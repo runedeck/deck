@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Generate an HTML report from run_loop.py output.
+"""Render a run_loop result, partial or final, as one self-contained HTML page.
 
-Takes the JSON output from run_loop.py and generates a visual HTML report
-showing each description attempt with check/x for each test case.
-Distinguishes between train and test queries.
+Usage, from the skill directory:
+
+    python3 -m scripts.generate_report results.json -o report.html
+    cat results.json | python3 -m scripts.generate_report - --skill-name my-skill
 """
 
 import argparse
@@ -12,313 +13,301 @@ import json
 import sys
 from pathlib import Path
 
+GOOD_PERCENT = 80
+FAIR_PERCENT = 50
+QUERY_HEADER_WIDTH = 48
+
+
+def esc(value: object) -> str:
+    """Escape any data value for safe placement in markup."""
+    return html.escape("" if value is None else str(value), quote=True)
+
+
+def normalize_entry(entry: dict) -> dict:
+    """Return a history entry with the ``train_``/``test_`` keys filled in.
+
+    Older entries carry ``passed``, ``total`` and ``results`` instead of the
+    ``train_`` keys; those are accepted too.
+    """
+    train_results = entry.get("train_results")
+    if train_results is None:
+        train_results = entry.get("results") or []
+    train_passed = entry.get("train_passed", entry.get("passed"))
+    train_total = entry.get("train_total", entry.get("total"))
+    if train_passed is None:
+        train_passed = sum(1 for item in train_results if item.get("pass"))
+    if train_total is None:
+        train_total = len(train_results)
+
+    test_results = entry.get("test_results")
+    test_passed = entry.get("test_passed")
+    test_total = entry.get("test_total")
+    if test_results is not None:
+        if test_passed is None:
+            test_passed = sum(1 for item in test_results if item.get("pass"))
+        if test_total is None:
+            test_total = len(test_results)
+
+    return {
+        "iteration": entry.get("iteration"),
+        "description": entry.get("description", ""),
+        "train_passed": train_passed,
+        "train_total": train_total,
+        "train_results": list(train_results),
+        "test_passed": test_passed,
+        "test_total": test_total,
+        "test_results": None if test_results is None else list(test_results),
+    }
+
+
+def best_iteration_index(history: list[dict]) -> int | None:
+    """Index of the best entry: most passed test queries when a test set
+    exists, otherwise most passed train queries; ties go to the earliest."""
+    entries = [normalize_entry(entry) for entry in history]
+    if not entries:
+        return None
+    use_test = any(entry["test_total"] is not None for entry in entries)
+    best_index: int | None = None
+    best_score = -1
+    for index, entry in enumerate(entries):
+        score = entry["test_passed"] if use_test else entry["train_passed"]
+        if score is None:
+            score = -1
+        if score > best_score:
+            best_index, best_score = index, score
+    return best_index
+
+
+def run_score(results: list[dict]) -> tuple[int, int]:
+    """Correct runs over total runs for a list of per-query results."""
+    correct = 0
+    total = 0
+    for item in results:
+        runs = int(item.get("runs") or 0)
+        triggers = int(item.get("triggers") or 0)
+        correct += triggers if item.get("should_trigger") else runs - triggers
+        total += runs
+    return correct, total
+
+
+def grade(correct: int, total: int) -> str:
+    if total <= 0:
+        return "none"
+    percent = 100 * correct / total
+    if percent >= GOOD_PERCENT:
+        return "good"
+    if percent >= FAIR_PERCENT:
+        return "fair"
+    return "poor"
+
+
+def _score_cell(results: list[dict] | None) -> str:
+    if not results:
+        return '<td class="score none">n/a</td>'
+    correct, total = run_score(results)
+    label = f"{correct}/{total}"
+    if total:
+        label += f" <small>({100 * correct / total:.0f}%)</small>"
+    return f'<td class="score {grade(correct, total)}">{label}</td>'
+
+
+def _query_columns(entries: list[dict]) -> list[dict]:
+    """Query columns in a stable order: train queries first, then test."""
+    columns: list[dict] = []
+    seen: set[tuple[str, str]] = set()
+    for split in ("train", "test"):
+        for entry in entries:
+            for item in entry[f"{split}_results"] or []:
+                key = (split, str(item.get("query")))
+                if key in seen:
+                    continue
+                seen.add(key)
+                columns.append(
+                    {
+                        "split": split,
+                        "query": str(item.get("query")),
+                        "should_trigger": bool(item.get("should_trigger")),
+                    }
+                )
+    return columns
+
+
+def _query_header(column: dict) -> str:
+    query = column["query"]
+    short = query if len(query) <= QUERY_HEADER_WIDTH else query[: QUERY_HEADER_WIDTH - 1] + "…"
+    kind = "should trigger" if column["should_trigger"] else "should NOT trigger"
+    kind_class = "want-yes" if column["should_trigger"] else "want-no"
+    return (
+        f'<th class="query {esc(column["split"])} {kind_class}" title="{esc(query)}">'
+        f'<span class="tag">{esc(column["split"])}</span> '
+        f'<span class="tag">{esc(kind)}</span>'
+        f'<div class="qtext">{esc(short)}</div></th>'
+    )
+
+
+def _query_cell(entry: dict, column: dict) -> str:
+    lookup = {
+        str(item.get("query")): item for item in entry[f"{column['split']}_results"] or []
+    }
+    item = lookup.get(column["query"])
+    if item is None:
+        return '<td class="cell none">–</td>'
+    status = "pass" if item.get("pass") else "fail"
+    mark = "✓" if item.get("pass") else "✗"
+    return (
+        f'<td class="cell {status}">{mark} '
+        f'{esc(item.get("triggers"))}/{esc(item.get("runs"))}</td>'
+    )
+
+
+_STYLE = """
+:root { --ink: #1f2430; --muted: #6b7280; --line: #e3e6ec; --bg: #f7f8fa;
+        --good: #d9f2e3; --good-ink: #146c43; --fair: #fff1cc; --fair-ink: #8a6100;
+        --poor: #fbe0e0; --poor-ink: #a32d2d; --best: #eef3ff; --accent: #2f55d4; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 2rem; background: var(--bg); color: var(--ink);
+       font: 15px/1.5 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+h1 { margin: 0 0 .25rem; font-size: 1.6rem; }
+h2 { margin: 2rem 0 .75rem; font-size: 1.15rem; }
+.note { color: var(--muted); max-width: 70rem; }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 10px;
+        padding: 1.25rem 1.5rem; margin-top: 1.25rem; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: .5rem 1.5rem; margin: 0; }
+dt { color: var(--muted); font-weight: 600; }
+dd { margin: 0; overflow-wrap: anywhere; }
+.scorechip { display: inline-block; padding: .1rem .55rem; border-radius: 999px; font-weight: 600; }
+.good { background: var(--good); color: var(--good-ink); }
+.fair { background: var(--fair); color: var(--fair-ink); }
+.poor { background: var(--poor); color: var(--poor-ink); }
+.none { color: var(--muted); }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; background: #fff; min-width: 100%; }
+th, td { border: 1px solid var(--line); padding: .45rem .6rem; vertical-align: top; text-align: left; }
+thead th { background: #f0f2f6; position: sticky; top: 0; }
+th.query { min-width: 11rem; font-weight: 500; }
+th.test { background: #e8edf8; }
+.tag { display: inline-block; font-size: .7rem; text-transform: uppercase; letter-spacing: .04em;
+       color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 .3rem; }
+th.want-no .tag:last-of-type { color: var(--poor-ink); }
+th.want-yes .tag:last-of-type { color: var(--good-ink); }
+.qtext { margin-top: .25rem; font-size: .85rem; }
+td.cell { white-space: nowrap; text-align: center; }
+td.pass { background: var(--good); color: var(--good-ink); }
+td.fail { background: var(--poor); color: var(--poor-ink); }
+td.score { white-space: nowrap; font-weight: 600; }
+td.desc { min-width: 24rem; max-width: 40rem; font-size: .9rem; }
+tr.best td { box-shadow: inset 0 0 0 1px var(--accent); }
+tr.best td.iter { background: var(--best); font-weight: 700; }
+.best-mark { color: var(--accent); font-size: .8rem; margin-left: .3rem; }
+"""
+
 
 def generate_html(data: dict, auto_refresh: bool = False, skill_name: str = "") -> str:
-    """Generate HTML report from loop output data. If auto_refresh is True, adds a meta refresh tag."""
-    history = data.get("history", [])
-    data.get("holdout", 0)
-    title_prefix = html.escape(skill_name + " \u2014 ") if skill_name else ""
+    """Build the report page from a run_loop result."""
+    entries = [normalize_entry(entry) for entry in data.get("history") or []]
+    best_index = best_iteration_index(data.get("history") or [])
+    columns = _query_columns(entries)
+    has_test = any(entry["test_total"] is not None for entry in entries)
+    test_size = data.get("test_size")
+    deciding_split = "test" if has_test or (test_size or 0) > 0 else "train"
 
-    # Get all unique queries from train and test sets, with should_trigger info
-    train_queries: list[dict] = []
-    test_queries: list[dict] = []
-    if history:
-        for r in history[0].get("train_results", history[0].get("results", [])):
-            train_queries.append({"query": r["query"], "should_trigger": r.get("should_trigger", True)})
-        if history[0].get("test_results"):
-            for r in history[0].get("test_results", []):
-                test_queries.append({"query": r["query"], "should_trigger": r.get("should_trigger", True)})
+    title = "Trigger optimization report"
+    if skill_name:
+        title += f": {skill_name}"
+    refresh = '<meta http-equiv="refresh" content="5">\n' if auto_refresh else ""
 
-    refresh_tag = '    <meta http-equiv="refresh" content="5">\n' if auto_refresh else ""
+    best_score = data.get("best_score")
+    best_score_text = esc(best_score) if best_score is not None else "n/a"
 
-    html_parts = ["""<!DOCTYPE html>
-<html>
+    summary_rows = [
+        ("Original description", esc(data.get("original_description"))),
+        ("Best description", esc(data.get("best_description"))),
+        (f"Best score ({deciding_split})", best_score_text),
+        ("Iterations run", esc(data.get("iterations_run"))),
+        ("Train / test queries", f"{esc(data.get('train_size'))} / {esc(test_size)}"),
+    ]
+    exit_reason = data.get("exit_reason")
+    if exit_reason is not None:
+        summary_rows.append(("Exit reason", esc(exit_reason)))
+    holdout = data.get("holdout")
+    if holdout is not None:
+        summary_rows.append(("Holdout fraction", esc(holdout)))
+    summary_html = "".join(f"<dt>{label}</dt><dd>{value}</dd>" for label, value in summary_rows)
+
+    header_cells = [
+        "<th>Iteration</th>",
+        "<th>Train score<br><small>correct runs / runs</small></th>",
+        "<th>Test score<br><small>correct runs / runs</small></th>",
+        "<th>Description</th>",
+    ] + [_query_header(column) for column in columns]
+
+    body_rows = []
+    for index, entry in enumerate(entries):
+        is_best = index == best_index
+        row_class = "iteration best" if is_best else "iteration"
+        iteration_label = esc(entry["iteration"] if entry["iteration"] is not None else index + 1)
+        if is_best:
+            iteration_label += '<span class="best-mark">best</span>'
+        cells = [
+            f'<td class="iter">{iteration_label}</td>',
+            _score_cell(entry["train_results"]),
+            _score_cell(entry["test_results"]),
+            f'<td class="desc">{esc(entry["description"])}</td>',
+        ] + [_query_cell(entry, column) for column in columns]
+        body_rows.append(f'<tr class="{row_class}">{"".join(cells)}</tr>')
+
+    if body_rows:
+        table_html = (
+            '<div class="tablewrap"><table>'
+            f"<thead><tr>{''.join(header_cells)}</tr></thead>"
+            f"<tbody>{''.join(body_rows)}</tbody></table></div>"
+        )
+    else:
+        table_html = '<p class="note">No iteration has finished yet.</p>'
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-""" + refresh_tag + """    <title>""" + title_prefix + """Skill Description Optimization</title>
-    <style>
-        body {
-            font-family: ui-serif, Georgia, 'Times New Roman', serif;
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 20px;
-            background: #faf9f5;
-            color: #141413;
-        }
-        h1 { font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; color: #141413; }
-        .explainer {
-            background: white;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border: 1px solid #e8e6dc;
-            color: #b0aea5;
-            font-size: 0.875rem;
-            line-height: 1.6;
-        }
-        .summary {
-            background: white;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border: 1px solid #e8e6dc;
-        }
-        .summary p { margin: 5px 0; }
-        .best { color: #788c5d; font-weight: bold; }
-        .table-container {
-            overflow-x: auto;
-            width: 100%;
-        }
-        table {
-            border-collapse: collapse;
-            background: white;
-            border: 1px solid #e8e6dc;
-            border-radius: 6px;
-            font-size: 12px;
-            min-width: 100%;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-            border: 1px solid #e8e6dc;
-            white-space: normal;
-            word-wrap: break-word;
-        }
-        th {
-            font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-            background: #141413;
-            color: #faf9f5;
-            font-weight: 500;
-        }
-        th.test-col {
-            background: #6a9bcc;
-        }
-        th.query-col { min-width: 200px; }
-        td.description {
-            font-family: monospace;
-            font-size: 11px;
-            word-wrap: break-word;
-            max-width: 400px;
-        }
-        td.result {
-            text-align: center;
-            font-size: 16px;
-            min-width: 40px;
-        }
-        td.test-result {
-            background: #f0f6fc;
-        }
-        .pass { color: #788c5d; }
-        .fail { color: #c44; }
-        .rate {
-            font-size: 9px;
-            color: #b0aea5;
-            display: block;
-        }
-        tr:hover { background: #faf9f5; }
-        .score {
-            display: inline-block;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 11px;
-        }
-        .score-good { background: #eef2e8; color: #788c5d; }
-        .score-ok { background: #fef3c7; color: #d97706; }
-        .score-bad { background: #fceaea; color: #c44; }
-        .train-label { color: #b0aea5; font-size: 10px; }
-        .test-label { color: #6a9bcc; font-size: 10px; font-weight: bold; }
-        .best-row { background: #f5f8f2; }
-        th.positive-col { border-bottom: 3px solid #788c5d; }
-        th.negative-col { border-bottom: 3px solid #c44; }
-        th.test-col.positive-col { border-bottom: 3px solid #788c5d; }
-        th.test-col.negative-col { border-bottom: 3px solid #c44; }
-        .legend { font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif; display: flex; gap: 20px; margin-bottom: 10px; font-size: 13px; align-items: center; }
-        .legend-item { display: flex; align-items: center; gap: 6px; }
-        .legend-swatch { width: 16px; height: 16px; border-radius: 3px; display: inline-block; }
-        .swatch-positive { background: #141413; border-bottom: 3px solid #788c5d; }
-        .swatch-negative { background: #141413; border-bottom: 3px solid #c44; }
-        .swatch-test { background: #6a9bcc; }
-        .swatch-train { background: #141413; }
-    </style>
+<meta charset="utf-8">
+{refresh}<title>{esc(title)}</title>
+<style>{_STYLE}</style>
 </head>
 <body>
-    <h1>""" + title_prefix + """Skill Description Optimization</h1>
-    <div class="explainer">
-        <strong>Optimizing your skill's description.</strong> This page updates automatically as the optimizer tests different versions of your skill's description. Each row is an iteration — a new description attempt. The columns show test queries: green checkmarks mean the skill triggered correctly (or correctly didn't trigger), red crosses mean it got it wrong. The "Train" score shows performance on queries used to improve the description; the "Test" score shows performance on held-out queries the optimizer hasn't seen. When it's done, return to your agent session to review and apply the best-performing description.
-    </div>
-"""]
-
-    # Summary section
-    best_test_score = data.get('best_test_score')
-    data.get('best_train_score')
-    html_parts.append(f"""
-    <div class="summary">
-        <p><strong>Original:</strong> {html.escape(data.get('original_description', 'N/A'))}</p>
-        <p class="best"><strong>Best:</strong> {html.escape(data.get('best_description', 'N/A'))}</p>
-        <p><strong>Best Score:</strong> {data.get('best_score', 'N/A')} {'(test)' if best_test_score else '(train)'}</p>
-        <p><strong>Iterations:</strong> {data.get('iterations_run', 0)} | <strong>Train:</strong> {data.get('train_size', '?')} | <strong>Test:</strong> {data.get('test_size', '?')}</p>
-    </div>
-""")
-
-    # Legend
-    html_parts.append("""
-    <div class="legend">
-        <span style="font-weight:600">Query columns:</span>
-        <span class="legend-item"><span class="legend-swatch swatch-positive"></span> Should trigger</span>
-        <span class="legend-item"><span class="legend-swatch swatch-negative"></span> Should NOT trigger</span>
-        <span class="legend-item"><span class="legend-swatch swatch-train"></span> Train</span>
-        <span class="legend-item"><span class="legend-swatch swatch-test"></span> Test</span>
-    </div>
-""")
-
-    # Table header
-    html_parts.append("""
-    <div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th>Iter</th>
-                <th>Train</th>
-                <th>Test</th>
-                <th class="query-col">Description</th>
-""")
-
-    # Add column headers for train queries
-    for qinfo in train_queries:
-        polarity = "positive-col" if qinfo["should_trigger"] else "negative-col"
-        html_parts.append(f'                <th class="{polarity}">{html.escape(qinfo["query"])}</th>\n')
-
-    # Add column headers for test queries (different color)
-    for qinfo in test_queries:
-        polarity = "positive-col" if qinfo["should_trigger"] else "negative-col"
-        html_parts.append(f'                <th class="test-col {polarity}">{html.escape(qinfo["query"])}</th>\n')
-
-    html_parts.append("""            </tr>
-        </thead>
-        <tbody>
-""")
-
-    # Find best iteration for highlighting
-    if not history:
-        best_iter = None
-    elif test_queries:
-        best_iter = max(history, key=lambda h: h.get("test_passed") or 0).get("iteration")
-    else:
-        best_iter = max(history, key=lambda h: h.get("train_passed", h.get("passed", 0))).get("iteration")
-
-    # Add rows for each iteration
-    for h in history:
-        iteration = h.get("iteration", "?")
-        h.get("train_passed", h.get("passed", 0))
-        h.get("train_total", h.get("total", 0))
-        h.get("test_passed")
-        h.get("test_total")
-        description = h.get("description", "")
-        train_results = h.get("train_results", h.get("results", []))
-        test_results = h.get("test_results", [])
-
-        # Create lookups for results by query
-        train_by_query = {r["query"]: r for r in train_results}
-        test_by_query = {r["query"]: r for r in test_results} if test_results else {}
-
-        # Compute aggregate correct/total runs across all retries
-        def aggregate_runs(results: list[dict]) -> tuple[int, int]:
-            correct = 0
-            total = 0
-            for r in results:
-                runs = r.get("runs", 0)
-                triggers = r.get("triggers", 0)
-                total += runs
-                if r.get("should_trigger", True):
-                    correct += triggers
-                else:
-                    correct += runs - triggers
-            return correct, total
-
-        train_correct, train_runs = aggregate_runs(train_results)
-        test_correct, test_runs = aggregate_runs(test_results)
-
-        # Determine score classes
-        def score_class(correct: int, total: int) -> str:
-            if total > 0:
-                ratio = correct / total
-                if ratio >= 0.8:
-                    return "score-good"
-                elif ratio >= 0.5:
-                    return "score-ok"
-            return "score-bad"
-
-        train_class = score_class(train_correct, train_runs)
-        test_class = score_class(test_correct, test_runs)
-
-        row_class = "best-row" if iteration == best_iter else ""
-
-        html_parts.append(f"""            <tr class="{row_class}">
-                <td>{iteration}</td>
-                <td><span class="score {train_class}">{train_correct}/{train_runs}</span></td>
-                <td><span class="score {test_class}">{test_correct}/{test_runs}</span></td>
-                <td class="description">{html.escape(description)}</td>
-""")
-
-        # Add result for each train query
-        for qinfo in train_queries:
-            r = train_by_query.get(qinfo["query"], {})
-            did_pass = r.get("pass", False)
-            triggers = r.get("triggers", 0)
-            runs = r.get("runs", 0)
-
-            icon = "✓" if did_pass else "✗"
-            css_class = "pass" if did_pass else "fail"
-
-            html_parts.append(f'                <td class="result {css_class}">{icon}<span class="rate">{triggers}/{runs}</span></td>\n')
-
-        # Add result for each test query (with different background)
-        for qinfo in test_queries:
-            r = test_by_query.get(qinfo["query"], {})
-            did_pass = r.get("pass", False)
-            triggers = r.get("triggers", 0)
-            runs = r.get("runs", 0)
-
-            icon = "✓" if did_pass else "✗"
-            css_class = "pass" if did_pass else "fail"
-
-            html_parts.append(f'                <td class="result test-result {css_class}">{icon}<span class="rate">{triggers}/{runs}</span></td>\n')
-
-        html_parts.append("            </tr>\n")
-
-    html_parts.append("""        </tbody>
-    </table>
-    </div>
-""")
-
-    html_parts.append("""
+<h1>{esc(title)}</h1>
+<p class="note">Each row is one iteration of the optimization loop. Scores count
+correct runs over all runs: a should-trigger query is correct when the skill was
+picked, a should-not-trigger query when it was not. Query cells show pass or fail
+and picks over runs. Column tags mark train versus test queries and whether the
+query should trigger. Green is {GOOD_PERCENT}% or better, amber is {FAIR_PERCENT}%
+or better, red is below that. The outlined row is the best iteration, chosen by
+test score when a test set exists and by train score otherwise.</p>
+<div class="card"><dl>{summary_html}</dl></div>
+<h2>Iterations</h2>
+{table_html}
 </body>
 </html>
-""")
-
-    return "".join(html_parts)
+"""
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Generate HTML report from run_loop output")
-    parser.add_argument("input", help="Path to JSON output from run_loop.py (or - for stdin)")
-    parser.add_argument("-o", "--output", default=None, help="Output HTML file (default: stdout)")
-    parser.add_argument("--skill-name", default="", help="Skill name to include in the report title")
-    args = parser.parse_args()
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Render a run_loop result as HTML")
+    parser.add_argument("input", help="result JSON path, or '-' for standard input")
+    parser.add_argument("-o", "--output", type=Path, default=None, help="output file")
+    parser.add_argument("--skill-name", default="")
+    return parser
 
+
+def main(argv: list[str] | None = None) -> None:
+    args = build_parser().parse_args(argv)
     if args.input == "-":
         data = json.load(sys.stdin)
     else:
-        data = json.loads(Path(args.input).read_text())
-
-    html_output = generate_html(data, skill_name=args.skill_name)
-
-    if args.output:
-        Path(args.output).write_text(html_output)
-        print(f"Report written to {args.output}", file=sys.stderr)
+        data = json.loads(Path(args.input).read_text(encoding="utf-8"))
+    page = generate_html(data, skill_name=args.skill_name)
+    if args.output is None:
+        sys.stdout.write(page)
     else:
-        print(html_output)
+        args.output.write_text(page, encoding="utf-8")
 
 
 if __name__ == "__main__":

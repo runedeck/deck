@@ -1,4 +1,6 @@
 name: all
-description: Everything the deck publishes.
+description: Everything the deck publishes, except the provisioning module, which a consumer names to receive.
 runes:
     - '**'
+exclude:
+    - 'provisioning/**'

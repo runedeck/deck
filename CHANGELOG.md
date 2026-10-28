@@ -11,6 +11,8 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 - Add the FullSend skill in development: take one task to a merge-ready pull request while the owner reads nothing, then ask once, through the question tool, to merge.
 - Add the PruneTests skill in development: delete tests that no plausible bug can fail, repair weak ones with a recorded mutation, and hand the pull request to FullSend.
 - Add the PreferExistingTools, ProofsShowTheRealApp, AskBeforeMovingData, and AnswerBeforeEditing rules in core.
+- Add the `provisioning` module shell: `PROVISION_ROOT` defaults, the `all` cast leaves it out, no executable file in it, and a two-model comparison record per rune (provisioning-joins-the-deck).
+- Add the BrowserbaseToolkit skill in development: read a blocked page through a Browserbase cloud browser as clean markdown (automate-cloud-browsers-browserbase).
 - Add the Dotfiles Scanner and Online Mentions routines with a deterministic detector the run takes from the deck object store, and retire GitHub Exposure (scanner-routines-from-deck).
 - Add `routines/`: the Repository Digest and Weekly Ceremony Audit prompts as deck files a Claude Code routine reads at `main`, with the instance values in the provider stub (routine-prompts-from-deck).
 - Add `scripts/check-ontology`: the smoke fixture names each finding in `ontology/smoke/expected.tsv`, and the graph check prints each violation by node. Both hooks call it.
@@ -72,6 +74,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- Change BuildSkill's trigger-eval scripts and review page to a clean-room rewrite with tests, so the deck carries no copied skill-creator code.
 - Change the Dotfiles Scanner to read acknowledgements from `.auditignore.yaml` and to run the detector from a checked copy in the scratch directory (scanner-routines-from-deck).
 - Routine notifications open with the result and whether to act, group details in bullets, end with one next step, and show health only when degraded (routine-prompts-from-deck).
 - Require `### Consequences` under `## Decision Outcome` with `[+]` and `[-]` items, as the runeADR template states, and convert every record (decision-records-match-template).
@@ -100,12 +103,14 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 ### Removed
 
 - Remove the Claude Code variant of SafetyFirst. Its load-time probe stopped the skill from loading where Bash was not granted, and the canon alone scores 0.44 against 0 (runes-carry-eval-records).
+- Remove the BenchArtifact eval viewer, which no instruction used and which carried copied skill-creator code.
 - Remove the legacy per-block review ledgers from BuildSkill and ReviewMarkers.
 - Remove the dated markdown backlog.
 
 ### Fixed
 
 - Fix VersionControl's directory advice: `gh -R` and `glab -R` take a remote `OWNER/REPO`, so a local directory needs its own `cd` call (runes-carry-eval-records).
+- Fix the ReviewChange term links to point at the glossary pages by repository URL, so the bundle passes the source-layer check and the links survive deployment (skill-term-links-survive-deployment).
 - Fix the Dotfiles Scanner to fetch the whole branch history and report a scan that stops at a shallow boundary as incomplete (scanner-routines-from-deck).
 - Fix a Dotfiles notification bullet to point to the first file before a commit message (scanner-routines-from-deck).
 - Fix the Repository Digest and Weekly Ceremony Audit to end with the notification text only (routine-prompts-from-deck).

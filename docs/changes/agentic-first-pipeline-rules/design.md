@@ -74,6 +74,7 @@ A requirement names a role. This table names the command or link form behind eac
 |---|---|---|
 | Pushback before scaffold | `rune spec propose` | Creates the change directory once the challenge pass leaves a sharpened intent standing. |
 | Any medium, one entry point | `obsidian://` | The link form a drawing in the owner's vault arrives in. The Obsidian CLI reads it. |
+
 A requirement names a role. This table names the program and hook behind each requirement, so nothing is lost when a command moves out of a requirement.
 
 | Requirement | Command | Notes |

@@ -42,6 +42,12 @@ jobs:
             - name: Test exposure detector
               run: python3 -m unittest discover -s tests -p 'test_exposure_scan.py' -v
 
+            - name: Test the provisioning checks
+              run: python3 -m unittest discover -s tests -p 'test_check_provisioning_*.py' -v
+
+            - name: Test the comparison record generator
+              run: python3 -m unittest discover -s tests -p 'test_record_comparison.py' -v
+
             - name: Install JJ for push gate tests
               env:
                   JJ_VERSION: "0.45.1"
@@ -113,6 +119,13 @@ jobs:
                   cargo install --quiet --git https://github.com/runedeck/cli --rev "$RUNE_CLI_REV" rune-cli
                   rune --version
 
+            # The selection test installs a scratch deck with the rune above,
+            # so it comes after it and fails rather than skips without one.
+            - name: Test that the default deployment leaves the provisioning module out
+              env:
+                  REQUIRE_GATES: "1"
+              run: python3 -m unittest discover -s tests -p 'test_provisioning_default_selection.py' -v
+
             # The fixture tests run the Vale rules and the check scripts the
             # installer above provides, so they come after it.
             - name: Test the foundation checks and Core Vale rules against their fixtures
@@ -121,7 +134,12 @@ jobs:
               run: python3 -m unittest tests.test_check_scripts -v
 
             # Select the event range once so both prek stages inspect the same
-            # change. Inspect all files only when no base commit exists.
+            # change. The first push of a new branch carries no before commit,
+            # and a rewritten branch carries one that no ref reaches any more.
+            # Both start at the branch's merge base with main. Without it, the
+            # stages inspected every file, and a hook that needs a desktop tool,
+            # such as the idea snapshot check, failed on every such push.
+            # Inspect all files only when no base commit exists.
             - name: Select check range
               id: check-range
               env:
@@ -137,6 +155,10 @@ jobs:
                       to="$PR_HEAD"
                   elif [ -n "$PUSH_BASE" ] && ! printf '%s' "$PUSH_BASE" | grep -q '^0*$'; then
                       from="$PUSH_BASE"
+                  fi
+                  if [ "$GITHUB_REF" != "refs/heads/main" ] \
+                      && { [ -z "$from" ] || ! git cat-file -e "$from^{commit}" 2>/dev/null; }; then
+                      from=$(git merge-base origin/main "$to" 2>/dev/null || true)
                   fi
 
                   if [ -n "$from" ] && git cat-file -e "$from^{commit}" 2>/dev/null; then
