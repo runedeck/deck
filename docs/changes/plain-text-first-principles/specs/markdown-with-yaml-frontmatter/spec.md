@@ -3,7 +3,7 @@
 ### Requirement: Markdown System Language
 
 Every *[instruction][INSTRUCTION]* MUST be Markdown with YAML frontmatter, in the dialect the *[repository][REPOSITORY]* accepts: GitHub Flavored Markdown [GFM] plus one YAML frontmatter block. Wikilinks, callouts, and raw HTML blocks are outside the dialect.
-Markdown is our plain text format of choice, because language models are trained on it. One file serves a git or jj repository, a vault such as Obsidian, and a *[harness][HARNESS]*.
+Markdown is our plain text format of choice, because language *[models][MODEL]* are trained on it. One file serves a git or jj [repository][REPOSITORY], a vault such as Obsidian, and a *[harness][HARNESS]*.
 
 #### Scenario: Instruction arrives in another format
 
@@ -23,17 +23,17 @@ The one exception is the *[provenance record][PROVENANCERECORD]*, sealed in a *[
 #### Scenario: Provenance evidence arrives
 
 - **WHEN** an adoption or an assembly produces a [provenance record][PROVENANCERECORD] for an *[artifact][ARTIFACT]*
-- **THEN** the *[assembler][ASSEMBLER]* seals the record in a [sidecar][SIDECAR] beside the artifact, and the artifact's frontmatter is untouched
+- **THEN** the *[assembler][ASSEMBLER]* seals the record in a [sidecar][SIDECAR] beside the [artifact][ARTIFACT], and the [artifact][ARTIFACT]'s frontmatter is untouched
 
 #### Scenario: Derived index disagrees with frontmatter
 
-- **WHEN** a derived store, such as the deployment manifest that records the fingerprints of assembled instances, disagrees with an [artifact][ARTIFACT]'s frontmatter on one field
+- **WHEN** a derived store, such as the deployment manifest that records the fingerprints of assembled *[instances][INSTANCE]*, disagrees with an [artifact][ARTIFACT]'s frontmatter on one field
 - **THEN** frontmatter wins, and the *[generator][GENERATOR]* regenerates the store
 
 #### Scenario: Harness field arrives
 
 - **WHEN** a field only one [harness][HARNESS] reads, such as an argument hint or an allowed-tools list, is added for a [state file][STATEFILE]
-- **THEN** it goes into that harness's [basis parameters][BASISPARAMETERS] beside the state file. That input tells the [assembler][ASSEMBLER] how to build the *[instance][INSTANCE]* for that harness
+- **THEN** it goes into that [harness][HARNESS]'s [basis parameters][BASISPARAMETERS] beside the [state file][STATEFILE]. That input tells the [assembler][ASSEMBLER] how to build the [instance][INSTANCE] for that [harness][HARNESS]
 
 ### Requirement: Reference Citations
 
@@ -47,8 +47,8 @@ A bare number tells the reader nothing at the point of use. Inserting a source r
 
 ### Requirement: Defined Terms Cite the Ontology
 
-A term with a special meaning MUST be marked once per file, at its first use, by an emphasized link to its glossary page. Later uses are plain words, and a later link stays plain. Plain italics mean emphasis only.
-The [assembler][ASSEMBLER] strips the links from each [instance][INSTANCE] and adds a definition block for only the terms it uses. An always-on rule tells every *[model][MODEL]* that the [repository][REPOSITORY] has an ontology.
+A term with a special meaning MUST be marked at every use by a link to its glossary page. The first use in a file is an emphasized link, so a reader notices a new term, and every later use is a plain link. Plain italics mean emphasis only.
+The [assembler][ASSEMBLER] strips the links from each [instance][INSTANCE] and adds a definition block for only the terms it uses. An always-on rule tells every [model][MODEL] that the [repository][REPOSITORY] has an ontology.
 
 #### Scenario: First use is not emphasized
 
@@ -58,22 +58,25 @@ The [assembler][ASSEMBLER] strips the links from each [instance][INSTANCE] and a
 #### Scenario: Assembler builds an instance with term links
 
 - **WHEN** the [assembler][ASSEMBLER] builds an [instance][INSTANCE] from a [state file][STATEFILE] that links terms
-- **THEN** the instance contains no term links and no reference definition block. A short block built from the ontology defines only the terms the instance uses
+- **THEN** the [instance][INSTANCE] contains no term links and no reference definition block. A short block built from the ontology defines only the terms the [instance][INSTANCE] uses
 
 #### Scenario: Model meets a word with no entry
 
 - **WHEN** a [model][MODEL] is about to use or introduce a word that seems to have a special meaning
-- **THEN** the always-on rule has the model look the word up in the ontology first. The model asks the user when the ontology has no entry for it
+- **THEN** the always-on rule has the [model][MODEL] look the word up in the ontology first. The [model][MODEL] asks the user when the ontology has no entry for it
 
 ### Requirement: The Ontology Defines Every Term
 
 The ontology MUST be the only definition of a term. Before writing, the author reads the glossary and uses an existing term, or adds the term to the ontology first.
-A term link whose tag resolves to no ontology entry is a finding. While a *[change][CHANGE]* is active, the *[fixer][FIXER]* adds a draft entry for the term and the [validator][VALIDATOR] warns on every link to a draft. The *[archiver][ARCHIVER]* refuses to archive a change that links to a draft term still without a definition.
 
 #### Scenario: Term link points at no entry
 
 - **WHEN** a term link's tag resolves to no entry in the ontology
-- **THEN** the [validator][VALIDATOR] reports the term and the file, and the [fixer][FIXER] adds a draft entry, run by the author or by the commit hook
+- **THEN** the [validator][VALIDATOR] reports the term and the file, and the *[fixer][FIXER]* adds a draft entry, run by the author or by the commit hook
+
+### Requirement: Draft Terms Warn And Archive Refuses Them
+
+A term link whose tag resolves to no ontology entry is a finding. While a *[change][CHANGE]* is active, the [fixer][FIXER] adds a draft entry for the term and the [validator][VALIDATOR] MUST warn on every link to a draft. The *[archiver][ARCHIVER]* MUST refuse to archive a [change][CHANGE] that links to a draft term still without a definition.
 
 #### Scenario: Change links to a draft term at archive
 
@@ -83,11 +86,11 @@ A term link whose tag resolves to no ontology entry is a finding. While a *[chan
 ### Requirement: Glossary Renders From The Ontology
 
 The glossary MUST be a *[render][RENDER]* of the ontology: one generated page per term and an index. A vault keeps one note per concept in the same way, and term links point at those pages.
-The [validator][VALIDATOR] renders every page in memory and compares the bytes with the committed page, so a hand edit is drift. People edit only the ontology, and the [generator][GENERATOR] writes the pages, one hop from every link.
+The [validator][VALIDATOR] [renders][RENDER] every page in memory and compares the bytes with the committed page, so a hand edit is drift. People edit only the ontology, and the [generator][GENERATOR] writes the pages, one hop from every link.
 
 #### Scenario: Glossary page drifts from the ontology
 
-- **WHEN** a committed glossary page differs by one byte from a fresh render of the ontology
+- **WHEN** a committed glossary page differs by one byte from a fresh [render][RENDER] of the ontology
 - **THEN** the [validator][VALIDATOR] reports the page, and the ontology is what counts
 
 [INSTRUCTION]: ../../../../specs/glossary/instruction.md

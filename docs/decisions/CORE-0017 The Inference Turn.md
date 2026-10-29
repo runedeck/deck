@@ -9,7 +9,7 @@ tags:
     - pipeline
 status: accepted
 created: 2026-08-27
-updated: 2026-08-27
+updated: 2026-10-19
 author: "@N4M3Z"
 project: deck
 related:
@@ -26,7 +26,7 @@ change: economy-measure-context-efficiency
 
 ## Context and Problem Statement
 
-Authoring decisions argue about token cost without a shared model of when each artifact reaches the model. The deck needs one record of the inference pipeline, so every artifact discussion can name the layer it changes and the price it pays.
+The *[repository][REPOSITORY]* needs one record of the inference pipeline, so every *[artifact][ARTIFACT]* discussion can state the layer it alters and the price it pays. Authoring decisions argue about token cost without a shared account of when each [artifact][ARTIFACT] reaches the *[model][MODEL]*.
 
 ## Considered Options
 
@@ -37,20 +37,30 @@ Authoring decisions argue about token cost without a shared model of when each a
 
 Chosen option: record the pipeline.
 
-Session start loads the resident set once: the harness system prompt, the settings cascade as behavior, the memory chain (user memory, user rules, the repository brief, deployed rules), the auto-memory index, and the skill listing as names with descriptions. Deferred tools cost nothing until a search loads them.
+Session start loads the resident set once. The resident set contains the *[harness][HARNESS]* system prompt, the settings cascade as behavior, and the memory chain. The memory chain is user memory, user *[rules][RULE]*, the [repository][REPOSITORY] brief, and deployed [rules][RULE]. The resident set also contains the auto-memory index and the *[skill][SKILL]* listing as *[names][NAME]* with *[descriptions][DESCRIPTION]*. Deferred tools cost nothing until a search loads them.
 
-Each turn can invoke the event layer: prompt-submit hooks, pre-tool gates, sandbox enforcement, post-tool feedback, and stop hooks.
+Each turn can invoke the event layer: prompt-submit *[hooks][HOOK]*, pre-tool checks, sandbox enforcement, post-tool feedback, and stop [hooks][HOOK]. Prompt-submit [hooks][HOOK] and post-tool feedback can add payloads that the [model][MODEL] sees. The other entries perform runtime work and add tokens only when they emit a diagnostic that the [model][MODEL] sees.
 
-Prompt-submit hooks and post-tool feedback can add model-visible payloads. The other entries perform runtime work and add tokens only when they emit a model-visible diagnostic.
+Compaction rebuilds the context from a summary. Critical constraints need re-injection at that boundary, and a PostCompact [hook][HOOK] is the mechanism.
 
-Compaction rebuilds the context from a summary. Critical constraints need re-injection at that boundary, and a PostCompact hook is the mechanism.
-
-The layer map from CORE-0013 assigns each fact its home. The resident set adds tokens to every inference turn.
-
-The event layer always pays its runtime cost. It adds input tokens only for model-visible payloads. The on-demand layer adds cost only when loaded.
+The layer map from [CORE-0013 Context Economy](CORE-0013%20Context%20Economy.md) assigns each fact its home. The resident set adds tokens to every inference turn. The event layer always incurs its runtime cost, and it adds input tokens only for payloads that the [model][MODEL] sees. The on-demand layer adds cost only when the session loads it.
 
 ### Consequences
 
-- [+] Every authoring debate can name the layer and its price.
+- [+] Every authoring debate can state the layer and its price.
 - [+] The compaction boundary is a recorded gap with a named mechanism.
-- [-] The record needs an update when the harness changes its loading model.
+- [-] The record needs an update when the [harness][HARNESS] alters its loading behavior.
+
+## More Information
+
+- Rewritten on 2026-10-19 in the plain spoken register. The decision is unchanged.
+
+[ARTIFACT]: ../specs/glossary/artifact.md
+[MODEL]: ../specs/glossary/model.md
+[HARNESS]: ../specs/glossary/harness.md
+[RULE]: ../specs/glossary/rule.md
+[REPOSITORY]: ../specs/glossary/repository.md
+[SKILL]: ../specs/glossary/skill.md
+[HOOK]: ../specs/glossary/hook.md
+[NAME]: ../specs/glossary/name.md
+[DESCRIPTION]: ../specs/glossary/description.md
