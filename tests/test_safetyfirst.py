@@ -19,6 +19,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "runes/core/skills/SafetyFirst"
 POLICY_SHA256 = "6b762301756a6c0df6bd162c718f7799d59839882a93d1c83f9f90fc8c42b8b8"
+# The bounded invocation the canon prescribes: the helper by absolute path,
+# a five-second kill deadline, and no shell around the version probe.
+PROBE_COMMAND = 'timeout -s KILL 5s python3 "${SKILL_DIR}/scripts/probe_guard.py" 2>/dev/null'
 
 
 def injection_commands(text):
@@ -39,17 +42,14 @@ def check_bundle(directory, provider):
             raise AssertionError("The source link alias entered the assembled bundle")
         if companion.read_bytes() != (SKILL / "Workflow.md").read_bytes():
             raise AssertionError("The assembled shared policy changed")
-    commands = injection_commands(text)
-    if provider == "claude" and len(commands) != 1:
-        raise AssertionError("The Claude entrypoint needs the shared discovery helper")
-    if provider != "claude" and commands:
-        raise AssertionError("Portable entrypoints must not contain injection")
+    if injection_commands(text):
+        raise AssertionError(f"The {provider} entrypoint must not contain injection")
     if "mode:" in text:
         raise AssertionError("Assembly did not consume the body mode")
     if any(path.name in {"claude", "codex"} for path in directory.iterdir()):
         raise AssertionError("A qualifier directory entered the assembled bundle")
-    if provider == "claude" and "Run `python3` with this skill's" in text:
-        raise AssertionError("Append retained the portable discovery procedure")
+    if "Run `python3` with this skill's" not in text:
+        raise AssertionError("The bundle lost the discovery procedure")
     helper = directory / "scripts/probe_guard.py"
     if not helper.is_file():
         raise AssertionError("The discovery helper is missing")
@@ -64,32 +64,20 @@ class SafetyFirstContentTests(unittest.TestCase):
         self.assertEqual(hashlib.sha256(policy.encode()).hexdigest(), POLICY_SHA256)
         self.assertFalse(injection_commands(workflow))
 
-    def test_provider_entrypoints_have_explicit_discovery_contracts(self):
-        portable = (SKILL / "SKILL.md").read_text(encoding="utf-8")
-        claude = (SKILL / "claude/SKILL.md").read_text(encoding="utf-8")
-        self.assertFalse(injection_commands(portable))
-        self.assertIn("mode: replace\n", claude)
+    def test_canon_carries_the_only_discovery_contract(self):
+        canon = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+        self.assertFalse(injection_commands(canon))
+        self.assertFalse((SKILL / "claude").exists())
         self.assertFalse((SKILL / "codex").exists())
-        alias = SKILL / "claude/Workflow.md"
-        self.assertTrue(alias.is_symlink())
-        self.assertEqual(alias.readlink(), Path("../Workflow.md"))
-        self.assertEqual(alias.resolve(), (SKILL / "Workflow.md").resolve())
-        self.assertNotIn("rumdl-disable", claude)
-        for text in (portable, claude):
-            self.assertIn("[Workflow.md](Workflow.md)", text)
-            self.assertIn("five-second timeout", text)
-            self.assertIn("1024-byte output limit", text)
-            self.assertIn("`unknown`", text)
-            self.assertIn("does not prove that a guard is active", text)
-            self.assertIn("escaped `payload` strings", text)
-            self.assertIn("`process.exit_code: 0`", text)
-            self.assertIn("`process.truncated: false`", text)
-        tools_line = next(line for line in claude.splitlines() if line.startswith("allowed-tools:"))
-        scopes = tools_line.split(":", 1)[1].strip().strip("'")
-        self.assertNotIn("*", scopes)
-        for command in injection_commands(claude):
-            self.assertEqual(f"Bash({command})", scopes)
-        self.assertNotIn("head -c", claude)
+        self.assertNotIn("rumdl-disable", canon)
+        self.assertIn("[Workflow.md](Workflow.md)", canon)
+        self.assertIn("five-second timeout", canon)
+        self.assertIn("1024-byte output limit", canon)
+        self.assertIn("`unknown`", canon)
+        self.assertIn("does not prove that a guard is active", canon)
+        self.assertIn("escaped `payload` strings", canon)
+        self.assertIn("`process.exit_code: 0`", canon)
+        self.assertIn("`process.truncated: false`", canon)
 
 
 class SafetyFirstProbeTests(unittest.TestCase):
@@ -106,8 +94,6 @@ class SafetyFirstProbeTests(unittest.TestCase):
         self.skill = self.directory / "skill with spaces"
         (self.skill / "scripts").mkdir(parents=True)
         shutil.copyfile(SKILL / "scripts/probe_guard.py", self.skill / "scripts/probe_guard.py")
-        self.commands = injection_commands((SKILL / "claude/SKILL.md").read_text())
-        self.assertEqual(len(self.commands), 1)
 
     def write_guard(self, body):
         path = self.binaries / "dcg"
@@ -116,12 +102,12 @@ class SafetyFirstProbeTests(unittest.TestCase):
 
     def execute_helper(self):
         result = subprocess.run(
-            ["/bin/sh", "-c", self.commands[0]],
+            ["/bin/sh", "-c", PROBE_COMMAND],
             cwd=self.directory,
             env={
                 "PATH": str(self.binaries),
                 "LC_ALL": "C",
-                "CLAUDE_SKILL_DIR": str(self.skill),
+                "SKILL_DIR": str(self.skill),
                 "PYTHONDONTWRITEBYTECODE": "1",
             },
             text=True,
@@ -359,11 +345,12 @@ class SafetyFirstAssemblyTests(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, "helper is missing"):
             check_bundle(self.bundle("codex"), "codex")
 
-    def test_append_cannot_silently_keep_both_discovery_procedures(self):
+    def test_reintroduced_injection_variant_is_detected_after_assembly(self):
         variant = self.skill / "claude/SKILL.md"
-        variant.write_text(variant.read_text().replace("mode: replace", "mode: append"))
+        variant.parent.mkdir()
+        variant.write_text(f"---\nmode: append\n---\n\n!`{PROBE_COMMAND}`\n")
         self.assemble()
-        with self.assertRaisesRegex(AssertionError, "Append retained"):
+        with self.assertRaisesRegex(AssertionError, "must not contain injection"):
             check_bundle(self.bundle("claude"), "claude")
 
 

@@ -1,0 +1,31 @@
+{
+  "rune": "PruneTests",
+  "kind": "skill",
+  "layer": "assembled",
+  "instance_sha256": "df84b7acb247ad6755c805c743182f140092c0d073b83eece26cf2dcd4404a68",
+  "model": "claude-haiku-4-5-20251001",
+  "profile": "main",
+  "runs": 3,
+  "recorded": "2026-10-20T093425Z",
+  "claude_version": "2.1.304",
+  "score": 0.8333333333333333,
+  "cases_passed": 0,
+  "cases_total": 2,
+  "mean_delta": 0.3888888888888889,
+  "cost_usd": 0.30108894999999997,
+  "duration_seconds": 246,
+  "cases": [
+    {
+      "name": "classify-tests",
+      "score": 0.8888888888888888,
+      "score_without": 0.3333333333333333,
+      "delta": 0.5555555555555556
+    },
+    {
+      "name": "flaky-test-stays",
+      "score": 0.7777777777777777,
+      "score_without": 0.5555555555555555,
+      "delta": 0.2222222222222222
+    }
+  ]
+}
