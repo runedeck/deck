@@ -1,150 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Eval Set Review</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: ui-serif, Georgia, serif; background: #faf9f5; padding: 2rem; color: #141413; }
-    h1 { font-family: ui-sans-serif, system-ui, sans-serif; margin-bottom: 0.5rem; font-size: 1.5rem; }
-    .description { color: #b0aea5; margin-bottom: 1.5rem; font-style: italic; max-width: 900px; }
-    .controls { margin-bottom: 1rem; display: flex; gap: 0.5rem; }
-    .btn { font-family: ui-sans-serif, system-ui, sans-serif; padding: 0.5rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 500; }
-    .btn-add { background: #6a9bcc; color: white; }
-    .btn-add:hover { background: #5889b8; }
-    .btn-export { background: #d97757; color: white; }
-    .btn-export:hover { background: #c4613f; }
-    table { width: 100%; max-width: 1100px; border-collapse: collapse; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-    th { font-family: ui-sans-serif, system-ui, sans-serif; background: #141413; color: #faf9f5; padding: 0.75rem 1rem; text-align: left; font-size: 0.875rem; }
-    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e8e6dc; vertical-align: top; }
-    tr:nth-child(even) td { background: #faf9f5; }
-    tr:hover td { background: #f3f1ea; }
-    .section-header td { background: #e8e6dc; font-family: ui-sans-serif, system-ui, sans-serif; font-weight: 500; font-size: 0.8rem; color: #141413; text-transform: uppercase; letter-spacing: 0.05em; }
-    .query-input { width: 100%; padding: 0.4rem; border: 1px solid #e8e6dc; border-radius: 4px; font-size: 0.875rem; font-family: ui-serif, Georgia, serif; resize: vertical; min-height: 60px; }
-    .query-input:focus { outline: none; border-color: #d97757; box-shadow: 0 0 0 2px rgba(217,119,87,0.15); }
-    .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
-    .toggle input { opacity: 0; width: 0; height: 0; }
-    .toggle .slider { position: absolute; inset: 0; background: #b0aea5; border-radius: 24px; cursor: pointer; transition: 0.2s; }
-    .toggle .slider::before { content: ""; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
-    .toggle input:checked + .slider { background: #d97757; }
-    .toggle input:checked + .slider::before { transform: translateX(20px); }
-    .btn-delete { background: #c44; color: white; padding: 0.3rem 0.6rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-family: ui-sans-serif, system-ui, sans-serif; }
-    .btn-delete:hover { background: #a33; }
-    .summary { margin-top: 1rem; color: #b0aea5; font-size: 0.875rem; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trigger eval set review</title>
+<style>
+  :root {
+    --ink: #1d232e; --muted: #667085; --line: #dfe3ea; --bg: #f4f6f9;
+    --card: #ffffff; --accent: #2d5bd1; --accent-ink: #ffffff;
+    --yes: #178a4c; --yes-bg: #e7f6ed; --no: #b23a3a; --no-bg: #fbeaea;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  header, main { max-width: 64rem; margin: 0 auto; padding: 1.5rem 1.25rem; }
+  header { padding-bottom: 0; }
+  h1 { margin: 0 0 .5rem; font-size: 1.5rem; }
+  h2 { font-size: 1.1rem; margin: 1.75rem 0 .5rem; display: flex; align-items: center; gap: .5rem; }
+  h2 .pill { font-size: .75rem; font-weight: 600; padding: .05rem .5rem; border-radius: 999px; }
+  .yes h2 .pill { background: var(--yes-bg); color: var(--yes); }
+  .no h2 .pill { background: var(--no-bg); color: var(--no); }
+  .meta { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.25rem; }
+  .meta p { margin: .25rem 0; overflow-wrap: anywhere; }
+  .label { color: var(--muted); font-weight: 600; margin-right: .4rem; }
+  .intro { color: var(--muted); margin: .75rem 0 0; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin-top: 1rem; }
+  .summary { color: var(--muted); margin-left: auto; }
+  button {
+    font: inherit; padding: .45rem .9rem; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--card); color: var(--ink);
+  }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  button.danger { color: var(--no); }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--line);
+    border-radius: 10px; padding: .75rem .9rem; margin-bottom: .6rem;
+    display: grid; grid-template-columns: 1fr auto; gap: .6rem; align-items: start;
+  }
+  .yes .card { border-left-color: var(--yes); }
+  .no .card { border-left-color: var(--no); }
+  textarea {
+    width: 100%; min-height: 4.5rem; resize: vertical; font: inherit; padding: .5rem .6rem;
+    border: 1px solid var(--line); border-radius: 6px; color: var(--ink);
+  }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .actions { display: flex; flex-direction: column; gap: .4rem; min-width: 12rem; }
+  .empty { color: var(--muted); font-style: italic; }
+  .error { background: var(--no-bg); color: var(--no); padding: .75rem 1rem; border-radius: 8px; margin-top: 1rem; }
+</style>
 </head>
 <body>
-  <h1>Eval Set Review: <span id="skill-name"></span></h1>
-  <p class="description">Current description: <span id="skill-desc"></span></p>
-
-  <div class="controls">
-    <button class="btn btn-add" onclick="addRow()">+ Add Query</button>
-    <button class="btn btn-export" onclick="exportEvalSet()">Export Eval Set</button>
+<header>
+  <h1>Trigger eval set review</h1>
+  <div class="meta">
+    <p><span class="label">Skill</span><span id="skill-name"></span></p>
+    <p><span class="label">Current description</span><span id="skill-description"></span></p>
+    <p class="intro">Edit the queries below, move any between the two groups, delete the weak ones,
+      and add new ones. When the set looks right, export it and hand the saved file back.</p>
   </div>
+  <div class="toolbar">
+    <button id="add-query" type="button">Add should-trigger query</button>
+    <button id="export" type="button" class="primary">Export Eval Set</button>
+    <span id="summary" class="summary"></span>
+  </div>
+  <div id="error" class="error" hidden></div>
+</header>
+<main>
+  <section class="yes">
+    <h2>Should trigger <span class="pill" id="count-yes"></span></h2>
+    <div id="group-yes"></div>
+  </section>
+  <section class="no">
+    <h2>Should not trigger <span class="pill" id="count-no"></span></h2>
+    <div id="group-no"></div>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
 
-  <table>
-    <thead>
-      <tr>
-        <th style="width:65%">Query</th>
-        <th style="width:18%">Should Trigger</th>
-        <th style="width:10%">Actions</th>
-      </tr>
-    </thead>
-    <tbody id="eval-body"></tbody>
-  </table>
+  var EVAL_DATA_B64 = "__EVAL_DATA_BASE64__";
+  var SKILL_NAME_B64 = "__SKILL_NAME_BASE64__";
+  var SKILL_DESCRIPTION_B64 = "__SKILL_DESCRIPTION_BASE64__";
 
-  <p class="summary" id="summary"></p>
-
-  <script>
-    // Base64 payloads survive </script> sequences and HTML metacharacters in
-    // skill names, descriptions, and queries without breaking the page.
-    function decodeBase64Utf8(value) {
-      return new TextDecoder().decode(Uint8Array.from(atob(value), c => c.charCodeAt(0)));
+  function decodeUtf8Base64(encoded) {
+    var binary = atob(encoded);
+    var bytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
     }
-    const EVAL_DATA = JSON.parse(decodeBase64Utf8("__EVAL_DATA_BASE64__"));
-    document.getElementById('skill-name').textContent = decodeBase64Utf8("__SKILL_NAME_BASE64__");
-    document.getElementById('skill-desc').textContent = decodeBase64Utf8("__SKILL_DESCRIPTION_BASE64__");
+    return new TextDecoder("utf-8").decode(bytes);
+  }
 
-    let evalItems = [...EVAL_DATA];
+  var items = [];
+  var nextId = 1;
 
-    function render() {
-      const tbody = document.getElementById('eval-body');
-      tbody.innerHTML = '';
+  function byId(id) { return document.getElementById(id); }
 
-      // Sort: should-trigger first, then should-not-trigger
-      const sorted = evalItems
-        .map((item, origIdx) => ({ ...item, origIdx }))
-        .sort((a, b) => (b.should_trigger ? 1 : 0) - (a.should_trigger ? 1 : 0));
+  function makeButton(text, className, onClick) {
+    var button = document.createElement("button");
+    button.type = "button";
+    button.textContent = text;
+    if (className) { button.className = className; }
+    button.addEventListener("click", onClick);
+    return button;
+  }
 
-      let lastGroup = null;
-      sorted.forEach(item => {
-        const group = item.should_trigger ? 'trigger' : 'no-trigger';
-        if (group !== lastGroup) {
-          const headerRow = document.createElement('tr');
-          headerRow.className = 'section-header';
-          headerRow.innerHTML = `<td colspan="3">${item.should_trigger ? 'Should Trigger' : 'Should NOT Trigger'}</td>`;
-          tbody.appendChild(headerRow);
-          lastGroup = group;
-        }
+  function buildCard(item) {
+    var card = document.createElement("div");
+    card.className = "card";
 
-        const idx = item.origIdx;
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><textarea class="query-input" onchange="updateQuery(${idx}, this.value)">${escapeHtml(item.query)}</textarea></td>
-          <td>
-            <label class="toggle">
-              <input type="checkbox" ${item.should_trigger ? 'checked' : ''} onchange="updateTrigger(${idx}, this.checked)">
-              <span class="slider"></span>
-            </label>
-            <span style="margin-left:8px;font-size:0.8rem;color:#b0aea5">${item.should_trigger ? 'Yes' : 'No'}</span>
-          </td>
-          <td><button class="btn-delete" onclick="deleteRow(${idx})">Delete</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
+    var area = document.createElement("textarea");
+    area.value = item.query;
+    area.setAttribute("data-item-id", String(item.id));
+    area.setAttribute("aria-label", "Query text");
+    area.addEventListener("input", function () {
+      item.query = area.value;
       updateSummary();
+    });
+
+    var actions = document.createElement("div");
+    actions.className = "actions";
+    actions.appendChild(makeButton(
+      item.shouldTrigger ? "Move to should-not-trigger" : "Move to should-trigger",
+      "",
+      function () {
+        item.shouldTrigger = !item.shouldTrigger;
+        render(item.id);
+      }
+    ));
+    actions.appendChild(makeButton("Delete", "danger", function () {
+      items = items.filter(function (other) { return other !== item; });
+      render(null);
+    }));
+
+    card.appendChild(area);
+    card.appendChild(actions);
+    return card;
+  }
+
+  function fillGroup(container, groupItems) {
+    container.replaceChildren();
+    if (groupItems.length === 0) {
+      var note = document.createElement("p");
+      note.className = "empty";
+      note.textContent = "No queries in this group.";
+      container.appendChild(note);
+      return;
     }
+    groupItems.forEach(function (item) {
+      container.appendChild(buildCard(item));
+    });
+  }
 
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
+  function updateSummary() {
+    var yes = items.filter(function (item) { return item.shouldTrigger; }).length;
+    var no = items.length - yes;
+    byId("summary").textContent =
+      items.length + " queries: " + yes + " should trigger, " + no + " should not trigger";
+    byId("count-yes").textContent = String(yes);
+    byId("count-no").textContent = String(no);
+  }
+
+  function render(focusId) {
+    fillGroup(byId("group-yes"), items.filter(function (item) { return item.shouldTrigger; }));
+    fillGroup(byId("group-no"), items.filter(function (item) { return !item.shouldTrigger; }));
+    updateSummary();
+    if (focusId !== null && focusId !== undefined) {
+      var area = document.querySelector('textarea[data-item-id="' + focusId + '"]');
+      if (area) { area.focus(); }
     }
+  }
 
-    function updateQuery(idx, value) { evalItems[idx].query = value; updateSummary(); }
-    function updateTrigger(idx, value) { evalItems[idx].should_trigger = value; render(); }
-    function deleteRow(idx) { evalItems.splice(idx, 1); render(); }
+  function addQuery() {
+    var item = { id: nextId++, query: "", shouldTrigger: true };
+    items.push(item);
+    render(item.id);
+  }
 
-    function addRow() {
-      evalItems.push({ query: '', should_trigger: true });
-      render();
-      const inputs = document.querySelectorAll('.query-input');
-      inputs[inputs.length - 1].focus();
+  function exportEvalSet() {
+    var exported = [];
+    items.filter(function (item) { return item.shouldTrigger; })
+      .concat(items.filter(function (item) { return !item.shouldTrigger; }))
+      .forEach(function (item) {
+        var text = item.query.trim();
+        if (text.length > 0) {
+          exported.push({ query: text, should_trigger: item.shouldTrigger });
+        }
+      });
+    var blob = new Blob([JSON.stringify(exported, null, 2) + "\n"], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = "eval_set.json";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function showError(message) {
+    var box = byId("error");
+    box.textContent = message;
+    box.hidden = false;
+  }
+
+  function load() {
+    var data;
+    try {
+      byId("skill-name").textContent = decodeUtf8Base64(SKILL_NAME_B64);
+      byId("skill-description").textContent = decodeUtf8Base64(SKILL_DESCRIPTION_B64);
+      data = JSON.parse(decodeUtf8Base64(EVAL_DATA_B64));
+    } catch (err) {
+      showError("The embedded data could not be decoded: " + err.message);
+      data = [];
     }
-
-    function updateSummary() {
-      const trigger = evalItems.filter(i => i.should_trigger).length;
-      const noTrigger = evalItems.filter(i => !i.should_trigger).length;
-      document.getElementById('summary').textContent =
-        `${evalItems.length} queries total: ${trigger} should trigger, ${noTrigger} should not trigger`;
+    if (!Array.isArray(data)) {
+      showError("The embedded eval data is not a JSON array.");
+      data = [];
     }
+    items = data.map(function (row) {
+      return {
+        id: nextId++,
+        query: row && typeof row.query === "string" ? row.query : "",
+        shouldTrigger: Boolean(row && row.should_trigger)
+      };
+    });
+    byId("add-query").addEventListener("click", addQuery);
+    byId("export").addEventListener("click", exportEvalSet);
+    render(null);
+  }
 
-    function exportEvalSet() {
-      const valid = evalItems.filter(i => i.query.trim() !== '');
-      const data = valid.map(i => ({ query: i.query.trim(), should_trigger: i.should_trigger }));
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'eval_set.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    render();
-  </script>
+  load();
+})();
+</script>
 </body>
 </html>

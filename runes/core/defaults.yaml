@@ -3,7 +3,6 @@ validate:
         - skills/BuildSkill/scripts/*
         - skills/BuildSkill/assets/*
         - skills/BenchArtifact/scripts/*
-        - skills/BenchArtifact/eval-viewer/*
         - skills/BenchArtifact/assets/*
         - skills/SimplifiedTechnicalEnglish/config/*
         - skills/SimplifiedTechnicalEnglish/scripts/*

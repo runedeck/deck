@@ -10,12 +10,16 @@ provenance:
       buildType: adopt/v1
       externalParameters:
         source: ''
-        upstream_url: https://github.com/N4M3Z/forge-core
-        upstream_commit: ''
+        upstream_url: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/scripts/package_skill.py
+        upstream_commit: b9e19e6f44773509fbdd7001d77ff41a49a486c1
         transforms_applied:
         - copy
       resolvedDependencies:
       - name: upstream
+        uri: https://github.com/anthropics/skills/blob/b9e19e6f44773509fbdd7001d77ff41a49a486c1/skills/skill-creator/scripts/package_skill.py
+        digest:
+          sha256: 1a33059b0db1ef73375d46d513e5ea81369d2e8838c970597b0d52ddef8d1c0f
+      - name: forge-core
         uri: https://github.com/N4M3Z/forge-core
         digest:
           sha256: 1a33059b0db1ef73375d46d513e5ea81369d2e8838c970597b0d52ddef8d1c0f
