@@ -5,11 +5,14 @@
 # the text counts as the definition, and italics alone are emphasis. The
 # nouns are the TERMS subset of OVERUSE, so one list serves this rule and
 # STE.Overused*. Raw scope, because Vale strips the markers before any
-# other scope.
+# other scope. A hyphenated name such as review-lanes is a name, not
+# the noun, in prose and in link text, and a link whose text ends in
+# the noun (agentic review lane) defines it. The first pattern matches
+# the stem alone, so a plural use counts as defined by its singular link.
 extends: conditional
 message: "'%s' is never defined here. Link it to its glossary page at first use, or say which check, file, or flag it is (rule Deslop)."
 level: warning
 ignorecase: true
 scope: raw
-first: '\b(arm|gate|knob|landscape|lane|surface)s?\b'
-second: '(?:\[(?<a>arm|gate|knob|landscape|lane|surface)s?\]\[|[*_`](?<a>arm|gate|knob|landscape|lane|surface)s?[*_`])'
+first: '(?<![\w-])(arm|gate|knob|landscape|lane|surface)(?=s?(?![\w-]))'
+second: '(?:\[[^\]]*?(?<![\w-])(?<a>arm|gate|knob|landscape|lane|surface)s?\]\[|\*\*(?<a>arm|gate|knob|landscape|lane|surface)s?\*\*|__(?<a>arm|gate|knob|landscape|lane|surface)s?__|`(?<a>arm|gate|knob|landscape|lane|surface)s?`)'

@@ -17,13 +17,13 @@ Review enforces the judgment, a *[missed requirement][MISSEDREQUIREMENT]* in the
 
 ### Requirement: Qualifier Directory Names Are Checked
 
-One narrow check MUST cover the directory names a [harness][HARNESS] acts on, such as its rules directory. A typo there silently disables content, and the harness reports no error. The [validator][VALIDATOR] reports a name the harness does not document.
+One narrow check MUST cover the directory names a [harness][HARNESS] acts on, such as its rules directory. A typo there silently disables content, and the [harness][HARNESS] reports no error. The [validator][VALIDATOR] reports a name the [harness][HARNESS] does not document.
 The routing judgment itself stays with review. A wrong name elsewhere costs little, and a general check would force every directory onto an allowlist, which the owner rejected.
 
 #### Scenario: Qualifier directory name is misspelled
 
 - **WHEN** a directory name a [harness][HARNESS] acts on, such as its rules directory, is misspelled
-- **THEN** the [validator][VALIDATOR] reports the name, because the harness loads nothing from the misspelling and reports no error
+- **THEN** the [validator][VALIDATOR] reports the name, because the [harness][HARNESS] loads nothing from the misspelling and reports no error
 
 ### Requirement: Catch-All Directories Drain
 

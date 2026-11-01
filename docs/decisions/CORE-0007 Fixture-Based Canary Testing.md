@@ -9,7 +9,7 @@ tags:
     - fixtures
 status: accepted
 created: 2026-04-05
-updated: 2026-04-05
+updated: 2026-10-19
 author: "@N4M3Z"
 project: deck
 related:
@@ -29,30 +29,34 @@ change: plain-text-first-principles
 
 ## Context and Problem Statement
 
-A checker that passes every file looks the same as a checker that checks nothing. A rule can be deleted, a pattern can stop matching, or a tool upgrade can change a default, and the check stays green. The deck needs proof that each checker still catches what it claims to catch.
+The *[repository][REPOSITORY]* needs evidence that each checker still catches what it claims to catch. A checker that passes every file looks the same as a checker that checks nothing. Someone can delete an *[analysis rule][ANALYSISRULE]*, a pattern can stop matching, or a tool upgrade can alter a default, and the check still passes.
 
 ## Considered Options
 
-1. Trust the checker. Review catches a broken rule when someone notices.
-2. A manifest that maps each fixture file to its expected result.
-3. Fixture inputs that must pass and inputs that must fail, with the expected result asserted by the test that runs them.
+1. Trust the checker, and let review catch a broken [analysis rule][ANALYSISRULE] when someone notices.
+2. A manifest that maps each *[fixture][FIXTURE]* file to its expected result.
+3. [Fixture][FIXTURE] inputs that must pass and inputs that must fail, where the test that runs them asserts the expected result.
 
 ## Decision Outcome
 
-Option 3. A checker the deck depends on MUST have at least one input that it accepts and one input that it rejects. The test MUST assert the exact result, so that a deleted or weakened rule fails the test. Where fixtures are files, `valid/` and `invalid/` directory names state the assertion.
+Option 3. A checker the [repository][REPOSITORY] depends on MUST have at least one input that it accepts and one input that it rejects. The test MUST assert the exact result, so a deleted or weakened [analysis rule][ANALYSISRULE] fails the test. Where [fixtures][FIXTURE] are files, the directory names `valid/` and `invalid/` state the assertion.
 
-The ontology hook is the instance in the deck. It validates `ontology/smoke/instances.ttl` against the shapes and asserts the exact count of violations and warnings, so a removed shape fails the hook.
+The ontology hook is the one example in the [repository][REPOSITORY]. It validates `ontology/smoke/instances.ttl` against the shapes and asserts the exact count of violations and warnings, so a removed shape fails the hook.
 
 ### Consequences
 
 - [+] A new canary is one file in the right place.
-- [-] Most checkers in the deck have no canary yet. The scripts under `scripts/` that check names, record ids, record fields, and record links were each proven by hand with a passing and a failing input, and those inputs are not committed.
-- [-] An exact count is brittle on purpose. A new shape changes the count, and the author updates the assertion in the same commit.
+- [-] Most checkers in the [repository][REPOSITORY] have no canary yet. The scripts under `scripts/` check names, record ids, record fields, and record links. The author proved each one by hand with a passing and a failing input, and nobody committed those inputs.
+- [-] An exact count is fragile on purpose. A new shape alters the count, and the author updates the assertion in the same commit.
 
 ## More Information
 
 - [JSON Schema Test Suite][JSTS]
 - [markdownlint][MDLINT]
+- Rewritten on 2026-10-19 in the plain spoken register. The decision is unchanged.
 
 [JSTS]: https://github.com/json-schema-org/JSON-Schema-Test-Suite "JSON Schema Test Suite, the validator testing pattern"
 [MDLINT]: https://github.com/DavidAnson/markdownlint "markdownlint, valid and invalid fixture convention"
+[REPOSITORY]: ../specs/glossary/repository.md
+[ANALYSISRULE]: ../specs/glossary/analysis-rule.md
+[FIXTURE]: ../specs/glossary/fixture.md

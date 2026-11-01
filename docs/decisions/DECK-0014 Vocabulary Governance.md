@@ -9,7 +9,7 @@ tags:
     - evidence
 status: accepted
 created: 2026-09-15
-updated: 2026-09-15
+updated: 2026-10-19
 author: "@N4M3Z"
 project: deck
 related:
@@ -27,34 +27,53 @@ change: terms-enter-ontology-first
 
 ## Context and Problem Statement
 
-DECK-0010 declared the deck's world in RDF and made a decision record the price of a new class. It did not say who admits a term, how an artifact gets its name, or what happens when the corpus drifts. Naming the prove-stage skill on 2026-09-15 took a survey of agent-skill catalogs, CI vendors, philosophy, and governance vocabularies before the answer came from the deck's own lifecycle scheme, which already names the stage. The same session found four words for one prove-stage record: receipt, proof, attestation, evidence. The ontology has a class for measure-stage evidence, `rune:Verdict`, and none for the prove stage.
+DECK-0010 declared the world of the *[repository][REPOSITORY]* in RDF (the Resource Description Framework) and made a *[decision record][DECISIONRECORD]* the price of a new class. It did not say who admits a term, how an *[artifact][ARTIFACT]* gets its name, or what happens when the corpus drifts.
+
+On 2026-09-15 a search looked for the name of the prove-stage *[skill][SKILL]*. The search went through catalogs of agent [skills][SKILL], continuous integration (CI) vendors, philosophy, and governance vocabularies. The answer came from the [repository][REPOSITORY]'s own lifecycle scheme, which already states the stage name. The same session found four words for one prove-stage record: receipt, *[proof][PROOF]*, *[attestation][ATTESTATION]*, evidence. The ontology has a class for measure-stage evidence, `rune:Verdict`, and none for the prove stage.
 
 ## Decision Drivers
 
-- A term used in prose before it exists in the ontology is a synonym waiting to happen.
-- An artifact named by taste is renamed later. A name derived from the stage table is stable.
-- A rule or skill is paid for on every turn, and a vocabulary at density one is what keeps it short.
-- The prove stage produces evidence that nothing in the graph can hold.
+- A term that prose uses before the ontology defines it invites a synonym. The next author picks another word for the same thing.
+- An [artifact][ARTIFACT] that the author names by taste gets renamed later. A name derived from the stage table is stable.
+- The owner pays for a *[rule][RULE]* or a [skill][SKILL] on every turn. A vocabulary at density one, one word for each concept, shortens the [rule][RULE] or the [skill][SKILL].
+- The prove stage produces evidence, and no class in the graph can store it.
 
 ## Considered Options
 
-1. A skill, AgenticOntology, that owns admission, naming, drift audit, and retirement, plus `rune:Proof` as the prove-stage evidence class with a shape.
-2. A naming rule alone, loaded on every turn, with the ontology untouched.
-3. Keep naming ad hoc and add classes when a change needs one.
+1. A [skill][SKILL], AgenticOntology, owns admission, naming, drift audit, and retirement. The class `rune:Proof` with its shape stores the prove-stage evidence.
+2. The owner adds a naming [rule][RULE] alone, loaded on every turn, and leaves the ontology untouched.
+3. The owner keeps naming ad hoc and adds a class when a *[change][CHANGE]* needs one.
 
 ## Decision Outcome
 
-Chosen option: the skill and the class.
+Chosen option: the [skill][SKILL] and the class.
 
-AgenticOntology routes four acts. Admit a term: corpus search, established-vocabulary search in a fixed order, then mint with a superclass, a Warning shape, and a seeded smoke instance. Name an artifact: stage verb or discipline noun plus the entity the stage consumes. Audit drift: synonyms per label and labels per word, reported as a density with the target one. Retire a term: deprecate, alternative label for one release, remove. The lifecycle table, the density measure, and the vocabulary search order are companions.
+AgenticOntology routes four acts. To admit a term, the author searches the corpus and then the established vocabularies in a fixed order. The author then creates the term with a superclass, a Warning shape, and a seeded smoke instance. To name an [artifact][ARTIFACT], the author joins the stage verb or the discipline noun to the entity the stage consumes. To audit drift, the [skill][SKILL] counts synonyms per label and labels per word and reports the result as a density, with a target of one. To retire a term, the author deprecates it, keeps an alternative label for one release, and then removes it.
 
-`rune:Proof` is a `prov:Entity` that `proves` a candidate commit and carries one `proofKind` from a SKOS scheme, with `checks` and `behavior` as the first kinds. A candidate is proven when a proof exists for its commit, a query and not a stored state. The ContinuousIntegration receipt is the first Proof.
+The lifecycle table, the density measure, and the vocabulary search order are *[companions][COMPANION]* of the [skill][SKILL].
 
-Option 2 puts the rule in every context window and still leaves the ontology behind the prose. Option 3 is the state this decision replaces.
+`rune:Proof` is a `prov:Entity`. It `proves` a candidate commit and has one `proofKind` from a SKOS (Simple Knowledge Organization System) scheme. The first kinds are `checks` and `behavior`. A candidate counts as proven when a [proof][PROOF] exists for its commit. A query answers that question, and no stored state does. The ContinuousIntegration receipt is the first [Proof][PROOF].
+
+Option 2 puts the [rule][RULE] in every context window and still leaves the ontology behind the prose. Option 3 is the state this decision replaces.
 
 ### Consequences
 
-- [-] A new concept costs one ontology edit and one shape before it costs any prose.
-- [-] The density audit is manual until the extractor computes it, which is a recorded follow-up.
-- [-] The skill names `rudof` and `rg`. A checkout without rudof cannot run the shape check, and the hook says so under `REQUIRE_GATES`.
-- [-] The smoke fixture states four Violations and thirteen Warnings, and the hook asserts those counts. A missing property that a shape also constrains by value reports twice, which the fixture comment states. The permitted proof kinds are enumerated in the shape, because the hook validates the instance graph without the ontology loaded.
+- [-] The author pays for a new concept with one ontology edit and one shape before writing any prose.
+- [-] The owner runs the density audit by hand until the extractor computes it. That extractor is a recorded follow-up.
+- [-] The [skill][SKILL] names two tools, `rudof` and `rg`. A checkout without rudof cannot run the shape check. The hook reports that under `REQUIRE_GATES`.
+- [-] The smoke *[fixture][FIXTURE]* states four Violations and thirteen Warnings, and the hook asserts those counts. A missing property that a shape also constrains by value reports twice. The [fixture][FIXTURE] comment says so. The shape lists the permitted [proof][PROOF] kinds, because the hook validates the instance graph without the ontology loaded.
+
+## More Information
+
+- Rewritten on 2026-10-19 in the plain spoken register. The decision is unchanged.
+
+[REPOSITORY]: ../specs/glossary/repository.md
+[DECISIONRECORD]: ../specs/glossary/decision-record.md
+[ARTIFACT]: ../specs/glossary/artifact.md
+[SKILL]: ../specs/glossary/skill.md
+[COMPANION]: ../specs/glossary/companion.md
+[PROOF]: ../specs/glossary/proof.md
+[FIXTURE]: ../specs/glossary/fixture.md
+[RULE]: ../specs/glossary/rule.md
+[CHANGE]: ../specs/glossary/change.md
+[ATTESTATION]: ../specs/glossary/attestation.md

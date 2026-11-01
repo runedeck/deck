@@ -17,7 +17,7 @@ For Claude Code, the *[basis parameters][BASISPARAMETERS]* add an argument hint 
 | environment-variables-supported-syntax | Value Sources Have One Order | missed requirement: no check runs the loader against a fixture that sets all four sources |
 | environment-variables-supported-syntax | The Loader Exports Environment Variables | missed requirement: no loader exists yet |
 | environment-variables-supported-syntax | The Shell Resolves the Variable | missed requirement: no check finds a named variable that no step reads, carried over from the foundations' coverage table |
-| environment-variables-supported-syntax | Each Harness Runs the Loader | missed requirement: the assembler writes no loader step and no context line yet |
+| environment-variables-supported-syntax | Each [Harness][HARNESS] Runs the Loader | missed requirement: the [assembler][ASSEMBLER] writes no loader step and no context line yet |
 | environment-variables-supported-syntax | Provenance Shows the Parameters | missed requirement: `scripts/check-provenance` checks that the sidecar exists, and no check reads a parameters field yet |
 
 ## Commands

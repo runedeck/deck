@@ -17,8 +17,8 @@ The graph export fills the type in. A strict outside reader of the Open Knowledg
 
 ### Requirement: Path Is The Identifier
 
-A file's identifier MUST be its web address: the *[repository][REPOSITORY]*'s base address plus the file's path inside the repository without the `.md` suffix. The Open Knowledge Format and a vault derive it the same way.
-The repository adds one rule of its own: an `id` key, when present, MUST equal that identifier. Moving a file rewrites every link to it in the same commit, and the [validator][VALIDATOR] reports any link missed.
+A file's identifier MUST be its web address: the *[repository][REPOSITORY]*'s base address plus the file's path inside the [repository][REPOSITORY] without the `.md` suffix. The Open Knowledge Format and a vault derive it the same way.
+The [repository][REPOSITORY] adds one rule of its own: an `id` key, when present, MUST equal that identifier. Moving a file rewrites every link to it in the same commit, and the [validator][VALIDATOR] reports any link missed.
 
 #### Scenario: Identifier key appears
 
@@ -48,8 +48,8 @@ Only the root index has the version line. The [generator][GENERATOR] writes the 
 ### Requirement: Bundle Declares Its Version
 
 The root `index.md` of a [repository][REPOSITORY] read as a bundle MUST declare `okf_version: "0.2"`. The [generator][GENERATOR] writes the declaration into the root index, and the [validator][VALIDATOR] checks it.
-The Open Knowledge Format makes the declaration optional. We require it, so a consumer that reads the repository as a bundle finds the version there.
-The check is a warning until the generator exists, and an error after.
+The Open Knowledge Format makes the declaration optional. We require it, so a consumer that reads the [repository][REPOSITORY] as a bundle finds the version there.
+The check is a warning until the [generator][GENERATOR] exists, and an error after.
 
 #### Scenario: Version declaration is absent
 

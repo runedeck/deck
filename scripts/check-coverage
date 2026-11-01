@@ -17,9 +17,17 @@ import pathlib
 import re
 import sys
 
+# The term tag grammar comes from the term model, so a cell's term link
+# reads the same here as in check-terms.
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent / "fallback"))
+from termlib import TAG
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 REQUIREMENT = re.compile(r"^### Requirement: (.+?)\s*$")
-ROW = re.compile(r"^\|\s*([a-z0-9-]+)\s*\|\s*(.+?)\s*\|\s*(.*?)\s*\|\s*$")
+ROW = re.compile(r"^\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.*?)\s*\|\s*$")
+# A capability is a kebab-case name once its term links read as words.
+CAPABILITY = re.compile(r"[a-z0-9-]+")
+TERM_LINK = re.compile(r"\*?\[([^\]]+)\]\[" + TAG + r"\]\*?")
 TOOLS = ("rune validate", "rune spec validate", "rune spec doctor", "mdschema", "rumdl", "lychee", "vale", "shellcheck", "ruff", "openspec validate", "rudof")
 
 
@@ -56,12 +64,19 @@ def rows(change):
             inside = line.strip().lower() == "## coverage table"
             continue
         match = ROW.match(line) if inside else None
-        if match and match.group(1) != "Capability" and not set(match.group(1)) <= set("-"):
-            table.setdefault((match.group(1), match.group(2)), match.group(3))
+        capability = plain(match.group(1)) if match else ""
+        if CAPABILITY.fullmatch(capability) and not set(capability) <= set("-"):
+            table.setdefault((capability, plain(match.group(2))), match.group(3))
     return table
 
 
+def plain(cell):
+    """A cell with its term links read as words: `[requirement][REQUIREMENT]` is `requirement`."""
+    return TERM_LINK.sub(r"\1", cell)
+
+
 def names_a_check(cell, root):
+    cell = plain(cell)
     if cell.lower().startswith(("missed requirement", "open gap")):
         return True
     hooks = (root / ".pre-commit-config.yaml").read_text() if (root / ".pre-commit-config.yaml").is_file() else ""

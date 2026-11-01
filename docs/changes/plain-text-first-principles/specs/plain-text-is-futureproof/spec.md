@@ -34,18 +34,18 @@ A [model][MODEL] cannot use an image, a font, or an archive without that descrip
 
 ### Requirement: Lossless Renders
 
-A committed *[render][RENDER]* of a *[state file][STATEFILE]* MUST regenerate from that file byte for byte. The *[generator][GENERATOR]* that writes the render is kept in the [repository][REPOSITORY], so the [validator][VALIDATOR] can rerun it and compare. A render nobody can rerun is a second home for the same facts, and the two drift apart.
-An assembled *[instance][INSTANCE]* is not a render: instructions-stay-vendor-neutral covers it.
+A committed *[render][RENDER]* of a *[state file][STATEFILE]* MUST regenerate from that file byte for byte. The *[generator][GENERATOR]* that writes the [render][RENDER] is kept in the [repository][REPOSITORY], so the [validator][VALIDATOR] can rerun it and compare. A [render][RENDER] nobody can rerun is a second home for the same facts, and the two drift apart.
+An assembled *[instance][INSTANCE]* is not a [render][RENDER]: instructions-stay-vendor-neutral covers it.
 
 #### Scenario: Render drifts from its state file
 
 - **WHEN** a committed [render][RENDER] differs by one byte from a fresh regeneration from its [state file][STATEFILE]
-- **THEN** the [validator][VALIDATOR] reports the drift, and the state file is what counts
+- **THEN** the [validator][VALIDATOR] reports the drift, and the [state file][STATEFILE] is what counts
 
 ### Requirement: Projections Are Never Authoritative
 
-A *[projection][PROJECTION]* is a representation that drops information from its *[source state][SOURCESTATE]*. A projection operator in quantum mechanics does the same: it keeps one component of a state and discards the rest.
-A projection MUST NOT replace the source state it was taken from. A search index is never committed. A snapshot of something outside the [repository][REPOSITORY] is committed only with a *[provenance record][PROVENANCERECORD]* that says where it came from.
+A *[projection][PROJECTION]* is a [representation][REPRESENTATION] that drops information from its *[source state][SOURCESTATE]*.
+A [projection][PROJECTION] MUST NOT replace the [source state][SOURCESTATE] it was taken from. A search index is never committed. A snapshot of something outside the [repository][REPOSITORY] is committed only with a *[provenance record][PROVENANCERECORD]* that says where it came from.
 
 #### Scenario: Committed file is generated from a projection
 

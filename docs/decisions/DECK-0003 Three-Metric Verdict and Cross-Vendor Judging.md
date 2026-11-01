@@ -9,7 +9,7 @@ tags:
     - judging
 status: accepted
 created: 2026-08-19
-updated: 2026-08-19
+updated: 2026-10-19
 author: "@N4M3Z"
 project: deck
 related: ["DECK-0001 Artifact Benchmarking Skill", "DECK-0002 Benchmark Execution Ladder"]
@@ -25,39 +25,46 @@ change: benchmark-instructions-per-model
 
 ## Context and Problem Statement
 
-A single score hides the failure modes that matter. A model can drive a style checker to zero by dropping facts, or keep every fact in prose no reader would accept. Early Simplified Technical English iterations showed both failures, and they also showed judge self-preference: a judge model preferred baselines written by itself. The benchmark needs a verdict rule that catches each failure separately and a judging scheme that removes the self-preference confound.
+One score hides the failure modes that matter. A *[model][MODEL]* can bring a style checker to zero by dropping facts, or keep every fact in prose that no reader accepts. Early iterations of Simplified Technical English (STE) showed both failures. They also showed judge self-preference: a judge [model][MODEL] preferred the baselines it had written itself. The benchmark needs a *[verdict][VERDICT]* rule that catches each failure separately, and a judging scheme that removes the self-preference confound.
 
 ## Decision Drivers
 
-- Meaning loss, mechanical compliance, and prose damage are independent failure modes
-- Blind judgment is the only defense against outputs that satisfy the checker and repel readers
-- A judge that grades its own vendor's output measures taste, not quality
-- Each artifact claims a different measurable behavior, so the middle metric must be pluggable
+- Meaning loss, mechanical compliance, and prose damage fail independently of each other
+- Only a blind judge catches an output that satisfies the checker and repels readers
+- A judge that grades its own vendor's output measures its own taste instead of quality
+- Each *[artifact][ARTIFACT]* claims a different measurable behavior, so the bench has to accept a different middle metric per [artifact][ARTIFACT]
 
 ## Considered Options
 
-1. **One combined score**: a single number per run, simple to rank, hides every trade-off
-2. **Checker density with validity filter**: assertions gate validity, density decides, prose damage invisible
-3. **Three metrics, cross-vendor judging**: separate signals read together, judges assigned across vendors
+1. **One combined score**: one number per run. It ranks simply and hides every trade-off.
+2. **Checker density with validity filter**: the assertions decide validity, the density decides the [verdict][VERDICT], and prose damage stays invisible.
+3. **Three metrics, cross-vendor judging**: the bench reads separate signals together and assigns the judges across vendors.
 
 ## Decision Outcome
 
-Chosen option: **Three metrics, cross-vendor judging**, read together within one model and never combined into one number.
+Chosen option: **Three metrics, cross-vendor judging**. The bench reads the three metrics together within one [model][MODEL] and never combines them into one number.
 
-- **Assertions guard meaning.** Frozen, objectively checkable statements about facts, figures, and restrictions. A drop is a regression regardless of the other metrics.
-- **The checker measures the claimed behavior.** The artifact brings its checker: a domain linter for a large claim, or a generic pattern-density configuration for a small one. Density uses checker findings per 100 checker words from the same text.
-- **Blind preferences guard prose.** A judge compares shuffled pairs for clarity, fluency, and directness separately, with reasons recorded per pair.
+- **Assertions guard meaning.** An assertion is a frozen statement about a fact, a figure, or a restriction, and a checker tests it objectively. A dropped assertion is a regression whatever the other metrics say.
+- **The checker measures the claimed behavior.** The [artifact][ARTIFACT] brings its own checker, a domain *[linter][LINTER]* for a large claim or a generic pattern-density configuration for a small one. The density metric counts checker findings per 100 checker words of the same text.
+- **Blind preferences guard prose.** A judge compares shuffled pairs for clarity, fluency, and directness separately, and the bench records the reasons for each pair.
 
-An artifact earns its place when its claimed behavior improves, assertions hold, and blind preference stays acceptable. Judging is cross-vendor: one judge covers the models from other vendors, and a second vendor's judge covers the first judge's own model. The report withholds a verdict when fewer than half of the planned pairs are valid.
+The bench accepts an [artifact][ARTIFACT] when its claimed behavior improves, its assertions hold, and the blind preference stays acceptable. The judging is cross-vendor. One judge covers the [models][MODEL] from other vendors. A judge from a second vendor covers the first judge's own [model][MODEL]. The report withholds a [verdict][VERDICT] when fewer than half of the planned pairs are valid.
 
 ### Consequences
 
-- [+] Iteration-4 could state a split verdict: the STE skill earns its place on Claude Opus and Sonnet, does nothing for GPT-5.6 Sol, and degrades grok-4.6 and Lumo Max
-- [+] Pair review is a first-class report feature, because numbers alone cannot show a model answering with a plan instead of a deliverable
-- [-] Judging costs one provider call per pair. The quick rung skips it and must say so
-- [-] Custom judge dimensions per artifact are a planned manifest extension, not yet built
+- [+] Iteration-4 could state a split [verdict][VERDICT]. The STE *[skill][SKILL]* passes on Claude Opus and Sonnet, does nothing for GPT-5.6 Sol, and degrades grok-4.6 and Lumo Max
+- [+] The report includes the pair review, because numbers alone cannot show a [model][MODEL] that answers with a plan instead of a deliverable
+- [-] The judging costs one provider call per pair. The quick rung skips the judging and must say so
+- [-] The bench does not yet accept custom judge dimensions per [artifact][ARTIFACT]. That is a planned manifest extension
 
 ## More Information
 
 - [DECK-0002 Benchmark Execution Ladder](DECK-0002%20Benchmark%20Execution%20Ladder.md): where each metric runs
-- `runes/core/skills/BenchArtifact/references/schemas.md`: the judgment record shape
+- `runes/core/skills/BenchArtifact/references/schemas.md`: the structure of the judgment record
+- Rewritten on 2026-10-19 in the plain spoken register. The decision is unchanged.
+
+[MODEL]: ../specs/glossary/model.md
+[VERDICT]: ../specs/glossary/verdict.md
+[ARTIFACT]: ../specs/glossary/artifact.md
+[LINTER]: ../specs/glossary/linter.md
+[SKILL]: ../specs/glossary/skill.md

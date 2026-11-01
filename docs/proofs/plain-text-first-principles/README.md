@@ -20,7 +20,7 @@ scenes:
     kind: check
   - scenario: markdown-with-yaml-frontmatter#the-ontology-defines-every-term/term-link-points-at-no-entry
     kind: unproven
-  - scenario: markdown-with-yaml-frontmatter#the-ontology-defines-every-term/change-links-to-a-draft-term-at-archive
+  - scenario: markdown-with-yaml-frontmatter#draft-terms-warn-and-archive-refuses-them/change-links-to-a-draft-term-at-archive
     kind: unproven
   - scenario: markdown-relative-links-matching#markdown-links-between-files/wikilink-enters-a-repository-file
     kind: check
@@ -52,9 +52,9 @@ scenes:
     kind: unproven
   - scenario: user-values-and-variables#canon-stays-vendor-neutral/harness-needs-different-wording
     kind: run
-  - scenario: user-values-and-variables#canon-stays-vendor-neutral/instruction-depends-on-one-harness-s-hook-event
+  - scenario: user-values-and-variables#assembly-projects-out-one-harness/instruction-depends-on-one-harness-s-hook-event
     kind: unproven
-  - scenario: instructions-stay-vendor-neutral#one-instance-per-harness/assembly-writes-an-instance
+  - scenario: instructions-stay-vendor-neutral#every-instance-has-a-provenance-record/assembly-writes-an-instance
     kind: run
   - scenario: instructions-stay-vendor-neutral#one-instance-per-harness/new-harness-joins
     kind: run

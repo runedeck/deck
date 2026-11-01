@@ -9,7 +9,7 @@ tags:
     - publication
 status: accepted
 created: 2026-09-14
-updated: 2026-09-14
+updated: 2026-10-19
 author: "@N4M3Z"
 project: deck
 related:
@@ -26,30 +26,41 @@ change: all-checks-before-push
 
 ## Context and Problem Statement
 
-Every runedeck repository declares its checks in `.pre-commit-config.yaml`. CI runs that file with every tool required, and the checked push hook replays it in an isolated checkout before `jj git push`. Sessions ran a hand-picked subset by hand, reported it as clean, and met the full set only at push time. On 2026-09-14 a `typos` finding in an adopted decision record and a base change with no proposal stopped two pushes while the owner waited at the signing key. The checks were right. The procedure ran them last instead of first.
+Every runedeck *[repository][REPOSITORY]* declares its checks in `.pre-commit-config.yaml`. Continuous integration runs that file with every tool required. The checked push hook replays the file in an isolated checkout before `jj git push`. A session ran a hand-picked subset by hand, reported it as clean, and met the full set only at push time. On 2026-09-14 two pushes stopped while the owner waited at the signing key. One stopped on a `typos` finding in an adopted *[decision record][DECISIONRECORD]*, the other on a base *[change][CHANGE]* with no proposal. The checks were right. The procedure ran them last instead of first.
 
 ## Decision Drivers
 
-- The check set is declared once. A second, hand-picked list drifts from it.
-- The owner's presence at the key is the scarce step. Nothing that can fail should run after it starts.
-- A skipped tool must fail, not pass silently.
+- The [repository][REPOSITORY] declares the check set once. A second, hand-picked list drifts from it.
+- The owner's presence at the key is the scarce step. Nothing that can fail belongs after that step starts.
+- A skipped tool has to fail instead of passing silently.
 
 ## Considered Options
 
-1. A skill that mandates the commit stage after each edit batch, the push stage on the frozen head, and a receipt per stage. The same mandate follows as a rule and as a specification requirement in the cli and skeleton.
-2. Rely on the push hook and CI alone.
+1. A *[skill][SKILL]* that mandates the commit stage after each edit batch, the push stage on the frozen head, and a receipt for each stage. The same mandate then becomes a *[rule][RULE]* and a specification *[requirement][REQUIREMENT]* in the cli and the skeleton.
+2. Rely on the push hook and continuous integration alone.
 3. Run the checks only at push time, as today, and tolerate the wait.
 
 ## Decision Outcome
 
-Chosen option: the skill, with the rule and the specifications to follow.
+Option 1: the [skill][SKILL] now, with the [rule][RULE] and the specifications to come later.
 
-ContinuousIntegration runs `REQUIRE_GATES=1 make validate` after every edit batch and `REQUIRE_GATES=1 bash .githooks/jj-push -b <bookmark> --dry-run` on the frozen head. Both use the repository's configuration and require every tool. Each stage writes one log that ends with the check's own exit status, beside the candidate commit id. A finding is fixed and the sequence restarts. The signing step comes last.
+The ContinuousIntegration [skill][SKILL] runs `REQUIRE_GATES=1 make validate` after every edit batch. It runs `REQUIRE_GATES=1 bash .githooks/jj-push -b <bookmark> --dry-run` on the frozen head. Both commands use the [repository][REPOSITORY]'s configuration and require every tool. Each stage writes one log that ends with the check's own exit status, beside the id of the candidate commit. The session fixes a finding and restarts the sequence. The signing step comes last.
 
 Option 2 finds the same defects, one push later, with the owner waiting. Option 3 is the state this decision replaces.
 
 ### Consequences
 
-- [-] A session spends a few minutes per edit batch on checks it would otherwise meet once at the end, and the push reaches the key without a validation stop.
-- [+] The skill names `make validate` and the checked push hook. A repository without either falls back to direct `prek` invocations, which the skill also gives.
-- [-] The mandate is skill-level until the rule and the cli and skeleton specifications carry it.
+- [-] A session spends a few minutes per edit batch on checks it would otherwise meet once at the end. In return, the push arrives at the key without a validation stop.
+- [+] The [skill][SKILL] names `make validate` and the checked push hook. In a [repository][REPOSITORY] without either, the session calls `prek` directly, and the [skill][SKILL] gives those calls too.
+- [-] The mandate lives only in the [skill][SKILL] until the [rule][RULE] and the cli and skeleton specifications state it.
+
+## More Information
+
+- Rewritten on 2026-10-19 in the plain spoken register. The decision is unchanged.
+
+[REPOSITORY]: ../specs/glossary/repository.md
+[DECISIONRECORD]: ../specs/glossary/decision-record.md
+[CHANGE]: ../specs/glossary/change.md
+[SKILL]: ../specs/glossary/skill.md
+[RULE]: ../specs/glossary/rule.md
+[REQUIREMENT]: ../specs/glossary/requirement.md
