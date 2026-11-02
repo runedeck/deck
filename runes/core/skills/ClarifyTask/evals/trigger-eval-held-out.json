@@ -1,0 +1,18 @@
+[
+    {
+        "query": "Build the replacement import process for our regional teams. Their current files use incompatible naming rules, and I own the decision about which rule becomes standard. Resolve that choice with me before changing the importers.",
+        "should_trigger": true
+    },
+    {
+        "query": "What do you need to know from me before you reorganize the customer reports? Check the existing reports first. Let me choose the audience and access policy, then explain what my choices mean for the work.",
+        "should_trigger": true
+    },
+    {
+        "query": "Attack this architecture draft from hostile angles. Find the holes in its claims, quote each disputed line, and settle each objection with a fix or a reason to reject it.",
+        "should_trigger": false
+    },
+    {
+        "query": "Walk the existing change requirements with me one at a time. Explain each tension, ask for keep, change, drop, split, or merge, and read the final verdicts back as prose.",
+        "should_trigger": false
+    }
+]

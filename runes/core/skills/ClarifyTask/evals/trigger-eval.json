@@ -1,0 +1,26 @@
+[
+    {
+        "query": "Ask me clarifying questions before you change the billing export. Read the current code first, then give me choices for decisions only I can make.",
+        "should_trigger": true
+    },
+    {
+        "query": "Interview me first about the replacement project dashboard. I have not decided which staff should use it or which actions they need.",
+        "should_trigger": true
+    },
+    {
+        "query": "Migrate our four services to one event format. The code shows several supported formats, but it cannot tell you which customers must retain compatibility. A wrong choice means repeating the migration.",
+        "should_trigger": true
+    },
+    {
+        "query": "Before you start planning the account migration, ask me what is unclear. Present the policy choices as question cards and record my answers with the task.",
+        "should_trigger": true
+    },
+    {
+        "query": "quiz me about how this workflow should behave",
+        "should_trigger": false
+    },
+    {
+        "query": "Turn this raw idea into a spec change: a shared calendar for our support teams. Challenge whether we need it, then draft the proposal and requirements.",
+        "should_trigger": false
+    }
+]
