@@ -1,0 +1,176 @@
+#!/bin/bash
+# Run one rune's eval suite against its assembled Claude instance and write a record.
+# The suite lives in evals/<Name>/. The instance comes from rune assemble.
+# A plugin cannot carry a rule file, so a rule loads through a session-start hook.
+set -euo pipefail
+
+name=""
+profile="main"
+model="claude-haiku-4-5-20251001"
+runs=1
+record_dir=""
+canon=0
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+root=$(cd -- "$script_dir/.." && pwd)
+
+usage() {
+    echo "usage: scripts/eval-rune <Name> [--profile <launch profile>] [--model <id>] [--runs <n>] [--record <dir>] [--canon]" >&2
+    echo "       scripts/eval-rune --show <result.json>" >&2
+    exit 2
+}
+
+# Print each case's scores and the final answer of each arm's first run, then remove the kept traces.
+show() {
+    local result=$1 cases index arm trace
+    cases=$(jq '.cases | length' "$result")
+    for ((index = 0; index < cases; index++)); do
+        jq -r --argjson i "$index" '.cases[$i] |
+            "\n# Case: \(.name)  with \(.aggregates.score)  without \(.aggregates.scoreWithout)"' "$result"
+        for arm in with without; do
+            trace=$(jq -r --argjson i "$index" --arg arm "$arm" '.cases[$i].arms[$arm][0].tracePath // ""' "$result")
+            printf '## %s the rune\n' "$arm"
+            if [ -s "$trace" ]; then
+                jq -r 'select(.type == "result") | .result // ""' "$trace" | head -n 12
+            else
+                echo "(no trace)"
+            fi
+        done
+    done
+    jq -r '.cases[].arms[][].tracePath // empty' "$result" | while read -r trace; do
+        trace_root=${trace%/out/trace.jsonl}
+        case "$trace_root" in
+            /private/tmp/e-* | /tmp/e-*)
+                # The eval seals what the plugin wrote; open it before removing the kept directory.
+                chmod 700 "$trace_root" "$trace_root/sealed" 2> /dev/null || true
+                rm -rf "$trace_root" 2> /dev/null || true
+                ;;
+        esac
+    done
+}
+
+if [ "${1:-}" = --show ]; then
+    [ "$#" -eq 2 ] || usage
+    show "$2"
+    exit 0
+fi
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --profile | --model | --runs | --record)
+            [ "$#" -ge 2 ] || usage
+            case "$1" in
+                --profile) profile=$2 ;;
+                --model) model=$2 ;;
+                --runs) runs=$2 ;;
+                --record) record_dir=$2 ;;
+            esac
+            shift 2
+            ;;
+        --canon)
+            canon=1
+            shift
+            ;;
+        -h | --help) usage ;;
+        -*) usage ;;
+        *)
+            [ -z "$name" ] || usage
+            name=$1
+            shift
+            ;;
+    esac
+done
+[ -n "$name" ] || usage
+
+suite="$root/evals/$name"
+[ -d "$suite" ] || { echo "eval-rune: no suite at evals/$name" >&2; exit 1; }
+
+kind=""
+domain=""
+for candidate in "$root"/runes/*/skills/"$name" "$root"/runes/*/rules/"$name".md; do
+    [ -e "$candidate" ] || continue
+    domain=$(basename "$(dirname "$(dirname "$candidate")")")
+    kind=$(basename "$(dirname "$candidate")")
+    break
+done
+[ -n "$kind" ] || { echo "eval-rune: no skill or rule named $name under runes/" >&2; exit 1; }
+
+work=$(mktemp -d)
+trap 'rm -rf "$work"' EXIT
+# Assemble a private copy, so parallel runs never share one build directory.
+cp -R "$root/runes/$domain" "$work/source"
+rm -rf "$work/source/build"
+# --canon drops a skill's harness and model variants, so a variant can be measured against the canon alone.
+if [ "$canon" = 1 ] && [ "$kind" = skills ]; then
+    for variant in "$work/source/skills/$name"/*/; do
+        [ -f "$variant/SKILL.md" ] && rm -rf "$variant"
+    done
+fi
+rune assemble --source "$work/source" > /dev/null 2>&1 || true
+build="$work/source/build/claude"
+plugin="$work/rune-eval"
+mkdir -p "$plugin/.claude-plugin" "$plugin/evals"
+printf '{"name": "rune-eval", "version": "0.0.0", "description": "Eval wrapper for the %s rune"}\n' "$name" \
+    > "$plugin/.claude-plugin/plugin.json"
+
+if [ "$kind" = skills ]; then
+    instance="$build/skills/$name"
+    mkdir -p "$plugin/skills"
+    cp -R "$instance" "$plugin/skills/$name"
+    digest=$(cd "$instance" && find . -type f | LC_ALL=C sort | xargs shasum -a 256 | shasum -a 256 | cut -d' ' -f1)
+else
+    instance="$build/rules/$name.md"
+    mkdir -p "$plugin/rules" "$plugin/hooks"
+    cp "$instance" "$plugin/rules/$name.md"
+    printf '%s\n' '{"hooks": {"SessionStart": [{"hooks": [{"type": "command", "command": "cat \"${CLAUDE_PLUGIN_ROOT}/rules/\"*.md"}]}]}}' \
+        > "$plugin/hooks/hooks.json"
+    digest=$(shasum -a 256 "$instance" | cut -d' ' -f1)
+fi
+[ -e "$instance" ] || { echo "eval-rune: assembly wrote no Claude instance for $name" >&2; exit 1; }
+
+for case_dir in "$suite"/*/; do
+    [ "$(basename "$case_dir")" = records ] && continue
+    cp -R "${case_dir%/}" "$plugin/evals/"
+done
+
+result="$work/result.json"
+# The eval's child sessions need the profile's credential, which the session scrub would strip.
+eval_command=(env CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=0 rune launch "$profile@claude" --direct --
+    plugin eval "$plugin" --runs "$runs" --no-publish --trust-plugin --keep-temp --model "$model" --json "$result")
+
+if [ -n "$record_dir" ]; then
+    mkdir -p "$record_dir"
+    printf -v shown '%q ' "${eval_command[@]}"
+    printf -v show_command '%q --show %q' "$script_dir/eval-rune" "$result"
+    asciinema rec --command "echo '# Eval: $name on $model'; $shown; $show_command" --headless \
+        --window-size 100x30 --idle-time-limit 2 --overwrite --return "$record_dir/$name.cast" || true
+    agg --theme github-dark --font-size 18 --last-frame-duration 4 "$record_dir/$name.cast" "$record_dir/$name.gif"
+else
+    "${eval_command[@]}" || true
+    [ -s "$result" ] && show "$result"
+fi
+
+[ -s "$result" ] || { echo "eval-rune: the eval wrote no result" >&2; exit 1; }
+errors=$(jq '[.cases[].arms[][] | select(.error != null and .error != "")] | length' "$result")
+if [ "$errors" -gt 0 ]; then
+    jq -r '[.cases[].arms[][] | .error // empty | select(. != "")] | unique[]' "$result" >&2
+    echo "eval-rune: $errors runs failed in the harness, no record written" >&2
+    exit 1
+fi
+
+stamp=$(date -u +%Y-%m-%dT%H%M%SZ)
+mkdir -p "$suite/records"
+layer=assembled
+[ "$canon" = 1 ] && layer=canon
+record="$suite/records/$stamp-$model-$layer.json"
+jq --arg rune "$name" --arg kind "${kind%s}" --arg digest "$digest" --arg model "$model" \
+    --arg profile "$profile" --argjson runs "$runs" --arg recorded "$stamp" --arg layer "$layer" '{
+        rune: $rune, kind: $kind, layer: $layer, instance_sha256: $digest, model: $model, profile: $profile,
+        runs: $runs, recorded: $recorded, claude_version: .claudeVersion,
+        score: .aggregates.overallScore, cases_passed: .aggregates.casesPassed,
+        cases_total: .aggregates.casesTotal, mean_delta: .aggregates.meanDelta,
+        cost_usd: .costUsd, duration_seconds: .durationSeconds,
+        cases: [.cases[] | {name, score: .aggregates.score, score_without: .aggregates.scoreWithout,
+            delta: .aggregates.delta}]
+    }' "$result" > "$record"
+jq -r '"\(.rune) on \(.model): score \(.score), mean delta \(.mean_delta), \(.cases_passed)/\(.cases_total) cases passed"' "$record"
+echo "record: ${record#"$root"/}"
