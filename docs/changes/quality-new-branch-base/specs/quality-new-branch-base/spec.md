@@ -2,7 +2,7 @@
 
 ### Requirement: New branch checks start at the merge base
 
-The *[validator][VALIDATOR]* MUST select one commit range for every check stage of a push or a pull request. A pull request MUST start at its base. A push MUST start at the earlier head of its branch when that head still exists. A push to any other branch than the default one MUST start at its merge base with the default branch when it carries no earlier head, or one that a rewrite removed. The validator MUST inspect every file only when no start commit exists.
+The *[validator][VALIDATOR]* MUST select one commit range for every check stage of a push or a pull request. A pull request MUST start at its base. A push MUST start at the earlier head of its branch when that head still exists. A push to any other branch than the default one MUST start at its merge base with the default branch when it carries no earlier head, or one that a rewrite removed. The [validator][VALIDATOR] MUST inspect every file only when no start commit exists.
 
 #### Scenario: New branch arrives without an earlier head
 

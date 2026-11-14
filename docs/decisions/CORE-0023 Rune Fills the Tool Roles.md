@@ -44,7 +44,7 @@ This record answers the question the specifications leave open: which program fi
 
 1. One program per role: a separate [validator][VALIDATOR], [assembler][ASSEMBLER], [generator][GENERATOR], [deployer][DEPLOYER], [fixer][FIXER], [signer][SIGNER], and [archiver][ARCHIVER], each installed and versioned alone. Seven tools agree on one ontology and one manifest only by discipline.
 2. Rune fills every role: one program fills each role as a capability, and a [requirement][REQUIREMENT] is met when rune's behavior matches it.
-3. A plugin per [harness][HARNESS]: each harness's own extension mechanism fills the roles for that harness, with no shared program. Every harness then carries its own copy of the rules.
+3. A plugin per [harness][HARNESS]: each [harness][HARNESS]'s own extension mechanism fills the roles for that [harness][HARNESS], with no shared program. Every [harness][HARNESS] then carries its own copy of the rules.
 
 ## Decision Outcome
 
@@ -53,24 +53,24 @@ Option 2. Rune fills every role. The specifications keep naming roles, and this 
 - The [validator][VALIDATOR] reads [artifacts][ARTIFACT] against the structure schemas, the ontology, the link rules, and the deployment manifest, and reports findings. It never edits.
 - The [assembler][ASSEMBLER] turns a *[canon][CANON]* and its *[sidecars][SIDECAR]* into one *[instance][INSTANCE]* for each [harness][HARNESS] and a *[variant][VARIANT]* for each *[model][MODEL]* it knows. It translates includes and term links for each [harness][HARNESS] and seals the *[provenance record][PROVENANCERECORD]*.
 - The [generator][GENERATOR] writes derived files from their source: the root index, the directory indexes, the glossary pages, and the changelog. It regenerates them for the drift check.
-- The [deployer][DEPLOYER] copies [instances][INSTANCE] into the harness trees and records the deployment manifest.
-- The [fixer][FIXER] edits [artifacts][ARTIFACT] to repair a reported finding, as a separate step the author invokes or a hook runs before the validator. Its first job is a draft term in the ontology.
+- The [deployer][DEPLOYER] copies [instances][INSTANCE] into the [harness][HARNESS] trees and records the deployment manifest.
+- The [fixer][FIXER] edits [artifacts][ARTIFACT] to repair a reported finding, as a separate step the author invokes or a hook runs before the [validator][VALIDATOR]. Its first job is a draft term in the ontology.
 - The [signer][SIGNER] binds a head to the owner's key.
-- The [archiver][ARCHIVER] moves an accepted *[change][CHANGE]* into the canonical specifications and refuses a change that links to a draft term.
+- The [archiver][ARCHIVER] moves an accepted *[change][CHANGE]* into the canonical specifications and refuses a [change][CHANGE] that links to a draft term.
 
 A role stays replaceable. Another program MAY fill a role when it passes the same scenarios, and a [requirement][REQUIREMENT] never names rune.
 
 ### Consequences
 
-- [+] A requirement stays true when a rune command is renamed, because the specification names the role
+- [+] A [requirement][REQUIREMENT] stays true when a rune command is renamed, because the specification names the role
 - [+] One install, one version, and one path through the hooks and continuous integration
 - [+] Every role shares one reading of the ontology, the structure schemas, and the manifests
-- [-] Rune is the one dependency for every role. A bug in rune blocks checking, assembly, and deployment at once. The fallback scripts under `scripts/fallback/` cover only the term check, the term fixer, and the glossary generator today.
+- [-] Rune is the one dependency for every role. A bug in rune blocks checking, assembly, and deployment at once. The fallback scripts under `scripts/fallback/` cover only the term check, the term [fixer][FIXER], and the glossary [generator][GENERATOR] today.
 - [-] The capability list in this record grows with every new role. A role a specification adds without a line here is a gap this record owns.
 
 ## More Information
 
-- The voice review of 17 and 18 October 2026 decided that specifications name roles and no program. It named the validator, the assembler, the generator, the deployer, and the fixer. The signer and the archiver joined when the ontology gained the roles.
+- The voice review of 17 and 18 October 2026 decided that specifications name roles and no program. It named the [validator][VALIDATOR], the [assembler][ASSEMBLER], the [generator][GENERATOR], the [deployer][DEPLOYER], and the [fixer][FIXER]. The [signer][SIGNER] and the [archiver][ARCHIVER] joined when the ontology gained the roles.
 
 [INSTRUCTION]: ../specs/glossary/instruction.md
 [ARTIFACT]: ../specs/glossary/artifact.md
