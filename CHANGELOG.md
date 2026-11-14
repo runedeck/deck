@@ -69,6 +69,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- Sync the ceremony files to skeleton `d7c9bdf7` through `copier update`: Quality on push and merge queue, `scripts/trash`, `secretspec.toml` with the CI secrets and its hook, GPT display names.
 - Change BuildSkill's trigger-eval scripts and review page to a clean-room rewrite with tests, so the deck carries no copied skill-creator code.
 - Change the Dotfiles Scanner to read acknowledgements from `.auditignore.yaml` and to run the detector from a checked copy in the scratch directory (scanner-routines-from-deck).
 - Routine notifications open with the result and whether to act, group details in bullets, end with one next step, and show health only when degraded (routine-prompts-from-deck).
