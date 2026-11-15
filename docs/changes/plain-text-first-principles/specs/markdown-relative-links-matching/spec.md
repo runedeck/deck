@@ -24,7 +24,7 @@ A *[state file][STATEFILE]* includes another file with `![text](relative path)`,
 ### Requirement: Link Targets Resolve
 
 Every internal link in a [repository][REPOSITORY] file MUST resolve. A relative link points at a file, a fragment at a heading in that file, and a term link at a generated glossary page. The [validator][VALIDATOR] checks every link offline, excludes nothing, and only reports.
-The *[fixer][FIXER]* repairs a link to a term the ontology lacks by adding a draft entry. A commit hook may run the fixer before the validator. An external link never blocks a commit.
+The *[fixer][FIXER]* repairs a link to a term the ontology lacks by adding a draft entry. A commit hook may run the [fixer][FIXER] before the [validator][VALIDATOR]. An external link never blocks a commit.
 
 #### Scenario: Link target moves
 

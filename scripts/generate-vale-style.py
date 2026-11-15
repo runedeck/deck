@@ -206,12 +206,15 @@ def render_core() -> dict[str, str]:
         + "# the text counts as the definition, and italics alone are emphasis. The\n"
         + "# nouns are the TERMS subset of OVERUSE, so one list serves this rule and\n"
         + "# STE.Overused*. Raw scope, because Vale strips the markers before any\n"
-        + "# other scope.\n"
+        + "# other scope. A hyphenated name such as review-lanes is a name, not\n"
+        + "# the noun, in prose and in link text, and a link whose text ends in\n"
+        + "# the noun (agentic review lane) defines it. The first pattern matches\n"
+        + "# the stem alone, so a plural use counts as defined by its singular link.\n"
         + "extends: conditional\n"
         + "message: \"'%s' is never defined here. Link it to its glossary page at first use, or say which check, file, or flag it is (rule Deslop).\"\n"
         + "level: warning\nignorecase: true\nscope: raw\n"
-        + f"first: '\\b({nouns})s?\\b'\n"
-        + f"second: '(?:\\[(?<a>{nouns})s?\\]\\[|[*_`](?<a>{nouns})s?[*_`])'\n",
+        + f"first: '(?<![\\w-])({nouns})(?=s?(?![\\w-]))'\n"
+        + f"second: '(?:\\[[^\\]]*?(?<![\\w-])(?<a>{nouns})s?\\]\\[|\\*\\*(?<a>{nouns})s?\\*\\*|__(?<a>{nouns})s?__|`(?<a>{nouns})s?`)'\n",
     }
 
 

@@ -3,6 +3,7 @@ five findings on the invalid one, and the fixers migrate the legacy tree
 and add a draft term, idempotently (CORE-0007). The fixtures under
 tests/fixtures/terms/ carry their own ontology and glossary pages, so no
 test touches the repository's own tree or delegates to rune."""
+import re
 import shutil
 import subprocess
 import sys
@@ -168,6 +169,123 @@ class FixTerms(unittest.TestCase):
 
     def test_unknown_flag_is_a_usage_error(self):
         self.assertEqual(run("fix-terms", "--bogus", FIXTURES / "legacy").returncode, 2)
+
+
+LINKED_ONTOLOGY = "@prefix rune: <https://runedeck.ai/ns#> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n\n" + "".join(
+    f'rune:{name} a rdfs:Class ;\n    rdfs:label "{label}" ;\n    rdfs:comment "The {label}." .\n\n'
+    for name, label in (("Harness", "harness"), ("Rule", "rule"), ("Requirement", "requirement"), ("MissedRequirement", "missed requirement"), ("RedReview", "red review"), ("ReviewLane", "review lane"), ("Capability", "capability"))
+)
+PAGE = {"HARNESS": "harness", "RULE": "rule", "REQUIREMENT": "requirement", "MISSEDREQUIREMENT": "missed-requirement", "REDREVIEW": "red-review", "REVIEWLANE": "review-lane", "CAPABILITY": "capability"}
+
+
+def definitions(*tags):
+    return "\n" + "".join(f"[{tag}]: ../specs/glossary/{PAGE[tag]}.md\n" for tag in tags)
+
+
+FIRST = "*[harness][HARNESS]* first.\n\n"
+HARNESS = definitions("HARNESS")
+# One file per case: the body, and the plain words the checker reports in it.
+UNLINKED = {
+    "line-edges": (FIRST + "harness works.\nThe harness\n" + HARNESS, ["harness", "harness"]),
+    "es-plural": (FIRST + "Two harnesses work.\n" + HARNESS, ["harnesses"]),
+    "ies-plural": ("A *[capability][CAPABILITY]* here. Two capabilities, no capabilitys.\n\n[CAPABILITY]: ../specs/glossary/capability.md\n", ["capabilities"]),
+    "bare-url": (FIRST + "See https://example.com/harness and <https://x/harness> and <a href=\"harness\">x</a>, then a harness.\n" + HARNESS, ["harness"]),
+    # An emphasized word is a run-in label (`**Change ceremony.**`) and stays plain, as in rune.
+    "italic-word": (FIRST + "A later *harness* here.\n" + HARNESS, []),
+    "legacy-citation": (FIRST + "A *harness* [HARNESS] cite.\n" + HARNESS, []),
+    "fences": (FIRST + "~~~md\nThe harness works.\n~~~~\n\n  ```\n  The harness works.\n  ```\n" + HARNESS, []),
+    "unclosed-fence": (HARNESS + "\n" + FIRST + "```\nThe harness works.\n", []),
+    "code-spans": (FIRST + "Use ``the harness`` and ``a `harness` b`` here.\n" + HARNESS, []),
+    "destinations": (FIRST + "See [record](path(foo)harness) and [record](a]harness) now.\n" + HARNESS, []),
+    "setext-heading": (FIRST + "The harness guide\n=================\n" + HARNESS, []),
+    "definition-label": (FIRST + "[MORE INFO]: ./harness.md\n" + HARNESS, []),
+    "titled-definition": (FIRST + "A plain harness.\n\n[HARNESS]: ../specs/glossary/harness.md \"title\"\n", ["harness"]),
+    "definition-only": ("The harness works.\n" + HARNESS, []),
+    "legacy-definition-only": ("The harness works.\n\n[HARNESS]: https://runedeck.ai/ns#Harness\n", []),
+    "longer-term": ("*[requirement][REQUIREMENT]* and *[missed requirement][MISSEDREQUIREMENT]*.\n\nA missed requirement remains.\n" + definitions("REQUIREMENT", "MISSEDREQUIREMENT"), ["missed requirement"]),
+}
+OWN_TAG = "\n[OTHER]: ../specs/glossary/harness.md\n[HARNESS]: ../specs/glossary/harness.md\n"
+LANES = definitions("REDREVIEW", "REVIEWLANE")
+RULE = definitions("RULE")
+# One file per case: the body, and the text after `fix-terms --links`.
+FIXED = {
+    "dotted-capital": (FIRST + "The İ harness works.\n" + HARNESS, FIRST + "The İ [harness][HARNESS] works.\n" + HARNESS),
+    "own-tag": (FIRST + "A plain harness.\n" + OWN_TAG, FIRST + "A plain [harness][HARNESS].\n" + OWN_TAG),
+    "later-longer-term": ("*[red review][REDREVIEW]* and *[review lane][REVIEWLANE]*.\n\nThe red review lane runs.\n" + LANES, "*[red review][REDREVIEW]* and *[review lane][REVIEWLANE]*.\n\nThe red [review lane][REVIEWLANE] runs.\n" + LANES),
+    "first-use-moves": ("A rule governs. Then *[rule][RULE]* follows.\n" + RULE, "A *[rule][RULE]* governs. Then [rule][RULE] follows.\n" + RULE),
+    "italic-later-use": (FIRST + "A later *harness* here.\n" + HARNESS, FIRST + "A later *harness* here.\n" + HARNESS),
+}
+UNLINKED_LINE = re.compile(r"^error\[term-unlinked\]: docs/notes/([^:]+)\.md:\d+: '([^']*)'", re.MULTILINE)
+
+
+def unlinked_words(output, name):
+    return [word for file, word in UNLINKED_LINE.findall(output) if file == name]
+
+
+class LinkedTermOccurrences(unittest.TestCase):
+    """Every plain occurrence of a term a file links is a link. The checker
+    finds one at a line edge, as an `es` plural, and in italics, and never
+    in code, a heading, a definition, a legacy citation, or a link
+    destination. The fixer links the longer term first and keeps the
+    emphasis on the first use. Each case is one file of a scratch deck."""
+
+    @staticmethod
+    def deck(scratch, cases, missing=()):
+        root = Path(scratch) / "deck"
+        (root / "ontology").mkdir(parents=True)
+        (root / termlib.ONTOLOGY).write_text(LINKED_ONTOLOGY)
+        glossary = root / termlib.GLOSSARY
+        glossary.mkdir(parents=True)
+        for name, text in termlib.load(root).render().items():
+            if name not in missing:
+                (glossary / name).write_text(text)
+        notes = root / "docs" / "notes"
+        notes.mkdir(parents=True)
+        for name, body in cases.items():
+            (notes / f"{name}.md").write_text(body)
+        return root, notes
+
+    def test_checker_reports_each_plain_occurrence_once(self):
+        with tempfile.TemporaryDirectory() as scratch:
+            root, _ = self.deck(scratch, {name: body for name, (body, _) in UNLINKED.items()})
+            result = run("check-terms", root)
+            self.assertEqual(result.stderr, "", "a check that crashes is not a finding")
+            for name, (_, words) in UNLINKED.items():
+                with self.subTest(name):
+                    self.assertEqual(unlinked_words(result.stdout, name), words, result.stdout)
+
+    def test_checker_suggests_the_tag_the_file_uses(self):
+        with tempfile.TemporaryDirectory() as scratch:
+            root, _ = self.deck(scratch, {"own-tag": FIXED["own-tag"][0]})
+            result = run("check-terms", root)
+            self.assertIn("write `[harness][HARNESS]`", result.stdout)
+
+    def test_fixer_links_once_and_moves_the_emphasis(self):
+        cases = {name: body for name, (body, _) in {**UNLINKED, **FIXED}.items()}
+        with tempfile.TemporaryDirectory() as scratch:
+            root, notes = self.deck(scratch, cases)
+            result = run("fix-terms", "--links", root)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            for name, (_, expected) in FIXED.items():
+                with self.subTest(name):
+                    self.assertEqual((notes / f"{name}.md").read_text(), expected)
+            for name, (body, words) in UNLINKED.items():
+                if not words and name != "legacy-definition-only":
+                    with self.subTest(name):
+                        self.assertEqual((notes / f"{name}.md").read_text(), body, "nothing to link, so nothing changes")
+            check = run("check-terms", root)
+            self.assertNotIn("term-unlinked", check.stdout)
+            self.assertNotIn("term-first-use", check.stdout)
+            again = run("fix-terms", "--links", root)
+            self.assertIn("links: 0 files rewritten", again.stdout)
+
+    def test_a_migrated_link_to_a_missing_page_keeps_its_term(self):
+        body = "A *rule* [CUSTOM] governs. Another rule follows.\n\n[CUSTOM]: https://runedeck.ai/ns#Rule\n"
+        with tempfile.TemporaryDirectory() as scratch:
+            root, notes = self.deck(scratch, {"custom-tag": body}, missing={"rule.md"})
+            result = run("fix-terms", "--links", root)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual((notes / "custom-tag.md").read_text(), "A *[rule][CUSTOM]* governs. Another [rule][CUSTOM] follows.\n\n[CUSTOM]: ../specs/glossary/rule.md\n")
 
 
 if __name__ == "__main__":
