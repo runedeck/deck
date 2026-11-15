@@ -1,0 +1,37 @@
+{
+  "rune": "VersionControl",
+  "kind": "skill",
+  "layer": "assembled",
+  "instance_sha256": "3f13999b5f59a96c81d07a5abc9041e03d1afe43f3855e0cb43464e7a84f049b",
+  "model": "claude-haiku-4-5-20251001",
+  "profile": "main",
+  "runs": 3,
+  "recorded": "2026-10-20T091421Z",
+  "claude_version": "2.1.304",
+  "score": 0.7222222222222222,
+  "cases_passed": 1,
+  "cases_total": 3,
+  "mean_delta": 0.5555555555555555,
+  "cost_usd": 0.3767405,
+  "duration_seconds": 221,
+  "cases": [
+    {
+      "name": "commit-whole-refactor",
+      "score": 0.5,
+      "score_without": 0.5,
+      "delta": 0
+    },
+    {
+      "name": "jj-colocated-push",
+      "score": 1,
+      "score_without": 0,
+      "delta": 1
+    },
+    {
+      "name": "open-deck-pull-request",
+      "score": 0.6666666666666666,
+      "score_without": 0,
+      "delta": 0.6666666666666666
+    }
+  ]
+}

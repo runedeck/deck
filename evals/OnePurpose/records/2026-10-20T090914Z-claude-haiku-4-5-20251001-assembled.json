@@ -1,0 +1,31 @@
+{
+  "rune": "OnePurpose",
+  "kind": "rule",
+  "layer": "assembled",
+  "instance_sha256": "9c253600637082657ea22bad7e6c98ea6f4bd02050bc6f92867de1a7a8881565",
+  "model": "claude-haiku-4-5-20251001",
+  "profile": "main",
+  "runs": 3,
+  "recorded": "2026-10-20T090914Z",
+  "claude_version": "2.1.304",
+  "score": 0.5,
+  "cases_passed": 1,
+  "cases_total": 2,
+  "mean_delta": 0.33333333333333337,
+  "cost_usd": 0.1687627,
+  "duration_seconds": 60,
+  "cases": [
+    {
+      "name": "chained-validate-stage-diff",
+      "score": 1,
+      "score_without": 0,
+      "delta": 1
+    },
+    {
+      "name": "commit-and-push",
+      "score": 0,
+      "score_without": 0.3333333333333333,
+      "delta": -0.3333333333333333
+    }
+  ]
+}

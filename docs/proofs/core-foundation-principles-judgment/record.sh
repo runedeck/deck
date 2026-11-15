@@ -15,7 +15,7 @@ RUNE=${RUNE:-rune}
 MODEL=${PROOF_MODEL:-claude-opus-5-5}
 SPECS="$ROOT/docs/changes/plain-text-first-principles/specs"
 PROOF_HOME=$(mktemp -d "${TMPDIR:-/tmp}/cfp-judgment.XXXXXX")
-# shellcheck disable=SC2154
+# shellcheck disable=SC2154 # the trap string assigns status before it reads it
 trap 'status=$?; command rm -rf "$PROOF_HOME"; proof_exit "$status"' EXIT
 cd "$PROOF_HOME" || exit 1
 export TYPE_DELAY=0.01 PAUSE_AFTER_COMMENT=0.8 PAUSE_AFTER_OUTPUT=1.0
