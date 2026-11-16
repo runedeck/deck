@@ -13,10 +13,11 @@
 - [x] 2.1 Write the skill suites: VersionControl, SafetyFirst, SimplifiedTechnicalEnglish, BuildSkill, FullSend, PruneTests
 - [x] 2.2 Write the rule suites: RemoteWrites, PreferTrash, OnePurpose, PlainSpokenLanguage, Deslop, VerifyClaims
 - [x] 2.3 Run each suite once, and rewrite or drop each case that both runs pass
-- [x] 2.4 Fix each rune that fails its own case where the fix is clear: VersionControl's directory flag, FullSend's question fallback and scanner path, and SafetyFirst's Claude Code variant
+- [x] 2.4 Fix each rune that fails its own case where the fix is clear: VersionControl's directory flag, and FullSend's question fallback and scanner path
 - [x] 2.5 Record each suite into `docs/proofs/runes-carry-eval-records/` and keep its record
-- [x] 2.6 Run FullSend and SafetyFirst with their Claude Code variants and without them. FullSend's variant beats its canon and stays. SafetyFirst's variant scores 0 against 0.44 and is removed
+- [x] 2.6 Run FullSend and SafetyFirst with their Claude Code variants and without them. FullSend's variant beats its canon and stays. SafetyFirst's variant scores 0 against 0.44
 - [ ] 2.7 Decide the weaknesses that need the owner: OnePurpose on chained commands, PlainSpokenLanguage on abbreviations, Deslop on negative parallelism and on cases that pass without it, BuildSkill on triggering and naming, and RemoteWrites on full addresses and thread offers
+- [ ] 2.8 Remove SafetyFirst's Claude Code variant, together with a new `tests/test_safetyfirst.py` that no longer requires it
 
 ## 3. Skills and rules
 

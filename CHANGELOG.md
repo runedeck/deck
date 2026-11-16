@@ -104,7 +104,6 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 ### Removed
 
 - Remove the BenchArtifact eval viewer, which no instruction used and which carried copied skill-creator code.
-- Remove the Claude Code variant of SafetyFirst. Its load-time probe stopped the skill from loading where Bash was not granted, and the canon alone scores 0.44 against 0 (runes-carry-eval-records).
 - Remove the legacy per-block review ledgers from BuildSkill and ReviewMarkers.
 - Remove the dated markdown backlog.
 
