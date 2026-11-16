@@ -44,7 +44,7 @@ The owner extracts the loop into a standalone BenchArtifact [skill][SKILL] in co
 
 BenchArtifact benchmarks any *[rune][RUNE]*. A [skill][SKILL] runs with and without the [skill][SKILL] loaded. A [rule][RULE] runs with and without the [rule][RULE] text in context. An [agent][AGENT] runs against a general-purpose baseline. Each run records a [model][MODEL] dimension. Aggregation reports per configuration and [model][MODEL], with no cross-model averaging.
 
-The report is one self-contained HTML (HyperText Markup Language) file in the pattern of proton-ai-security's review reports. That pattern inlines structured data into a [template][TEMPLATE], vendors the stylesheet, renders on the client, and makes no external request.
+The report is one self-contained HTML (HyperText Markup Language) file in the pattern of an earlier security tool's review reports. That pattern inlines structured data into a [template][TEMPLATE], vendors the stylesheet, renders on the client, and makes no external request.
 
 Keeping the loop inside BuildSkill would grow a skill-authoring guide into a benchmarking product. [Rules][RULE] and [agents][AGENT] would then reach into another [skill][SKILL]'s internals. Starting in the `rune` CLI would block a working measurement loop behind a Rust port. The [skill][SKILL] form keeps the loop editable while its structure settles. The CLI import comes after that.
 

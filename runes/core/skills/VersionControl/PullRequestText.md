@@ -15,10 +15,10 @@ casual and brief. These rules apply to GitLab merge requests too.
 
 Examples:
 
-- Bad: `feat(proton): claim jj's new-commit exports in the untraced-commit fixup`
-- Good: `feat(proton): attribute commits made with jj`
-- Bad: `feat(proton): notes_sync_repositories decides where notes travel, apart from attribution`
-- Good: `feat(proton): record data for every repo, but push notes only to Proton remotes`
+- Bad: `feat(notes): claim jj's new-commit exports in the untraced-commit fixup`
+- Good: `feat(notes): attribute commits made with jj`
+- Bad: `feat(notes): notes_sync_repositories decides where notes travel, apart from attribution`
+- Good: `feat(notes): record data for every repo, but push notes only to company remotes`
 
 ## Body
 
