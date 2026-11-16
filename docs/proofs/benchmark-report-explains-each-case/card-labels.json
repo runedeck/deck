@@ -1,0 +1,30 @@
+{
+  "1": {
+    "question": "Write the code that starts a cloud browser",
+    "why": "Stagehand is Browserbase's code library for steering a browser from a script. Its version 4 changed how a script starts, and version 3 code no longer runs.",
+    "pass_label": "current v4 code",
+    "fail_labels": {
+      "Uses the V4 factory.": "no v4 start call",
+      "Launches the browser through the Browserbase factory.": "no Browserbase launch",
+      "Uses no V3 constructor or init call outside a comment.": "old v3 code"
+    }
+  },
+  "2": {
+    "question": "List the settings a Browserbase project needs",
+    "why": "Browserbase finds the project from the API key alone. Older guides also ask for a project ID, which sends the reader after a value they do not need.",
+    "pass_label": "key only",
+    "fail_labels": {
+      "Lists the API key.": "missed the API key",
+      "Does not list a project id.": "added project ID"
+    }
+  },
+  "3": {
+    "question": "Get the text of a page that refused a normal fetch",
+    "why": "Browserbase's browse command can fetch a page without starting a browser. Opening a browser session for one page uses the plan's browser hours.",
+    "pass_label": "page fetch",
+    "fail_labels": {
+      "Reads the page through Browserbase Fetch.": "no page fetch",
+      "Does not start a browser session first.": "opened a browser"
+    }
+  }
+}
