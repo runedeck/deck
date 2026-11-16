@@ -125,3 +125,4 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 - Fix the meta module to include its required empty defaults file.
 - Fix stable shell to validate the `rune` skill with the shared meta skill schema.
 - Fix the skill hook to validate each entrypoint against its nearest `.mdschema`.
+- Fix the UseEfficientCLI rule to match the command guard: write an overwrite redirect to a literal path, and send output through `tee` when the path needs a variable.

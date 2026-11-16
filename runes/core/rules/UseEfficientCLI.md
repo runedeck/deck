@@ -18,6 +18,8 @@ Use `sd` for find-and-replace edits. Run `sd --version` first. When the output i
 
 The shell may run with `noclobber` set. A plain `>` or `2>` redirect to an existing file then fails (zsh prints `file exists`, bash prints `cannot overwrite existing file`). Use `>|` and `2>|` when you intend to overwrite. Use `>>` when you intend to append. Do not disable the option.
 
+A command guard such as dcg refuses a `>` or `>|` redirect when it cannot read the destination from the command text. The shell expands a variable, such as `"$TMPDIR/out.txt"`, or a command substitution only when the command runs. The guard also refuses to overwrite an absolute path outside `/tmp`. Write the destination as a literal path inside the working directory or under `/tmp`. When the path needs a variable, send the output through `tee`. Do not repeat the refused form.
+
 Request selected GitHub fields with `gh ... --json <fields>` and `--jq`. Read only what the task needs. Never load a complete directory or repository into context.
 
 For the rtk command tables and verification, use the RTK skill.
