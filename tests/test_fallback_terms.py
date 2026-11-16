@@ -190,8 +190,13 @@ UNLINKED = {
     "es-plural": (FIRST + "Two harnesses work.\n" + HARNESS, ["harnesses"]),
     "ies-plural": ("A *[capability][CAPABILITY]* here. Two capabilities, no capabilitys.\n\n[CAPABILITY]: ../specs/glossary/capability.md\n", ["capabilities"]),
     "bare-url": (FIRST + "See https://example.com/harness and <https://x/harness> and <a href=\"harness\">x</a>, then a harness.\n" + HARNESS, ["harness"]),
-    # An emphasized word is a run-in label (`**Change ceremony.**`) and stays plain, as in rune.
-    "italic-word": (FIRST + "A later *harness* here.\n" + HARNESS, []),
+    # An italic or a bold word is prose, alone or inside an emphasized phrase.
+    "italic-word": (FIRST + "A later *harness* here.\n" + HARNESS, ["harness"]),
+    "bold-word": (FIRST + "A later **harness** here.\n" + HARNESS, ["harness"]),
+    "emphasized-phrase": (FIRST + "Then *the harness works* again.\n" + HARNESS, ["harness"]),
+    "bold-not-a-label": (FIRST + "**Harness** works here.\n\n1. **Harness**, the first.\n" + HARNESS, ["Harness", "Harness"]),
+    # A run-in label is a bold span that opens a block and ends with a period or a colon. It stays plain, as a heading does.
+    "run-in-label": (FIRST + "- **Harness ceremony.** The text.\n\n**The harness rule:** more text.\n\n> 1. **Harness.** Quoted.\n" + HARNESS, []),
     "legacy-citation": (FIRST + "A *harness* [HARNESS] cite.\n" + HARNESS, []),
     "fences": (FIRST + "~~~md\nThe harness works.\n~~~~\n\n  ```\n  The harness works.\n  ```\n" + HARNESS, []),
     "unclosed-fence": (HARNESS + "\n" + FIRST + "```\nThe harness works.\n", []),
@@ -213,7 +218,13 @@ FIXED = {
     "own-tag": (FIRST + "A plain harness.\n" + OWN_TAG, FIRST + "A plain [harness][HARNESS].\n" + OWN_TAG),
     "later-longer-term": ("*[red review][REDREVIEW]* and *[review lane][REVIEWLANE]*.\n\nThe red review lane runs.\n" + LANES, "*[red review][REDREVIEW]* and *[review lane][REVIEWLANE]*.\n\nThe red [review lane][REVIEWLANE] runs.\n" + LANES),
     "first-use-moves": ("A rule governs. Then *[rule][RULE]* follows.\n" + RULE, "A *[rule][RULE]* governs. Then [rule][RULE] follows.\n" + RULE),
-    "italic-later-use": (FIRST + "A later *harness* here.\n" + HARNESS, FIRST + "A later *harness* here.\n" + HARNESS),
+    # A later use drops its stars, and a first use keeps them as the emphasis of the link.
+    "italic-later-use": (FIRST + "A later *harness* here.\n" + HARNESS, FIRST + "A later [harness][HARNESS] here.\n" + HARNESS),
+    "bold-later-use": (FIRST + "A later **harness** here.\n" + HARNESS, FIRST + "A later [harness][HARNESS] here.\n" + HARNESS),
+    "phrase-later-use": (FIRST + "Then *the harness works* again.\n" + HARNESS, FIRST + "Then *the [harness][HARNESS] works* again.\n" + HARNESS),
+    "bold-at-line-start": (FIRST + "**Harness** works here.\n" + HARNESS, FIRST + "[Harness][HARNESS] works here.\n" + HARNESS),
+    "italic-first-use": ("An italic *rule* governs. Then *[rule][RULE]* follows.\n" + RULE, "An italic *[rule][RULE]* governs. Then [rule][RULE] follows.\n" + RULE),
+    "label-then-prose": (FIRST + "- **Harness ceremony.** A *harness* runs it.\n" + HARNESS, FIRST + "- **Harness ceremony.** A [harness][HARNESS] runs it.\n" + HARNESS),
 }
 UNLINKED_LINE = re.compile(r"^error\[term-unlinked\]: docs/notes/([^:]+)\.md:\d+: '([^']*)'", re.MULTILINE)
 
@@ -224,10 +235,11 @@ def unlinked_words(output, name):
 
 class LinkedTermOccurrences(unittest.TestCase):
     """Every plain occurrence of a term a file links is a link. The checker
-    finds one at a line edge, as an `es` plural, and in italics, and never
-    in code, a heading, a definition, a legacy citation, or a link
-    destination. The fixer links the longer term first and keeps the
-    emphasis on the first use. Each case is one file of a scratch deck."""
+    finds one at a line edge, as an `es` plural, and in italics or bold,
+    and never in code, a heading, a run-in label, a definition, a legacy
+    citation, or a link destination. The fixer links the longer term first
+    and keeps the emphasis on the first use. Each case is one file of a
+    scratch deck."""
 
     @staticmethod
     def deck(scratch, cases, missing=()):

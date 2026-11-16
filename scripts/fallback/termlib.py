@@ -68,6 +68,12 @@ SCHEME = re.compile(r"^[a-z][a-z0-9+.-]*:")
 # its attributes) are not prose, so a term inside them is never linked.
 BARE_URL = re.compile(r"\b[a-z][a-z0-9+.-]*://[^\s<>\]\)]+", re.IGNORECASE)
 ANGLE_SPAN = re.compile(r"<[^<>\n]*>")
+# A run-in label: a bold span that opens a paragraph, a list item, or a
+# quote and ends with a period or a colon inside the stars, as in
+# `**Change ceremony.** A new class needs a record.` It names the text
+# after it, as a heading does, so its words are not prose. Group 1 is the
+# label text. Any other emphasized word is prose: `*harness*`, `**harness**`.
+RUN_IN_LABEL = re.compile(r"^[ \t]*(?:>[ \t]*)*(?:(?:[-*+]|\d{1,9}[.)])[ \t]+)?(?:\[[ xX]\][ \t]+)?\*\*(?!\*)([^*\n]+[.:])\*\*(?!\*)")
 
 Term = collections.namedtuple("Term", "label precedence name kind comment status")
 Finding = collections.namedtuple("Finding", "path line severity name message")
@@ -322,8 +328,8 @@ def plain_occurrences(text, label):
     """(start, end) of every plain occurrence of a term label in blanked text:
     a whole word (or its plural), case-insensitive, outside a link, a legacy
     citation, brackets, and an inline-link destination, and not on a heading
-    or a definition line, and not right after an emphasis star, where a
-    run-in label sits.
+    or a definition line, and not inside a run-in label (RUN_IN_LABEL).
+    An italic or a bold word is prose like any other word.
     Every occurrence of a linked term is a link, so the validator reports
     these and the fixer links them."""
     if not label:
@@ -336,12 +342,12 @@ def plain_occurrences(text, label):
         matches = list(pattern.finditer(line)) if number not in headings and not DEFINITION_LINE.match(line) else []
         if matches:
             masked = prose_mask(line)
-            # A word right after an emphasis star is a run-in label such as
-            # `**Change ceremony.**`, which rune's checker leaves alone too.
+            label = RUN_IN_LABEL.match(line)
+            label_start, label_end = label.span(1) if label else (0, 0)
             found.extend(
                 (base + m.start(), base + m.end())
                 for m in matches
-                if not any(masked[m.start():m.end()]) and not line[:m.start()].endswith("*")
+                if not any(masked[m.start():m.end()]) and not (label_start <= m.start() and m.end() <= label_end)
             )
         base += len(line) + 1
     return found

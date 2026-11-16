@@ -8,7 +8,9 @@ A defined term is a reference link to its generated glossary page:
 `*[analysis tool][ANALYSISTOOL]*` at the first use in a file,
 `[analysis tool][ANALYSISTOOL]` at every later use, and
 `[ANALYSISTOOL]: ../../specs/glossary/analysis-tool.md` at the end of the
-file. Plain italics are emphasis and are not checked. The findings carry
+file. Plain italics mark nothing: an italic or a bold word that is a term
+the file links is reported like any plain word. Only a run-in label such
+as `**Change ceremony.**` is left alone, as a heading is. The findings carry
 the meaning of rune's spec-term-* and delta-term-* diagnostics:
 
 - term-undefined (error): the link resolves to no ontology entry.

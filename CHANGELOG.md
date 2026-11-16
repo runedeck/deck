@@ -110,6 +110,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Fixed
 
+- Fix the fallback term checker to report an italic or a bold term that the file links elsewhere. Only a run-in label such as `**Change ceremony.**` stays plain.
 - Fix the ReviewChange term links to point at the glossary pages by repository URL, so the bundle passes the source-layer check and the links survive deployment (skill-term-links-survive-deployment).
 - Fix VersionControl's directory advice: `gh -R` and `glab -R` take a remote `OWNER/REPO`, so a local directory needs its own `cd` call (runes-carry-eval-records).
 - Fix the Dotfiles Scanner to fetch the whole branch history and report a scan that stops at a shallow boundary as incomplete (scanner-routines-from-deck).

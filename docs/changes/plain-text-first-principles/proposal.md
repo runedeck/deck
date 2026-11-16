@@ -38,7 +38,7 @@ Two ideas from science decide what stays in an [instruction][INSTRUCTION], *[fal
 
 1. **Architecture** removes the cause: better structure, better data. One canonical tree ends mirror drift.
 2. **Tests and linters** catch every recurrence mechanically. A prose rule flags a banned word on write.
-3. **Instructions**, meaning skills and rules, steer the [model][MODEL] directly.
+3. [Instructions][INSTRUCTION], meaning skills and rules, steer the [model][MODEL] directly.
 4. **Human review** comes last. Human attention is the most expensive resource, so it catches only what nothing else did.
 
 Three positions argue against parts of this, and each gets an answer rather than silence:
