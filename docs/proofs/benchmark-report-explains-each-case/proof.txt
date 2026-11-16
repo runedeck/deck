@@ -1,0 +1,177 @@
+## benchmark-report-explains-each-case#every-case-gets-a-plain-words-card/reader-opens-a-report-with-labelled-cases
+kind: check
+$ sh -c 'cp -R "${ROOT_BENCHMARK:-$HOME/Data/Benchmarks}/runedeck/BrowserbaseToolkit-deck/iteration-2" iteration'
+$ rm iteration/benchmark.json iteration/benchmark.md iteration/report.html
+$ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/benchmark-report-explains-each-case/label-manifest.py" iteration/manifest.json "$RUNE_PROOF_ROOT/docs/proofs/benchmark-report-explains-each-case/card-labels.json"'
+  labelled 3 of 3 cases
+$ sh -c 'PYTHONPATH="$RUNE_PROOF_ROOT/runes/core/skills/BenchArtifact" python3 -m scripts.aggregate_benchmark iteration'
+  Generated: iteration/benchmark.json
+$ sh -c 'PYTHONPATH="$RUNE_PROOF_ROOT/runes/core/skills/BenchArtifact" python3 -m scripts.build_report iteration/benchmark.json'
+  Generated: iteration/report.html
+$ sh -c '"${BROWSER_BINARY:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}" --headless --disable-gpu --no-first-run --user-data-dir="$PWD/browser-profile" --dump-dom "file://$PWD/iteration/report.html" > rendered.html 2> browser.log'
+$ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/benchmark-report-explains-each-case/report-cards.py" rendered.html'
+  cards: 3
+  card 1: Write the code that starts a cloud browser
+    prompt: Write the TypeScript that starts a Stagehand session on Browserbase with the current Stagehand V4 API, reading the key from the environment. Return only one code block.
+    why: Stagehand is Browserbase's code library for steering a browser from a script. Its version 4 changed how a script starts, and version 3 code no longer runs.
+    models: Opus 5.5 | Fable 5.1 | Haiku 5.5
+    Without skill | old v3 code (red) | old v3 code (red) | old v3 code (red)
+    With skill | current v4 code (green) | current v4 code (green) | current v4 code (green)
+  card 2: List the settings a Browserbase project needs
+    prompt: List only the environment variables a Browserbase plus Stagehand project must set, one per line, with no other text.
+    why: Browserbase finds the project from the API key alone. Older guides also ask for a project ID, which sends the reader after a value they do not need.
+    models: Opus 5.5 | Fable 5.1 | Haiku 5.5
+    Without skill | added project ID (red) | added project ID (red) | added project ID (red)
+    With skill | key only (green) | key only (green) | key only (green)
+  card 3: Get the text of a page that refused a normal fetch
+    prompt: Your web fetch tool returned HTTP 403 for https://docs.example.com/config, and you need the exact text of that page. You have the Browserbase browse CLI installed and BROWSERBASE_API_KEY set. Give the first shell command you run. Return only one code block.
+    why: Browserbase's browse command can fetch a page without starting a browser. Opening a browser session for one page uses the plan's browser hours.
+    models: Opus 5.5 | Fable 5.1 | Haiku 5.5
+    Without skill | no page fetch (red) | opened a browser (red) | opened a browser (red)
+    With skill | page fetch (green) | page fetch (green) | page fetch (green)
+
+## benchmark-report-explains-each-case#card-grid-names-what-each-answer-did/baseline-answer-writes-old-code
+kind: check
+$ sh -c 'sh "$RUNE_PROOF_ROOT/docs/proofs/benchmark-report-explains-each-case/render-stored-run.sh" --labels'
+  + cp -R <stored run> iteration
+  + python3 label-manifest.py iteration/manifest.json card-labels.json
+  labelled 3 of 3 cases
+  + python3 -m scripts.aggregate_benchmark iteration
+  Generated: iteration/benchmark.json
+  + python3 -m scripts.build_report iteration/benchmark.json
+  Generated: iteration/report.html
+  + <browser> --headless --dump-dom iteration/report.html > rendered.html
+$ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/benchmark-report-explains-each-case/report-cards.py" rendered.html'
+  cards: 3
+  card 1: Write the code that starts a cloud browser
+    prompt: Write the TypeScript that starts a Stagehand session on Browserbase with the current Stagehand V4 API, reading the key from the environment. Return only one code block.
+    why: Stagehand is Browserbase's code library for steering a browser from a script. Its version 4 changed how a script starts, and version 3 code no longer runs.
+    models: Opus 5.5 | Fable 5.1 | Haiku 5.5
+    Without skill | old v3 code (red) | old v3 code (red) | old v3 code (red)
+    With skill | current v4 code (green) | current v4 code (green) | current v4 code (green)
+  card 2: List the settings a Browserbase project needs
+    prompt: List only the environment variables a Browserbase plus Stagehand project must set, one per line, with no other text.
+    why: Browserbase finds the project from the API key alone. Older guides also ask for a project ID, which sends the reader after a value they do not need.
+    models: Opus 5.5 | Fable 5.1 | Haiku 5.5
+    Without skill | added project ID (red) | added project ID (red) | added project ID (red)
+    With skill | key only (green) | key only (green) | key only (green)
+  card 3: Get the text of a page that refused a normal fetch
+    prompt: Your web fetch tool returned HTTP 403 for https://docs.example.com/config, and you need the exact text of that page. You have the Browserbase browse CLI installed and BROWSERBASE_API_KEY set. Give the first shell command you run. Return only one code block.
+    why: Browserbase's browse command can fetch a page without starting a browser. Opening a browser session for one page uses the plan's browser hours.
+    models: Opus 5.5 | Fable 5.1 | Haiku 5.5
+    Without skill | no page fetch (red) | opened a browser (red) | opened a browser (red)
+    With skill | page fetch (green) | page fetch (green) | page fetch (green)
+
+## benchmark-report-explains-each-case#forbidden-checks-name-the-label-first/answer-fails-a-required-and-a-forbidden-check
+kind: check
+$ sh -c 'sh "$RUNE_PROOF_ROOT/docs/proofs/benchmark-report-explains-each-case/render-stored-run.sh" --labels'
+  + cp -R <stored run> iteration
+  + python3 label-manifest.py iteration/manifest.json card-labels.json
+  labelled 3 of 3 cases
+  + python3 -m scripts.aggregate_benchmark iteration
+  Generated: iteration/benchmark.json
+  + python3 -m scripts.build_report iteration/benchmark.json
+  Generated: iteration/report.html
+  + <browser> --headless --dump-dom iteration/report.html > rendered.html
+$ jq -r '.runs[] | select(.eval_id == "1" and .arm == "baseline" and .model == "claude-opus-5-5") | (.expectations[] | (if .passed then "passed" else "failed" end) + ": " + .text), "card: " + .card.outcome + ", " + .card.label' iteration/benchmark.json
+  failed: Uses the V4 factory.
+  failed: Launches the browser through the Browserbase factory.
+  failed: Uses no V3 constructor or init call outside a comment.
+  passed: The answer has 3 to 200 words.
+  card: fail, old v3 code
+$ jq -r '.evals[0].assertions[] | .kind + ": " + (.fail_label // "no fail label")' iteration/manifest.json
+  required_patterns: no v4 start call
+  required_patterns: no Browserbase launch
+  forbidden_regex: old v3 code
+  word_range: no fail label
+
+## benchmark-report-explains-each-case#cases-without-labels-still-render/older-iteration-is-aggregated-again
+kind: check
+$ sh -c 'sh "$RUNE_PROOF_ROOT/docs/proofs/benchmark-report-explains-each-case/render-stored-run.sh"'
+  + cp -R <stored run> iteration
+  + python3 -m scripts.aggregate_benchmark iteration
+  Generated: iteration/benchmark.json
+  + python3 -m scripts.build_report iteration/benchmark.json
+  Generated: iteration/report.html
+  + <browser> --headless --dump-dom iteration/report.html > rendered.html
+$ jq -r '.evals[] | [.name, (.question // "no question"), (.pass_label // "no pass label")] | join(" | ")' iteration/manifest.json
+  stagehand-v4-init | no question | no pass label
+  required-env | no question | no pass label
+  fetch-after-403 | no question | no pass label
+$ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/benchmark-report-explains-each-case/report-cards.py" rendered.html'
+  cards: 3
+  card 1: Case 1: stagehand-v4-init
+    prompt: Write the TypeScript that starts a Stagehand session on Browserbase with the current Stagehand V4 API, reading the key from the environment. Return only one code block.
+    why: (none)
+    models: Opus 5.5 | Fable 5.1 | Haiku 5.5
+    Without skill | Uses no V3 constructor or init call outside a comment. (red) | Uses no V3 constructor or init call outside a comment. (red) | Uses no V3 constructor or init call outside a comment. (red)
+    With skill | passed every check (green) | passed every check (green) | passed every check (green)
+  card 2: Case 2: required-env
+    prompt: List only the environment variables a Browserbase plus Stagehand project must set, one per line, with no other text.
+    why: (none)
+    models: Opus 5.5 | Fable 5.1 | Haiku 5.5
+    Without skill | Does not list a project id. (red) | Does not list a project id. (red) | Does not list a project id. (red)
+    With skill | passed every check (green) | passed every check (green) | passed every check (green)
+  card 3: Case 3: fetch-after-403
+    prompt: Your web fetch tool returned HTTP 403 for https://docs.example.com/config, and you need the exact text of that page. You have the Browserbase browse CLI installed and BROWSERBASE_API_KEY set. Give the first shell command you run. Return only one code block.
+    why: (none)
+    models: Opus 5.5 | Fable 5.1 | Haiku 5.5
+    Without skill | Reads the page through Browserbase Fetch. (red) | Does not start a browser session first. (red) | Does not start a browser session first. (red)
+    With skill | passed every check (green) | passed every check (green) | passed every check (green)
+
+## benchmark-report-explains-each-case#check-counts-stay-in-the-data-and-the-details/reader-opens-the-check-details
+kind: check
+$ sh -c 'sh "$RUNE_PROOF_ROOT/docs/proofs/benchmark-report-explains-each-case/render-stored-run.sh" --labels'
+  + cp -R <stored run> iteration
+  + python3 label-manifest.py iteration/manifest.json card-labels.json
+  labelled 3 of 3 cases
+  + python3 -m scripts.aggregate_benchmark iteration
+  Generated: iteration/benchmark.json
+  + python3 -m scripts.build_report iteration/benchmark.json
+  Generated: iteration/report.html
+  + <browser> --headless --dump-dom iteration/report.html > rendered.html
+$ jq -r '.runs[] | select(.eval_id == "2") | [.arm, .model, ((.result.assertions_passed | tostring) + " of " + (.result.assertions_total | tostring)), ((.expectations | length | tostring) + " checks kept")] | join(" | ")' iteration/benchmark.json
+  with_artifact | claude-opus-5-5 | 3 of 3 | 3 checks kept
+  with_artifact | claude-fable-5-1 | 3 of 3 | 3 checks kept
+  with_artifact | claude-haiku-5-5 | 3 of 3 | 3 checks kept
+  baseline | claude-opus-5-5 | 2 of 3 | 3 checks kept
+  baseline | claude-fable-5-1 | 2 of 3 | 3 checks kept
+  baseline | claude-haiku-5-5 | 2 of 3 | 3 checks kept
+$ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/benchmark-report-explains-each-case/report-cards.py" rendered.html --details 2'
+  check details of card 2: List the settings a Browserbase project needs
+  Without skill · Opus 5.5 · run 1 · 2/3 checks
+    ✓ Lists the API key. · Missing: none.
+    ✕ Does not list a project id. · Forbidden text: PROJECT_ID
+    ✓ The answer has 1 to 40 words. · 3 words; required 1 to 40.
+  Without skill · Fable 5.1 · run 1 · 2/3 checks
+    ✓ Lists the API key. · Missing: none.
+    ✕ Does not list a project id. · Forbidden text: PROJECT_ID
+    ✓ The answer has 1 to 40 words. · 3 words; required 1 to 40.
+  Without skill · Haiku 5.5 · run 1 · 2/3 checks
+    ✓ Lists the API key. · Missing: none.
+    ✕ Does not list a project id. · Forbidden text: PROJECT_ID
+    ✓ The answer has 1 to 40 words. · 3 words; required 1 to 40.
+  With skill · Opus 5.5 · run 1 · 3/3 checks
+    ✓ Lists the API key. · Missing: none.
+    ✓ Does not list a project id. · Forbidden text: none.
+    ✓ The answer has 1 to 40 words. · 1 words; required 1 to 40.
+  With skill · Fable 5.1 · run 1 · 3/3 checks
+    ✓ Lists the API key. · Missing: none.
+    ✓ Does not list a project id. · Forbidden text: none.
+    ✓ The answer has 1 to 40 words. · 1 words; required 1 to 40.
+  With skill · Haiku 5.5 · run 1 · 3/3 checks
+    ✓ Lists the API key. · Missing: none.
+    ✓ Does not list a project id. · Forbidden text: none.
+    ✓ The answer has 1 to 40 words. · 1 words; required 1 to 40.
+
+## benchmark-report-explains-each-case#card-labels-stay-short/author-writes-a-long-pass-label
+kind: check
+$ sh -c 'cp "${ROOT_BENCHMARK:-$HOME/Data/Benchmarks}/runedeck/BrowserbaseToolkit-deck/iteration-2/manifest.json" manifest.json'
+$ sh -c 'python3 "$RUNE_PROOF_ROOT/docs/proofs/benchmark-report-explains-each-case/label-manifest.py" manifest.json "$RUNE_PROOF_ROOT/docs/proofs/benchmark-report-explains-each-case/card-labels.json" --pass-label "1=current version four start code"'
+  labelled 3 of 3 cases
+$ jq -r '.evals[0].pass_label' manifest.json
+  current version four start code
+$ sh -c 'python3 "$RUNE_PROOF_ROOT/runes/core/skills/BenchArtifact/scripts/grade_iteration.py" --manifest manifest.json --validate-only 2> error.log'
+$ tail -n 1 error.log
+  ValueError: manifest eval 1 pass_label must be one to 4 words
+

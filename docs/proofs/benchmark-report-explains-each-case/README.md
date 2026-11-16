@@ -1,21 +1,24 @@
 ---
 type: proof
 change: benchmark-report-explains-each-case
-recorded: 2026-11-16
-transcript: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+head: c150a4a3fa85a80192538016aa1872fafc0aee02
+head_change: rmxopysouywxwroupsmvrrqpxrswttkw
+head_tree: fd4e6a4083c69dfd17d11eb004850b69a6809f61
+recorded: 2026-11-17
+transcript: cca1bebe2cc9e3b527eeeae163bf8f0eafdd760b902f32e4eefabe29dd8add47
 scenes:
 - scenario: benchmark-report-explains-each-case#every-case-gets-a-plain-words-card/reader-opens-a-report-with-labelled-cases
-  kind: unproven
+  kind: check
 - scenario: benchmark-report-explains-each-case#card-grid-names-what-each-answer-did/baseline-answer-writes-old-code
-  kind: unproven
+  kind: check
 - scenario: benchmark-report-explains-each-case#forbidden-checks-name-the-label-first/answer-fails-a-required-and-a-forbidden-check
-  kind: unproven
+  kind: check
 - scenario: benchmark-report-explains-each-case#cases-without-labels-still-render/older-iteration-is-aggregated-again
-  kind: unproven
+  kind: check
 - scenario: benchmark-report-explains-each-case#check-counts-stay-in-the-data-and-the-details/reader-opens-the-check-details
-  kind: unproven
+  kind: check
 - scenario: benchmark-report-explains-each-case#card-labels-stay-short/author-writes-a-long-pass-label
-  kind: unproven
+  kind: check
 ---
 
 # Proof: benchmark-report-explains-each-case
