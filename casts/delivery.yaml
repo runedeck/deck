@@ -9,6 +9,7 @@ runes:
     - core/rules/AnchorWorkingDirectory
     - core/rules/PreferTrash
     - core/rules/CaptureOnTouch
+    - core/rules/DeclareSecrets
     - development/skills/MergeTrain
     - development/skills/ForgeCycle
     - development/skills/AgentTeam
