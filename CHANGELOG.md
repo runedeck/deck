@@ -100,11 +100,12 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 - Change the authorship check to read separate author and trailer lists from `authors.yaml`, so a trailer attribution no longer validates an author field.
 - Move the BuildSkill evaluation step to BenchArtifact, with the loop, agent templates, review viewer, and evaluation schemas.
 - Change the core skill schema to accept `targets`, `disable-model-invocation`, and `user-invocable`.
+- Change the SafetyFirst contract test to run the portable discovery procedure, so it no longer needs a Claude Code variant.
 
 ### Removed
 
 - Remove the BenchArtifact eval viewer, which no instruction used and which carried copied skill-creator code.
-- Remove the Claude Code variant of SafetyFirst. Its load-time probe stopped the skill from loading where Bash was not granted, and the canon alone scores 0.44 against 0 (runes-carry-eval-records). The contract test now runs the portable discovery procedure.
+- Remove the Claude Code variant of SafetyFirst. Its load-time probe stopped the skill from loading where Bash was not granted, and the canon alone scores 0.44 against 0 (runes-carry-eval-records).
 - Remove the legacy per-block review ledgers from BuildSkill and ReviewMarkers.
 - Remove the dated markdown backlog.
 
