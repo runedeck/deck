@@ -44,7 +44,7 @@ An assembled *[instance][INSTANCE]* is not a [render][RENDER]: instructions-stay
 
 ### Requirement: Projections Are Never Authoritative
 
-A *[projection][PROJECTION]* is a [representation][REPRESENTATION] that drops information from its *[source state][SOURCESTATE]*. In quantum mechanics, a [projection][PROJECTION] operator keeps one component of a state and drops the rest.
+A *[projection][PROJECTION]* is a [representation][REPRESENTATION] that drops information from its *[source state][SOURCESTATE]*.
 A [projection][PROJECTION] MUST NOT replace its [source state][SOURCESTATE]. A search index is never committed. A snapshot from outside the [repository][REPOSITORY] is committed only with a *[provenance record][PROVENANCERECORD]* that names its origin.
 
 #### Scenario: Committed file is generated from a projection
