@@ -6,7 +6,7 @@ status: proposed
 
 ## Why
 
-The runedeck stack now declares secrets with SecretSpec ([SecretSpec][SECRETSPEC]). The skeleton gives each repository a `secretspec.toml`. Rune launch reads its credentials through `~/.config/rune/secretspec.toml`, and provision stores new keys in the Keychain. An agent that does not know this still reads `~/.env` or puts a key on a command line. A core rule tells every session how to declare, read, and pass a secret.
+The runedeck stack now declares secrets with SecretSpec ([SecretSpec][SECRETSPEC]). The skeleton gives each repository a `secretspec.toml`. Provision declares the machine's credentials and publishes the manifest at `~/.config/provision/secretspec.toml`. The owner's keys stay in the Keychain, and rune launch reads its credentials through that manifest. An agent that does not know this still reads `~/.env` or puts a key on a command line. A core rule tells every session how to declare, read, and pass a secret.
 
 ## What Changes
 

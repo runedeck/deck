@@ -6,7 +6,7 @@ Change `declare-secrets-per-repository`: proposal, one ADDED delta (`declare-sec
 
 ## Changes
 
-- Adds `runes/core/rules/DeclareSecrets.md`: declare with `secretspec add`, read with `secretspec run` or `secretspec get`, pass values on stdin, give every call a `--reason`, and use `~/.config/rune/secretspec.toml` for harness credentials.
+- Adds `runes/core/rules/DeclareSecrets.md`: declare with `secretspec add`, read with `secretspec run` or `secretspec get`, pass values on stdin, give every call a `--reason`, and use `~/.config/provision/secretspec.toml`, with the profile of the account, for the machine's credentials.
 - Adds the rule to `casts/delivery.yaml`. The `core` cast selects it through `core/**`.
 
 ## Testing
