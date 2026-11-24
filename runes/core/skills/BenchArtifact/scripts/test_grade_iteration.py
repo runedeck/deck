@@ -114,6 +114,43 @@ class GradeIterationTests(unittest.TestCase):
         self.assertTrue(all(check["passed"] for check in checks))
         self.assertIn("required at least 3", checks[0]["evidence"])
 
+    def test_required_regex_accepts_each_correct_wording(self):
+        case = {"assertions": [{
+            "kind": "required_regex",
+            "text": "The response recommends Home Manager.",
+            "patterns": [r"home[- ]manager"],
+        }]}
+
+        for text in ("Use home-manager.", "Use Home Manager."):
+            with self.subTest(text=text):
+                self.assertTrue(GRADE.grade_case(case, text)[0]["passed"])
+        missing = GRADE.grade_case(case, "Use chezmoi.")[0]
+        self.assertFalse(missing["passed"])
+        self.assertEqual(missing["evidence"], r"Missing: home[- ]manager")
+
+    def test_forbidden_regex_matches_usage_and_ignores_a_quoted_warning(self):
+        case = {"assertions": [{
+            "kind": "forbidden_regex",
+            "text": "The response never commits without a signature.",
+            "patterns": [r"^[ \t]*git commit[^\n]*--no-gpg-sign"],
+        }]}
+        warning = "Do not use `git commit --no-gpg-sign`.\n\n```sh\ngit commit -S\n```"
+        usage = "Run this:\n\n```sh\ngit commit --no-gpg-sign -m wip\n```"
+
+        self.assertTrue(GRADE.grade_case(case, warning)[0]["passed"])
+        found = GRADE.grade_case(case, usage)[0]
+        self.assertFalse(found["passed"])
+        self.assertEqual(found["evidence"], "Forbidden match: git commit --no-gpg-sign")
+
+    def test_literal_patterns_keep_substring_semantics(self):
+        case = {"assertions": [{
+            "kind": "forbidden_patterns",
+            "text": "The response avoids the flag.",
+            "patterns": ["--no-gpg-sign"],
+        }]}
+
+        self.assertFalse(GRADE.grade_case(case, "Do not use --no-gpg-sign.")[0]["passed"])
+
     def test_plain_string_assertion_reports_the_schema_error(self):
         with self.assertRaisesRegex(TypeError, "assertion must be an object"):
             GRADE.grade_case({"assertions": ["Keep every number."]}, "Keep 25.")

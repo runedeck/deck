@@ -8,6 +8,7 @@ import json
 import math
 import os
 import random
+import re
 import shutil
 import subprocess
 import sys
@@ -21,7 +22,11 @@ PREFLIGHT_PROMPT = "Reply with exactly OK."
 WORKSPACE_ROOT_VARIABLE = "ROOT_BENCHMARK"
 DEFAULT_WORKSPACE_ROOT = Path.home() / "Data" / "Benchmarks"
 RESPONSE_KINDS = {"text", "json", "jsonl"}
-ASSERTION_KINDS = {"word_range", "required_patterns", "forbidden_patterns"}
+REGEX_KINDS = {"required_regex", "forbidden_regex"}
+PATTERN_KINDS = {"required_patterns", "forbidden_patterns", *REGEX_KINDS}
+ASSERTION_KINDS = {"word_range", *PATTERN_KINDS}
+REGEX_FLAGS = re.IGNORECASE | re.MULTILINE
+CARD_LABEL_WORDS = 4
 SUPPORTED_JUDGING_DIMENSIONS = ("clarity", "fluency", "directness")
 DEFAULT_TRADE_OFF = 0.4
 DEFAULT_WIN = 0.5
@@ -273,6 +278,12 @@ def validate_judging_config(judging, thresholds) -> None:
         raise ValueError("judging must enable at least one preference dimension")
 
 
+def validate_card_label(value, label: str) -> None:
+    """A case card label fits one grid cell: one to CARD_LABEL_WORDS words."""
+    if not isinstance(value, str) or not value.strip() or len(value.split()) > CARD_LABEL_WORDS:
+        raise ValueError(f"{label} must be one to {CARD_LABEL_WORDS} words")
+
+
 def validate_manifest(manifest: dict, require_run_plan: bool = False) -> None:
     required = {"schema_version", "arms", "comparisons", "evals"}
     missing = sorted(required - manifest.keys())
@@ -325,6 +336,12 @@ def validate_manifest(manifest: dict, require_run_plan: bool = False) -> None:
                 raise ValueError(f"manifest eval {case['id']} {field} must be a non-negative integer")
         if case.get("maximum_words") is not None and case.get("minimum_words", 1) > case["maximum_words"]:
             raise ValueError(f"manifest eval {case['id']} word limits are reversed")
+        for field in ("question", "why"):
+            value = case.get(field)
+            if value is not None and (not isinstance(value, str) or not value.strip()):
+                raise ValueError(f"manifest eval {case['id']} {field} must be non-empty text")
+        if "pass_label" in case:
+            validate_card_label(case["pass_label"], f"manifest eval {case['id']} pass_label")
         assertions = case.get("assertions")
         if not isinstance(assertions, list) or not assertions:
             raise ValueError(f"manifest eval {case['id']} needs non-empty assertions")
@@ -336,7 +353,9 @@ def validate_manifest(manifest: dict, require_run_plan: bool = False) -> None:
                 raise ValueError(f"manifest eval {case['id']} has unsupported assertion kind: {kind}")
             if not isinstance(assertion.get("text"), str) or not assertion["text"].strip():
                 raise ValueError(f"manifest eval {case['id']} assertion needs text")
-            if kind in {"required_patterns", "forbidden_patterns"}:
+            if "fail_label" in assertion:
+                validate_card_label(assertion["fail_label"], f"manifest eval {case['id']} fail_label")
+            if kind in PATTERN_KINDS:
                 patterns = assertion.get("patterns")
                 if (
                     not isinstance(patterns, list)
@@ -344,6 +363,15 @@ def validate_manifest(manifest: dict, require_run_plan: bool = False) -> None:
                     or not all(isinstance(pattern, str) and pattern for pattern in patterns)
                 ):
                     raise ValueError(f"manifest eval {case['id']} {kind} needs pattern strings")
+            if kind in REGEX_KINDS:
+                for pattern in patterns:
+                    try:
+                        re.compile(pattern, REGEX_FLAGS)
+                    except re.error as error:
+                        raise ValueError(
+                            f"manifest eval {case['id']} {kind} pattern {pattern!r} "
+                            f"is not a valid regular expression: {error}"
+                        ) from error
             if kind == "word_range" and case.get("minimum_words") is None and case.get("maximum_words") is None:
                 raise ValueError(f"manifest eval {case['id']} word_range needs a word limit")
     comparison_ids = []

@@ -1,13 +1,19 @@
 name: Quality
 
+# Two runs, two facts. The push run proves the head commit: it is the
+# green-head signal Draft Open and the review controller re-enter on, and
+# its log is the receipt `rune sign submit` carries. The merge_group run
+# proves the merge the queue is about to make, and the ruleset requires it.
+# There is no pull_request run: GitHub builds that merge commit once and
+# never rebuilds it when the base moves, so its verdict is about a tree
+# nobody can inspect (runedeck/cli #67, 2026-09-21). The queue's temporary
+# branches are proven by the merge_group run alone.
 on:
     push:
-        branches: [main]
-    pull_request:
-        branches: [main]
-    # draft-open.yaml calls this workflow on the first push of a ceremony
-    # branch, so the draft opens only after the deterministic checks pass.
-    workflow_call: {}
+        branches-ignore:
+            - "gh-readonly-queue/**"
+    merge_group:
+        types: [checks_requested]
 
 concurrency:
     group: quality-${{ github.ref }}
@@ -83,14 +89,36 @@ jobs:
             - name: Test JJ push environment isolation
               run: python3 scripts/test_jj_push_environment.py
 
+            # The pull request under check: on merge_group its number is in
+            # the queue branch name, on push it is the open pull request whose
+            # head is this branch. A push with no pull request yet (the first
+            # push, before Draft Open) and a push to the default branch have
+            # no body to attest.
             - name: Release notes attestation
-              if: github.event_name == 'pull_request'
+              if: github.event_name == 'merge_group' || github.ref_name != github.event.repository.default_branch
               env:
                   GH_TOKEN: ${{ github.token }}
+                  REPOSITORY: ${{ github.repository }}
+                  OWNER: ${{ github.repository_owner }}
+                  BRANCH: ${{ github.ref_name }}
+                  QUEUE_REF: ${{ github.event.merge_group.head_ref }}
               run: |
+                  set -o pipefail
+                  if [ -n "$QUEUE_REF" ]; then
+                      number=$(printf '%s\n' "$QUEUE_REF" | sed -nE 's#^refs/heads/gh-readonly-queue/[^/]+/pr-([0-9]+)-.*$#\1#p')
+                      [ -n "$number" ] || { echo "cannot read the pull request number from $QUEUE_REF"; exit 1; }
+                  else
+                      number=$(gh api --paginate "repos/$REPOSITORY/pulls?state=open&head=$OWNER:$BRANCH&per_page=100" \
+                          --jq '[.[].number]' | jq -s -r 'add // [] | first // ""') \
+                          || { echo "could not read the pull requests for $BRANCH (API or permission failure)"; exit 1; }
+                      if [ -z "$number" ]; then
+                          echo "no open pull request for $BRANCH yet; nothing to attest."
+                          exit 0
+                      fi
+                  fi
                   # The fetch and the parse fail separately: an API or
                   # permission fault must not read as a missing section.
-                  body=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" --jq '.body // ""') \
+                  body=$(gh api "repos/$REPOSITORY/pulls/$number" --jq '.body // ""') \
                       || { echo "could not read the pull request body (API or permission failure)"; exit 1; }
                   if printf '%s\n' "$body" \
                       | awk '/^## Release Notes[[:space:]]*$/{in_section=1; next} /^## /{in_section=0} in_section && /^([-*+]|[0-9]+[.)]) /{found=1} END{exit !found}'; then
@@ -114,7 +142,7 @@ jobs:
             # An in-tree checkout would land under the all-files hooks.
             - name: Install the pinned rune
               env:
-                  RUNE_CLI_REV: eb6cec352ea6f0f60893d9ec6555348190853001
+                  RUNE_CLI_REV: 1cea8c7995591518df25687bc1203e45524ce624
               run: |
                   cargo install --quiet --git https://github.com/runedeck/cli --rev "$RUNE_CLI_REV" rune-cli
                   rune --version
@@ -134,7 +162,8 @@ jobs:
               run: python3 -m unittest tests.test_check_scripts -v
 
             # Select the event range once so both prek stages inspect the same
-            # change. The first push of a new branch carries no before commit,
+            # change: the merge group from its base, a push from its previous
+            # tip. The first push of a new branch carries no before commit,
             # and a rewritten branch carries one that no ref reaches any more.
             # Both start at the branch's merge base with main. Without it, the
             # stages inspected every file, and a hook that needs a desktop tool,
@@ -143,16 +172,16 @@ jobs:
             - name: Select check range
               id: check-range
               env:
-                  PR_BASE: ${{ github.event.pull_request.base.sha }}
-                  PR_HEAD: ${{ github.event.pull_request.head.sha }}
+                  MERGE_BASE: ${{ github.event.merge_group.base_sha }}
+                  MERGE_HEAD: ${{ github.event.merge_group.head_sha }}
                   PUSH_BASE: ${{ github.event.before }}
                   PUSH_HEAD: ${{ github.sha }}
               run: |
                   from=""
                   to="$PUSH_HEAD"
-                  if [ -n "$PR_BASE" ]; then
-                      from="$PR_BASE"
-                      to="$PR_HEAD"
+                  if [ -n "$MERGE_BASE" ]; then
+                      from="$MERGE_BASE"
+                      to="$MERGE_HEAD"
                   elif [ -n "$PUSH_BASE" ] && ! printf '%s' "$PUSH_BASE" | grep -q '^0*$'; then
                       from="$PUSH_BASE"
                   fi
@@ -172,6 +201,10 @@ jobs:
             # The prek CLI is called directly: the wrapper action logs at
             # TRACE level and buries the failing hook's output. REQUIRE_GATES
             # turns a missing linter into a failure instead of a skip.
+            # The idea snapshot check reads the owner's vault through the
+            # Obsidian CLI, which no runner has, so it stays a local gate:
+            # a fresh branch's first push checks every file and would fail
+            # on it under REQUIRE_GATES.
             - name: Commit-stage checks
               env:
                   REQUIRE_GATES: "1"
@@ -180,9 +213,9 @@ jobs:
                   TO_REF: ${{ steps.check-range.outputs.to }}
               run: |
                   if [ "$RANGE_USABLE" = "true" ]; then
-                      prek run --from-ref "$FROM_REF" --to-ref "$TO_REF"
+                      prek run --skip sync-idea --from-ref "$FROM_REF" --to-ref "$TO_REF"
                   else
-                      prek run --all-files
+                      prek run --skip sync-idea --all-files
                   fi
 
             # Scan the same range at the pre-push stage. Without a usable base,

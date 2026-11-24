@@ -18,27 +18,27 @@ An enforcing check is one run of an *[analysis tool][ANALYSISTOOL]* from the sha
 ### Requirement: Analysis Tool Has Fixtures
 
 Every [analysis tool][ANALYSISTOOL] the *[repository][REPOSITORY]* depends on MUST have one *[fixture][FIXTURE]* it accepts and one it rejects, with the expected result asserted. A change to an *[analysis rule][ANALYSISRULE]* that alters the asserted result fails the test.
-Where fixtures are files, the directory name states the assertion: one directory holds the accepted fixtures and one the rejected ones.
+Where [fixtures][FIXTURE] are files, the directory name states the assertion: one directory holds the accepted [fixtures][FIXTURE] and one the rejected ones.
 
 #### Scenario: Analysis tool arrives without fixtures
 
-- **WHEN** an [analysis tool][ANALYSISTOOL] is added to the repository without a passing and a failing [fixture][FIXTURE]
-- **THEN** the [coverage][COVERAGE] table lists the tool as a [missed requirement][MISSEDREQUIREMENT] until the fixtures exist
+- **WHEN** an [analysis tool][ANALYSISTOOL] is added to the [repository][REPOSITORY] without a passing and a failing [fixture][FIXTURE]
+- **THEN** the [coverage][COVERAGE] table lists the tool as a [missed requirement][MISSEDREQUIREMENT] until the [fixtures][FIXTURE] exist
 
 #### Scenario: Analysis rule is weakened
 
 - **WHEN** an [analysis rule][ANALYSISRULE] a tool enforced is removed
-- **THEN** the failing [fixture][FIXTURE] passes, and the fixture test fails
+- **THEN** the failing [fixture][FIXTURE] passes, and the [fixture][FIXTURE] test fails
 
 ### Requirement: Record Cites Its Proofs
 
-An accepted decision record MUST list the *[proofs][PROOF]* of the scenarios under the requirements it points at. A record whose scenarios have no proof MUST stay proposed.
-The `record-proof-per-scenario` capability says how a proof is recorded and replayed. This requirement only asks that the record cites it.
+An accepted decision record MUST list the *[proofs][PROOF]* of the scenarios under the requirements it points at. A record whose scenarios have no [proof][PROOF] MUST stay proposed.
+The `record-proof-per-scenario` capability says how a [proof][PROOF] is recorded and replayed. This requirement only asks that the record cites it.
 
 #### Scenario: Record is accepted without proof
 
 - **WHEN** a record's status changes to accepted and one scenario under a requirement it points at has no [proof][PROOF]
-- **THEN** the check refuses the status and lists the scenarios without a proof
+- **THEN** the check refuses the status and lists the scenarios without a [proof][PROOF]
 
 [COVERAGE]: ../../../../specs/glossary/coverage.md
 [MISSEDREQUIREMENT]: ../../../../specs/glossary/missed-requirement.md

@@ -1,0 +1,37 @@
+{
+  "rune": "BuildSkill",
+  "kind": "skill",
+  "layer": "assembled",
+  "instance_sha256": "e508dab4dc95de58388a3986a8635c924ef87252df0f1a0213fdaf1e62b82f9b",
+  "model": "claude-haiku-4-5-20251001",
+  "profile": "main",
+  "runs": 3,
+  "recorded": "2026-10-20T091719Z",
+  "claude_version": "2.1.304",
+  "score": 0.4074074074074074,
+  "cases_passed": 0,
+  "cases_total": 3,
+  "mean_delta": 0.4074074074074074,
+  "cost_usd": 0.4132798,
+  "duration_seconds": 295,
+  "cases": [
+    {
+      "name": "always-on-guidance",
+      "score": 0,
+      "score_without": 0,
+      "delta": 0
+    },
+    {
+      "name": "create-skill-shape",
+      "score": 0.5555555555555555,
+      "score_without": 0,
+      "delta": 0.5555555555555555
+    },
+    {
+      "name": "validate-in-deck",
+      "score": 0.6666666666666666,
+      "score_without": 0,
+      "delta": 0.6666666666666666
+    }
+  ]
+}

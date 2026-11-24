@@ -8,12 +8,17 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 - Add the `provisioning` module shell: `PROVISION_ROOT` defaults, the `all` cast leaves it out, no executable file in it, and a two-model comparison record per rune (provisioning-joins-the-deck).
 - Add the BrowserbaseToolkit skill in development: read a blocked page through a Browserbase cloud browser as clean markdown (automate-cloud-browsers-browserbase).
+- Add `scripts/eval-rune` and `evals/`: each case runs with the rune and without it, and each run leaves a record and an optional GIF (runes-carry-eval-records).
+- Add eval suites with records for twelve core and development runes, listed in `evals/` (runes-carry-eval-records).
+- Add the FullSend skill in development: take one task to a merge-ready pull request while the owner reads nothing, then ask once, through the question tool, to merge.
+- Add the PruneTests skill in development: delete tests that no plausible bug can fail, repair weak ones with a recorded mutation, and hand the pull request to FullSend.
+- Add the AskBeforeMovingData and AnswerBeforeEditing rules in core.
 - Add the Dotfiles Scanner and Online Mentions routines with a deterministic detector the run takes from the deck object store, and retire GitHub Exposure (scanner-routines-from-deck).
 - Add `routines/`: the Repository Digest and Weekly Ceremony Audit prompts as deck files a Claude Code routine reads at `main`, with the instance values in the provider stub (routine-prompts-from-deck).
 - Add `scripts/check-ontology`: the smoke fixture names each finding in `ontology/smoke/expected.tsv`, and the graph check prints each violation by node. Both hooks call it.
 - Add `supersedes`, `archived`, and `status` to the record vocabulary, a JSON-LD context for every frontmatter key, and shapes for supersession and status (decision-records-match-template).
 - Add `scripts/check-decision-shape`: a sign on each consequence, a harness on each consulted model, and a resolvable `upstream` or `related` entry (decision-records-match-template).
-- Add the PreferTrash rule in core: delete with `trash`, the FreeDesktop-layout script that every repository and the dotfiles carry, never with `rm`. Recovery is a move back from `~/.local/share/Trash`.
+- Add the PreferTrash rule in core: delete with `trash`, never with `rm`. On macOS the script moves items to the Trash that Finder shows and empties. Build directories go with `rm` first.
 - Add the DetachedJob skill in development: start a long command in its own session so no tool timeout, terminal close, or session exit stops it, then wait for its exit code and read its log.
 - Add recorded proofs for record-proof-per-scenario, playable-proof-recordings-page, and convenient-proof-page-viewer under `docs/proofs/`, and DECK-0019 from the archived cast-player decision.
 - AcceptanceTesting hands over a proof as a page: `scripts/proof-page.py` builds it from the casts with the html-tools player, and the GIF alone is an unfinished handover (convenient-proof-page-viewer).
@@ -69,6 +74,7 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 
 ### Changed
 
+- Sync the ceremony files to skeleton `d7c9bdf7` through `copier update`: Quality on push and merge queue, `scripts/trash`, `secretspec.toml` with the CI secrets and its hook, GPT display names.
 - Change BuildSkill's trigger-eval scripts and review page to a clean-room rewrite with tests, so the deck carries no copied skill-creator code.
 - Change the Dotfiles Scanner to read acknowledgements from `.auditignore.yaml` and to run the detector from a checked copy in the scratch directory (scanner-routines-from-deck).
 - Routine notifications open with the result and whether to act, group details in bullets, end with one next step, and show health only when degraded (routine-prompts-from-deck).
@@ -94,16 +100,20 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 - Change the authorship check to read separate author and trailer lists from `authors.yaml`, so a trailer attribution no longer validates an author field.
 - Move the BuildSkill evaluation step to BenchArtifact, with the loop, agent templates, review viewer, and evaluation schemas.
 - Change the core skill schema to accept `targets`, `disable-model-invocation`, and `user-invocable`.
+- Change the SafetyFirst contract test to run the portable discovery procedure, so it no longer needs a Claude Code variant.
 
 ### Removed
 
 - Remove the BenchArtifact eval viewer, which no instruction used and which carried copied skill-creator code.
+- Remove the Claude Code variant of SafetyFirst. Its load-time probe stopped the skill from loading where Bash was not granted, and the canon alone scores 0.44 against 0 (runes-carry-eval-records).
 - Remove the legacy per-block review ledgers from BuildSkill and ReviewMarkers.
 - Remove the dated markdown backlog.
 
 ### Fixed
 
+- Fix the fallback term checker to report an italic or a bold term that the file links elsewhere. Only a run-in label such as `**Change ceremony.**` stays plain.
 - Fix the ReviewChange term links to point at the glossary pages by repository URL, so the bundle passes the source-layer check and the links survive deployment (skill-term-links-survive-deployment).
+- Fix VersionControl's directory advice: `gh -R` and `glab -R` take a remote `OWNER/REPO`, so a local directory needs its own `cd` call (runes-carry-eval-records).
 - Fix the Dotfiles Scanner to fetch the whole branch history and report a scan that stops at a shallow boundary as incomplete (scanner-routines-from-deck).
 - Fix a Dotfiles notification bullet to point to the first file before a commit message (scanner-routines-from-deck).
 - Fix the Repository Digest and Weekly Ceremony Audit to end with the notification text only (routine-prompts-from-deck).
@@ -117,3 +127,4 @@ All notable changes to Rune Deck are documented here, following [Keep a Changelo
 - Fix the meta module to include its required empty defaults file.
 - Fix stable shell to validate the `rune` skill with the shared meta skill schema.
 - Fix the skill hook to validate each entrypoint against its nearest `.mdschema`.
+- Fix the UseEfficientCLI rule to match the command guard: write an overwrite redirect to a literal path, and send output through `tee` when the path needs a variable.

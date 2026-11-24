@@ -9,7 +9,7 @@ tags:
     - portability
 status: accepted
 created: 2026-03-30
-updated: 2026-03-30
+updated: 2026-10-19
 author: "@N4M3Z"
 project: deck
 related:
@@ -28,35 +28,39 @@ change: plain-text-first-principles
 
 ## Context and Problem Statement
 
-[CORE-0001](CORE-0001%20Markdown%20as%20System%20Language.md) makes Markdown the system language. Every Markdown file has metadata: status, author, tags, relationships, dates. The question is where that metadata lives.
-Knowledge tools answer it in two ways. One keeps the metadata in a database beside the files. The other keeps it inside each file.
+Every Markdown file has metadata, and this record says where the author stores it. [CORE-0001](CORE-0001%20Markdown%20as%20System%20Language.md) makes Markdown the system language. The metadata of a file is its status, its author, its tags, its relationships, and its dates.
+Knowledge tools store that metadata in one of two places. One tool keeps the metadata in a database beside the files. Another tool keeps it inside each file.
 
 ## Decision Drivers
 
-- Files move between git repositories, Obsidian vaults, model contexts, CI pipelines, and shared drives
-- Metadata that does not move with its file is invisible and eventually lost
+- The owner moves files between git repositories, Obsidian vaults, *[model][MODEL]* contexts, continuous integration (CI) pipelines, and shared drives
+- Metadata that does not move with its file is invisible to the reader, and the owner loses it in the end
 - Obsidian, Claude Code, GitHub, shell scripts, and CI validators all read the same metadata
-- No single tool is the keeper of the metadata. The file is the source of truth.
+- No tool is the keeper of the metadata. The file is the source of truth.
 
 ## Considered Options
 
-1. An external database: [Evernote][EVERNOTE], [DEVONthink][DEVON], [TheBrain][BRAIN], and [Bear][BEAR] keep metadata in a proprietary database outside the files. Queries are fast, and git, text editors, and models cannot see the metadata. A file that moves loses it, and the database is a single point of failure and a lock-in.
-2. Sidecar files: a `.yaml` or `.json` beside each `.md`. The data stays in the filesystem, the file count doubles, and a rename or move silently orphans the sidecar.
-3. Metadata inside the file: the metadata moves with the file, every tool that reads the file gets it, and there is nothing to synchronize.
+1. An external database. [Evernote][EVERNOTE], [DEVONthink][DEVON], [TheBrain][BRAIN], and [Bear][BEAR] keep metadata in a proprietary database outside the files. Queries are fast. Git, a text editor, and a [model][MODEL] cannot see the metadata. A file that the owner moves loses its metadata. The database is one point of failure, and it locks the owner in.
+2. *[Sidecar][SIDECAR]* files. The author writes a `.yaml` or `.json` beside each `.md`. The data stays in the filesystem. The number of files doubles. A rename or a move orphans the [sidecar][SIDECAR], and no tool warns.
+3. Metadata inside the file. The metadata moves with the file. Every tool that reads the file gets the metadata, and there is nothing to synchronize.
 
 ## Decision Outcome
 
-Option 3. Metadata MUST live inside the file it describes, not in a database, a sidecar, or a separate tracking system.
-The one exception is sealed provenance evidence, which goes into `.provenance/` sidecars beside deployed artifacts, because a seal attests a file at a point in time and cannot be part of the content it attests.
-[Obsidian][OBS] keeps frontmatter in each file and rebuilds its metadata cache from the files, so a vault of thousands of notes moves through git with nothing but the files ([Obsidian Properties][OBS-PROPS]).
-The mechanism is YAML frontmatter ([CORE-0003](CORE-0003%20YAML%20Frontmatter%20for%20Machine%20Readability.md)).
+Option 3. The author MUST keep metadata inside the file it describes. A database, a [sidecar][SIDECAR], or a separate tracking system MUST NOT hold it.
+The one exception is the sealed *[provenance record][PROVENANCERECORD]*. It goes into a [sidecar][SIDECAR] under `.provenance/` beside each deployed *[artifact][ARTIFACT]*. A seal attests a file at a point in time, so the seal cannot be part of the content it attests.
+[Obsidian][OBS] keeps frontmatter in each file and rebuilds its metadata cache from the files. A vault of thousands of notes moves through git with nothing but the files ([Obsidian Properties][OBS-PROPS]).
+The author writes the metadata as YAML frontmatter ([CORE-0003](CORE-0003%20YAML%20Frontmatter%20for%20Machine%20Readability.md)).
 
 ### Consequences
 
-- [+] Files describe themselves and move to any system that reads text
-- [+] No external dependency for metadata
-- [+] A whole class of bugs disappears: orphaned metadata, stale sidecars, sync failures
-- [-] Files grow slightly. Compact frontmatter keeps the cost small.
+- [+] A file describes itself, and the owner moves it to any system that reads text
+- [+] The metadata depends on nothing outside the file
+- [+] A whole class of bugs disappears: orphaned metadata, stale [sidecars][SIDECAR], and failed synchronization
+- [-] A file grows slightly. Compact frontmatter limits the growth.
+
+## More Information
+
+- Rewritten on 2026-10-19 in the plain spoken register. The decision is unchanged.
 
 [EVERNOTE]: https://evernote.com/
 [DEVON]: https://www.devontechnologies.com/apps/devonthink
@@ -64,3 +68,7 @@ The mechanism is YAML frontmatter ([CORE-0003](CORE-0003%20YAML%20Frontmatter%20
 [BEAR]: https://bear.app/
 [OBS]: https://obsidian.md/
 [OBS-PROPS]: https://help.obsidian.md/properties
+[MODEL]: ../specs/glossary/model.md
+[PROVENANCERECORD]: ../specs/glossary/provenance-record.md
+[SIDECAR]: ../specs/glossary/sidecar.md
+[ARTIFACT]: ../specs/glossary/artifact.md

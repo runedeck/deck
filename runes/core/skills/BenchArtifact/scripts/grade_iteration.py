@@ -59,6 +59,20 @@ def grade_case(case: dict, text: str) -> list[dict]:
             found = [pattern for pattern in assertion["patterns"] if pattern.casefold() in lowered]
             passed = not found
             evidence = "Forbidden text: " + (", ".join(found) if found else "none.")
+        elif kind == "required_regex":
+            missing = [
+                pattern for pattern in assertion["patterns"]
+                if not re.search(pattern, text, run_benchmark.REGEX_FLAGS)
+            ]
+            passed = not missing
+            evidence = "Missing: " + (", ".join(missing) if missing else "none.")
+        elif kind == "forbidden_regex":
+            found = [
+                match.group(0) for pattern in assertion["patterns"]
+                if (match := re.search(pattern, text, run_benchmark.REGEX_FLAGS))
+            ]
+            passed = not found
+            evidence = "Forbidden match: " + (", ".join(found) if found else "none.")
         else:
             raise ValueError(f"unsupported assertion kind: {kind}")
         checks.append(expectation(assertion["text"], passed, evidence))

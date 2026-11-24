@@ -1,0 +1,31 @@
+{
+  "rune": "FullSend",
+  "kind": "skill",
+  "layer": "canon",
+  "instance_sha256": "a5731a1f6d48d4b0ecf9cc8a75b8149ab2cb8e6b9c376e69575ce012a2e50fc1",
+  "model": "claude-haiku-4-5-20251001",
+  "profile": "main",
+  "runs": 3,
+  "recorded": "2026-10-20T132814Z",
+  "claude_version": "2.1.304",
+  "score": 0.5,
+  "cases_passed": 1,
+  "cases_total": 2,
+  "mean_delta": 0.16666666666666669,
+  "cost_usd": 0.28170105,
+  "duration_seconds": 236,
+  "cases": [
+    {
+      "name": "hook-blocks-push",
+      "score": 1,
+      "score_without": 0.6666666666666666,
+      "delta": 0.33333333333333337
+    },
+    {
+      "name": "merge-ready-ask-once",
+      "score": 0,
+      "score_without": 0,
+      "delta": 0
+    }
+  ]
+}

@@ -9,6 +9,19 @@ SPEC = importlib.util.spec_from_file_location("aggregate_benchmark", SCRIPT)
 AGG = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(AGG)
 
+CARD_CASE = {
+    "id": 1, "name": "init", "question": "Start a cloud browser",
+    "why": "Version 3 code no longer runs.", "pass_label": "current v4 code",
+    "assertions": [
+        {"kind": "required_patterns", "text": "Uses the V4 factory.", "patterns": ["create"]},
+        {
+            "kind": "forbidden_regex", "text": "Uses no V3 constructor.",
+            "patterns": ["new Stagehand"], "fail_label": "old v3 code",
+        },
+        {"kind": "word_range", "text": "Has 3 to 200 words.", "fail_label": "too long"},
+    ],
+}
+
 
 class AggregateTests(unittest.TestCase):
     def setUp(self):
@@ -242,7 +255,7 @@ class AggregateTests(unittest.TestCase):
         self.assertEqual(checker_verdict["label"], "No checker data")
         self.assertIn("1 of 2 matched pairs", " ".join(checker_verdict["parts"]))
 
-    def test_unreliable_checker_density_is_excluded(self):
+    def test_unreliable_checker_density_stays_null(self):
         self.write_run("baseline", 1, lint=4, checker_words=1, density_reliable=False)
         self.write_run("with_rule", 1, lint=0, checker_words=50)
         manifest = self.root / "evals.json"
@@ -255,6 +268,94 @@ class AggregateTests(unittest.TestCase):
 
         self.assertIsNone(result["baseline"]["metrics"]["lint_per100w"]["mean"])
         self.assertIsNone(result["paired_corpus"]["baseline"]["lint_per100w"])
+
+    def test_unreliable_density_keeps_assertion_results_comparable(self):
+        self.write_run(
+            "baseline", 1, words=1, checker_words=1, passed=0,
+            density_reliable=False,
+        )
+        self.write_run(
+            "with_rule", 1, words=3, checker_words=3, density_reliable=False,
+        )
+        manifest = self.root / "evals.json"
+        manifest.write_text(json.dumps({
+            "arms": {"baseline": {}, "with_rule": {}},
+            "comparisons": [{"id": "rule", "primary": "with_rule", "baseline": "baseline"}],
+        }), encoding="utf-8")
+
+        data = AGG.generate(self.root, manifest, "STE", "")
+        cell = data["comparisons"][0]["models"]["model"]
+
+        self.assertEqual([run["state"] for run in data["runs"]], ["valid", "valid"])
+        self.assertTrue(all(run["result"]["lint_per100w"] is None for run in data["runs"]))
+        self.assertEqual(cell["paired_samples"], 1)
+        self.assertEqual(cell["deltas"]["assertion_pass_rate"], 1.0)
+        self.assertIsNone(cell["deltas"]["lint_per100w"])
+        self.assertEqual(cell["verdict"]["label"], "No checker data")
+        self.assertIn("| model | No checker data | 1 | 0.00 → 1.00 | — → — |", AGG.markdown(data))
+
+    def card_run(self, *passed, valid=True, state="valid"):
+        texts = [assertion["text"] for assertion in CARD_CASE["assertions"]]
+        return {
+            "valid": valid, "state": state, "result": {"assertion_pass_rate": None},
+            "expectations": [
+                {"text": text, "passed": result, "evidence": ""}
+                for text, result in zip(texts, passed)
+            ],
+        }
+
+    def test_run_card_prefers_a_failed_forbidden_check(self):
+        card = AGG.run_card(self.card_run(False, False, True), CARD_CASE)
+
+        self.assertEqual(card, {"outcome": "fail", "label": "old v3 code"})
+
+    def test_run_card_ignores_word_count_and_falls_back_to_the_check_text(self):
+        word_count_only = AGG.run_card(self.card_run(True, True, False), CARD_CASE)
+        required_only = AGG.run_card(self.card_run(False, True, True), CARD_CASE)
+
+        self.assertEqual(word_count_only, {"outcome": "pass", "label": "current v4 code"})
+        self.assertEqual(required_only, {"outcome": "fail", "label": "Uses the V4 factory."})
+
+    def test_run_card_without_labels_or_a_valid_run(self):
+        bare = {key: value for key, value in CARD_CASE.items() if key != "pass_label"}
+
+        self.assertEqual(
+            AGG.run_card(self.card_run(True, True, True), bare),
+            {"outcome": "pass", "label": "passed every check"},
+        )
+        self.assertEqual(
+            AGG.run_card(self.card_run(valid=False, state="missing_execution"), bare),
+            {"outcome": "excluded", "label": "not run"},
+        )
+
+    def test_generate_writes_case_cards_and_the_planned_model_order(self):
+        self.write_run("baseline", 1)
+        self.write_run("with_rule", 1)
+        manifest = self.root / "evals.json"
+        manifest.write_text(json.dumps({
+            "arms": {"baseline": {}, "with_rule": {}},
+            "comparisons": [{"id": "rule", "primary": "with_rule", "baseline": "baseline"}],
+            "evals": [{**CARD_CASE, "prompt": "Write the code."}],
+            "run_plan": {"models": ["model"], "repeats": 1},
+        }), encoding="utf-8")
+
+        data = AGG.generate(self.root, manifest, "STE", "")
+
+        self.assertEqual(data["case_models"], ["model"])
+        self.assertEqual(data["cases"][0]["question"], "Start a cloud browser")
+        self.assertEqual(data["cases"][0]["prompt"], "Write the code.")
+        self.assertEqual(data["runs"][0]["card"], {"outcome": "pass", "label": "current v4 code"})
+
+    def test_reliable_density_without_checker_words_is_missing_grading(self):
+        self.write_run("baseline", 1, checker_words=1)
+        grading_path = self.root / "eval-1-case" / "baseline@model" / "run-1" / "grading.json"
+        grading = json.loads(grading_path.read_text(encoding="utf-8"))
+        del grading["lint"]["words"]
+        grading_path.write_text(json.dumps(grading), encoding="utf-8")
+
+        run = AGG.generate(self.root, None, "STE", "")["runs"][0]
+
+        self.assertEqual(run["state"], "missing_grading")
 
     def test_rune_cache_usage_field_is_aggregated(self):
         self.write_run("baseline", 1, cache_tokens=17)

@@ -85,7 +85,19 @@ Every benchmark requires `manifest.json`. Cross-harness mode writes this file be
 
 Each frozen assertion is an object with `kind` and `text`.
 
-Use `required_patterns` or `forbidden_patterns` with a non-empty `patterns` array.
+Use `required_patterns`, `forbidden_patterns`, `required_regex`, or `forbidden_regex` with a non-empty `patterns` array.
+
+The literal kinds ignore case and match each pattern as plain text. `required_patterns` needs every pattern. `forbidden_patterns` fails on any pattern.
+
+The regex kinds take Python regular expressions with the case-insensitive and multiline flags. In multiline mode, `^` and `$` match at the start and end of each line.
+
+The manifest validator compiles each regular expression. An invalid pattern stops the benchmark before the first provider call.
+
+Write two correct wordings as one alternation, for example `home[- ]manager`.
+
+Write a forbidden check that matches the use of a command. A treatment model often quotes the command that its artifact prohibits. The literal pattern `--no-gpg-sign` fails on the warning "do not use --no-gpg-sign". The regex `^[ \t]*git commit[^\n]*--no-gpg-sign` matches only a line that starts with the command.
+
+Escape each backslash in JSON: write `\s` as `"\\s"`.
 
 Use `word_range` with `minimum_words`, `maximum_words`, or both fields on the case.
 
@@ -123,6 +135,20 @@ File digests use SHA-256 bytes. Directory digests include sorted relative paths 
 Read [execution-results.md](execution-results.md) for execution, timing, and grading records.
 
 Read [preference-results.md](preference-results.md) for judging and aggregate records.
+
+## Case cards
+
+The report opens with one card for each case. Each card shows what the case asked and what each answer did.
+
+A case can set `question`, `why`, and `pass_label`. An assertion can set `fail_label`. All four fields are optional.
+
+Write `question` as a plain title for a reader who does not know the product, for example "Write the code that starts a cloud browser".
+
+Write `why` in one or two sentences that say what a right answer does and what a wrong one costs. Explain each product name there, for example "Stagehand is Browserbase's code library for steering a browser from a script."
+
+Write each label in four words or fewer. A label says what the answer did, for example "old v3 code" or "key only".
+
+A cell shows `pass_label` when every content check passes. Otherwise it shows the `fail_label` of a failed forbidden check, then of a failed required check. A check without `fail_label` shows its `text`. A word-count check never picks the label.
 
 ## Report links
 
