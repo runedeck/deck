@@ -1,0 +1,9 @@
+Declare every secret a repository reads in `secretspec.toml` at the repository root, each with a description. Add one with `secretspec add <NAME> --description "<purpose>"`. Read a secret only through `secretspec run -- <command>` or `secretspec get <NAME>`, never from a dotenv file or a shell profile.
+
+Never print a secret value, and never read one into the conversation. When a command needs a secret, run it under `secretspec run` and report the result. Use `secretspec get` only where a pipe or a command substitution takes its output. A bare call prints the value into the transcript. Pass a value to a program on stdin, because a process list shows every argument. Never type or paste a value yourself. Ask the owner to store a new secret with `secretspec set <NAME>`, which prompts and does not echo. A program that makes a value pipes it into `secretspec set <NAME> --from-file -`.
+
+Never show secretspec's own error text: a dotenv parse error quotes the line, value included. Send the stderr of `secretspec get` to `/dev/null` and report its exit code.
+
+Give every call a reason with `--reason "<why>"`. By default SecretSpec refuses an agent session that gives none, and a provider that keeps an audit log writes the reason into it.
+
+runedeck/provision declares the machine's credentials, the harness keys among them, and publishes that manifest at `~/.config/provision/secretspec.toml`. A repository that reads one of these credentials reads it from that manifest and does not declare it again. Each account reads its own profile: `owner` on the owner's machines, `agents` for the agent user on Cortex. A command that needs one runs as `secretspec run --file ~/.config/provision/secretspec.toml --profile owner --reason "<why>" -- <command>`. `rune launch` and `rune run` read an unset `from_env` key from that manifest. Do not export a credential in the shell to start a launch.
